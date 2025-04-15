@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Map Maker - Atlas Tiler</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/mapmaker.css">
+</head>
+<body>
+    <nav>
+        <div class="logo">Atlas Tiler</div>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="mapmaker.html" class="active">Map Maker</a>
+            <a href="gallery.html">Map Gallery</a>
+            <a href="my-maps.html">My Maps</a>
+            <button id="loginBtn" class="login-btn">Login with Discord</button>
+        </div>
+    </nav>
+
+    <div class="mapmaker-container">
+        <div class="toolbar">
+            <div class="tool-section">
+                <h3>Tiles</h3>
+                <div id="tileSelector"></div>
+            </div>
+            <div class="tool-section">
+                <h3>Actions</h3>
+                <button id="clearBtn">Clear Map</button>
+                <button id="saveBtn">Save Map</button>
+                <button id="exportBtn">Export as PNG</button>
+            </div>
+        </div>
+        
+        <div class="map-editor">
+            <canvas id="mapCanvas"></canvas>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-database-compat.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/mapmaker.js"></script>
+</body>
+</html>
