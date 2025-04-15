@@ -22,6 +22,23 @@ class MapMaker {
         this.gamemode = 'custom';
         this.environment = 'desert';
         
+        // Drawing state
+        this.isDrawing = false;
+        this.isErasing = false;
+        this.drawingMode = 'single';
+        this.startTile = null;
+        this.lastTile = null;
+
+        // Mirroring state
+        this.mirrorDiagonal = false;
+        this.mirrorVertical = false;
+        this.mirrorHorizontal = false;
+
+        // Preview overlay
+        this.previewOverlay = document.createElement('div');
+        this.previewOverlay.className = 'preview-overlay';
+        document.querySelector('.map-editor').appendChild(this.previewOverlay);
+        
         this.initializeCanvas();
         this.initializeTileSelector();
         this.setupEventListeners();
@@ -63,12 +80,43 @@ class MapMaker {
     }
 
     setupEventListeners() {
-        this.canvas.addEventListener('mousedown', this.handleCanvasClick.bind(this));
-        this.canvas.addEventListener('mousemove', this.handleCanvasMove.bind(this));
+        this.canvas.addEventListener('mousedown', this.handleMouseDown.bind(this));
+        this.canvas.addEventListener('mousemove', this.handleMouseMove.bind(this));
+        this.canvas.addEventListener('mouseup', this.handleMouseUp.bind(this));
+        this.canvas.addEventListener('mouseleave', this.handleMouseUp.bind(this));
+        
         document.getElementById('clearBtn').addEventListener('click', this.clearMap.bind(this));
         document.getElementById('saveBtn').addEventListener('click', this.saveMap.bind(this));
         document.getElementById('exportBtn').addEventListener('click', this.exportToPNG.bind(this));
-        
+
+        // Drawing mode listener
+        document.getElementById('drawingMode').addEventListener('change', (e) => {
+            this.drawingMode = e.target.value;
+        });
+
+        // Mirror listeners
+        document.getElementById('mirrorDiagonal').addEventListener('change', (e) => {
+            this.mirrorDiagonal = e.target.checked;
+        });
+        document.getElementById('mirrorVertical').addEventListener('change', (e) => {
+            this.mirrorVertical = e.target.checked;
+        });
+        document.getElementById('mirrorHorizontal').addEventListener('change', (e) => {
+            this.mirrorHorizontal = e.target.checked;
+        });
+
+        // Tool buttons
+        document.getElementById('drawBtn').addEventListener('click', (e) => {
+            this.isErasing = false;
+            document.getElementById('drawBtn').classList.add('active');
+            document.getElementById('eraseBtn').classList.remove('active');
+        });
+        document.getElementById('eraseBtn').addEventListener('click', (e) => {
+            this.isErasing = true;
+            document.getElementById('eraseBtn').classList.add('active');
+            document.getElementById('drawBtn').classList.remove('active');
+        });
+
         // Add listeners for dropdowns
         document.getElementById('mapSize').addEventListener('change', (e) => {
             const newSize = this.mapSizes[e.target.value];
@@ -94,22 +142,117 @@ class MapMaker {
         });
     }
 
-    handleCanvasClick(event) {
-        if (!this.selectedTile) return;
-        
+    getTileCoordinates(event) {
         const rect = this.canvas.getBoundingClientRect();
-        const x = Math.floor((event.clientX - rect.left) / this.tileSize);
-        const y = Math.floor((event.clientY - rect.top) / this.tileSize);
+        return {
+            x: Math.floor((event.clientX - rect.left) / this.tileSize),
+            y: Math.floor((event.clientY - rect.top) / this.tileSize)
+        };
+    }
+
+    handleMouseDown(event) {
+        if (!this.selectedTile && !this.isErasing) return;
         
-        if (x >= 0 && x < this.mapWidth && y >= 0 && y < this.mapHeight) {
-            this.map[y][x] = this.selectedTile.id;
-            this.drawMap();
+        this.isDrawing = true;
+        const tile = this.getTileCoordinates(event);
+        this.startTile = tile;
+        this.lastTile = tile;
+        
+        if (this.drawingMode === 'single') {
+            this.placeTile(tile.x, tile.y);
         }
     }
 
-    handleCanvasMove(event) {
-        if (event.buttons !== 1 || !this.selectedTile) return;
-        this.handleCanvasClick(event);
+    handleMouseMove(event) {
+        if (!this.isDrawing) return;
+        
+        const tile = this.getTileCoordinates(event);
+        
+        if (this.drawingMode === 'line') {
+            if (tile.x !== this.lastTile.x || tile.y !== this.lastTile.y) {
+                this.placeTile(tile.x, tile.y);
+                this.lastTile = tile;
+            }
+        } else if (this.drawingMode === 'rectangle') {
+            this.updateRectanglePreview(tile);
+        }
+    }
+
+    handleMouseUp(event) {
+        if (!this.isDrawing) return;
+        
+        if (this.drawingMode === 'rectangle') {
+            const endTile = this.getTileCoordinates(event);
+            this.placeRectangle(this.startTile, endTile);
+            this.previewOverlay.style.display = 'none';
+        }
+        
+        this.isDrawing = false;
+        this.startTile = null;
+        this.lastTile = null;
+    }
+
+    updateRectanglePreview(currentTile) {
+        const rect = this.canvas.getBoundingClientRect();
+        const startX = Math.min(this.startTile.x, currentTile.x) * this.tileSize;
+        const startY = Math.min(this.startTile.y, currentTile.y) * this.tileSize;
+        const width = (Math.abs(currentTile.x - this.startTile.x) + 1) * this.tileSize;
+        const height = (Math.abs(currentTile.y - this.startTile.y) + 1) * this.tileSize;
+
+        this.previewOverlay.style.display = 'block';
+        this.previewOverlay.style.left = `${rect.left + startX}px`;
+        this.previewOverlay.style.top = `${rect.top + startY}px`;
+        this.previewOverlay.style.width = `${width}px`;
+        this.previewOverlay.style.height = `${height}px`;
+        this.previewOverlay.className = `preview-overlay${this.isErasing ? ' erase' : ''}`;
+    }
+
+    placeRectangle(start, end) {
+        const startX = Math.min(start.x, end.x);
+        const startY = Math.min(start.y, end.y);
+        const endX = Math.max(start.x, end.x);
+        const endY = Math.max(start.y, end.y);
+
+        for (let y = startY; y <= endY; y++) {
+            for (let x = startX; x <= endX; x++) {
+                this.placeTile(x, y);
+            }
+        }
+    }
+
+    placeTile(x, y) {
+        if (x < 0 || x >= this.mapWidth || y < 0 || y >= this.mapHeight) return;
+
+        const value = this.isErasing ? 0 : this.selectedTile.id;
+        this.map[y][x] = value;
+
+        // Apply mirroring
+        if (this.mirrorVertical) {
+            const mirrorX = x;
+            const mirrorY = this.mapHeight - 1 - y;
+            if (mirrorY >= 0 && mirrorY < this.mapHeight) {
+                this.map[mirrorY][mirrorX] = value;
+            }
+        }
+
+        if (this.mirrorHorizontal) {
+            const mirrorX = this.mapWidth - 1 - x;
+            const mirrorY = y;
+            if (mirrorX >= 0 && mirrorX < this.mapWidth) {
+                this.map[mirrorY][mirrorX] = value;
+            }
+        }
+
+        if (this.mirrorDiagonal) {
+            // Diagonal mirror across both axes
+            const mirrorX = this.mapWidth - 1 - x;
+            const mirrorY = this.mapHeight - 1 - y;
+            if (mirrorX >= 0 && mirrorX < this.mapWidth && mirrorY >= 0 && mirrorY < this.mapHeight) {
+                this.map[mirrorY][mirrorX] = value;
+            }
+        }
+
+        this.drawMap();
     }
 
     drawGrid() {

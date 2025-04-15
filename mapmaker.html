@@ -109,6 +109,37 @@
                 <div id="tileSelector"></div>
             </div>
             <div class="tool-section">
+                <h3>Drawing Mode</h3>
+                <div class="select-container">
+                    <select id="drawingMode">
+                        <option value="single" selected>Single Tile</option>
+                        <option value="line">Line</option>
+                        <option value="rectangle">Rectangle</option>
+                    </select>
+                </div>
+            </div>
+            <div class="tool-section">
+                <h3>Mirroring</h3>
+                <div class="checkbox-container">
+                    <label>
+                        <input type="checkbox" id="mirrorDiagonal"> Diagonal
+                    </label>
+                    <label>
+                        <input type="checkbox" id="mirrorVertical"> Vertical
+                    </label>
+                    <label>
+                        <input type="checkbox" id="mirrorHorizontal"> Horizontal
+                    </label>
+                </div>
+            </div>
+            <div class="tool-section">
+                <h3>Tools</h3>
+                <div class="tool-buttons">
+                    <button id="drawBtn" class="tool-button active">Draw</button>
+                    <button id="eraseBtn" class="tool-button">Erase</button>
+                </div>
+            </div>
+            <div class="tool-section">
                 <h3>Actions</h3>
                 <button id="clearBtn">Clear Map</button>
                 <button id="saveBtn">Save Map</button>
