@@ -1,6 +1,6 @@
-# Atlas Tiler - Brawl Stars Map Maker
+# Atlas Tiler
 
-A web-based tool for creating and sharing Brawl Stars maps. Built with HTML, JavaScript, and CSS, using Firebase for authentication and data storage.
+This site is not affiliated with or endorsed by Supercell. Brawl Stars and all related assets belong to Supercell.
 
 ## Features
 - Discord Authentication
