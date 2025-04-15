@@ -143,9 +143,35 @@ class MapMaker {
     }
 
     exportToPNG() {
+        // Create a temporary canvas for the export
+        const exportCanvas = document.createElement('canvas');
+        exportCanvas.width = this.canvas.width;
+        exportCanvas.height = this.canvas.height;
+        const exportCtx = exportCanvas.getContext('2d');
+
+        // Draw only the tiles without the grid
+        for (let y = 0; y < this.mapHeight; y++) {
+            for (let x = 0; x < this.mapWidth; x++) {
+                const tileId = this.map[y][x];
+                if (tileId !== 0) {
+                    const tile = [
+                        null,
+                        { color: '#666666' }, // Wall
+                        { color: '#90EE90' }, // Bush
+                        { color: '#87CEEB' }, // Water
+                        { color: '#FFD700' }  // Spawn
+                    ][tileId];
+
+                    exportCtx.fillStyle = tile.color;
+                    exportCtx.fillRect(x * this.tileSize, y * this.tileSize, this.tileSize, this.tileSize);
+                }
+            }
+        }
+
+        // Create download link with the grid-free version
         const link = document.createElement('a');
         link.download = 'brawl-stars-map.png';
-        link.href = this.canvas.toDataURL();
+        link.href = exportCanvas.toDataURL();
         link.click();
     }
 }
