@@ -3,14 +3,32 @@ class MapMaker {
         this.canvas = document.getElementById('mapCanvas');
         this.ctx = this.canvas.getContext('2d');
         this.tileSize = 32;
-        this.mapWidth = 25;
-        this.mapHeight = 25;
+        
+        // Map size configurations
+        this.mapSizes = {
+            regular: { width: 33, height: 21 },
+            showdown: { width: 60, height: 60 },
+            siege: { width: 39, height: 27 },
+            volley: { width: 25, height: 21 },
+            basket: { width: 17, height: 21 }
+        };
+        
+        // Initialize with default size (regular)
+        this.mapWidth = this.mapSizes.regular.width;
+        this.mapHeight = this.mapSizes.regular.height;
+        
         this.selectedTile = null;
-        this.map = Array(this.mapHeight).fill().map(() => Array(this.mapWidth).fill(0));
+        this.map = this.createEmptyMap();
+        this.gamemode = 'custom';
+        this.environment = 'desert';
         
         this.initializeCanvas();
         this.initializeTileSelector();
         this.setupEventListeners();
+    }
+
+    createEmptyMap() {
+        return Array(this.mapHeight).fill().map(() => Array(this.mapWidth).fill(0));
     }
 
     initializeCanvas() {
@@ -50,6 +68,30 @@ class MapMaker {
         document.getElementById('clearBtn').addEventListener('click', this.clearMap.bind(this));
         document.getElementById('saveBtn').addEventListener('click', this.saveMap.bind(this));
         document.getElementById('exportBtn').addEventListener('click', this.exportToPNG.bind(this));
+        
+        // Add listeners for dropdowns
+        document.getElementById('mapSize').addEventListener('change', (e) => {
+            const newSize = this.mapSizes[e.target.value];
+            if (confirm('Changing map size will clear the current map. Continue?')) {
+                this.mapWidth = newSize.width;
+                this.mapHeight = newSize.height;
+                this.map = this.createEmptyMap();
+                this.initializeCanvas();
+            } else {
+                e.target.value = Object.keys(this.mapSizes).find(key => 
+                    this.mapSizes[key].width === this.mapWidth && 
+                    this.mapSizes[key].height === this.mapHeight
+                );
+            }
+        });
+
+        document.getElementById('gamemode').addEventListener('change', (e) => {
+            this.gamemode = e.target.value;
+        });
+
+        document.getElementById('environment').addEventListener('change', (e) => {
+            this.environment = e.target.value;
+        });
     }
 
     handleCanvasClick(event) {
@@ -114,7 +156,7 @@ class MapMaker {
 
     clearMap() {
         if (confirm('Are you sure you want to clear the map?')) {
-            this.map = Array(this.mapHeight).fill().map(() => Array(this.mapWidth).fill(0));
+            this.map = this.createEmptyMap();
             this.drawMap();
         }
     }
@@ -129,7 +171,13 @@ class MapMaker {
             userId: firebase.auth().currentUser.uid,
             userName: firebase.auth().currentUser.displayName,
             created: firebase.database.ServerValue.TIMESTAMP,
-            mapData: this.map
+            mapData: this.map,
+            gamemode: this.gamemode,
+            environment: this.environment,
+            size: {
+                width: this.mapWidth,
+                height: this.mapHeight
+            }
         };
 
         try {
