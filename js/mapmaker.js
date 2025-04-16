@@ -62,16 +62,16 @@ class MapMaker {
         // Tile definitions with images and sizes
         this.tileDefinitions = {
             0: { name: 'Empty' },
-            1: { name: 'Wall', img: 'Wall.png', size: 1 },
-            2: { name: 'Bush', img: 'Bush.png', size: 1 },
-            3: { name: 'Wall2', img: 'Wall2.png', size: 1 },
-            4: { name: 'Crate', img: 'Crate.png', size: 1 },
-            5: { name: 'Barrel', img: 'Barrel.png', size: 1 },
-            6: { name: 'Cactus', img: 'Cactus.png', size: 1 },
-            7: { name: 'Fence', img: 'Fence/Fence.png', size: 1 },
-            8: { name: 'Water', img: 'Water/00000000.png', size: 1 },
-            9: { name: 'Rope Fence', img: 'Rope/Rope.png', size: 1 },
-            10: { name: 'Skull', img: 'Skull.png', size: 1 },
+            1: { name: 'Wall', img: '${env}/Tiles/Wall.png', size: 1 },
+            2: { name: 'Bush', img: '${env}/Tiles/Bush.png', size: 1 },
+            3: { name: 'Wall2', img: '${env}/Tiles/Wall2.png', size: 1 },
+            4: { name: 'Crate', img: '${env}/Tiles/Crate.png', size: 1 },
+            5: { name: 'Barrel', img: '${env}/Tiles/Barrel.png', size: 1 },
+            6: { name: 'Cactus', img: '${env}/Tiles/Cactus.png', size: 1 },
+            7: { name: 'Fence', img: '${env}/Fence/Fence.png', size: 1 },
+            8: { name: 'Water', img: '${env}/Water/00000000.png', size: 1 },
+            9: { name: 'Rope Fence', img: '${env}/Rope/Rope.png', size: 1 },
+            10: { name: 'Skull', img: '${env}/Tiles/Skull.png', size: 1 },
             11: { name: 'Unbreakable', img: 'Global/Unbreakable.png', size: 1 },
             12: { name: 'Blue Spawn', img: 'Global/Spawns/3v3/1.png', size: 1 },
             13: { name: 'Red Spawn', img: 'Global/Spawns/3v3/2.png', size: 1 },
@@ -167,7 +167,7 @@ class MapMaker {
         zoomOutBtn.addEventListener('click', () => this.zoom(-this.zoomStep));
         clearBtn.addEventListener('click', () => this.clearMap());
         saveBtn.addEventListener('click', () => this.saveMap());
-        exportBtn.addEventListener('click', () => this.exportAsPNG());
+        exportBtn.addEventListener('click', () => this.exportMap());
 
         // Mirror listeners
         mirrorVertical.addEventListener('change', (e) => this.mirrorVertical = e.target.checked);
@@ -195,8 +195,7 @@ class MapMaker {
 
         gamemodeSelect.addEventListener('change', (e) => this.gamemode = e.target.value);
         environmentSelect.addEventListener('change', (e) => {
-            this.environment = e.target.value;
-            this.loadEnvironmentBackgrounds();
+            this.setEnvironment(e.target.value);
         });
 
         // Canvas event listeners
@@ -444,7 +443,7 @@ class MapMaker {
             
             if (def.img) {
                 const img = document.createElement('img');
-                img.src = `Resources/${def.img}`;
+                img.src = `Resources/${def.img.replace('${env}', this.environment)}`;
                 img.alt = def.name;
                 btn.appendChild(img);
             }
@@ -484,8 +483,17 @@ class MapMaker {
         Object.entries(this.tileDefinitions).forEach(([id, def]) => {
             if (def.img) {
                 const img = new Image();
-                img.src = `Resources/${def.img}`;
+                const path = def.img.replace('${env}', this.environment);
+                img.src = `Resources/${path}`;
                 this.tileImages[id] = img;
+                
+                img.onerror = () => {
+                    // If environment-specific tile fails, try desert
+                    if (this.environment !== 'desert' && def.img.includes('${env}')) {
+                        img.src = `Resources/${def.img.replace('${env}', 'desert')}`;
+                    }
+                };
+                
                 img.onload = () => this.draw();
             }
         });
@@ -715,42 +723,69 @@ class MapMaker {
         }
     }
 
-    exportAsPNG() {
-        // Create a temporary canvas for the export
+    exportMap() {
+        if (!confirm('Are you sure you want to download the map?')) {
+            return;
+        }
+
         const exportCanvas = document.createElement('canvas');
         exportCanvas.width = this.canvas.width;
         exportCanvas.height = this.canvas.height;
         const exportCtx = exportCanvas.getContext('2d');
 
-        // Draw only the tiles without the grid
+        // Draw background grid
         for (let y = 0; y < this.mapHeight; y++) {
             for (let x = 0; x < this.mapWidth; x++) {
-                const tileId = this.mapData[y][x];
-                if (tileId !== 0) {
-                    const img = this.tileImages[tileId];
-                    if (img && img.complete) {
-                        // Calculate position to align bottom of image with bottom of tile
-                        const aspectRatio = img.height / img.width;
-                        const drawHeight = this.tileSize * aspectRatio;
-                        const drawY = y * this.tileSize + this.tileSize - drawHeight;
-
-                        exportCtx.drawImage(
-                            img,
-                            x * this.tileSize,
-                            drawY,
-                            this.tileSize,
-                            drawHeight
-                        );
-                    }
+                const isDark = (x + y) % 2 === 0;
+                const bgImg = isDark ? this.bgDark : this.bgLight;
+                
+                if (bgImg.complete) {
+                    exportCtx.drawImage(
+                        bgImg,
+                        x * this.tileSize,
+                        y * this.tileSize,
+                        this.tileSize,
+                        this.tileSize
+                    );
                 }
             }
         }
 
-        // Create download link with the grid-free version
+        // Draw tiles
+        for (let y = 0; y < this.mapHeight; y++) {
+            for (let x = 0; x < this.mapWidth; x++) {
+                const tileId = this.mapData[y][x];
+                if (tileId === 0) continue;
+
+                const img = this.tileImages[tileId];
+                if (img && img.complete) {
+                    // Calculate position to align bottom of image with bottom of tile
+                    const aspectRatio = img.height / img.width;
+                    const drawHeight = this.tileSize * aspectRatio;
+                    const drawY = y * this.tileSize + this.tileSize - drawHeight;
+
+                    exportCtx.drawImage(
+                        img,
+                        x * this.tileSize,
+                        drawY,
+                        this.tileSize,
+                        drawHeight
+                    );
+                }
+            }
+        }
+
+        // Create download link
         const link = document.createElement('a');
-        link.download = 'brawl-stars-map.png';
-        link.href = exportCanvas.toDataURL();
+        link.download = 'map.png';
+        link.href = exportCanvas.toDataURL('image/png');
         link.click();
+    }
+
+    setEnvironment(env) {
+        this.environment = env;
+        this.loadEnvironmentBackgrounds();
+        this.loadTileImages();
     }
 }
 
