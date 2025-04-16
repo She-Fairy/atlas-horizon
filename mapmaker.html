@@ -40,28 +40,83 @@
                 <div class="select-container">
                     <label for="gamemode">Gamemode:</label>
                     <select id="gamemode">
-                        <option value="custom">Custom</option>
-                        <option value="gemGrab">Gem Grab</option>
-                        <option value="brawlBall">Brawl Ball</option>
-                        <option value="heist">Heist</option>
-                        <option value="bounty">Bounty</option>
-                        <option value="siege">Siege</option>
-                        <option value="hotZone">Hot Zone</option>
+                        <option value="Gem_Grab">Gem Grab</option>
+                        <option value="Showdown">Showdown</option>
+                        <option value="Heist">Heist</option>
+                        <option value="Bounty">Bounty</option>
+                        <option value="Brawl_Ball">Brawl Ball</option>
+                        <option value="Hot_Zone">Hot Zone</option>
+                        <option value="Knockout">Knockout</option>
+                        <option value="Wipeout">Wipeout</option>
+                        <option value="Duels">Duels</option>
+                        <option value="Snowtel_Thieves">Snowtel Thieves</option>
+                        <option value="Basket_Brawl">Basket Brawl</option>
+                        <option value="Volley_Brawl">Volley Brawl</option>
+                        <option value="Siege">Siege</option>
+                        <option value="Hold_The_Trophy">Hold The Trophy</option>
                     </select>
                 </div>
                 <div class="select-container">
                     <label for="environment">Environment:</label>
                     <select id="environment">
-                        <option value="desert">Desert</option>
-                        <option value="arcade">Arcade</option>
-                        <option value="mine">Mine</option>
-                        <option value="jungle">Jungle</option>
+                        <option value="Desert">Desert</option>
+                        <option value="Mine">Mine</option>
+                        <option value="Oasis">Oasis</option>
+                        <option value="Grassy_Field">Grassy Field</option>
+                        <option value="City">City</option>
+                        <option value="Rertopolis">Rertopolis</option>
+                        <option value="Mortuary">Mortuary</option>
+                        <option value="Pirate_Ship">Pirate Ship</option>
+                        <option value="Arcade">Arcade</option>
+                        <option value="Stadium">Stadium</option>
+                        <option value="Bazaar">Bazaar</option>
+                        <option value="Super_City">Super City</option>
+                        <option value="Gift_Shop">Gift Shop</option>
+                        <option value="Bandstand">Bandstand</option>
+                        <option value="Snowtel">Snowtel</option>
+                        <option value="Scrapyard">Scrapyard</option>
+                        <option value="Starr_Force">Starr Force</option>
+                        <option value="Wild_West">Wild West</option>
+                        <option value="Water_Park">Water Park</option>
+                        <option value="Castle_Courtyard">Castle Courtyard</option>
+                        <option value="Brawlywood">Brawlywood</option>
+                        <option value="Fighting_Game">Fighting Game</option>
+                        <option value="Biodome">Biodome</option>
+                        <option value="Stunt_Show">Stunt Show</option>
+                        <option value="Deep_Sea">Deep Sea</option>
+                        <option value="Robot_Factory">Robot Factory</option>
+                        <option value="Ghost_Station">Ghost Station</option>
+                        <option value="Candyland">Candyland</option>
+                        <option value="The_Hub">The Hub</option>
+                        <option value="Rumble_Jungle">Rumble Jungle</option>
+                        <option value="Enchanted_Woods">Enchanted Woods</option>
+                        <option value="Circus">Circus</option>
+                        <option value="Starr_Toon">Starr Toon</option>
+                        <option value="Swamp_of_Love">Swamp of Love</option>
+                        <option value="Rooftop">Rooftop</option>
+                        <option value="Coin_Factory">Coin Factory</option>
+                        <option value="Snowtel_2">Snowtel 2</option>
+                        <option value="Firedome">Firedome</option>
+                        <option value="Super_City_2">Super City 2</option>
+                        <option value="Spongebob">Spongebob</option>
+                        <option value="Oddity_Shop">Oddity Shop</option>
+                        <option value="Skating_Bowl">Skating Bowl</option>
+                        <option value="Hockey">Hockey</option>
+                        <option value="Escape_Room">Escape Room</option>
                     </select>
                 </div>
             </div>
             <div class="tool-section">
                 <h3>Tiles</h3>
                 <div id="tileSelector"></div>
+                <div class="save-export-buttons">
+                    <button id="saveBtn" class="text-btn" title="Save Map (Ctrl+S)">
+                        Save Map
+                    </button>
+                    <button id="exportBtn" class="text-btn" title="Export as PNG (Ctrl+E)">
+                        Download Map
+                    </button>
+                </div>
             </div>
         </div>
         
@@ -96,26 +151,30 @@
                     </label>
                 </div>
                 <div class="tool-buttons">
-                    <label class="icon-btn" title="Erase">
+                    <label class="icon-btn" title="Erase (E)">
                         <input type="checkbox" id="eraseBtn">
                         <img src="Resources/Additional/Icons/Erase.png" alt="Erase">
                     </label>
-                    <button id="zoomInBtn" class="icon-btn" title="Zoom In">
+                    <button id="undoBtn" class="icon-btn" title="Undo (Ctrl+Z)">
+                        <img src="Resources/Additional/Icons/Undo.png" alt="Undo">
+                    </button>
+                    <button id="redoBtn" class="icon-btn" title="Redo (Ctrl+Y)">
+                        <img src="Resources/Additional/Icons/Redo.png" alt="Redo">
+                    </button>
+                    <label class="icon-btn" title="Replace (R)">
+                        <input type="checkbox" id="replaceBtn">
+                        <img src="Resources/Additional/Icons/Replace.png" alt="Replace">
+                    </label>
+                    <button id="zoomInBtn" class="icon-btn" title="Zoom In (Ctrl++)">
                         <img src="Resources/Additional/Icons/GlassPlus.png" alt="Zoom In">
                     </button>
-                    <button id="zoomOutBtn" class="icon-btn" title="Zoom Out">
+                    <button id="zoomOutBtn" class="icon-btn" title="Zoom Out (Ctrl+-)">
                         <img src="Resources/Additional/Icons/GlassMinus.png" alt="Zoom Out">
                     </button>
                 </div>
                 <div class="action-buttons">
-                    <button id="clearBtn" class="icon-btn" title="Clear Map">
+                    <button id="clearBtn" class="icon-btn" title="Clear Map (Ctrl+Del)">
                         <img src="Resources/Additional/Icons/Clear.png" alt="Clear">
-                    </button>
-                    <button id="saveBtn" class="icon-btn" title="Save Map">
-                        <img src="Resources/Additional/Icons/Save.png" alt="Save">
-                    </button>
-                    <button id="exportBtn" class="icon-btn" title="Export as PNG">
-                        <img src="Resources/Additional/Icons/Image.png" alt="Export">
                     </button>
                 </div>
             </div>

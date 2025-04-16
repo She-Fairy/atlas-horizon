@@ -78,53 +78,47 @@
 }
 
 .map-editor {
-    flex-grow: 1;
-    background-color: var(--surface-color);
-    border-radius: 0.5rem;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 1rem;
+    flex: 1;
     position: relative;
-}
-
-.map-editor.scrollable {
     overflow: auto;
-}
-
-.map-editor canvas {
-    background-color: var(--surface-color);
+    background: var(--surface-color);
     border: 1px solid var(--border-color);
-    cursor: crosshair;
+    border-radius: 4px;
+}
+
+.map-container {
+    position: relative;
+    overflow: auto;
+    min-width: 100%;
+    min-height: 100%;
+}
+
+.map-canvas {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     image-rendering: pixelated;
-    transition: transform 0.2s ease-out;
-    max-width: 100%;
-    max-height: calc(100vh - 200px);
 }
 
-.map-editor canvas.dragging {
-    cursor: grabbing;
-}
-
+/* Ensure scrollbars are always visible */
 .map-editor::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 12px;
+    height: 12px;
 }
 
 .map-editor::-webkit-scrollbar-track {
-    background-color: var(--surface-color);
-    border-radius: 4px;
+    background: var(--surface-color);
 }
 
 .map-editor::-webkit-scrollbar-thumb {
     background-color: var(--border-color);
-    border-radius: 4px;
+    border-radius: 6px;
+    border: 3px solid var(--surface-color);
 }
 
 .map-editor::-webkit-scrollbar-thumb:hover {
-    background-color: var(--surface-color-hover);
+    background-color: var(--primary-color);
 }
 
 .tool-section {
@@ -245,6 +239,37 @@
 .toggle-btn.active {
     background: var(--primary-color);
     color: white;
+}
+
+.save-export-buttons {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1rem;
+}
+
+.text-btn{
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background-color: var(--surface-color);
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.text-btn:hover {
+    background-color: var(--surface-color-hover);
+    border-color: var(--primary-color);
+}
+
+.text-btn:active {
+    outline: 1px solid var(--primary-color);
 }
 
 label:has(input[type="checkbox"]) input[type="checkbox"] {
