@@ -42,6 +42,9 @@ class MapMaker {
         this.initializeCanvas();
         this.initializeTileSelector();
         this.setupEventListeners();
+        
+        // Set draw button as active by default
+        document.getElementById('drawBtn').classList.add('active');
     }
 
     createEmptyMap() {
@@ -74,7 +77,10 @@ class MapMaker {
             tileElement.addEventListener('click', () => {
                 document.querySelectorAll('.tile-option').forEach(el => el.classList.remove('selected'));
                 tileElement.classList.add('selected');
-                this.selectedTile = tile;
+                this.selectedTile = { ...tile };  
+                this.isErasing = false;  
+                document.getElementById('drawBtn').classList.add('active');
+                document.getElementById('eraseBtn').classList.remove('active');
             });
         });
     }

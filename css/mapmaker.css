@@ -62,15 +62,18 @@
     background: white;
     border-radius: 0.5rem;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    overflow: hidden;
+    overflow: auto;
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: 1rem;
 }
 
 #mapCanvas {
     background: #f8fafc;
     border: 1px solid #e2e8f0;
+    image-rendering: pixelated;
+    cursor: crosshair;
 }
 
 .select-container {
@@ -155,9 +158,12 @@
 .preview-overlay {
     position: absolute;
     pointer-events: none;
-    background: rgba(128, 128, 128, 0.5);
+    border: 2px solid var(--primary-color);
+    background-color: rgba(var(--primary-color-rgb), 0.2);
+    display: none;
 }
 
 .preview-overlay.erase {
-    background: rgba(255, 0, 0, 0.5);
+    border-color: #ef4444;
+    background-color: rgba(239, 68, 68, 0.2);
 }
