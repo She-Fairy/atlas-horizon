@@ -1,9 +1,8 @@
 class MapMaker {
-    constructor() {
-        this.canvas = document.getElementById('mapCanvas');
+    constructor(canvasId) {
+        this.canvas = document.getElementById(canvasId);
         this.ctx = this.canvas.getContext('2d');
         this.tileSize = 32;
-        this.zoomLevel = 1;
         
         // Map size configurations
         this.mapSizes = {
@@ -18,43 +17,137 @@ class MapMaker {
         this.mapWidth = this.mapSizes.regular.width;
         this.mapHeight = this.mapSizes.regular.height;
         
-        // Initialize with Wall tile selected
-        this.selectedTile = { id: 1, name: 'Wall', color: '#666666' };
-        this.map = this.createEmptyMap();
-        this.gamemode = 'custom';
-        this.environment = 'desert';
-        
-        // Drawing state
-        this.isDrawing = false;
-        this.isErasing = false;
-        this.drawingMode = 'single';
-        this.startTile = null;
-        this.lastTile = null;
+        this.zoomLevel = 1;
+        this.minZoom = 0.5;
+        this.maxZoom = 2;
+        this.zoomStep = 0.25;
 
-        // Mirroring state
-        this.mirrorDiagonal = false;
-        this.mirrorVertical = false;
-        this.mirrorHorizontal = false;
-
-        // Preview overlay
-        this.previewOverlay = document.createElement('div');
-        this.previewOverlay.className = 'preview-overlay';
-        document.querySelector('.map-editor').appendChild(this.previewOverlay);
-        
-        this.initializeCanvas();
-        this.initializeTileSelector();
-        this.setupEventListeners();
-        this.setInitialZoom();
-    }
-
-    createEmptyMap() {
-        return Array(this.mapHeight).fill().map(() => Array(this.mapWidth).fill(0));
-    }
-
-    initializeCanvas() {
+        // Initialize canvas size
         this.canvas.width = this.mapWidth * this.tileSize;
         this.canvas.height = this.mapHeight * this.tileSize;
-        this.drawGrid();
+
+        // Initialize map data
+        this.mapData = Array(this.mapHeight).fill().map(() => Array(this.mapWidth).fill(0));
+        
+        this.selectedTile = { id: 1, name: 'Wall', color: '#666666' };
+        this.isErasing = false;
+        this.isDragging = false;
+        this.lastX = 0;
+        this.lastY = 0;
+
+        // Mirroring state
+        this.mirrorVertical = false;
+        this.mirrorHorizontal = false;
+        this.mirrorDiagonal = false;
+
+        // Game settings
+        this.gamemode = 'custom';
+        this.environment = 'desert';
+
+        this.initializeEventListeners();
+        this.initializeTileSelector();
+        
+        // Set initial zoom to fit the map
+        this.fitMapToScreen();
+        this.draw();
+    }
+
+    fitMapToScreen() {
+        const container = this.canvas.parentElement;
+        const containerWidth = container.clientWidth - 32;
+        const containerHeight = container.clientHeight - 32;
+        
+        const scaleX = containerWidth / this.canvas.width;
+        const scaleY = containerHeight / this.canvas.height;
+        this.zoomLevel = Math.min(scaleX, scaleY, 1);
+        
+        this.updateCanvasZoom();
+    }
+
+    updateCanvasZoom() {
+        this.canvas.style.transform = `scale(${this.zoomLevel})`;
+        
+        const container = this.canvas.parentElement;
+        const mapWidth = this.canvas.width * this.zoomLevel;
+        const mapHeight = this.canvas.height * this.zoomLevel;
+        
+        if (mapWidth > container.clientWidth - 32 || mapHeight > container.clientHeight - 32) {
+            container.classList.add('scrollable');
+        } else {
+            container.classList.remove('scrollable');
+        }
+    }
+
+    initializeEventListeners() {
+        // Tool buttons
+        const eraseBtn = document.getElementById('eraseBtn');
+        const zoomInBtn = document.getElementById('zoomInBtn');
+        const zoomOutBtn = document.getElementById('zoomOutBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const saveBtn = document.getElementById('saveBtn');
+        const exportBtn = document.getElementById('exportBtn');
+
+        // Mirror checkboxes
+        const mirrorVertical = document.getElementById('mirrorVertical');
+        const mirrorHorizontal = document.getElementById('mirrorHorizontal');
+        const mirrorDiagonal = document.getElementById('mirrorDiagonal');
+
+        // Map settings
+        const mapSizeSelect = document.getElementById('mapSize');
+        const gamemodeSelect = document.getElementById('gamemode');
+        const environmentSelect = document.getElementById('environment');
+
+        eraseBtn.addEventListener('change', (e) => {
+            this.isErasing = e.target.checked;
+            eraseBtn.parentElement.classList.toggle('active', this.isErasing);
+        });
+
+        zoomInBtn.addEventListener('click', () => this.zoom(this.zoomStep));
+        zoomOutBtn.addEventListener('click', () => this.zoom(-this.zoomStep));
+        clearBtn.addEventListener('click', () => this.clearMap());
+        saveBtn.addEventListener('click', () => this.saveMap());
+        exportBtn.addEventListener('click', () => this.exportAsPNG());
+
+        // Mirror listeners
+        mirrorVertical.addEventListener('change', (e) => this.mirrorVertical = e.target.checked);
+        mirrorHorizontal.addEventListener('change', (e) => this.mirrorHorizontal = e.target.checked);
+        mirrorDiagonal.addEventListener('change', (e) => this.mirrorDiagonal = e.target.checked);
+
+        // Map setting listeners
+        mapSizeSelect.addEventListener('change', (e) => {
+            const newSize = this.mapSizes[e.target.value];
+            if (confirm('Changing map size will clear the current map. Continue?')) {
+                this.mapWidth = newSize.width;
+                this.mapHeight = newSize.height;
+                this.canvas.width = this.mapWidth * this.tileSize;
+                this.canvas.height = this.mapHeight * this.tileSize;
+                this.mapData = Array(this.mapHeight).fill().map(() => Array(this.mapWidth).fill(0));
+                this.fitMapToScreen();
+                this.draw();
+            } else {
+                e.target.value = Object.keys(this.mapSizes).find(key => 
+                    this.mapSizes[key].width === this.mapWidth && 
+                    this.mapSizes[key].height === this.mapHeight
+                );
+            }
+        });
+
+        gamemodeSelect.addEventListener('change', (e) => this.gamemode = e.target.value);
+        environmentSelect.addEventListener('change', (e) => this.environment = e.target.value);
+
+        this.canvas.addEventListener('mousedown', (e) => this.handleMouseDown(e));
+        this.canvas.addEventListener('mousemove', (e) => this.handleMouseMove(e));
+        this.canvas.addEventListener('mouseup', () => this.handleMouseUp());
+        this.canvas.addEventListener('mouseleave', () => this.handleMouseUp());
+    }
+
+    zoom(delta) {
+        const oldZoom = this.zoomLevel;
+        this.zoomLevel = Math.max(this.minZoom, Math.min(this.maxZoom, this.zoomLevel + delta));
+        
+        if (oldZoom !== this.zoomLevel) {
+            this.updateCanvasZoom();
+        }
     }
 
     initializeTileSelector() {
@@ -85,209 +178,12 @@ class MapMaker {
         });
     }
 
-    setupEventListeners() {
-        this.canvas.addEventListener('mousedown', this.handleMouseDown.bind(this));
-        this.canvas.addEventListener('mousemove', this.handleMouseMove.bind(this));
-        this.canvas.addEventListener('mouseup', this.handleMouseUp.bind(this));
-        this.canvas.addEventListener('mouseleave', this.handleMouseUp.bind(this));
-        
-        document.getElementById('clearBtn').addEventListener('click', this.clearMap.bind(this));
-        document.getElementById('saveBtn').addEventListener('click', this.saveMap.bind(this));
-        document.getElementById('exportBtn').addEventListener('click', this.exportToPNG.bind(this));
-
-        // Mirror listeners
-        document.getElementById('mirrorDiagonal').addEventListener('change', (e) => {
-            this.mirrorDiagonal = e.target.checked;
-        });
-        document.getElementById('mirrorVertical').addEventListener('change', (e) => {
-            this.mirrorVertical = e.target.checked;
-        });
-        document.getElementById('mirrorHorizontal').addEventListener('change', (e) => {
-            this.mirrorHorizontal = e.target.checked;
-        });
-
-        // Erase button
-        document.getElementById('eraseBtn').addEventListener('click', (e) => {
-            this.isErasing = !this.isErasing;
-            e.target.classList.toggle('active');
-        });
-
-        // Zoom controls
-        document.getElementById('zoomInBtn').addEventListener('click', () => {
-            this.zoomLevel = Math.min(this.zoomLevel * 1.2, 2);
-            this.updateCanvasZoom();
-        });
-
-        document.getElementById('zoomOutBtn').addEventListener('click', () => {
-            this.zoomLevel = Math.max(this.zoomLevel / 1.2, 0.1);
-            this.updateCanvasZoom();
-        });
-
-        // Add listeners for dropdowns
-        document.getElementById('mapSize').addEventListener('change', (e) => {
-            const newSize = this.mapSizes[e.target.value];
-            if (confirm('Changing map size will clear the current map. Continue?')) {
-                this.mapWidth = newSize.width;
-                this.mapHeight = newSize.height;
-                this.map = this.createEmptyMap();
-                this.initializeCanvas();
-                this.setInitialZoom();
-            } else {
-                e.target.value = Object.keys(this.mapSizes).find(key => 
-                    this.mapSizes[key].width === this.mapWidth && 
-                    this.mapSizes[key].height === this.mapHeight
-                );
-            }
-        });
-
-        document.getElementById('gamemode').addEventListener('change', (e) => {
-            this.gamemode = e.target.value;
-        });
-
-        document.getElementById('environment').addEventListener('change', (e) => {
-            this.environment = e.target.value;
-        });
-    }
-
-    getTileCoordinates(event) {
-        const rect = this.canvas.getBoundingClientRect();
-        return {
-            x: Math.floor((event.clientX - rect.left) / (this.tileSize * this.zoomLevel)),
-            y: Math.floor((event.clientY - rect.top) / (this.tileSize * this.zoomLevel))
-        };
-    }
-
-    handleMouseDown(event) {
-        if (!this.selectedTile && !this.isErasing) return;
-        
-        this.isDrawing = true;
-        const tile = this.getTileCoordinates(event);
-        this.startTile = tile;
-        this.lastTile = tile;
-        
-        if (this.drawingMode === 'single') {
-            this.placeTile(tile.x, tile.y);
-        }
-    }
-
-    handleMouseMove(event) {
-        if (!this.isDrawing) return;
-        
-        const tile = this.getTileCoordinates(event);
-        
-        if (this.drawingMode === 'line') {
-            if (tile.x !== this.lastTile.x || tile.y !== this.lastTile.y) {
-                this.placeTile(tile.x, tile.y);
-                this.lastTile = tile;
-            }
-        } else if (this.drawingMode === 'rectangle') {
-            this.updateRectanglePreview(tile);
-        }
-    }
-
-    handleMouseUp(event) {
-        if (!this.isDrawing) return;
-        
-        if (this.drawingMode === 'rectangle') {
-            const endTile = this.getTileCoordinates(event);
-            this.placeRectangle(this.startTile, endTile);
-            this.previewOverlay.style.display = 'none';
-        }
-        
-        this.isDrawing = false;
-        this.startTile = null;
-        this.lastTile = null;
-    }
-
-    updateRectanglePreview(currentTile) {
-        const rect = this.canvas.getBoundingClientRect();
-        const startX = Math.min(this.startTile.x, currentTile.x) * this.tileSize * this.zoomLevel;
-        const startY = Math.min(this.startTile.y, currentTile.y) * this.tileSize * this.zoomLevel;
-        const width = (Math.abs(currentTile.x - this.startTile.x) + 1) * this.tileSize * this.zoomLevel;
-        const height = (Math.abs(currentTile.y - this.startTile.y) + 1) * this.tileSize * this.zoomLevel;
-
-        this.previewOverlay.style.display = 'block';
-        this.previewOverlay.style.left = `${rect.left + startX}px`;
-        this.previewOverlay.style.top = `${rect.top + startY}px`;
-        this.previewOverlay.style.width = `${width}px`;
-        this.previewOverlay.style.height = `${height}px`;
-        this.previewOverlay.className = `preview-overlay${this.isErasing ? ' erase' : ''}`;
-    }
-
-    placeRectangle(start, end) {
-        const startX = Math.min(start.x, end.x);
-        const startY = Math.min(start.y, end.y);
-        const endX = Math.max(start.x, end.x);
-        const endY = Math.max(start.y, end.y);
-
-        for (let y = startY; y <= endY; y++) {
-            for (let x = startX; x <= endX; x++) {
-                this.placeTile(x, y);
-            }
-        }
-    }
-
-    placeTile(x, y) {
-        if (x < 0 || x >= this.mapWidth || y < 0 || y >= this.mapHeight) return;
-
-        const value = this.isErasing ? 0 : this.selectedTile.id;
-        this.map[y][x] = value;
-
-        // Apply mirroring
-        if (this.mirrorVertical) {
-            const mirrorX = x;
-            const mirrorY = this.mapHeight - 1 - y;
-            if (mirrorY >= 0 && mirrorY < this.mapHeight) {
-                this.map[mirrorY][mirrorX] = value;
-            }
-        }
-
-        if (this.mirrorHorizontal) {
-            const mirrorX = this.mapWidth - 1 - x;
-            const mirrorY = y;
-            if (mirrorX >= 0 && mirrorX < this.mapWidth) {
-                this.map[mirrorY][mirrorX] = value;
-            }
-        }
-
-        if (this.mirrorDiagonal) {
-            // Diagonal mirror across both axes
-            const mirrorX = this.mapWidth - 1 - x;
-            const mirrorY = this.mapHeight - 1 - y;
-            if (mirrorX >= 0 && mirrorX < this.mapWidth && mirrorY >= 0 && mirrorY < this.mapHeight) {
-                this.map[mirrorY][mirrorX] = value;
-            }
-        }
-
-        this.drawMap();
-    }
-
-    drawGrid() {
-        this.ctx.strokeStyle = '#e2e8f0';
-        this.ctx.lineWidth = 1;
-
-        for (let x = 0; x <= this.mapWidth; x++) {
-            this.ctx.beginPath();
-            this.ctx.moveTo(x * this.tileSize, 0);
-            this.ctx.lineTo(x * this.tileSize, this.canvas.height);
-            this.ctx.stroke();
-        }
-
-        for (let y = 0; y <= this.mapHeight; y++) {
-            this.ctx.beginPath();
-            this.ctx.moveTo(0, y * this.tileSize);
-            this.ctx.lineTo(this.canvas.width, y * this.tileSize);
-            this.ctx.stroke();
-        }
-    }
-
-    drawMap() {
+    draw() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.drawGrid();
-
+        
         for (let y = 0; y < this.mapHeight; y++) {
             for (let x = 0; x < this.mapWidth; x++) {
-                const tileId = this.map[y][x];
+                const tileId = this.mapData[y][x];
                 if (tileId !== 0) {
                     const tile = [
                         null,
@@ -304,14 +200,116 @@ class MapMaker {
         }
     }
 
-    clearMap() {
-        if (confirm('Are you sure you want to clear the map?')) {
-            this.map = this.createEmptyMap();
-            this.drawMap();
+    handleMouseDown(event) {
+        if (!this.selectedTile && !this.isErasing) return;
+        
+        this.isDragging = true;
+        const tile = this.getTileCoordinates(event);
+        this.lastX = tile.x;
+        this.lastY = tile.y;
+        
+        if (this.isErasing) {
+            this.eraseTile(tile.x, tile.y);
+        } else {
+            this.placeTile(tile.x, tile.y);
         }
     }
 
-    async saveMap() {
+    handleMouseMove(event) {
+        if (!this.isDragging) return;
+        
+        const tile = this.getTileCoordinates(event);
+        
+        if (this.isErasing) {
+            this.eraseTile(tile.x, tile.y);
+        } else {
+            this.placeTile(tile.x, tile.y);
+        }
+    }
+
+    handleMouseUp() {
+        this.isDragging = false;
+    }
+
+    getTileCoordinates(event) {
+        const rect = this.canvas.getBoundingClientRect();
+        return {
+            x: Math.floor((event.clientX - rect.left) / (this.tileSize * this.zoomLevel)),
+            y: Math.floor((event.clientY - rect.top) / (this.tileSize * this.zoomLevel))
+        };
+    }
+
+    placeTile(x, y) {
+        if (x < 0 || x >= this.mapWidth || y < 0 || y >= this.mapHeight) return;
+
+        const value = this.isErasing ? 0 : this.selectedTile.id;
+        this.mapData[y][x] = value;
+
+        // Apply mirroring
+        if (this.mirrorVertical) {
+            const mirrorY = this.mapHeight - 1 - y;
+            if (mirrorY >= 0 && mirrorY < this.mapHeight) {
+                this.mapData[mirrorY][x] = value;
+            }
+        }
+
+        if (this.mirrorHorizontal) {
+            const mirrorX = this.mapWidth - 1 - x;
+            if (mirrorX >= 0 && mirrorX < this.mapWidth) {
+                this.mapData[y][mirrorX] = value;
+            }
+        }
+
+        if (this.mirrorDiagonal) {
+            const mirrorX = this.mapWidth - 1 - x;
+            const mirrorY = this.mapHeight - 1 - y;
+            if (mirrorX >= 0 && mirrorX < this.mapWidth && mirrorY >= 0 && mirrorY < this.mapHeight) {
+                this.mapData[mirrorY][mirrorX] = value;
+            }
+        }
+
+        this.draw();
+    }
+
+    eraseTile(x, y) {
+        if (x < 0 || x >= this.mapWidth || y < 0 || y >= this.mapHeight) return;
+
+        this.mapData[y][x] = 0;
+
+        // Apply mirroring
+        if (this.mirrorVertical) {
+            const mirrorY = this.mapHeight - 1 - y;
+            if (mirrorY >= 0 && mirrorY < this.mapHeight) {
+                this.mapData[mirrorY][x] = 0;
+            }
+        }
+
+        if (this.mirrorHorizontal) {
+            const mirrorX = this.mapWidth - 1 - x;
+            if (mirrorX >= 0 && mirrorX < this.mapWidth) {
+                this.mapData[y][mirrorX] = 0;
+            }
+        }
+
+        if (this.mirrorDiagonal) {
+            const mirrorX = this.mapWidth - 1 - x;
+            const mirrorY = this.mapHeight - 1 - y;
+            if (mirrorX >= 0 && mirrorX < this.mapWidth && mirrorY >= 0 && mirrorY < this.mapHeight) {
+                this.mapData[mirrorY][mirrorX] = 0;
+            }
+        }
+
+        this.draw();
+    }
+
+    clearMap() {
+        if (confirm('Are you sure you want to clear the map?')) {
+            this.mapData = Array(this.mapHeight).fill().map(() => Array(this.mapWidth).fill(0));
+            this.draw();
+        }
+    }
+
+    saveMap() {
         if (!firebase.auth().currentUser) {
             alert('Please login to save your map');
             return;
@@ -321,9 +319,7 @@ class MapMaker {
             userId: firebase.auth().currentUser.uid,
             userName: firebase.auth().currentUser.displayName,
             created: firebase.database.ServerValue.TIMESTAMP,
-            mapData: this.map,
-            gamemode: this.gamemode,
-            environment: this.environment,
+            mapData: this.mapData,
             size: {
                 width: this.mapWidth,
                 height: this.mapHeight
@@ -332,7 +328,7 @@ class MapMaker {
 
         try {
             const newMapRef = firebase.database().ref('maps').push();
-            await newMapRef.set(mapData);
+            newMapRef.set(mapData);
             alert('Map saved successfully!');
         } catch (error) {
             console.error('Error saving map:', error);
@@ -340,7 +336,7 @@ class MapMaker {
         }
     }
 
-    exportToPNG() {
+    exportAsPNG() {
         // Create a temporary canvas for the export
         const exportCanvas = document.createElement('canvas');
         exportCanvas.width = this.canvas.width;
@@ -350,7 +346,7 @@ class MapMaker {
         // Draw only the tiles without the grid
         for (let y = 0; y < this.mapHeight; y++) {
             for (let x = 0; x < this.mapWidth; x++) {
-                const tileId = this.map[y][x];
+                const tileId = this.mapData[y][x];
                 if (tileId !== 0) {
                     const tile = [
                         null,
@@ -372,38 +368,9 @@ class MapMaker {
         link.href = exportCanvas.toDataURL();
         link.click();
     }
-
-    setInitialZoom() {
-        const container = document.querySelector('.map-editor');
-        const containerWidth = container.clientWidth - 32; // Account for padding
-        const containerHeight = container.clientHeight - 32;
-        const mapWidth = this.mapWidth * this.tileSize;
-        const mapHeight = this.mapHeight * this.tileSize;
-        
-        const widthRatio = containerWidth / mapWidth;
-        const heightRatio = containerHeight / mapHeight;
-        this.zoomLevel = Math.min(widthRatio, heightRatio, 1);
-        
-        this.updateCanvasZoom();
-    }
-
-    updateCanvasZoom() {
-        this.canvas.style.transform = `scale(${this.zoomLevel})`;
-        
-        // Check if scrolling is needed
-        const container = document.querySelector('.map-editor');
-        const mapWidth = this.mapWidth * this.tileSize * this.zoomLevel;
-        const mapHeight = this.mapHeight * this.tileSize * this.zoomLevel;
-        
-        if (mapWidth > container.clientWidth - 32 || mapHeight > container.clientHeight - 32) {
-            container.classList.add('scrollable');
-        } else {
-            container.classList.remove('scrollable');
-        }
-    }
 }
 
 // Initialize the map maker when the page loads
 window.addEventListener('load', () => {
-    new MapMaker();
+    new MapMaker('mapCanvas');
 });
