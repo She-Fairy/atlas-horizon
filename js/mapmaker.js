@@ -32,8 +32,12 @@ class MapMaker {
         this.selectedTile = { id: 1, name: 'Wall', color: '#666666' };
         this.isErasing = false;
         this.isDragging = false;
+        this.isDrawing = false;
         this.lastX = 0;
         this.lastY = 0;
+        this.draggedTileId = null;
+        this.dragStartX = null;
+        this.dragStartY = null;
 
         // Mirroring state
         this.mirrorVertical = false;
@@ -43,6 +47,12 @@ class MapMaker {
         // Game settings
         this.gamemode = 'custom';
         this.environment = 'desert';
+
+        // Selection mode
+        this.selectionMode = 'single';
+        this.selectionStart = null;
+        this.selectionEnd = null;
+        this.hoveredTiles = new Set(); // For line selection
 
         this.initializeEventListeners();
         this.initializeTileSelector();
@@ -97,6 +107,13 @@ class MapMaker {
         const gamemodeSelect = document.getElementById('gamemode');
         const environmentSelect = document.getElementById('environment');
 
+        // Selection mode radio buttons
+        document.querySelectorAll('input[name="selectionMode"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                this.selectionMode = e.target.value;
+            });
+        });
+
         eraseBtn.addEventListener('change', (e) => {
             this.isErasing = e.target.checked;
             eraseBtn.parentElement.classList.toggle('active', this.isErasing);
@@ -135,10 +152,205 @@ class MapMaker {
         gamemodeSelect.addEventListener('change', (e) => this.gamemode = e.target.value);
         environmentSelect.addEventListener('change', (e) => this.environment = e.target.value);
 
-        this.canvas.addEventListener('mousedown', (e) => this.handleMouseDown(e));
-        this.canvas.addEventListener('mousemove', (e) => this.handleMouseMove(e));
-        this.canvas.addEventListener('mouseup', () => this.handleMouseUp());
-        this.canvas.addEventListener('mouseleave', () => this.handleMouseUp());
+        // Canvas event listeners
+        this.canvas.addEventListener('mousedown', this.handleMouseDown.bind(this));
+        this.canvas.addEventListener('mousemove', this.handleMouseMove.bind(this));
+        this.canvas.addEventListener('mouseup', this.handleMouseUp.bind(this));
+        this.canvas.addEventListener('mouseleave', this.handleMouseLeave.bind(this));
+        
+        // Add document-level mouse up to ensure we catch the event even if released outside canvas
+        document.addEventListener('mouseup', this.handleMouseUp.bind(this));
+    }
+
+    handleMouseDown(event) {
+        const coords = this.getTileCoordinates(event);
+        if (coords.x < 0 || coords.x >= this.mapWidth || coords.y < 0 || coords.y >= this.mapHeight) return;
+
+        // Check if we're starting to drag an existing tile
+        if (!this.isErasing && this.mapData[coords.y][coords.x] !== 0) {
+            this.isDragging = true;
+            this.draggedTileId = this.mapData[coords.y][coords.x];
+            this.dragStartX = coords.x;
+            this.dragStartY = coords.y;
+            
+            // Remove tile from original position immediately
+            this.mapData[coords.y][coords.x] = 0;
+            
+            // Apply mirroring for removal
+            if (this.mirrorVertical) {
+                const mirrorY = this.mapHeight - 1 - coords.y;
+                this.mapData[mirrorY][coords.x] = 0;
+            }
+            if (this.mirrorHorizontal) {
+                const mirrorX = this.mapWidth - 1 - coords.x;
+                this.mapData[coords.y][mirrorX] = 0;
+            }
+            if (this.mirrorDiagonal) {
+                const mirrorX = this.mapWidth - 1 - coords.x;
+                const mirrorY = this.mapHeight - 1 - coords.y;
+                this.mapData[mirrorY][mirrorX] = 0;
+            }
+            
+            this.canvas.style.cursor = 'grabbing';
+            this.draw();
+            return;
+        }
+
+        // Start selection
+        this.isDrawing = true;
+        this.selectionStart = coords;
+        this.selectionEnd = coords;
+        
+        if (this.selectionMode === 'line') {
+            this.hoveredTiles.clear();
+            this.hoveredTiles.add(`${coords.x},${coords.y}`);
+        }
+        
+        this.draw();
+        this.drawSelection();
+    }
+
+    handleMouseMove(event) {
+        const coords = this.getTileCoordinates(event);
+        if (coords.x < 0 || coords.x >= this.mapWidth || coords.y < 0 || coords.y >= this.mapHeight) return;
+        
+        if (this.isDragging) {
+            this.draw(); // Redraw the base map
+            
+            // Draw preview
+            const draggedTile = [
+                null,
+                { color: '#666666' }, // Wall
+                { color: '#90EE90' }, // Bush
+                { color: '#87CEEB' }, // Water
+                { color: '#FFD700' }  // Spawn
+            ][this.draggedTileId];
+
+            if (draggedTile) {
+                this.ctx.globalAlpha = 0.5;
+                this.ctx.fillStyle = draggedTile.color;
+                this.ctx.fillRect(coords.x * this.tileSize, coords.y * this.tileSize, this.tileSize, this.tileSize);
+                
+                // Show mirrored previews
+                if (this.mirrorVertical) {
+                    const mirrorY = this.mapHeight - 1 - coords.y;
+                    this.ctx.fillRect(coords.x * this.tileSize, mirrorY * this.tileSize, this.tileSize, this.tileSize);
+                }
+                if (this.mirrorHorizontal) {
+                    const mirrorX = this.mapWidth - 1 - coords.x;
+                    this.ctx.fillRect(mirrorX * this.tileSize, coords.y * this.tileSize, this.tileSize, this.tileSize);
+                }
+                if (this.mirrorDiagonal) {
+                    const mirrorX = this.mapWidth - 1 - coords.x;
+                    const mirrorY = this.mapHeight - 1 - coords.y;
+                    this.ctx.fillRect(mirrorX * this.tileSize, mirrorY * this.tileSize, this.tileSize, this.tileSize);
+                }
+                
+                this.ctx.globalAlpha = 1.0;
+            }
+            return;
+        }
+
+        if (this.isDrawing) {
+            this.selectionEnd = coords;
+            
+            if (this.selectionMode === 'line') {
+                // Get all tiles between last position and current position
+                const lastPos = this.hoveredTiles.size > 0 ? 
+                    Array.from(this.hoveredTiles).pop().split(',').map(Number) : 
+                    [this.selectionStart.x, this.selectionStart.y];
+                
+                const [lastX, lastY] = lastPos;
+                const dx = Math.abs(coords.x - lastX);
+                const dy = Math.abs(coords.y - lastY);
+                const sx = lastX < coords.x ? 1 : -1;
+                const sy = lastY < coords.y ? 1 : -1;
+                let err = dx - dy;
+                
+                let x = lastX;
+                let y = lastY;
+                
+                // Add all tiles in between using Bresenham's line algorithm
+                while (!(x === coords.x && y === coords.y)) {
+                    if (err > -dy) {
+                        err -= dy;
+                        x += sx;
+                    }
+                    if (err < dx) {
+                        err += dx;
+                        y += sy;
+                    }
+                    const e2 = 2 * err;
+                    this.hoveredTiles.add(`${x},${y}`);
+                }
+                this.hoveredTiles.add(`${coords.x},${coords.y}`);
+            }
+            
+            this.draw();
+            this.drawSelection();
+        }
+    }
+
+    handleMouseUp(event) {
+        if (!this.isDragging && this.isDrawing) {
+            const coords = this.getTileCoordinates(event);
+            if (coords.x >= 0 && coords.x < this.mapWidth && coords.y >= 0 && coords.y < this.mapHeight) {
+                if (this.selectionMode === 'single') {
+                    if (this.isErasing) {
+                        this.eraseTile(coords.x, coords.y);
+                    } else {
+                        this.placeTile(coords.x, coords.y);
+                    }
+                } else {
+                    this.placeTilesInSelection();
+                }
+            }
+        } else if (this.isDragging) {
+            const coords = this.getTileCoordinates(event);
+            if (coords.x >= 0 && coords.x < this.mapWidth && coords.y >= 0 && coords.y < this.mapHeight) {
+                // Place the tile
+                this.mapData[coords.y][coords.x] = this.draggedTileId;
+                
+                // Apply mirroring
+                if (this.mirrorVertical) {
+                    const mirrorY = this.mapHeight - 1 - coords.y;
+                    this.mapData[mirrorY][coords.x] = this.draggedTileId;
+                }
+                if (this.mirrorHorizontal) {
+                    const mirrorX = this.mapWidth - 1 - coords.x;
+                    this.mapData[coords.y][mirrorX] = this.draggedTileId;
+                }
+                if (this.mirrorDiagonal) {
+                    const mirrorX = this.mapWidth - 1 - coords.x;
+                    const mirrorY = this.mapHeight - 1 - coords.y;
+                    this.mapData[mirrorY][mirrorX] = this.draggedTileId;
+                }
+            }
+        }
+        
+        // Reset all states
+        this.isDragging = false;
+        this.isDrawing = false;
+        this.draggedTileId = null;
+        this.dragStartX = null;
+        this.dragStartY = null;
+        this.selectionStart = null;
+        this.selectionEnd = null;
+        this.hoveredTiles.clear();
+        this.canvas.style.cursor = 'crosshair';
+        this.draw();
+    }
+
+    handleMouseLeave() {
+        this.isDrawing = false;
+        if (this.isDragging) {
+            this.isDragging = false;
+            this.draggedTileId = null;
+            this.dragStartX = null;
+            this.dragStartY = null;
+            this.canvas.style.cursor = 'crosshair';
+            this.draw();
+        }
     }
 
     zoom(delta) {
@@ -200,43 +412,85 @@ class MapMaker {
         }
     }
 
-    handleMouseDown(event) {
-        if (!this.selectedTile && !this.isErasing) return;
-        
-        this.isDragging = true;
-        const tile = this.getTileCoordinates(event);
-        this.lastX = tile.x;
-        this.lastY = tile.y;
-        
-        if (this.isErasing) {
-            this.eraseTile(tile.x, tile.y);
-        } else {
-            this.placeTile(tile.x, tile.y);
-        }
-    }
-
-    handleMouseMove(event) {
-        if (!this.isDragging) return;
-        
-        const tile = this.getTileCoordinates(event);
-        
-        if (this.isErasing) {
-            this.eraseTile(tile.x, tile.y);
-        } else {
-            this.placeTile(tile.x, tile.y);
-        }
-    }
-
-    handleMouseUp() {
-        this.isDragging = false;
-    }
-
     getTileCoordinates(event) {
         const rect = this.canvas.getBoundingClientRect();
-        return {
-            x: Math.floor((event.clientX - rect.left) / (this.tileSize * this.zoomLevel)),
-            y: Math.floor((event.clientY - rect.top) / (this.tileSize * this.zoomLevel))
-        };
+        const mouseX = event.clientX - rect.left;
+        const mouseY = event.clientY - rect.top;
+        
+        // Calculate actual tile size on screen
+        const actualTileWidth = rect.width / this.mapWidth;
+        const actualTileHeight = rect.height / this.mapHeight;
+        
+        // Convert mouse position to tile coordinates
+        const x = Math.floor(mouseX / actualTileWidth);
+        const y = Math.floor(mouseY / actualTileHeight);
+        
+        return { x, y };
+    }
+
+    drawSelection() {
+        if (!this.selectionStart || !this.selectionEnd) return;
+
+        // Set color based on erasing mode
+        this.ctx.fillStyle = this.isErasing ? 'rgba(255, 0, 0, 0.5)' : 'rgba(128, 128, 128, 0.5)';
+        
+        if (this.selectionMode === 'line') {
+            // Draw all hovered tiles
+            for (const tilePos of this.hoveredTiles) {
+                const [x, y] = tilePos.split(',').map(Number);
+                this.ctx.fillRect(x * this.tileSize, y * this.tileSize, this.tileSize, this.tileSize);
+            }
+        } else if (this.selectionMode === 'rectangle') {
+            const startX = Math.min(this.selectionStart.x, this.selectionEnd.x);
+            const endX = Math.max(this.selectionStart.x, this.selectionEnd.x);
+            const startY = Math.min(this.selectionStart.y, this.selectionEnd.y);
+            const endY = Math.max(this.selectionStart.y, this.selectionEnd.y);
+
+            for (let y = startY; y <= endY; y++) {
+                for (let x = startX; x <= endX; x++) {
+                    this.ctx.fillRect(x * this.tileSize, y * this.tileSize, this.tileSize, this.tileSize);
+                }
+            }
+        } else if (this.selectionMode === 'single') {
+            // Only show preview at current position
+            this.ctx.fillRect(
+                this.selectionEnd.x * this.tileSize,
+                this.selectionEnd.y * this.tileSize,
+                this.tileSize,
+                this.tileSize
+            );
+        }
+    }
+
+    placeTilesInSelection() {
+        if (!this.selectionStart || !this.selectionEnd) return;
+
+        if (this.selectionMode === 'line') {
+            // Place tiles in all hovered positions
+            for (const tilePos of this.hoveredTiles) {
+                const [x, y] = tilePos.split(',').map(Number);
+                if (this.isErasing) {
+                    this.eraseTile(x, y);
+                } else {
+                    this.placeTile(x, y);
+                }
+            }
+        } else if (this.selectionMode === 'rectangle') {
+            const startX = Math.min(this.selectionStart.x, this.selectionEnd.x);
+            const endX = Math.max(this.selectionStart.x, this.selectionEnd.x);
+            const startY = Math.min(this.selectionStart.y, this.selectionEnd.y);
+            const endY = Math.max(this.selectionStart.y, this.selectionEnd.y);
+
+            for (let y = startY; y <= endY; y++) {
+                for (let x = startX; x <= endX; x++) {
+                    if (this.isErasing) {
+                        this.eraseTile(x, y);
+                    } else {
+                        this.placeTile(x, y);
+                    }
+                }
+            }
+        }
     }
 
     placeTile(x, y) {

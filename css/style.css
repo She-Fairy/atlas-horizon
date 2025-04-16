@@ -6,7 +6,7 @@
     --surface-color: #1E293B;
     --surface-color-hover: #334155;
     --border-color: #334155;
-    --text-color: #f1f5f9;
+    --text-color: #cfdae7;
     --text-color-secondary: #94A3B8;
 }
 
@@ -17,7 +17,9 @@
 }
 
 body {
-    font-family: 'Arial', sans-serif;
+    font-family:fantasy;
+    letter-spacing: 0.035rem;
+    font-weight: 400;
     background-color: var(--background-color);
     color: var(--text-color);
 }
@@ -33,7 +35,6 @@ nav {
 
 .logo {
     font-size: 1.5rem;
-    font-weight: bold;
     color: var(--primary-color);
 }
 
@@ -46,7 +47,6 @@ nav {
 .nav-links a {
     text-decoration: none;
     color: var(--text-color-secondary);
-    font-weight: 500;
 }
 
 .nav-links a:hover,
@@ -61,7 +61,6 @@ nav {
     padding: 0.5rem 1rem;
     border-radius: 0.25rem;
     cursor: pointer;
-    font-weight: 500;
 }
 
 .login-btn:hover {
@@ -97,7 +96,6 @@ nav {
     padding: 0.75rem 1.5rem;
     border-radius: 0.25rem;
     text-decoration: none;
-    font-weight: 500;
     transition: all 0.2s;
 }
 

@@ -94,15 +94,18 @@
     overflow: auto;
 }
 
-#mapCanvas {
-    background-color: var(--background-color);
+.map-editor canvas {
+    background-color: var(--surface-color);
     border: 1px solid var(--border-color);
-    image-rendering: pixelated;
     cursor: crosshair;
-    transform-origin: center;
+    image-rendering: pixelated;
     transition: transform 0.2s ease-out;
     max-width: 100%;
     max-height: calc(100vh - 200px);
+}
+
+.map-editor canvas.dragging {
+    cursor: grabbing;
 }
 
 .map-editor::-webkit-scrollbar {
@@ -131,6 +134,9 @@
 .tool-section h3 {
     margin-bottom: 1rem;
     color: var(--primary-color);
+    font-family: fantasy;
+    letter-spacing: 0.035rem;
+    font-weight: 400;   
 }
 
 .select-container {
@@ -263,6 +269,8 @@ label:has(input[type="checkbox"]) {
     border: 1px solid var(--border-color);
     border-radius: 4px;
     padding: 0.5rem;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
 }
 
 label:has(input[type="checkbox"]:checked) {
@@ -275,4 +283,63 @@ label:has(input[type="checkbox"]:checked) {
     border-radius: 4px;
     padding: 0.5rem;
     background-color: rgba(var(--primary-color-rgb), 0.25);
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 0.6rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background-color: var(--surface-color);
+    color: var(--text-color);
+    transition: border-color 0.2s, background-color 0.2s;
+}
+
+.radio-container {
+    display: flex;
+    gap: 10px;
+    margin: 10px 0;
+}
+
+.radio-container label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 12px;
+    background: #2a2a2a;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.radio-container label:hover {
+    background: #3a3a3a;
+}
+
+.radio-container input[type="radio"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #666;
+    border-radius: 50%;
+    margin: 0;
+    position: relative;
+    transition: border-color 0.2s;
+}
+
+.radio-container input[type="radio"]:checked {
+    border-color: #4CAF50;
+}
+
+.radio-container input[type="radio"]:checked::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 8px;
+    height: 8px;
+    background: #4CAF50;
+    border-radius: 50%;
 }

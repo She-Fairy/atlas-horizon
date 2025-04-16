@@ -6,10 +6,11 @@
     <title>Atlas Tiler</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/mapmaker.css">
+    <link rel="icon" href="/Resources/Additional/Icons/AtlasLogo.ico" type="image/x-icon">
 </head>
 <body>
     <nav>
-        <div class="logo">Atlas TILER</div>
+        <div class="logo">Atlas Tiler</div>
         <div class="nav-links">
             <a href="index.html">Home</a>
             <a href="mapmaker.html" class="active">Map Maker</a>
@@ -24,6 +25,9 @@
             <div class="tool-section">
                 <h3>Map Settings</h3>
                 <div class="select-container">
+                    <input type="text" id="mapName" placeholder="Map Name">
+                </div>
+                <div class="select-container">
                     <label for="mapSize">Map Size:</label>
                     <select id="mapSize">
                         <option value="regular">Regular</option>
@@ -34,7 +38,7 @@
                     </select>
                 </div>
                 <div class="select-container">
-                    <label for="gamemode">Game Mode:</label>
+                    <label for="gamemode">Gamemode:</label>
                     <select id="gamemode">
                         <option value="custom">Custom</option>
                         <option value="gemGrab">Gem Grab</option>
@@ -69,6 +73,23 @@
                     <label>
                         <input type="checkbox" id="mirrorHorizontal">
                         Horizontal
+                    </label>
+                </div>
+            </div>
+            <div class="tool-section">
+                <h3>Selection Mode</h3>
+                <div class="radio-container">
+                    <label>
+                        <input type="radio" name="selectionMode" value="single" checked>
+                        Single
+                    </label>
+                    <label>
+                        <input type="radio" name="selectionMode" value="line">
+                        Line
+                    </label>
+                    <label>
+                        <input type="radio" name="selectionMode" value="rectangle">
+                        Rectangle
                     </label>
                 </div>
             </div>
