@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Map Gallery - Atlas Tiler</title>
+    <link rel="icon" href="/Resources/Additional/Icons/AtlasLogo.ico" type="image/x-icon">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/map-gallery.css">
+</head>
+<body>
+    <nav>
+        <div class="logo">Atlas Tiler</div>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="map-gallery.html" class="active">Gallery</a>
+            <a href="mapmaker.html">Map Maker</a>
+            <button class="login-btn">Login</button>
+        </div>
+    </nav>
+
+    <div class="gallery-container">
+        <div class="gallery-header">
+            <div class="search-bar">
+                <input type="text" placeholder="Search maps...">
+            </div>
+            <div class="filter-controls">
+                <select name="gamemode">
+                    <option value="all">All Game Modes</option>
+                    <option value="Gem_Grab">Gem Grab</option>
+                    <option value="Showdown">Showdown</option>
+                    <option value="Heist">Heist</option>
+                    <option value="Bounty">Bounty</option>
+                    <option value="Brawl_Ball">Brawl Ball</option>
+                    <option value="Hot_Zone">Hot Zone</option>
+                    <option value="Snowtel_Thieves">Snowtel Thieves</option>
+                    <option value="Basket_Brawl">Basket Brawl</option>
+                    <option value="Volley_Brawl">Volley Brawl</option>
+                    <option value="Siege">Siege</option>
+                    <option value="Hold_The_Trophy">Hold The Trophy</option>
+                </select>
+                <select name="environment">
+                    <option value="all">All Environments</option>
+                    <option value="Desert">Desert</option>
+                    <option value="Mine">Mine</option>
+                    <option value="Mortuary">Mortuary</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="map-grid">
+            <!-- Map cards will be dynamically inserted here -->
+        </div>
+
+        <div class="pagination">
+            <button class="pagination-btn" data-action="prev">Previous</button>
+            <span class="pagination-info">Page 1 of 1</span>
+            <button class="pagination-btn" data-action="next">Next</button>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Atlas Tiler. All rights reserved.</p>
+    </footer>
+
+    <script src="js/map-gallery.js"></script>
+</body>
+</html> 

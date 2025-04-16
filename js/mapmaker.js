@@ -3,6 +3,7 @@ class MapMaker {
         this.canvas = document.getElementById(canvasId);
         this.ctx = this.canvas.getContext('2d');
         this.tileSize = 32;
+        this.canvasPadding = 16;  // Add padding for the canvas
         
         // Map size configurations
         this.mapSizes = {
@@ -22,9 +23,9 @@ class MapMaker {
         this.maxZoom = 2;
         this.zoomStep = 0.25;
 
-        // Initialize canvas size
-        this.canvas.width = this.mapWidth * this.tileSize;
-        this.canvas.height = this.mapHeight * this.tileSize;
+        // Initialize canvas size with padding
+        this.canvas.width = (this.mapWidth * this.tileSize) + (this.canvasPadding * 2);
+        this.canvas.height = (this.mapHeight * this.tileSize) + (this.canvasPadding * 2);
 
         // Initialize map data
         this.mapData = Array(this.mapHeight).fill().map(() => Array(this.mapWidth).fill(0));
@@ -45,20 +46,235 @@ class MapMaker {
         this.mirrorDiagonal = false;
 
         // Game settings
-        this.gamemode = 'Gem_Grab'; // Set default gamemode to Gem_Grab
+        this.gamemode = 'Gem_Grab';
         this.environment = 'Desert';
 
         // Selection mode
         this.selectionMode = 'single';
         this.selectionStart = null;
         this.selectionEnd = null;
-        this.hoveredTiles = new Set(); // For line selection
+        this.hoveredTiles = new Set();
         this.mouseDown = false;
 
         // Environment and background
         this.bgDark = new Image();
         this.bgLight = new Image();
-        this.loadEnvironmentBackgrounds();
+
+        // Initialize tile data
+        this.tileData = {
+            'Wall': [1, 1.75, 0, -50, 1, 5],
+            'Bush': [1, 1.8, 0, -50, 1, 5],
+            'Wall2': [1, 1.75, 0, -50, 1, 5],
+            'Crate': [1, 1.8, 0, -50, 1, 5],
+            'Barrel': [1, 1.69, 0, -50, 1, 5],
+            'Cactus': [1.1, 1.75, -5, -50, 1, 5],
+            'Fence': [1, 1.75, 0, -50, 1, 5],
+            'Water': [1, 1, 0, 0, 1, 5],
+            'Rope Fence': [1, 1.75, 0, -50, 1, 5],
+            'Skull': [1, 1.08, 0, 0, 1, 5],
+            'Unbreakable': [1, 1.75, 0, -50, 1, 5],
+            'Blue Spawn': [1.7, 1.7, -27.5, -27.5, 0.85, 5],
+            'Red Spawn': [1.7, 1.7, -27.5, -27.5, 0.85, 5],
+            'Objective': [2, 2.21, -50, -115, 1, 10],
+            'Smoke': [1.5, 1.65, -10, -25, 1, 5],
+            'Heal Pad': [1, 1.12, 0, 0, 1, 5],
+            'Slow Tile': [1, 1.11, 0, 0, 1, 5],
+            'Speed Tile': [1, 1.11, 0, 0, 1, 5],
+            'Spikes': [1, 1.5, 0, -15, 1, 5],
+            'Jump R': [1, 1.12, 0, 0, 1, 5],
+            'Jump L': [1, 1.12, 0, 0, 1, 5],
+            'Jump T': [1, 1.12, 0, 0, 1, 5],
+            'Jump B': [1, 1.12, 0, 0, 1, 5],
+            'Jump BR': [1, 1.12, 0, 0, 1, 5],
+            'Jump TL': [1, 1.12, 0, 0, 1, 5],
+            'Jump BL': [1, 1.12, 0, 0, 1, 5],
+            'Jump TR': [1, 1.12, 0, 0, 1, 5],
+            'Teleporter Blue': [1, 1, 0, 0, 1, 5],
+            'Teleporter Green': [1, 1, 0, 0, 1, 5],
+            'Teleporter Red': [1, 1, 0, 0, 1, 5],
+            'Teleporter Yellow': [1, 1, 0, 0, 1, 5],
+            'Bolt': [1, 1.18, 0, 0, 1, 5]
+        };
+
+        // Initialize objective data
+        this.objectiveData = {
+            'Gem_Grab': [2, 2, -50, -50, 1, 10],
+            'Showdown': [1, 1.75, 0, -50, 1, 5],
+            'Heist': [2, 2.21, -50, -115, 1, 10],
+            'Bounty': [1.15, 2.0585, -10, -50, 1, 10],
+            'Brawl_Ball': [1.3, 1.495, -20, -20, 1, 10],
+            'Hot_Zone': [7, 7, -300, -300, 1, 10],
+            'Snowtel_Thieves': [4, 4, -150, -150, 1, 10],
+            'Basket_Brawl': [1.3, 1.495, -20, -20, 1, 10],
+            'Volley_Brawl': [1.3, 1.495, -20, -20, 1, 10],
+            'Siege': [2.5, 3.1, -60, -175, 1, 10],
+            'Hold_The_Trophy': [2.5, 2.5, -75, -75, 1, 10]
+        };
+
+        // Initialize environment data
+        this.environmentObjectiveData = {
+            Desert: {
+                'Gem_Grab': [2, 2, -50, -50, 1, 10],
+                'Showdown': [1, 1.75, 0, -50, 1, 5],
+                'Heist': [2, 2.21, -50, -115, 1, 10],
+                'Bounty': [1.15, 2.0585, -10, -50, 1, 10],
+                'Brawl_Ball': [1.3, 1.495, -20, -20, 1, 10],
+                'Hot_Zone': [7, 7, -300, -300, 1, 10],
+                'Snowtel_Thieves': [4, 4, -150, -150, 1, 10],
+                'Basket_Brawl': [1.3, 1.495, -20, -20, 1, 10],
+                'Volley_Brawl': [1.3, 1.495, -20, -20, 1, 10],
+                'Siege': [2.5, 3.1, -60, -175, 1, 10],
+                'Hold_The_Trophy': [2.5, 2.5, -75, -75, 1, 10]
+            }
+        };
+
+        this.environmentTileData = {
+            Desert: {
+                'Wall': [1, 1.75, 0, -50, 1, 5],
+                'Bush': [1, 1.8, 0, -50, 1, 5],
+                'Wall2': [1, 1.75, 0, -50, 1, 5],
+                'Crate': [1, 1.8, 0, -50, 1, 5],
+                'Barrel': [1, 1.69, 0, -50, 1, 5],
+                'Cactus': [1.1, 1.75, -5, -50, 1, 5],
+                'Fence': [1, 1.75, 0, -50, 1, 5],
+                'Water': [1, 1, 0, 0, 1, 5],
+                'Rope Fence': [1, 1.75, 0, -50, 1, 5],
+                'Skull': [1, 1.08, 0, 0, 1, 5],
+                'Unbreakable': [1, 1.75, 0, -50, 1, 5],
+                'Blue Spawn': [1.7, 1.7, -27.5, -27.5, 0.85, 5],
+                'Red Spawn': [1.7, 1.7, -27.5, -27.5, 0.85, 5],
+                'Objective': [2, 2.21, -50, -115, 1, 10],
+                'Smoke': [1.5, 1.65, -10, -25, 1, 5],
+                'Heal Pad': [1, 1.12, 0, 0, 1, 5],
+                'Slow Tile': [1, 1.11, 0, 0, 1, 5],
+                'Speed Tile': [1, 1.11, 0, 0, 1, 5],
+                'Spikes': [1, 1.5, 0, -15, 1, 5],
+                'Jump R': [1, 1.12, 0, 0, 1, 5],
+                'Jump L': [1, 1.12, 0, 0, 1, 5],
+                'Jump T': [1, 1.12, 0, 0, 1, 5],
+                'Jump B': [1, 1.12, 0, 0, 1, 5],
+                'Jump BR': [1, 1.12, 0, 0, 1, 5],
+                'Jump TL': [1, 1.12, 0, 0, 1, 5],
+                'Jump BL': [1, 1.12, 0, 0, 1, 5],
+                'Jump TR': [1, 1.12, 0, 0, 1, 5],
+                'Teleporter Blue': [1, 1, 0, 0, 1, 5],
+                'Teleporter Green': [1, 1, 0, 0, 1, 5],
+                'Teleporter Red': [1, 1, 0, 0, 1, 5],
+                'Teleporter Yellow': [1, 1, 0, 0, 1, 5],
+                'Bolt': [1, 1.18, 0, 0, 1, 5]
+            }
+        };
+        
+        // Initialize tile definitions
+        this.tileDefinitions = {
+            0: { name: 'Empty' },
+            1: { name: 'Wall', img: '${env}/Tiles/Wall.png', size: 1 },
+            2: { name: 'Bush', img: '${env}/Tiles/Bush.png', size: 1 },
+            3: { name: 'Wall2', img: '${env}/Tiles/Wall2.png', size: 1 },
+            4: { name: 'Crate', img: '${env}/Tiles/Crate.png', size: 1 },
+            5: { name: 'Barrel', img: '${env}/Tiles/Barrel.png', size: 1 },
+            6: { name: 'Cactus', img: '${env}/Tiles/Cactus.png', size: 1 },
+            7: { name: 'Fence', img: '${env}/Fence/Fence.png', size: 1 },
+            8: { name: 'Water', img: '${env}/Water/00000000.png', size: 1 },
+            9: { name: 'Rope Fence', img: '${env}/Rope/Rope.png', size: 1 },
+            10: { name: 'Skull', img: '${env}/Tiles/Skull.png', size: 1 },
+            11: { name: 'Unbreakable', img: 'Global/Unbreakable.png', size: 1 },
+            12: { name: 'Blue Spawn', img: 'Global/Spawns/3v3/1.png', size: 1 },
+            13: { name: 'Red Spawn', img: 'Global/Spawns/3v3/2.png', size: 1 },
+            14: { name: 'Objective', size: 1, getImg: (gamemode, y, mapHeight) => {
+                const objectives = {
+                    'Gem_Grab': { img: '${env}/Gamemode_Specifics/Gem_Grab.png' },
+                    'Showdown': { img: 'Global/Objectives/Box.png' },
+                    'Heist': { img: '${env}/Gamemode_Specifics/Heist.png' },
+                    'Bounty': { img: 'Global/Objectives/Bounty.png' },
+                    'Brawl_Ball': { img: '${env}/Gamemode_Specifics/Brawl_Ball.png' },
+                    'Hot_Zone': { img: 'Global/Objectives/Hot_Zone.png' },
+                    'Snowtel_Thieves': { 
+                        img: `Global/Objectives/${y > mapHeight/2 ? 'SnowtelThievesBlue' : 'SnowtelThievesRed'}.png`,
+                        displayImg: 'Global/Objectives/SnowtelThievesBlue.png'
+                    },
+                    'Basket_Brawl': { img: 'Global/Objectives/Basket_Brawl.png' },
+                    'Volley_Brawl': { img: 'Global/Objectives/Volley_Brawl.png' },
+                    'Siege': { 
+                        img: `Global/Objectives/${y > mapHeight/2 ? 'IkeBlue' : 'IkeRed'}.png`,
+                        displayImg: 'Global/Objectives/IkeRed.png'
+                    },
+                    'Hold_The_Trophy': { img: 'Global/Objectives/Hold_The_Trophy.png' }
+                };
+                return objectives[gamemode];
+            }},
+            15: { name: 'Smoke', img: 'Global/Special_Tiles/Smoke.png', size: 1 },
+            16: { name: 'Heal Pad', img: 'Global/Special_Tiles/HealPad.png', size: 2 },
+            17: { name: 'Slow Tile', img: 'Global/Special_Tiles/SlowTile.png', size: 1 },
+            18: { name: 'Speed Tile', img: 'Global/Special_Tiles/SpeedTile.png', size: 1 },
+            19: { name: 'Spikes', img: 'Global/Special_Tiles/Spikes.png', size: 1 },
+            20: { name: 'Jump R', img: 'Global/Jumpads/R.png', size: 2 },
+            21: { name: 'Jump L', img: 'Global/Jumpads/L.png', size: 2 },
+            22: { name: 'Jump T', img: 'Global/Jumpads/T.png', size: 2 },
+            23: { name: 'Jump B', img: 'Global/Jumpads/B.png', size: 2 },
+            24: { name: 'Jump BR', img: 'Global/Jumpads/BR.png', size: 2 },
+            25: { name: 'Jump TL', img: 'Global/Jumpads/TL.png', size: 2 },
+            26: { name: 'Jump BL', img: 'Global/Jumpads/BL.png', size: 2 },
+            27: { name: 'Jump TR', img: 'Global/Jumpads/TR.png', size: 2 },
+            28: { name: 'Teleporter Blue', img: 'Global/Teleporters/Blue.png', size: 2 },
+            29: { name: 'Teleporter Green', img: 'Global/Teleporters/Green.png', size: 2 },
+            30: { name: 'Teleporter Red', img: 'Global/Teleporters/Red.png', size: 2 },
+            31: { name: 'Teleporter Yellow', img: 'Global/Teleporters/Yellow.png', size: 2 },
+            32: { name: 'Bolt', img: 'Global/Objectives/Bolt.png', size: 1, showInGamemode: 'Siege' }
+        };
+        
+        // Initialize UI and event listeners
+        this.initializeUI();
+        this.initializeEventListeners();
+        this.initializeTileSelector();
+        
+        // Set initial zoom to fit the map
+        this.fitMapToScreen();
+
+        // Initialize the map maker
+        this.initialize();
+    }
+
+    async initialize() {
+        try {
+            await this.loadEnvironmentBackgrounds();
+            await this.loadTileImages();
+            this.setGamemode(this.gamemode);
+        } catch (error) {
+            console.error('Error initializing MapMaker:', error);
+        }
+    }
+
+    async loadEnvironmentBackgrounds() {
+        return new Promise((resolve) => {
+            let loadedCount = 0;
+            const onLoad = () => {
+                loadedCount++;
+                if (loadedCount === 2) {
+                    this.draw();
+                    resolve();
+                }
+            };
+
+            this.bgDark.onload = onLoad;
+            this.bgLight.onload = onLoad;
+
+            this.bgDark.src = `Resources/${this.environment}/BGDark.png`;
+            this.bgLight.src = `Resources/${this.environment}/BGLight.png`;
+
+            // Handle errors by falling back to Desert environment
+            this.bgDark.onerror = () => {
+                this.bgDark.src = 'Resources/Desert/BGDark.png';
+            };
+            this.bgLight.onerror = () => {
+                this.bgLight.src = 'Resources/Desert/BGLight.png';
+            };
+        });
+    }
+
+    async loadTileImages() {
+        this.tileImages = {};
+        const imageLoadPromises = [];
 
         let regularDownAdjust = -50;
         // Standard tile dimensions [width, height, horAdjust, verAdjust, opacity, zIndex]
@@ -74,8 +290,8 @@ class MapMaker {
             'Rope Fence': [1, 1.75, 0, regularDownAdjust, 1, 5],
             'Skull': [1, 1.08, 0, 0, 1, 5],
             'Unbreakable': [1, 1.75, 0, regularDownAdjust, 1, 5],
-            'Blue Spawn': [0.80, 0.80, -27.5, -27.5, 0.85, 5],
-            'Red Spawn': [0.80, 0.80, -27.5, -27.5, 0.85, 5],
+            'Blue Spawn': [1.7, 1.7, -27.5, -27.5, 0.85, 5],
+            'Red Spawn': [1.7, 1.7, -27.5, -27.5, 0.85, 5],
             'Objective': [2, 2.21, -50, -115, 1, 10],
             'Smoke': [1.5, 1.65, -10, -25, 1, 5],
             'Heal Pad': [1, 1.12, 0, 0, 1, 5],
@@ -222,25 +438,49 @@ class MapMaker {
 
         // Load all tile images
         this.tileImages = {};
-        this.loadTileImages();
-
-        this.undoStack = [];
-        this.redoStack = [];
-        this.maxStackSize = 50;
-
-        this.replaceMode = false;
-
-        // Add showErrors property
-        this.showErrors = false;
-        this.errorTiles = new Set();
-
-        this.initializeUI();
-        this.initializeEventListeners();
-        this.initializeTileSelector();
         
-        // Set initial zoom to fit the map
-        this.fitMapToScreen();
-        this.draw();
+        // Return a Promise that resolves when all images are loaded
+        return new Promise((resolve) => {
+            let loadedCount = 0;
+            const totalImages = Object.keys(this.tileDefinitions).length;
+            
+            const onLoad = () => {
+                loadedCount++;
+                if (loadedCount === totalImages) {
+                    this.draw();
+                    resolve();
+                }
+            };
+            
+            // Load each tile image
+            Object.entries(this.tileDefinitions).forEach(([id, def]) => {
+                if (!def.img && !def.getImg) {
+                    onLoad(); // Skip tiles without images
+                    return;
+                }
+                
+                const img = new Image();
+                if (def.img) {
+                    img.src = `Resources/${def.img.replace('${env}', this.environment)}`;
+                } else if (def.getImg) {
+                    const imgData = def.getImg(this.gamemode, 0, this.mapHeight);
+                    if (imgData) {
+                        img.src = `Resources/${imgData.img.replace('${env}', this.environment)}`;
+                    }
+                }
+                
+                img.onload = onLoad;
+                img.onerror = () => {
+                    if (this.environment !== 'Desert' && (def.img || '').includes('${env}')) {
+                        img.src = `Resources/${(def.img || '').replace('${env}', 'Desert')}`;
+                    } else {
+                        onLoad(); // Count as loaded even if it fails
+                    }
+                };
+                
+                this.tileImages[id] = img;
+            });
+        });
     }
 
     initializeUI() {
@@ -254,6 +494,9 @@ class MapMaker {
 
         // Initialize tile selector with current gamemode
         this.initializeTileSelector();
+        
+        // Update canvas size to include padding
+        this.updateCanvasSize();
     }
 
     fitMapToScreen() {
@@ -395,17 +638,36 @@ class MapMaker {
                         this.redo();
                     }
                     break;
+                case 'backspace':
+                case 'delete':
+                    if (e.ctrlKey || e.metaKey) 
+                        this.clearMap(true);
+                    break;
             }
         });
 
+        // Create bound event handlers
+        const boundMouseDown = this.handleMouseDown.bind(this);
+        const boundMouseMove = this.handleMouseMove.bind(this);
+        const boundMouseUp = this.handleMouseUp.bind(this);
+        const boundMouseLeave = this.handleMouseLeave.bind(this);
+
         // Canvas event listeners
-        this.canvas.addEventListener('mousedown', this.handleMouseDown.bind(this));
-        this.canvas.addEventListener('mousemove', this.handleMouseMove.bind(this));
-        this.canvas.addEventListener('mouseup', this.handleMouseUp.bind(this));
-        this.canvas.addEventListener('mouseleave', this.handleMouseLeave.bind(this));
+        this.canvas.addEventListener('mousedown', boundMouseDown);
+        this.canvas.addEventListener('mousemove', boundMouseMove);
+        this.canvas.addEventListener('mouseup', boundMouseUp);
+        this.canvas.addEventListener('mouseleave', boundMouseLeave);
         
         // Add document-level mouse up to ensure we catch the event even if released outside canvas
-        document.addEventListener('mouseup', this.handleMouseUp.bind(this));
+        document.addEventListener('mouseup', boundMouseUp);
+
+        // Store the bound handlers so we can remove them later if needed
+        this.boundEventHandlers = {
+            mousedown: boundMouseDown,
+            mousemove: boundMouseMove,
+            mouseup: boundMouseUp,
+            mouseleave: boundMouseLeave
+        };
     }
 
     saveState() {
@@ -474,22 +736,54 @@ class MapMaker {
             this.dragStartX = coords.x;
             this.dragStartY = coords.y;
             
+            // Get the tile definition to check if it's a 2x2 tile
+            const def = this.tileDefinitions[this.draggedTileId];
+            const is2x2 = def && def.size === 2;
+            
             // Remove tile from original position immediately
             this.mapData[coords.y][coords.x] = 0;
+            
+            // If it's a 2x2 tile, also remove the other three tiles
+            if (is2x2) {
+                this.mapData[coords.y][coords.x + 1] = 0;
+                this.mapData[coords.y + 1][coords.x] = 0;
+                this.mapData[coords.y + 1][coords.x + 1] = 0;
+            }
             
             // Apply mirroring for removal
             if (this.mirrorVertical) {
                 const mirrorY = this.mapHeight - 1 - coords.y;
                 this.mapData[mirrorY][coords.x] = 0;
+                
+                // If it's a 2x2 tile, also remove the other three tiles
+                if (is2x2) {
+                    this.mapData[mirrorY][coords.x + 1] = 0;
+                    this.mapData[mirrorY - 1][coords.x] = 0;
+                    this.mapData[mirrorY - 1][coords.x + 1] = 0;
+                }
             }
             if (this.mirrorHorizontal) {
                 const mirrorX = this.mapWidth - 1 - coords.x;
                 this.mapData[coords.y][mirrorX] = 0;
+                
+                // If it's a 2x2 tile, also remove the other three tiles
+                if (is2x2) {
+                    this.mapData[coords.y][mirrorX - 1] = 0;
+                    this.mapData[coords.y + 1][mirrorX] = 0;
+                    this.mapData[coords.y + 1][mirrorX - 1] = 0;
+                }
             }
             if (this.mirrorDiagonal) {
                 const mirrorX = this.mapWidth - 1 - coords.x;
                 const mirrorY = this.mapHeight - 1 - coords.y;
                 this.mapData[mirrorY][mirrorX] = 0;
+                
+                // If it's a 2x2 tile, also remove the other three tiles
+                if (is2x2) {
+                    this.mapData[mirrorY][mirrorX - 1] = 0;
+                    this.mapData[mirrorY - 1][mirrorX] = 0;
+                    this.mapData[mirrorY - 1][mirrorX - 1] = 0;
+                }
             }
             
             this.canvas.style.cursor = 'grabbing';
@@ -502,6 +796,7 @@ class MapMaker {
         this.selectionStart = coords;
         this.selectionEnd = coords;
         
+        // Initialize hoveredTiles with the starting tile
         if (this.selectionMode === 'line') {
             this.hoveredTiles.clear();
             this.hoveredTiles.add(`${coords.x},${coords.y}`);
@@ -522,53 +817,51 @@ class MapMaker {
             const draggedTile = this.tileDefinitions[this.draggedTileId];
 
             if (draggedTile) {
-                const img = this.tileImages[this.draggedTileId];
-                if (img && img.complete) {
-                    // Calculate position to align bottom of image with bottom of tile
-                    const aspectRatio = img.height / img.width;
-                    const drawHeight = this.tileSize * aspectRatio;
-                    const drawY = coords.y * this.tileSize + this.tileSize - drawHeight;
+                const drawTilePreview = (tileId, x, y) => {
+                    const img = this.tileImages[tileId];
+                    if (img && img.complete) {
+                        const aspectRatio = img.height / img.width;
+                        const drawHeight = this.tileSize * aspectRatio;
+                        const drawY = y * this.tileSize + this.tileSize - drawHeight;
+                        
+                        // Get tile dimensions from tileData
+                        const tileData = this.environmentTileData[this.environment]?.[draggedTile.name] || 
+                                       this.tileData[draggedTile.name];
+                        const [scaleX, scaleY] = tileData || [1, 1];
+                        
+                        this.ctx.drawImage(
+                            img,
+                            x * this.tileSize + this.canvasPadding,
+                            drawY + this.canvasPadding,
+                            this.tileSize * scaleX,
+                            drawHeight * scaleY
+                        );
+                    }
+                };
 
-                    this.ctx.drawImage(
-                        img,
-                        coords.x * this.tileSize,
-                        drawY,
-                        this.tileSize,
-                        drawHeight
-                    );
-                    
-                    // Show mirrored previews
-                    if (this.mirrorVertical) {
-                        const mirrorY = this.mapHeight - 1 - coords.y;
-                        this.ctx.drawImage(
-                            img,
-                            coords.x * this.tileSize,
-                            mirrorY * this.tileSize + this.tileSize - drawHeight,
-                            this.tileSize,
-                            drawHeight
-                        );
-                    }
-                    if (this.mirrorHorizontal) {
-                        const mirrorX = this.mapWidth - 1 - coords.x;
-                        this.ctx.drawImage(
-                            img,
-                            mirrorX * this.tileSize,
-                            coords.y * this.tileSize + this.tileSize - drawHeight,
-                            this.tileSize,
-                            drawHeight
-                        );
-                    }
-                    if (this.mirrorDiagonal) {
-                        const mirrorX = this.mapWidth - 1 - coords.x;
-                        const mirrorY = this.mapHeight - 1 - coords.y;
-                        this.ctx.drawImage(
-                            img,
-                            mirrorX * this.tileSize,
-                            mirrorY * this.tileSize + this.tileSize - drawHeight,
-                            this.tileSize,
-                            drawHeight
-                        );
-                    }
+                // Draw the main dragged tile
+                drawTilePreview(this.draggedTileId, coords.x, coords.y);
+                
+                // Show mirrored previews with correct directions
+                if (this.mirrorVertical) {
+                    const mirrorY = this.mapHeight - 1 - coords.y;
+                    const mirrorTileId = this.getMirroredTileId(this.draggedTileId, 'vertical');
+                    const adjustedY = draggedTile.size === 2 ? mirrorY - 1 : mirrorY;
+                    drawTilePreview(mirrorTileId, coords.x, adjustedY);
+                }
+                if (this.mirrorHorizontal) {
+                    const mirrorX = this.mapWidth - 1 - coords.x;
+                    const mirrorTileId = this.getMirroredTileId(this.draggedTileId, 'horizontal');
+                    const adjustedX = draggedTile.size === 2 ? mirrorX - 1 : mirrorX;
+                    drawTilePreview(mirrorTileId, adjustedX, coords.y);
+                }
+                if (this.mirrorDiagonal) {
+                    const mirrorX = this.mapWidth - 1 - coords.x;
+                    const mirrorY = this.mapHeight - 1 - coords.y;
+                    const mirrorTileId = this.getMirroredTileId(this.draggedTileId, 'diagonal');
+                    const adjustedX = draggedTile.size === 2 ? mirrorX - 1 : mirrorX;
+                    const adjustedY = draggedTile.size === 2 ? mirrorY - 1 : mirrorY;
+                    drawTilePreview(mirrorTileId, adjustedX, adjustedY);
                 }
             }
             return;
@@ -577,35 +870,8 @@ class MapMaker {
         if (this.isDrawing) {
             this.selectionEnd = coords;
             
+            // Add the current tile to hoveredTiles for line selection
             if (this.selectionMode === 'line') {
-                // Get all tiles between last position and current position
-                const lastPos = this.hoveredTiles.size > 0 ? 
-                    Array.from(this.hoveredTiles).pop().split(',').map(Number) : 
-                    [this.selectionStart.x, this.selectionStart.y];
-                
-                const [lastX, lastY] = lastPos;
-                const dx = Math.abs(coords.x - lastX);
-                const dy = Math.abs(coords.y - lastY);
-                const sx = lastX < coords.x ? 1 : -1;
-                const sy = lastY < coords.y ? 1 : -1;
-                let err = dx - dy;
-                
-                let x = lastX;
-                let y = lastY;
-                
-                // Add all tiles in between using Bresenham's line algorithm
-                while (!(x === coords.x && y === coords.y)) {
-                    if (err > -dy) {
-                        err -= dy;
-                        x += sx;
-                    }
-                    if (err < dx) {
-                        err += dx;
-                        y += sy;
-                    }
-                    const e2 = 2 * err;
-                    this.hoveredTiles.add(`${x},${y}`);
-                }
                 this.hoveredTiles.add(`${coords.x},${coords.y}`);
             }
             
@@ -616,21 +882,9 @@ class MapMaker {
 
     handleMouseUp(event) {
         this.mouseDown = false;
-        if (!this.isDragging && this.isDrawing) {
-            const coords = this.getTileCoordinates(event);
-            if (coords.x >= 0 && coords.x < this.mapWidth && coords.y >= 0 && coords.y < this.mapHeight) {
-                if (this.selectionMode === 'single') {
-                    if (this.isErasing) {
-                        this.eraseTile(coords.x, coords.y);
-                    } else {
-                        this.placeTile(coords.x, coords.y);
-                    }
-                } else {
-                    this.placeTilesInSelection();
-                }
-            }
-        } else if (this.isDragging) {
-            const coords = this.getTileCoordinates(event);
+        const coords = this.getTileCoordinates(event);
+        
+        if (this.isDragging) {
             if (coords.x >= 0 && coords.x < this.mapWidth && coords.y >= 0 && coords.y < this.mapHeight) {
                 // Get the tile definition
                 const def = this.tileDefinitions[this.draggedTileId];
@@ -673,7 +927,8 @@ class MapMaker {
                     
                     // Helper function to place a tile and its occupied spaces
                     const placeMirroredTile = (ty, tx, mid) => {
-                        if (ty < 0 || ty >= this.mapHeight || tx < 0 || tx >= this.mapWidth) return;
+                        if (tx < 0 || tx >= this.mapWidth || ty < 0 || ty >= this.mapHeight) return;
+                        
                         if (size === 2) {
                             if (tx >= this.mapWidth - 1 || ty >= this.mapHeight - 1) return;
                             // Check if any tiles are occupied
@@ -710,6 +965,18 @@ class MapMaker {
                         const adjustedX = size === 2 ? mirrorX - 1 : mirrorX;
                         placeMirroredTile(adjustedY, adjustedX, mirrorD);
                     }
+                }
+            }
+        } else if (this.isDrawing) {
+            if (coords.x >= 0 && coords.x < this.mapWidth && coords.y >= 0 && coords.y < this.mapHeight) {
+                if (this.selectionMode === 'single') {
+                    if (this.isErasing) {
+                        this.eraseTile(coords.x, coords.y);
+                    } else {
+                        this.placeTile(coords.x, coords.y);
+                    }
+                } else {
+                    this.placeTilesInSelection();
                 }
             }
         }
@@ -812,23 +1079,32 @@ class MapMaker {
     }
 
     loadEnvironmentBackgrounds() {
-        this.bgDark.src = `Resources/${this.environment}/BGDark.png`;
-        this.bgLight.src = `Resources/${this.environment}/BGLight.png`;
+        const bgDarkPromise = new Promise(resolve => {
+            this.bgDark.onload = resolve;
+            this.bgDark.src = `Resources/${this.environment}/BGDark.png`;
+            this.bgDark.onerror = () => {
+                this.bgDark.src = 'Resources/Desert/BGDark.png';
+            };
+        });
 
-        // Fallback to Desert if environment backgrounds don't exist
-        this.bgDark.onerror = () => {
-            this.bgDark.src = 'Resources/Desert/BGDark.png';
-        };
-        this.bgLight.onerror = () => {
-            this.bgLight.src = 'Resources/Desert/BGLight.png';
-        };
+        const bgLightPromise = new Promise(resolve => {
+            this.bgLight.onload = resolve;
+            this.bgLight.src = `Resources/${this.environment}/BGLight.png`;
+            this.bgLight.onerror = () => {
+                this.bgLight.src = 'Resources/Desert/BGLight.png';
+            };
+        });
 
-        this.bgDark.onload = () => this.draw();
-        this.bgLight.onload = () => this.draw();
+        // Wait for both backgrounds to load then draw
+        Promise.all([bgDarkPromise, bgLightPromise]).then(() => {
+            this.draw();
+        });
     }
 
     loadTileImages() {
         this.tileImages = {};
+        const imageLoadPromises = [];
+
         Object.entries(this.tileDefinitions).forEach(([id, def]) => {
             if (!def.img && !def.getImg) return;
 
@@ -849,6 +1125,14 @@ class MapMaker {
             };
 
             this.tileImages[id] = img;
+            imageLoadPromises.push(new Promise(resolve => {
+                img.onload = resolve;
+            }));
+        });
+
+        // Wait for all images to load then draw
+        Promise.all(imageLoadPromises).then(() => {
+            this.draw();
         });
     }
 
@@ -868,7 +1152,35 @@ class MapMaker {
         const def = this.tileDefinitions[tileId];
         if (!def) return;
 
-        const img = this.tileImages[tileId];
+        let img;
+        if (tileId === 8) { // Water tile
+            // Get surrounding water tiles
+            const surroundingWater = [
+                y > 0 && x > 0 ? this.mapData[y-1][x-1] === 8 : false, // Top-left
+                y > 0 ? this.mapData[y-1][x] === 8 : false, // Top
+                y > 0 && x < this.mapWidth - 1 ? this.mapData[y-1][x+1] === 8 : false, // Top-right
+                x > 0 ? this.mapData[y][x-1] === 8 : false, // Left
+                x < this.mapWidth - 1 ? this.mapData[y][x+1] === 8 : false, // Right
+                y < this.mapHeight - 1 && x > 0 ? this.mapData[y+1][x-1] === 8 : false, // Bottom-left
+                y < this.mapHeight - 1 ? this.mapData[y+1][x] === 8 : false, // Bottom
+                y < this.mapHeight - 1 && x < this.mapWidth - 1 ? this.mapData[y+1][x+1] === 8 : false // Bottom-right
+            ];
+
+            // Generate image name based on surrounding water
+            const imageName = surroundingWater.map(hasWater => hasWater ? '1' : '0').join('');
+            
+            // Get or create the image
+            if (!this.tileImages[`water_${imageName}`]) {
+                img = new Image();
+                img.src = `Resources/${this.environment}/Water/${imageName}.png`;
+                this.tileImages[`water_${imageName}`] = img;
+            } else {
+                img = this.tileImages[`water_${imageName}`];
+            }
+        } else {
+            img = this.tileImages[tileId];
+        }
+
         if (!img || !img.complete) return;
 
         // Get tile dimensions data
@@ -889,9 +1201,9 @@ class MapMaker {
         const width = tileSize * scaleX * (def.size || 1);
         const height = tileSize * scaleY * (def.size || 1);
         
-        // Calculate position with offsets
-        const drawX = x * tileSize + (tileSize * offsetX / 100);
-        const drawY = y * tileSize + (tileSize * offsetY / 100);
+        // Calculate position with offsets and padding
+        const drawX = x * tileSize + (tileSize * offsetX / 100) + this.canvasPadding;
+        const drawY = y * tileSize + (tileSize * offsetY / 100) + this.canvasPadding;
 
         // Set opacity
         ctx.globalAlpha = opacity;
@@ -904,9 +1216,10 @@ class MapMaker {
     }
 
     draw() {
+        // Clear the canvas
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        
-        // Draw background grid
+
+        // Draw the background grid
         for (let y = 0; y < this.mapHeight; y++) {
             for (let x = 0; x < this.mapWidth; x++) {
                 const isDark = (x + y) % 2 === 0;
@@ -915,8 +1228,8 @@ class MapMaker {
                 if (bgImg.complete) {
                     this.ctx.drawImage(
                         bgImg,
-                        x * this.tileSize,
-                        y * this.tileSize,
+                        x * this.tileSize + this.canvasPadding,
+                        y * this.tileSize + this.canvasPadding,
                         this.tileSize,
                         this.tileSize
                     );
@@ -966,89 +1279,112 @@ class MapMaker {
             this.ctx.fillStyle = 'rgba(255, 0, 0, 0.5)';
             for (const tilePos of this.errorTiles) {
                 const [x, y] = tilePos.split(',').map(Number);
-                this.ctx.fillRect(x * this.tileSize, y * this.tileSize, this.tileSize, this.tileSize);
+                this.ctx.fillRect(
+                    x * this.tileSize + this.canvasPadding, 
+                    y * this.tileSize + this.canvasPadding, 
+                    this.tileSize, 
+                    this.tileSize
+                );
             }
         }
     }
 
     getTileCoordinates(event) {
         const rect = this.canvas.getBoundingClientRect();
-        const mouseX = event.clientX - rect.left;
-        const mouseY = event.clientY - rect.top;
+        const scaleX = this.canvas.width / rect.width;
+        const scaleY = this.canvas.height / rect.height;
         
-        // Calculate actual tile size on screen
-        const actualTileWidth = rect.width / this.mapWidth;
-        const actualTileHeight = rect.height / this.mapHeight;
+        // Calculate mouse position relative to canvas
+        const mouseX = (event.clientX - rect.left) * scaleX;
+        const mouseY = (event.clientY - rect.top) * scaleY;
         
-        // Convert mouse position to tile coordinates
-        const x = Math.floor(mouseX / actualTileWidth);
-        const y = Math.floor(mouseY / actualTileHeight);
+        // Subtract padding to get position relative to map
+        const mapX = mouseX - this.canvasPadding;
+        const mapY = mouseY - this.canvasPadding;
+        
+        // Convert to tile coordinates
+        const x = Math.floor(mapX / this.tileSize);
+        const y = Math.floor(mapY / this.tileSize);
         
         return { x, y };
     }
 
     drawSelection() {
         if (!this.selectionStart || !this.selectionEnd) return;
-
-        // Set color based on erasing mode
-        this.ctx.fillStyle = this.isErasing ? 'rgba(255, 0, 0, 0.5)' : 'rgba(128, 128, 128, 0.5)';
         
-        if (this.selectionMode === 'line') {
-            // Draw all hovered tiles
-            for (const tilePos of this.hoveredTiles) {
-                const [x, y] = tilePos.split(',').map(Number);
-                this.ctx.fillRect(x * this.tileSize, y * this.tileSize, this.tileSize, this.tileSize);
-            }
-        } else if (this.selectionMode === 'rectangle') {
-            const startX = Math.min(this.selectionStart.x, this.selectionEnd.x);
-            const endX = Math.max(this.selectionStart.x, this.selectionEnd.x);
-            const startY = Math.min(this.selectionStart.y, this.selectionEnd.y);
-            const endY = Math.max(this.selectionStart.y, this.selectionEnd.y);
-
-            for (let y = startY; y <= endY; y++) {
-                for (let x = startX; x <= endX; x++) {
-                    this.ctx.fillRect(x * this.tileSize, y * this.tileSize, this.tileSize, this.tileSize);
-                }
-            }
-        } else if (this.selectionMode === 'single') {
-            // Only show preview at current position
+        this.ctx.fillStyle = 'rgba(255, 255, 0, 0.3)';
+        
+        if (this.selectionMode === 'single') {
             this.ctx.fillRect(
-                this.selectionEnd.x * this.tileSize,
-                this.selectionEnd.y * this.tileSize,
+                this.selectionEnd.x * this.tileSize + this.canvasPadding,
+                this.selectionEnd.y * this.tileSize + this.canvasPadding,
                 this.tileSize,
                 this.tileSize
             );
+        } else if (this.selectionMode === 'line') {
+            // Highlight all tiles that have been hovered over
+            for (const tilePos of this.hoveredTiles) {
+                const [x, y] = tilePos.split(',').map(Number);
+                this.ctx.fillRect(
+                    x * this.tileSize + this.canvasPadding,
+                    y * this.tileSize + this.canvasPadding,
+                    this.tileSize,
+                    this.tileSize
+                );
+            }
+        } else if (this.selectionMode === 'rectangle') {
+            const startX = Math.min(this.selectionStart.x, this.selectionEnd.x);
+            const startY = Math.min(this.selectionStart.y, this.selectionEnd.y);
+            const endX = Math.max(this.selectionStart.x, this.selectionEnd.x);
+            const endY = Math.max(this.selectionStart.y, this.selectionEnd.y);
+            
+            for (let y = startY; y <= endY; y++) {
+                for (let x = startX; x <= endX; x++) {
+                    this.ctx.fillRect(
+                        x * this.tileSize + this.canvasPadding,
+                        y * this.tileSize + this.canvasPadding,
+                        this.tileSize,
+                        this.tileSize
+                    );
+                }
+            }
         }
     }
 
     placeTilesInSelection() {
         if (!this.selectionStart || !this.selectionEnd) return;
-
-        // Save state before making changes - only once for the entire operation
+        
+        // Save state before making changes
         this.saveState();
-
-        if (this.selectionMode === 'line') {
+        
+        if (this.selectionMode === 'single') {
+            if (this.isErasing) {
+                this.eraseTile(this.selectionEnd.x, this.selectionEnd.y, false);
+            } else {
+                this.placeTile(this.selectionEnd.x, this.selectionEnd.y, null, false);
+            }
+        } else if (this.selectionMode === 'line') {
             // Place tiles in all hovered positions
             for (const tilePos of this.hoveredTiles) {
                 const [x, y] = tilePos.split(',').map(Number);
                 if (this.isErasing) {
-                    this.eraseTile(x, y, false); // Pass false to prevent saving state for each tile
+                    this.eraseTile(x, y, false);
                 } else {
-                    this.placeTile(x, y, null, false); // Pass false to prevent saving state for each tile
+                    this.placeTile(x, y, null, false);
                 }
             }
         } else if (this.selectionMode === 'rectangle') {
             const startX = Math.min(this.selectionStart.x, this.selectionEnd.x);
-            const endX = Math.max(this.selectionStart.x, this.selectionEnd.x);
             const startY = Math.min(this.selectionStart.y, this.selectionEnd.y);
+            const endX = Math.max(this.selectionStart.x, this.selectionEnd.x);
             const endY = Math.max(this.selectionStart.y, this.selectionEnd.y);
-
+            
             for (let y = startY; y <= endY; y++) {
                 for (let x = startX; x <= endX; x++) {
                     if (this.isErasing) {
-                        this.eraseTile(x, y, false); // Pass false to prevent saving state for each tile
+                        this.eraseTile(x, y, false);
                     } else {
-                        this.placeTile(x, y, null, false); // Pass false to prevent saving state for each tile
+                        this.placeTile(x, y, null, false);
                     }
                 }
             }
@@ -1157,28 +1493,28 @@ class MapMaker {
         if (saveState) {
             this.draw();
             this.checkForErrors();
+            this.updateWaterTileImages(); // Update water tiles after placing a tile
         }
     }
 
     getMirroredTileId(tileId, direction) {
         const def = this.tileDefinitions[tileId];
-        if (!def || !def.mirrorMap) return tileId;
+        if (!def) return tileId;
 
         // Handle jump pad mirroring
         if (def.name.startsWith('Jump')) {
             const mirrorMaps = {
-                'R': { vertical: 'R', horizontal: 'L', diagonal: 'L' },
-                'L': { vertical: 'L', horizontal: 'R', diagonal: 'R' },
-                'T': { vertical: 'B', horizontal: 'T', diagonal: 'B' },
-                'B': { vertical: 'T', horizontal: 'B', diagonal: 'T' },
-                'TR': { vertical: 'BR', horizontal: 'TL', diagonal: 'BL' },
-                'TL': { vertical: 'BL', horizontal: 'TR', diagonal: 'BR' },
-                'BR': { vertical: 'TR', horizontal: 'BL', diagonal: 'TL' },
-                'BL': { vertical: 'TL', horizontal: 'BR', diagonal: 'TR' }
+                'Jump R': { vertical: 'R', horizontal: 'L', diagonal: 'L' },
+                'Jump L': { vertical: 'L', horizontal: 'R', diagonal: 'R' },
+                'Jump T': { vertical: 'B', horizontal: 'T', diagonal: 'B' },
+                'Jump B': { vertical: 'T', horizontal: 'B', diagonal: 'T' },
+                'Jump TR': { vertical: 'BR', horizontal: 'TL', diagonal: 'BL' },
+                'Jump TL': { vertical: 'BL', horizontal: 'TR', diagonal: 'BR' },
+                'Jump BR': { vertical: 'TR', horizontal: 'BL', diagonal: 'TL' },
+                'Jump BL': { vertical: 'TL', horizontal: 'BR', diagonal: 'TR' }
             };
 
-            const currentDirection = def.name.split(' ')[1];
-            const mirroredDirection = mirrorMaps[currentDirection][direction];
+            const mirroredDirection = mirrorMaps[def.name][direction];
 
             // Find tile ID by mirrored name
             const mirroredDef = Object.entries(this.tileDefinitions)
@@ -1190,99 +1526,39 @@ class MapMaker {
     }
 
     eraseTile(x, y, saveState = true) {
-        if (x < 0 || x >= this.mapWidth || y < 0 || y >= this.mapHeight) return;
-
-        // Save state before making changes if requested
         if (saveState) {
             this.saveState();
         }
-
-        // Check if this is part of a 2x2 tile
-        const tileId = this.mapData[y][x];
-        const def = this.tileDefinitions[tileId];
-        const isPartOf2x2 = def && def.size === 2;
         
-        // If this is part of a 2x2 tile, we need to find the top-left corner
-        let startX = x;
-        let startY = y;
+        this.mapData[y][x] = 0;
         
-        if (isPartOf2x2) {
-            // Find the top-left corner of the 2x2 tile
-            if (x > 0 && this.mapData[y][x-1] === -1) {
-                startX = x - 1;
-            }
-            if (y > 0 && this.mapData[y-1][startX] === -1) {
-                startY = y - 1;
-            }
-            
-            // Erase the entire 2x2 tile
-            for (let dy = 0; dy < 2; dy++) {
-                for (let dx = 0; dx < 2; dx++) {
-                    if (startY + dy < this.mapHeight && startX + dx < this.mapWidth) {
-                        this.mapData[startY + dy][startX + dx] = 0;
-                    }
-                }
-            }
-        } else {
-            // Just erase the single tile
-            this.mapData[y][x] = 0;
-        }
-
-        // Apply mirroring
+        // Handle mirroring for regular tiles
         if (this.mirrorVertical || this.mirrorHorizontal || this.mirrorDiagonal) {
-            // Calculate mirror positions
-            const mirrorY = this.mapHeight - 1 - startY;
-            const mirrorX = this.mapWidth - 1 - startX;
+            const mirrorY = this.mapHeight - 1 - y;
+            const mirrorX = this.mapWidth - 1 - x;
             
-            // For 2x2 tiles, adjust the mirror position
-            const size = isPartOf2x2 ? 2 : 1;
-            
-            // Helper function to erase a tile and its occupied spaces
-            const eraseMirroredTile = (ty, tx) => {
-                if (ty < 0 || ty >= this.mapHeight || tx < 0 || tx >= this.mapWidth) return;
-                if (size === 2) {
-                    if (tx >= this.mapWidth - 1 || ty >= this.mapHeight - 1) return;
-                    // Erase the entire 2x2 tile
-                    for (let dy = 0; dy < 2; dy++) {
-                        for (let dx = 0; dx < 2; dx++) {
-                            if (ty + dy < this.mapHeight && tx + dx < this.mapWidth) {
-                                this.mapData[ty + dy][tx + dx] = 0;
-                            }
-                        }
-                    }
-                } else {
-                    this.mapData[ty][tx] = 0;
-                }
-            };
-
-            // Apply vertical mirroring - for 2x2 tiles, adjust by 1 tile back in rows
             if (this.mirrorVertical) {
-                const adjustedY = size === 2 ? mirrorY - 1 : mirrorY;
-                eraseMirroredTile(adjustedY, startX);
+                this.mapData[mirrorY][x] = 0;
             }
-
-            // Apply horizontal mirroring - for 2x2 tiles, adjust by 1 tile back in columns
+            
             if (this.mirrorHorizontal) {
-                const adjustedX = size === 2 ? mirrorX - 1 : mirrorX;
-                eraseMirroredTile(startY, adjustedX);
+                this.mapData[y][mirrorX] = 0;
             }
-
-            // Apply diagonal mirroring - for 2x2 tiles, adjust by 1 tile back in both rows and columns
+            
             if (this.mirrorDiagonal) {
-                const adjustedY = size === 2 ? mirrorY - 1 : mirrorY;
-                const adjustedX = size === 2 ? mirrorX - 1 : mirrorX;
-                eraseMirroredTile(adjustedY, adjustedX);
+                this.mapData[mirrorY][mirrorX] = 0;
             }
         }
-
+        
         if (saveState) {
             this.draw();
             this.checkForErrors();
+            this.updateWaterTileImages(); // Update water tiles after erasing a tile
         }
     }
 
-    clearMap() {
-        if (confirm('Are you sure you want to clear the map?')) {
+    clearMap(confirmed = false) {
+        if (confirmed || confirm('Are you sure you want to clear the map?')) {
             // Save state before making changes
             this.saveState();
 
@@ -1321,11 +1597,11 @@ class MapMaker {
     exportMap() {
         const mapName = document.getElementById('mapName').value || 'Untitled Map';
         const canvas = document.createElement('canvas');
-        canvas.width = this.mapWidth * this.tileSize;
-        canvas.height = this.mapHeight * this.tileSize;
+        canvas.width = this.canvas.width;
+        canvas.height = this.canvas.height;
         const ctx = canvas.getContext('2d');
-
-        // Draw background grid
+        
+        // Draw the background grid
         for (let y = 0; y < this.mapHeight; y++) {
             for (let x = 0; x < this.mapWidth; x++) {
                 const isDark = (x + y) % 2 === 0;
@@ -1334,27 +1610,25 @@ class MapMaker {
                 if (bgImg.complete) {
                     ctx.drawImage(
                         bgImg,
-                        x * this.tileSize,
-                        y * this.tileSize,
+                        x * this.tileSize + this.canvasPadding,
+                        y * this.tileSize + this.canvasPadding,
                         this.tileSize,
                         this.tileSize
                     );
                 }
             }
         }
-
+        
         // Group tiles by z-index
         const tilesByZIndex = new Map();
-
-        // Collect tiles by z-index
         for (let y = 0; y < this.mapHeight; y++) {
             for (let x = 0; x < this.mapWidth; x++) {
                 const tileId = this.mapData[y][x];
                 if (tileId === 0 || tileId === -1) continue;
-
+                
                 const def = this.tileDefinitions[tileId];
                 if (!def) continue;
-
+                
                 let dimensions;
                 if (def.name === 'Objective') {
                     dimensions = this.environmentObjectiveData[this.environment]?.[this.gamemode] || 
@@ -1364,7 +1638,7 @@ class MapMaker {
                                 this.tileData[def.name];
                 }
                 if (!dimensions) continue;
-
+                
                 const zIndex = dimensions[5] || 0;
                 if (!tilesByZIndex.has(zIndex)) {
                     tilesByZIndex.set(zIndex, []);
@@ -1372,7 +1646,7 @@ class MapMaker {
                 tilesByZIndex.get(zIndex).push({ x, y, tileId });
             }
         }
-
+        
         // Draw tiles in z-index order
         Array.from(tilesByZIndex.keys())
             .sort((a, b) => a - b)
@@ -1381,8 +1655,8 @@ class MapMaker {
                     this.drawTile(ctx, tileId, x, y);
                 });
             });
-
-        // Export with map name
+        
+        // Create a download link
         const link = document.createElement('a');
         link.download = `${mapName}.png`;
         link.href = canvas.toDataURL('image/png');
@@ -1391,8 +1665,103 @@ class MapMaker {
 
     setGamemode(gamemode) {
         this.gamemode = gamemode;
-        this.loadTileImages();
+        
+        // Remove all objectives from the map
+        for (let y = 0; y < this.mapHeight; y++) {
+            for (let x = 0; x < this.mapWidth; x++) {
+                const tileId = this.mapData[y][x];
+                if (tileId === 14) { // Objective tile ID
+                    this.mapData[y][x] = 0;
+                }
+            }
+        }
+
+        // Check if there are any spawns on the map
+        let hasSpawns = false;
+        for (let y = 0; y < this.mapHeight; y++) {
+            for (let x = 0; x < this.mapWidth; x++) {
+                if (this.mapData[y][x] === 12 || this.mapData[y][x] === 13) {
+                    hasSpawns = true;
+                    break;
+                }
+            }
+            if (hasSpawns) break;
+        }
+
+        // Place spawns if none exist
+        if (!hasSpawns) {
+            const middleX = Math.floor(this.mapWidth / 2);
+            
+            // Check if spawn positions are empty
+            const canPlaceSpawns = [
+                this.mapData[0][middleX - 2] === 0,
+                this.mapData[0][middleX] === 0,
+                this.mapData[0][middleX + 2] === 0,
+                this.mapData[this.mapHeight - 1][middleX - 2] === 0,
+                this.mapData[this.mapHeight - 1][middleX] === 0,
+                this.mapData[this.mapHeight - 1][middleX + 2] === 0
+            ].every(Boolean);
+
+            if (canPlaceSpawns) {
+                // Place red spawns on top
+                this.mapData[0][middleX - 2] = 13;
+                this.mapData[0][middleX] = 13;
+                this.mapData[0][middleX + 2] = 13;
+
+                // Place blue spawns on bottom
+                this.mapData[this.mapHeight - 1][middleX - 2] = 12;
+                this.mapData[this.mapHeight - 1][middleX] = 12;
+                this.mapData[this.mapHeight - 1][middleX + 2] = 12;
+            }
+        }
+
+        // Place objectives based on gamemode
+        const middleX = Math.floor(this.mapWidth / 2);
+        const middleY = Math.floor(this.mapHeight / 2);
+
+        const placeObjective = (x, y) => {
+            if (this.mapData[y][x] === 0) {
+                this.mapData[y][x] = 14; // Objective tile ID
+            }
+        };
+
+        switch (gamemode) {
+            case 'Gem_Grab':
+            case 'Bounty':
+            case 'Hot_Zone':
+            case 'Hold_The_Trophy':
+            case 'Brawl_Ball':
+            case 'Basket_Brawl':
+            case 'Volley_Brawl':
+                if (this.mapData[middleY][middleX] === 0) {
+                    placeObjective(middleX, middleY);
+                }
+                break;
+
+            case 'Heist':
+            case 'Snowtel_Thieves':
+                const row = 4; // 5th row (0-based index)
+                if (this.mapData[row][middleX] === 0 && 
+                    this.mapData[this.mapHeight - 1 - row][middleX] === 0) {
+                    placeObjective(middleX, row);
+                    placeObjective(middleX, this.mapHeight - 1 - row);
+                }
+                break;
+
+            case 'Siege':
+                const siegeRow = 3; // 4th row (0-based index)
+                if (this.mapData[siegeRow][middleX] === 0 && 
+                    this.mapData[this.mapHeight - 1 - siegeRow][middleX] === 0) {
+                    placeObjective(middleX, siegeRow);
+                    placeObjective(middleX, this.mapHeight - 1 - siegeRow);
+                }
+                break;
+        }
+
+        // Update UI and reload images
         this.initializeTileSelector();
+        this.loadTileImages();
+        this.updateWaterTileImages();
         this.draw();
     }
 
@@ -1401,6 +1770,7 @@ class MapMaker {
         this.loadEnvironmentBackgrounds();
         this.loadTileImages();
         this.initializeTileSelector();
+        this.updateWaterTileImages();
         this.draw();
     }
 
@@ -1574,8 +1944,6 @@ class MapMaker {
                                 hasError = true;
                                 break;
                             }
-
-
                         }
                         if (hasError) break;
                     }
@@ -1607,6 +1975,62 @@ class MapMaker {
         }
         
         this.draw();
+    }
+
+    // Update the canvas size to include padding and align to top left
+    updateCanvasSize() {
+        // Set canvas size to map size plus padding
+        this.canvas.width = (this.mapWidth * this.tileSize) + (this.canvasPadding * 2);
+        this.canvas.height = (this.mapHeight * this.tileSize) + (this.canvasPadding * 2);
+        
+        // Update the map container size and alignment
+        const mapContainer = document.getElementById('mapContainer');
+        if (mapContainer) {
+            mapContainer.style.width = `${this.canvas.width}px`;
+            mapContainer.style.height = `${this.canvas.height}px`;
+            mapContainer.style.display = 'flex';
+            mapContainer.style.justifyContent = 'flex-start';
+            mapContainer.style.alignItems = 'flex-start';
+            mapContainer.style.padding = '20px';
+        }
+    }
+
+    updateWaterTileImages() {
+        const imageLoadPromises = [];
+
+        for (let y = 0; y < this.mapHeight; y++) {
+            for (let x = 0; x < this.mapWidth; x++) {
+                if (this.mapData[y][x] === 8) { // Water tile ID
+                    // Get surrounding water tiles
+                    const surroundingWater = [
+                        y > 0 && x > 0 ? this.mapData[y-1][x-1] === 8 : false, // Top-left
+                        y > 0 ? this.mapData[y-1][x] === 8 : false, // Top
+                        y > 0 && x < this.mapWidth - 1 ? this.mapData[y-1][x+1] === 8 : false, // Top-right
+                        x > 0 ? this.mapData[y][x-1] === 8 : false, // Left
+                        x < this.mapWidth - 1 ? this.mapData[y][x+1] === 8 : false, // Right
+                        y < this.mapHeight - 1 && x > 0 ? this.mapData[y+1][x-1] === 8 : false, // Bottom-left
+                        y < this.mapHeight - 1 ? this.mapData[y+1][x] === 8 : false, // Bottom
+                        y < this.mapHeight - 1 && x < this.mapWidth - 1 ? this.mapData[y+1][x+1] === 8 : false // Bottom-right
+                    ];
+
+                    // Generate image name based on surrounding water
+                    const imageName = surroundingWater.map(hasWater => hasWater ? '1' : '0').join('');
+                    
+                    // Update the tile's image
+                    const img = new Image();
+                    img.src = `Resources/${this.environment}/Water/${imageName}.png`;
+                    this.tileImages[`water_${imageName}`] = img;
+                    imageLoadPromises.push(new Promise(resolve => {
+                        img.onload = resolve;
+                    }));
+                }
+            }
+        }
+
+        // Wait for all water images to load then draw
+        Promise.all(imageLoadPromises).then(() => {
+            this.draw();
+        });
     }
 }
 
