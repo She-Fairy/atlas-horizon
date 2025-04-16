@@ -3,6 +3,7 @@ class MapMaker {
         this.canvas = document.getElementById('mapCanvas');
         this.ctx = this.canvas.getContext('2d');
         this.tileSize = 32;
+        this.zoomLevel = 1;
         
         // Map size configurations
         this.mapSizes = {
@@ -17,7 +18,8 @@ class MapMaker {
         this.mapWidth = this.mapSizes.regular.width;
         this.mapHeight = this.mapSizes.regular.height;
         
-        this.selectedTile = null;
+        // Initialize with Wall tile selected
+        this.selectedTile = { id: 1, name: 'Wall', color: '#666666' };
         this.map = this.createEmptyMap();
         this.gamemode = 'custom';
         this.environment = 'desert';
@@ -42,9 +44,7 @@ class MapMaker {
         this.initializeCanvas();
         this.initializeTileSelector();
         this.setupEventListeners();
-        
-        // Set draw button as active by default
-        document.getElementById('drawBtn').classList.add('active');
+        this.setInitialZoom();
     }
 
     createEmptyMap() {
@@ -69,6 +69,7 @@ class MapMaker {
         tiles.forEach(tile => {
             const tileElement = document.createElement('div');
             tileElement.className = 'tile-option';
+            if (tile.id === 1) tileElement.className += ' selected';
             tileElement.style.backgroundColor = tile.color;
             tileElement.setAttribute('data-tile', tile.id);
             tileElement.title = tile.name;
@@ -77,9 +78,8 @@ class MapMaker {
             tileElement.addEventListener('click', () => {
                 document.querySelectorAll('.tile-option').forEach(el => el.classList.remove('selected'));
                 tileElement.classList.add('selected');
-                this.selectedTile = { ...tile };  
-                this.isErasing = false;  
-                document.getElementById('drawBtn').classList.add('active');
+                this.selectedTile = { ...tile };
+                this.isErasing = false;
                 document.getElementById('eraseBtn').classList.remove('active');
             });
         });
@@ -95,11 +95,6 @@ class MapMaker {
         document.getElementById('saveBtn').addEventListener('click', this.saveMap.bind(this));
         document.getElementById('exportBtn').addEventListener('click', this.exportToPNG.bind(this));
 
-        // Drawing mode listener
-        document.getElementById('drawingMode').addEventListener('change', (e) => {
-            this.drawingMode = e.target.value;
-        });
-
         // Mirror listeners
         document.getElementById('mirrorDiagonal').addEventListener('change', (e) => {
             this.mirrorDiagonal = e.target.checked;
@@ -111,16 +106,21 @@ class MapMaker {
             this.mirrorHorizontal = e.target.checked;
         });
 
-        // Tool buttons
-        document.getElementById('drawBtn').addEventListener('click', (e) => {
-            this.isErasing = false;
-            document.getElementById('drawBtn').classList.add('active');
-            document.getElementById('eraseBtn').classList.remove('active');
-        });
+        // Erase button
         document.getElementById('eraseBtn').addEventListener('click', (e) => {
-            this.isErasing = true;
-            document.getElementById('eraseBtn').classList.add('active');
-            document.getElementById('drawBtn').classList.remove('active');
+            this.isErasing = !this.isErasing;
+            e.target.classList.toggle('active');
+        });
+
+        // Zoom controls
+        document.getElementById('zoomInBtn').addEventListener('click', () => {
+            this.zoomLevel = Math.min(this.zoomLevel * 1.2, 2);
+            this.updateCanvasZoom();
+        });
+
+        document.getElementById('zoomOutBtn').addEventListener('click', () => {
+            this.zoomLevel = Math.max(this.zoomLevel / 1.2, 0.1);
+            this.updateCanvasZoom();
         });
 
         // Add listeners for dropdowns
@@ -131,6 +131,7 @@ class MapMaker {
                 this.mapHeight = newSize.height;
                 this.map = this.createEmptyMap();
                 this.initializeCanvas();
+                this.setInitialZoom();
             } else {
                 e.target.value = Object.keys(this.mapSizes).find(key => 
                     this.mapSizes[key].width === this.mapWidth && 
@@ -151,8 +152,8 @@ class MapMaker {
     getTileCoordinates(event) {
         const rect = this.canvas.getBoundingClientRect();
         return {
-            x: Math.floor((event.clientX - rect.left) / this.tileSize),
-            y: Math.floor((event.clientY - rect.top) / this.tileSize)
+            x: Math.floor((event.clientX - rect.left) / (this.tileSize * this.zoomLevel)),
+            y: Math.floor((event.clientY - rect.top) / (this.tileSize * this.zoomLevel))
         };
     }
 
@@ -200,10 +201,10 @@ class MapMaker {
 
     updateRectanglePreview(currentTile) {
         const rect = this.canvas.getBoundingClientRect();
-        const startX = Math.min(this.startTile.x, currentTile.x) * this.tileSize;
-        const startY = Math.min(this.startTile.y, currentTile.y) * this.tileSize;
-        const width = (Math.abs(currentTile.x - this.startTile.x) + 1) * this.tileSize;
-        const height = (Math.abs(currentTile.y - this.startTile.y) + 1) * this.tileSize;
+        const startX = Math.min(this.startTile.x, currentTile.x) * this.tileSize * this.zoomLevel;
+        const startY = Math.min(this.startTile.y, currentTile.y) * this.tileSize * this.zoomLevel;
+        const width = (Math.abs(currentTile.x - this.startTile.x) + 1) * this.tileSize * this.zoomLevel;
+        const height = (Math.abs(currentTile.y - this.startTile.y) + 1) * this.tileSize * this.zoomLevel;
 
         this.previewOverlay.style.display = 'block';
         this.previewOverlay.style.left = `${rect.left + startX}px`;
@@ -370,6 +371,35 @@ class MapMaker {
         link.download = 'brawl-stars-map.png';
         link.href = exportCanvas.toDataURL();
         link.click();
+    }
+
+    setInitialZoom() {
+        const container = document.querySelector('.map-editor');
+        const containerWidth = container.clientWidth - 32; // Account for padding
+        const containerHeight = container.clientHeight - 32;
+        const mapWidth = this.mapWidth * this.tileSize;
+        const mapHeight = this.mapHeight * this.tileSize;
+        
+        const widthRatio = containerWidth / mapWidth;
+        const heightRatio = containerHeight / mapHeight;
+        this.zoomLevel = Math.min(widthRatio, heightRatio, 1);
+        
+        this.updateCanvasZoom();
+    }
+
+    updateCanvasZoom() {
+        this.canvas.style.transform = `scale(${this.zoomLevel})`;
+        
+        // Check if scrolling is needed
+        const container = document.querySelector('.map-editor');
+        const mapWidth = this.mapWidth * this.tileSize * this.zoomLevel;
+        const mapHeight = this.mapHeight * this.tileSize * this.zoomLevel;
+        
+        if (mapWidth > container.clientWidth - 32 || mapHeight > container.clientHeight - 32) {
+            container.classList.add('scrollable');
+        } else {
+            container.classList.remove('scrollable');
+        }
     }
 }
 
