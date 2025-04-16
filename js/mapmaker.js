@@ -53,6 +53,7 @@ class MapMaker {
         this.selectionStart = null;
         this.selectionEnd = null;
         this.hoveredTiles = new Set(); // For line selection
+        this.mouseDown = false;
 
         // Environment and background
         this.bgDark = new Image();
@@ -229,6 +230,10 @@ class MapMaker {
 
         this.replaceMode = false;
 
+        // Add showErrors property
+        this.showErrors = false;
+        this.errorTiles = new Set();
+
         this.initializeUI();
         this.initializeEventListeners();
         this.initializeTileSelector();
@@ -285,6 +290,7 @@ class MapMaker {
         const clearBtn = document.getElementById('clearBtn');
         const saveBtn = document.getElementById('saveBtn');
         const exportBtn = document.getElementById('exportBtn');
+        const errorsBtn = document.getElementById('errorsBtn');
 
         // Mirror checkboxes
         const mirrorVertical = document.getElementById('mirrorVertical');
@@ -313,6 +319,7 @@ class MapMaker {
         clearBtn.addEventListener('click', () => this.clearMap());
         saveBtn.addEventListener('click', () => this.saveMap());
         exportBtn.addEventListener('click', () => this.exportMap());
+        errorsBtn.addEventListener('click', () => this.toggleShowErrors());
 
         // Mirror listeners
         mirrorVertical.addEventListener('change', (e) => this.mirrorVertical = e.target.checked);
@@ -350,55 +357,44 @@ class MapMaker {
 
         // Add keyboard shortcuts
         document.addEventListener('keydown', (e) => {
-            // Prevent shortcuts when typing in input fields
-            if (e.target.tagName === 'INPUT' && e.target.type === 'text') return;
-
-            if (e.ctrlKey) {
-                switch (e.key.toLowerCase()) {
-                    case 'z':
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+            
+            switch(e.key.toLowerCase()) {
+                case '1':
+                    this.setSelectionMode('single');
+                    break;
+                case '2':
+                    this.setSelectionMode('line');
+                    break;
+                case '3':
+                    this.setSelectionMode('rectangle');
+                    break;
+                case 'r':
+                    this.toggleReplaceMode();
+                    break;
+                case 'e':
+                    this.toggleEraseMode();
+                    break;
+                case 'm':
+                    this.toggleMirroring();
+                    break;
+                case 'q':
+                    this.toggleShowErrors();
+                    break;
+                case 'z':
+                    if (e.ctrlKey || e.metaKey) {
                         if (e.shiftKey) {
                             this.redo();
                         } else {
                             this.undo();
                         }
-                        e.preventDefault();
-                        break;
-                    case 'y':
+                    }
+                    break;
+                case 'y':
+                    if (e.ctrlKey || e.metaKey) {
                         this.redo();
-                        e.preventDefault();
-                        break;
-                    case 's':
-                        this.saveMap();
-                        e.preventDefault();
-                        break;
-                    case 'enter':
-                        this.exportMap();
-                        e.preventDefault();
-                        break;
-                }
-            } else {
-                switch (e.key.toLowerCase()) {
-                    case '1':
-                        this.setSelectionMode('single');
-                        e.preventDefault();
-                        break;
-                    case '2':
-                        this.setSelectionMode('line');
-                        e.preventDefault();
-                        break;
-                    case '3':
-                        this.setSelectionMode('rectangle');
-                        e.preventDefault();
-                        break;
-                    case 'm':
-                        this.toggleMirroring();
-                        e.preventDefault();
-                        break;
-                    case 'e':
-                        this.toggleEraseMode();
-                        e.preventDefault();
-                        break;
-                }
+                    }
+                    break;
             }
         });
 
@@ -462,8 +458,14 @@ class MapMaker {
     }
 
     handleMouseDown(event) {
+        this.mouseDown = true;
         const coords = this.getTileCoordinates(event);
         if (coords.x < 0 || coords.x >= this.mapWidth || coords.y < 0 || coords.y >= this.mapHeight) return;
+
+        if (this.replaceMode) {
+            this.handleReplace(coords.x, coords.y);
+            return;
+        }
 
         // Check if we're starting to drag an existing tile
         if (!this.isErasing && this.mapData[coords.y][coords.x] !== 0) {
@@ -613,6 +615,7 @@ class MapMaker {
     }
 
     handleMouseUp(event) {
+        this.mouseDown = false;
         if (!this.isDragging && this.isDrawing) {
             const coords = this.getTileCoordinates(event);
             if (coords.x >= 0 && coords.x < this.mapWidth && coords.y >= 0 && coords.y < this.mapHeight) {
@@ -957,6 +960,15 @@ class MapMaker {
                     this.drawTile(this.ctx, tileId, x, y);
                 });
             });
+
+        // Draw error tiles if showErrors is enabled
+        if (this.showErrors) {
+            this.ctx.fillStyle = 'rgba(255, 0, 0, 0.5)';
+            for (const tilePos of this.errorTiles) {
+                const [x, y] = tilePos.split(',').map(Number);
+                this.ctx.fillRect(x * this.tileSize, y * this.tileSize, this.tileSize, this.tileSize);
+            }
+        }
     }
 
     getTileCoordinates(event) {
@@ -1044,6 +1056,7 @@ class MapMaker {
         
         // Draw after all tiles are placed
         this.draw();
+        this.checkForErrors();
     }
 
     placeTile(x, y, tileId = null, saveState = true) {
@@ -1143,6 +1156,7 @@ class MapMaker {
 
         if (saveState) {
             this.draw();
+            this.checkForErrors();
         }
     }
 
@@ -1263,6 +1277,7 @@ class MapMaker {
 
         if (saveState) {
             this.draw();
+            this.checkForErrors();
         }
     }
 
@@ -1393,43 +1408,43 @@ class MapMaker {
         this.replaceMode = !this.replaceMode;
         
         // Update UI
-        const replaceBtn = document.querySelector('[data-tool="replace"]');
+        const replaceBtn = document.getElementById('replaceBtn');
         if (replaceBtn) {
-            replaceBtn.classList.toggle('active', this.replaceMode);
+            replaceBtn.checked = this.replaceMode;
+            replaceBtn.parentElement.classList.toggle('active', this.replaceMode);
         }
     }
 
     handleReplace(x, y) {
-        // First click - get source tile
+        // Get the source tile ID (the tile that was clicked)
         const sourceId = this.mapData[y][x];
-        if (sourceId === undefined) return; 
-            // Second click - replace all instances
+        if (sourceId === undefined) return;
+        
+        // Get the target tile ID (the currently selected tile)
         const targetId = this.selectedTile.id;
-        let changes = false;
-
+        
         // Save state before making changes
         this.saveState();
-
-        // Replace all instances
+        
+        // Replace all instances of the source tile with the target tile
         for (let y = 0; y < this.mapHeight; y++) {
             for (let x = 0; x < this.mapWidth; x++) {
                 if (this.mapData[y][x] === sourceId) {
                     this.mapData[y][x] = targetId;
-                    changes = true;
                 }
             }
         }
-
-        if (changes) {
-            this.draw();
-        }
-
+        
+        // Draw the updated map
+        this.draw();
+        
         // Turn off replace mode
         this.toggleReplaceMode();
     }
 
     // Add new methods for the shortcuts
     setSelectionMode(mode) {
+        if (this.mouseDown) return;
         this.selectionMode = mode;
         // Update UI to reflect the change
         document.querySelectorAll('input[name="selectionMode"]').forEach(radio => {
@@ -1494,6 +1509,104 @@ class MapMaker {
         const eraseBtn = document.getElementById('eraseBtn');
         eraseBtn.checked = this.isErasing;
         eraseBtn.parentElement.classList.toggle('active', this.isErasing);
+    }
+
+    // Add method to check if a tile is a block
+    isBlock(tileId) {
+        const blockIds = [1, 3, 4, 5, 6, 8, 9, 11]; // IDs for Wall, Wall2, Crate, Barrel, Cactus, Water, Fence, Rope Fence, Unbreakable
+        return blockIds.includes(tileId);
+    }
+    
+    // Add method to check if two blocks are connected in a continuous line
+    areBlocksConnected(x1, y1, x2, y2) {
+        // Check if they're adjacent (including diagonally)
+        const dx = Math.abs(x1 - x2);
+        const dy = Math.abs(y1 - y2);
+        return dx <= 1 && dy <= 1;
+    }
+    
+    // Add method to check for errors
+    checkForErrors() {
+        if (!this.showErrors) return;
+        
+        this.errorTiles.clear();
+        
+        // Check each tile in the map
+        for (let y = 0; y < this.mapHeight; y++) {
+            for (let x = 0; x < this.mapWidth; x++) {
+                const tileId = this.mapData[y][x];
+                
+                // Skip if the tile is a block or empty
+                if (this.isBlock(tileId)) continue;
+                
+                // Count adjacent blocks
+                let blockCount = 0;
+                const blocks = [];
+                
+                // Check all 8 surrounding tiles
+                for (let dy = -1; dy <= 1; dy++) {
+                    for (let dx = -1; dx <= 1; dx++) {
+                        if (dx === 0 && dy === 0) continue;
+                        
+                        const nx = x + dx;
+                        const ny = y + dy;
+                        
+                        if (nx < 0 || nx >= this.mapWidth || ny < 0 || ny >= this.mapHeight) continue;
+                        
+                        const neighborId = this.mapData[ny][nx];
+                        if (this.isBlock(neighborId)) {
+                            blockCount++;
+                            blocks.push({x: nx, y: ny});
+                        }
+                    }
+                }
+                
+                // If there are at least 2 blocks, check if they form a continuous line
+                if (blockCount >= 2) {
+                    let hasError = false;
+                    
+                    // Check all pairs of blocks
+                    for (let i = 0; i < blocks.length; i++) {
+                        for (let j = i + 1; j < blocks.length; j++) {
+                            if (blocks[i].x !== x && blocks[j].x !== x && blocks[i].y !== y && blocks[j].y !== y) continue;
+                            // If these two blocks are not connected, we have an error
+                            if (!this.areBlocksConnected(blocks[i].x, blocks[i].y, blocks[j].x, blocks[j].y)) {
+                                hasError = true;
+                                break;
+                            }
+
+
+                        }
+                        if (hasError) break;
+                    }
+                    
+                    if (hasError) {
+                        this.errorTiles.add(`${x},${y}`);
+                    }
+                }
+            }
+        }
+    }
+
+    // Add toggleShowErrors method
+    toggleShowErrors() {
+        this.showErrors = !this.showErrors;
+        
+        // Update UI
+        const showErrorsBtn = document.getElementById('errorsBtn');
+        if (showErrorsBtn) {
+            showErrorsBtn.checked = this.showErrors;
+        }
+        
+        // Clear error tiles if deactivated
+        if (!this.showErrors) {
+            this.errorTiles.clear();
+        } else {
+            // Check for errors if activated
+            this.checkForErrors();
+        }
+        
+        this.draw();
     }
 }
 
