@@ -54,6 +54,50 @@ class MapMaker {
         this.selectionEnd = null;
         this.hoveredTiles = new Set(); // For line selection
 
+        // Environment and background
+        this.bgDark = new Image();
+        this.bgLight = new Image();
+        this.loadEnvironmentBackgrounds();
+
+        // Tile definitions with images and sizes
+        this.tileDefinitions = {
+            0: { name: 'Empty' },
+            1: { name: 'Wall', img: 'Wall.png', size: 1 },
+            2: { name: 'Bush', img: 'Bush.png', size: 1 },
+            3: { name: 'Wall2', img: 'Wall2.png', size: 1 },
+            4: { name: 'Crate', img: 'Crate.png', size: 1 },
+            5: { name: 'Barrel', img: 'Barrel.png', size: 1 },
+            6: { name: 'Cactus', img: 'Cactus.png', size: 1 },
+            7: { name: 'Fence', img: 'Fence/Fence.png', size: 1 },
+            8: { name: 'Water', img: 'Water/00000000.png', size: 1 },
+            9: { name: 'Rope Fence', img: 'Rope/Rope.png', size: 1 },
+            10: { name: 'Skull', img: 'Skull.png', size: 1 },
+            11: { name: 'Unbreakable', img: 'Global/Unbreakable.png', size: 1 },
+            12: { name: 'Blue Spawn', img: 'Global/Spawns/3v3/1.png', size: 1 },
+            13: { name: 'Red Spawn', img: 'Global/Spawns/3v3/2.png', size: 1 },
+            14: { name: 'Smoke', img: 'Global/Special_Tiles/Smoke.png', size: 1 },
+            15: { name: 'Heal Pad', img: 'Global/Special_Tiles/HealPad.png', size: 1 },
+            16: { name: 'Slow Tile', img: 'Global/Special_Tiles/SlowTile.png', size: 1 },
+            17: { name: 'Speed Tile', img: 'Global/Special_Tiles/SpeedTile.png', size: 1 },
+            18: { name: 'Spikes', img: 'Global/Special_Tiles/Spikes.png', size: 1 },
+            19: { name: 'Jump R', img: 'Global/Jumpads/R.png', size: 1 },
+            20: { name: 'Jump L', img: 'Global/Jumpads/L.png', size: 1 },
+            21: { name: 'Jump B', img: 'Global/Jumpads/B.png', size: 1 },
+            22: { name: 'Jump T', img: 'Global/Jumpads/T.png', size: 1 },
+            23: { name: 'Jump BR', img: 'Global/Jumpads/BR.png', size: 1 },
+            24: { name: 'Jump TL', img: 'Global/Jumpads/TL.png', size: 1 },
+            25: { name: 'Jump BL', img: 'Global/Jumpads/BL.png', size: 1 },
+            26: { name: 'Jump TR', img: 'Global/Jumpads/TR.png', size: 1 },
+            27: { name: 'Teleporter Blue', img: 'Global/Teleporters/Blue.png', size: 1 },
+            28: { name: 'Teleporter Green', img: 'Global/Teleporters/Green.png', size: 1 },
+            29: { name: 'Teleporter Red', img: 'Global/Teleporters/Red.png', size: 1 },
+            30: { name: 'Teleporter Yellow', img: 'Global/Teleporters/Yellow.png', size: 1 }
+        };
+
+        // Load all tile images
+        this.tileImages = {};
+        this.loadTileImages();
+
         this.initializeEventListeners();
         this.initializeTileSelector();
         
@@ -150,7 +194,10 @@ class MapMaker {
         });
 
         gamemodeSelect.addEventListener('change', (e) => this.gamemode = e.target.value);
-        environmentSelect.addEventListener('change', (e) => this.environment = e.target.value);
+        environmentSelect.addEventListener('change', (e) => {
+            this.environment = e.target.value;
+            this.loadEnvironmentBackgrounds();
+        });
 
         // Canvas event listeners
         this.canvas.addEventListener('mousedown', this.handleMouseDown.bind(this));
@@ -218,35 +265,57 @@ class MapMaker {
             this.draw(); // Redraw the base map
             
             // Draw preview
-            const draggedTile = [
-                null,
-                { color: '#666666' }, // Wall
-                { color: '#90EE90' }, // Bush
-                { color: '#87CEEB' }, // Water
-                { color: '#FFD700' }  // Spawn
-            ][this.draggedTileId];
+            const draggedTile = this.tileDefinitions[this.draggedTileId];
 
             if (draggedTile) {
-                this.ctx.globalAlpha = 0.5;
-                this.ctx.fillStyle = draggedTile.color;
-                this.ctx.fillRect(coords.x * this.tileSize, coords.y * this.tileSize, this.tileSize, this.tileSize);
-                
-                // Show mirrored previews
-                if (this.mirrorVertical) {
-                    const mirrorY = this.mapHeight - 1 - coords.y;
-                    this.ctx.fillRect(coords.x * this.tileSize, mirrorY * this.tileSize, this.tileSize, this.tileSize);
+                const img = this.tileImages[this.draggedTileId];
+                if (img && img.complete) {
+                    // Calculate position to align bottom of image with bottom of tile
+                    const aspectRatio = img.height / img.width;
+                    const drawHeight = this.tileSize * aspectRatio;
+                    const drawY = coords.y * this.tileSize + this.tileSize - drawHeight;
+
+                    this.ctx.drawImage(
+                        img,
+                        coords.x * this.tileSize,
+                        drawY,
+                        this.tileSize,
+                        drawHeight
+                    );
+                    
+                    // Show mirrored previews
+                    if (this.mirrorVertical) {
+                        const mirrorY = this.mapHeight - 1 - coords.y;
+                        this.ctx.drawImage(
+                            img,
+                            coords.x * this.tileSize,
+                            mirrorY * this.tileSize + this.tileSize - drawHeight,
+                            this.tileSize,
+                            drawHeight
+                        );
+                    }
+                    if (this.mirrorHorizontal) {
+                        const mirrorX = this.mapWidth - 1 - coords.x;
+                        this.ctx.drawImage(
+                            img,
+                            mirrorX * this.tileSize,
+                            coords.y * this.tileSize + this.tileSize - drawHeight,
+                            this.tileSize,
+                            drawHeight
+                        );
+                    }
+                    if (this.mirrorDiagonal) {
+                        const mirrorX = this.mapWidth - 1 - coords.x;
+                        const mirrorY = this.mapHeight - 1 - coords.y;
+                        this.ctx.drawImage(
+                            img,
+                            mirrorX * this.tileSize,
+                            mirrorY * this.tileSize + this.tileSize - drawHeight,
+                            this.tileSize,
+                            drawHeight
+                        );
+                    }
                 }
-                if (this.mirrorHorizontal) {
-                    const mirrorX = this.mapWidth - 1 - coords.x;
-                    this.ctx.fillRect(mirrorX * this.tileSize, coords.y * this.tileSize, this.tileSize, this.tileSize);
-                }
-                if (this.mirrorDiagonal) {
-                    const mirrorX = this.mapWidth - 1 - coords.x;
-                    const mirrorY = this.mapHeight - 1 - coords.y;
-                    this.ctx.fillRect(mirrorX * this.tileSize, mirrorY * this.tileSize, this.tileSize, this.tileSize);
-                }
-                
-                this.ctx.globalAlpha = 1.0;
             }
             return;
         }
@@ -363,50 +432,106 @@ class MapMaker {
     }
 
     initializeTileSelector() {
-        const tileSelector = document.getElementById('tileSelector');
-        const tiles = [
-            { id: 1, name: 'Wall', color: '#666666' },
-            { id: 2, name: 'Bush', color: '#90EE90' },
-            { id: 3, name: 'Water', color: '#87CEEB' },
-            { id: 4, name: 'Spawn', color: '#FFD700' }
-        ];
+        const container = document.getElementById('tileSelector');
+        container.innerHTML = '';
 
-        tiles.forEach(tile => {
-            const tileElement = document.createElement('div');
-            tileElement.className = 'tile-option';
-            if (tile.id === 1) tileElement.className += ' selected';
-            tileElement.style.backgroundColor = tile.color;
-            tileElement.setAttribute('data-tile', tile.id);
-            tileElement.title = tile.name;
-            tileSelector.appendChild(tileElement);
+        Object.entries(this.tileDefinitions).forEach(([id, def]) => {
+            if (id === '0') return; // Skip empty tile
 
-            tileElement.addEventListener('click', () => {
-                document.querySelectorAll('.tile-option').forEach(el => el.classList.remove('selected'));
-                tileElement.classList.add('selected');
-                this.selectedTile = { ...tile };
-                this.isErasing = false;
-                document.getElementById('eraseBtn').classList.remove('active');
+            const btn = document.createElement('button');
+            btn.className = 'tile-btn';
+            btn.title = def.name;
+            
+            if (def.img) {
+                const img = document.createElement('img');
+                img.src = `Resources/${def.img}`;
+                img.alt = def.name;
+                btn.appendChild(img);
+            }
+
+            btn.addEventListener('click', () => {
+                this.selectedTile = { id: parseInt(id), ...def };
+                // Update selected state
+                container.querySelectorAll('.tile-btn').forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
             });
+
+            container.appendChild(btn);
+        });
+    }
+
+    loadEnvironmentBackgrounds() {
+        const envPath = `Resources/${this.environment}`;
+        this.bgDark.src = `${envPath}/BGDark.png`;
+        this.bgLight.src = `${envPath}/BGLight.png`;
+        
+        // If environment assets don't exist, fall back to desert
+        this.bgDark.onerror = () => {
+            this.environment = 'desert';
+            this.bgDark.src = 'Resources/desert/BGDark.png';
+        };
+        this.bgLight.onerror = () => {
+            this.environment = 'desert';
+            this.bgLight.src = 'Resources/desert/BGLight.png';
+        };
+
+        // Redraw when images are loaded
+        this.bgDark.onload = () => this.draw();
+        this.bgLight.onload = () => this.draw();
+    }
+
+    loadTileImages() {
+        Object.entries(this.tileDefinitions).forEach(([id, def]) => {
+            if (def.img) {
+                const img = new Image();
+                img.src = `Resources/${def.img}`;
+                this.tileImages[id] = img;
+                img.onload = () => this.draw();
+            }
         });
     }
 
     draw() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         
+        // Draw background grid
+        for (let y = 0; y < this.mapHeight; y++) {
+            for (let x = 0; x < this.mapWidth; x++) {
+                const isDark = (x + y) % 2 === 0;
+                const bgImg = isDark ? this.bgDark : this.bgLight;
+                
+                if (bgImg.complete) {
+                    this.ctx.drawImage(
+                        bgImg,
+                        x * this.tileSize,
+                        y * this.tileSize,
+                        this.tileSize,
+                        this.tileSize
+                    );
+                }
+            }
+        }
+
+        // Draw tiles
         for (let y = 0; y < this.mapHeight; y++) {
             for (let x = 0; x < this.mapWidth; x++) {
                 const tileId = this.mapData[y][x];
-                if (tileId !== 0) {
-                    const tile = [
-                        null,
-                        { color: '#666666' }, // Wall
-                        { color: '#90EE90' }, // Bush
-                        { color: '#87CEEB' }, // Water
-                        { color: '#FFD700' }  // Spawn
-                    ][tileId];
+                if (tileId === 0) continue;
 
-                    this.ctx.fillStyle = tile.color;
-                    this.ctx.fillRect(x * this.tileSize, y * this.tileSize, this.tileSize, this.tileSize);
+                const img = this.tileImages[tileId];
+                if (img && img.complete) {
+                    // Calculate position to align bottom of image with bottom of tile
+                    const aspectRatio = img.height / img.width;
+                    const drawHeight = this.tileSize * aspectRatio;
+                    const drawY = y * this.tileSize + this.tileSize - drawHeight;
+
+                    this.ctx.drawImage(
+                        img,
+                        x * this.tileSize,
+                        drawY,
+                        this.tileSize,
+                        drawHeight
+                    );
                 }
             }
         }
@@ -602,16 +727,21 @@ class MapMaker {
             for (let x = 0; x < this.mapWidth; x++) {
                 const tileId = this.mapData[y][x];
                 if (tileId !== 0) {
-                    const tile = [
-                        null,
-                        { color: '#666666' }, // Wall
-                        { color: '#90EE90' }, // Bush
-                        { color: '#87CEEB' }, // Water
-                        { color: '#FFD700' }  // Spawn
-                    ][tileId];
+                    const img = this.tileImages[tileId];
+                    if (img && img.complete) {
+                        // Calculate position to align bottom of image with bottom of tile
+                        const aspectRatio = img.height / img.width;
+                        const drawHeight = this.tileSize * aspectRatio;
+                        const drawY = y * this.tileSize + this.tileSize - drawHeight;
 
-                    exportCtx.fillStyle = tile.color;
-                    exportCtx.fillRect(x * this.tileSize, y * this.tileSize, this.tileSize, this.tileSize);
+                        exportCtx.drawImage(
+                            img,
+                            x * this.tileSize,
+                            drawY,
+                            this.tileSize,
+                            drawHeight
+                        );
+                    }
                 }
             }
         }

@@ -171,38 +171,55 @@
 
 #tileSelector {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+    gap: 4px;
+    padding: 8px;
+    max-height: 300px;
+    overflow-y: auto;
 }
 
-.tile-option {
-    width: 100%;
-    aspect-ratio: 1;
-    border: 2px solid var(--border-color);
-    border-radius: 0.25rem;
+.tile-btn {
+    width: 40px;
+    height: 40px;
+    padding: 2px;
+    border: 2px solid transparent;
+    border-radius: 4px;
+    background: var(--surface-color);
     cursor: pointer;
-    transition: border-color 0.2s;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.tile-option:hover {
+.tile-btn:hover {
+    background: var(--surface-hover-color);
+    border-color: var(--primary-color-light);
+}
+
+.tile-btn.selected {
     border-color: var(--primary-color);
+    background: rgba(var(--primary-color-rgb), 0.2);
 }
 
-.tile-option.selected {
-    border-color: var(--primary-color);
+.tile-btn img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
 }
 
-.preview-overlay {
-    position: absolute;
-    pointer-events: none;
-    border: 2px solid var(--primary-color);
-    background-color: rgba(var(--primary-color-rgb), 0.2);
-    display: none;
+/* Hide scrollbar but keep functionality */
+#tileSelector::-webkit-scrollbar {
+    width: 6px;
 }
 
-.preview-overlay.erase {
-    border-color: #ef4444;
-    background-color: rgba(239, 68, 68, 0.2);
+#tileSelector::-webkit-scrollbar-track {
+    background: var(--surface-color);
+}
+
+#tileSelector::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 3px;
 }
 
 .checkbox-container {
