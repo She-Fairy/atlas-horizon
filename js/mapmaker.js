@@ -178,14 +178,14 @@ class MapMaker {
             17: { name: 'Slow Tile', img: 'Global/Special_Tiles/SlowTile.png', size: 1 },
             18: { name: 'Speed Tile', img: 'Global/Special_Tiles/SpeedTile.png', size: 1 },
             19: { name: 'Spikes', img: 'Global/Special_Tiles/Spikes.png', size: 1 },
-            20: { name: 'Jump R', img: 'Global/Jumpads/R.png', size: 2 },
-            21: { name: 'Jump L', img: 'Global/Jumpads/L.png', size: 2 },
-            22: { name: 'Jump T', img: 'Global/Jumpads/T.png', size: 2 },
-            23: { name: 'Jump B', img: 'Global/Jumpads/B.png', size: 2 },
-            24: { name: 'Jump BR', img: 'Global/Jumpads/BR.png', size: 2 },
-            25: { name: 'Jump TL', img: 'Global/Jumpads/TL.png', size: 2 },
-            26: { name: 'Jump BL', img: 'Global/Jumpads/BL.png', size: 2 },
-            27: { name: 'Jump TR', img: 'Global/Jumpads/TR.png', size: 2 },
+            20: { name: 'Jump R', img: 'Global/Jumpads/R.png', size: 1 },
+            21: { name: 'Jump L', img: 'Global/Jumpads/L.png', size: 1 },
+            22: { name: 'Jump T', img: 'Global/Jumpads/T.png', size: 1 },
+            23: { name: 'Jump B', img: 'Global/Jumpads/B.png', size: 1 },
+            24: { name: 'Jump BR', img: 'Global/Jumpads/BR.png', size: 1 },
+            25: { name: 'Jump TL', img: 'Global/Jumpads/TL.png', size: 1 },
+            26: { name: 'Jump BL', img: 'Global/Jumpads/BL.png', size: 1 },
+            27: { name: 'Jump TR', img: 'Global/Jumpads/TR.png', size: 1 },
             28: { name: 'Teleporter Blue', img: 'Global/Teleporters/Blue.png', size: 1 },
             29: { name: 'Teleporter Green', img: 'Global/Teleporters/Green.png', size: 1 },
             30: { name: 'Teleporter Red', img: 'Global/Teleporters/Red.png', size: 1 },
@@ -375,40 +375,28 @@ class MapMaker {
                         this.exportMap();
                         e.preventDefault();
                         break;
-                    case 'backspace':
-                    case 'delete':
-                        this.clearMap();
-                        e.preventDefault();
-                        break;
-                    case '=':
-                    case '+':
-                        this.zoomIn();
-                        e.preventDefault();
-                        break;
-                    case '-':
-                        this.zoomOut();
-                        e.preventDefault();
-                        break;
                 }
             } else {
                 switch (e.key.toLowerCase()) {
                     case '1':
                         this.setSelectionMode('single');
+                        e.preventDefault();
                         break;
                     case '2':
                         this.setSelectionMode('line');
+                        e.preventDefault();
                         break;
                     case '3':
-                        this.setSelectionMode('rect');
+                        this.setSelectionMode('rectangle');
+                        e.preventDefault();
                         break;
                     case 'm':
                         this.toggleMirroring();
+                        e.preventDefault();
                         break;
                     case 'e':
                         this.toggleEraseMode();
-                        break;
-                    case 'r':
-                        this.toggleReplaceMode();
+                        e.preventDefault();
                         break;
                 }
             }
@@ -422,26 +410,6 @@ class MapMaker {
         
         // Add document-level mouse up to ensure we catch the event even if released outside canvas
         document.addEventListener('mouseup', this.handleMouseUp.bind(this));
-
-        // Add keyboard shortcuts
-        document.addEventListener('keydown', (e) => {
-            if (e.ctrlKey) {
-                switch (e.key.toLowerCase()) {
-                    case 'z':
-                        if (e.shiftKey) {
-                            this.redo();
-                        } else {
-                            this.undo();
-                        }
-                        e.preventDefault();
-                        break;
-                    case 'y':
-                        this.redo();
-                        e.preventDefault();
-                        break;
-                }
-            }
-        });
     }
 
     saveState() {
@@ -661,22 +629,84 @@ class MapMaker {
         } else if (this.isDragging) {
             const coords = this.getTileCoordinates(event);
             if (coords.x >= 0 && coords.x < this.mapWidth && coords.y >= 0 && coords.y < this.mapHeight) {
+                // Get the tile definition
+                const def = this.tileDefinitions[this.draggedTileId];
+                if (!def) return;
+                
+                // Check if we can place this tile (for 2x2 tiles)
+                if (def.size === 2) {
+                    if (coords.x >= this.mapWidth - 1 || coords.y >= this.mapHeight - 1) return;
+                    // Check if any of the 4 tiles are occupied
+                    for (let dy = 0; dy < 2; dy++) {
+                        for (let dx = 0; dx < 2; dx++) {
+                            if (this.mapData[coords.y + dy][coords.x + dx] !== 0) return;
+                        }
+                    }
+                }
+                
                 // Place the tile
                 this.mapData[coords.y][coords.x] = this.draggedTileId;
                 
+                // For 2x2 tiles, mark the other tiles as occupied
+                if (def.size === 2) {
+                    this.mapData[coords.y][coords.x + 1] = -1;
+                    this.mapData[coords.y + 1][coords.x] = -1;
+                    this.mapData[coords.y + 1][coords.x + 1] = -1;
+                }
+                
                 // Apply mirroring
-                if (this.mirrorVertical) {
+                if (this.mirrorVertical || this.mirrorHorizontal || this.mirrorDiagonal) {
+                    // Calculate mirror positions
                     const mirrorY = this.mapHeight - 1 - coords.y;
-                    this.mapData[mirrorY][coords.x] = this.draggedTileId;
-                }
-                if (this.mirrorHorizontal) {
                     const mirrorX = this.mapWidth - 1 - coords.x;
-                    this.mapData[coords.y][mirrorX] = this.draggedTileId;
-                }
-                if (this.mirrorDiagonal) {
-                    const mirrorX = this.mapWidth - 1 - coords.x;
-                    const mirrorY = this.mapHeight - 1 - coords.y;
-                    this.mapData[mirrorY][mirrorX] = this.draggedTileId;
+                    
+                    // For 2x2 tiles, adjust the mirror position
+                    const size = def.size || 1;
+                    
+                    // Get mirrored tile ID (for jump pads)
+                    const mirrorV = this.getMirroredTileId(this.draggedTileId, 'vertical');
+                    const mirrorH = this.getMirroredTileId(this.draggedTileId, 'horizontal');
+                    const mirrorD = this.getMirroredTileId(this.draggedTileId, 'diagonal');
+                    
+                    // Helper function to place a tile and its occupied spaces
+                    const placeMirroredTile = (ty, tx, mid) => {
+                        if (ty < 0 || ty >= this.mapHeight || tx < 0 || tx >= this.mapWidth) return;
+                        if (size === 2) {
+                            if (tx >= this.mapWidth - 1 || ty >= this.mapHeight - 1) return;
+                            // Check if any tiles are occupied
+                            for (let dy = 0; dy < 2; dy++) {
+                                for (let dx = 0; dx < 2; dx++) {
+                                    if (this.mapData[ty + dy][tx + dx] !== 0) return;
+                                }
+                            }
+                            // Place the tile and mark occupied spaces
+                            this.mapData[ty][tx] = mid;
+                            this.mapData[ty][tx + 1] = -1;
+                            this.mapData[ty + 1][tx] = -1;
+                            this.mapData[ty + 1][tx + 1] = -1;
+                        } else {
+                            this.mapData[ty][tx] = mid;
+                        }
+                    };
+                    
+                    // Apply vertical mirroring - for 2x2 tiles, adjust by 1 tile back in rows
+                    if (this.mirrorVertical) {
+                        const adjustedY = size === 2 ? mirrorY - 1 : mirrorY;
+                        placeMirroredTile(adjustedY, coords.x, mirrorV);
+                    }
+                    
+                    // Apply horizontal mirroring - for 2x2 tiles, adjust by 1 tile back in columns
+                    if (this.mirrorHorizontal) {
+                        const adjustedX = size === 2 ? mirrorX - 1 : mirrorX;
+                        placeMirroredTile(coords.y, adjustedX, mirrorH);
+                    }
+                    
+                    // Apply diagonal mirroring - for 2x2 tiles, adjust by 1 tile back in both rows and columns
+                    if (this.mirrorDiagonal) {
+                        const adjustedY = size === 2 ? mirrorY - 1 : mirrorY;
+                        const adjustedX = size === 2 ? mirrorX - 1 : mirrorX;
+                        placeMirroredTile(adjustedY, adjustedX, mirrorD);
+                    }
                 }
             }
         }
@@ -982,14 +1012,17 @@ class MapMaker {
     placeTilesInSelection() {
         if (!this.selectionStart || !this.selectionEnd) return;
 
+        // Save state before making changes - only once for the entire operation
+        this.saveState();
+
         if (this.selectionMode === 'line') {
             // Place tiles in all hovered positions
             for (const tilePos of this.hoveredTiles) {
                 const [x, y] = tilePos.split(',').map(Number);
                 if (this.isErasing) {
-                    this.eraseTile(x, y);
+                    this.eraseTile(x, y, false); // Pass false to prevent saving state for each tile
                 } else {
-                    this.placeTile(x, y);
+                    this.placeTile(x, y, null, false); // Pass false to prevent saving state for each tile
                 }
             }
         } else if (this.selectionMode === 'rectangle') {
@@ -1001,16 +1034,19 @@ class MapMaker {
             for (let y = startY; y <= endY; y++) {
                 for (let x = startX; x <= endX; x++) {
                     if (this.isErasing) {
-                        this.eraseTile(x, y);
+                        this.eraseTile(x, y, false); // Pass false to prevent saving state for each tile
                     } else {
-                        this.placeTile(x, y);
+                        this.placeTile(x, y, null, false); // Pass false to prevent saving state for each tile
                     }
                 }
             }
         }
+        
+        // Draw after all tiles are placed
+        this.draw();
     }
 
-    placeTile(x, y, tileId = null) {
+    placeTile(x, y, tileId = null, saveState = true) {
         const id = tileId ?? this.selectedTile.id;
         const def = this.tileDefinitions[id];
         if (!def) return;
@@ -1035,8 +1071,10 @@ class MapMaker {
         // Only show Bolt in Siege mode
         if (def.showInGamemode && def.showInGamemode !== this.gamemode) return;
 
-        // Save state before making changes
-        this.saveState();
+        // Save state before making changes if requested
+        if (saveState) {
+            this.saveState();
+        }
 
         // Place the tile
         this.mapData[y][x] = id;
@@ -1056,8 +1094,7 @@ class MapMaker {
 
             // For 2x2 tiles, we need to adjust the mirror position
             const size = def.size || 1;
-            const adjust = size - 1;
-
+            
             // Get mirrored tile ID (for jump pads)
             const mirrorV = this.getMirroredTileId(id, 'vertical');
             const mirrorH = this.getMirroredTileId(id, 'horizontal');
@@ -1084,23 +1121,29 @@ class MapMaker {
                 }
             };
 
-            // Apply vertical mirroring
+            // Apply vertical mirroring - for 2x2 tiles, adjust by 1 tile back in rows
             if (this.mirrorVertical) {
-                placeMirroredTile(mirrorY - adjust, x, mirrorV);
+                const adjustedY = size === 2 ? mirrorY - 1 : mirrorY;
+                placeMirroredTile(adjustedY, x, mirrorV);
             }
 
-            // Apply horizontal mirroring
+            // Apply horizontal mirroring - for 2x2 tiles, adjust by 1 tile back in columns
             if (this.mirrorHorizontal) {
-                placeMirroredTile(y, mirrorX - adjust, mirrorH);
+                const adjustedX = size === 2 ? mirrorX - 1 : mirrorX;
+                placeMirroredTile(y, adjustedX, mirrorH);
             }
 
-            // Apply diagonal mirroring
+            // Apply diagonal mirroring - for 2x2 tiles, adjust by 1 tile back in both rows and columns
             if (this.mirrorDiagonal) {
-                placeMirroredTile(mirrorY - adjust, mirrorX - adjust, mirrorD);
+                const adjustedY = size === 2 ? mirrorY - 1 : mirrorY;
+                const adjustedX = size === 2 ? mirrorX - 1 : mirrorX;
+                placeMirroredTile(adjustedY, adjustedX, mirrorD);
             }
         }
 
-        this.draw();
+        if (saveState) {
+            this.draw();
+        }
     }
 
     getMirroredTileId(tileId, direction) {
@@ -1132,38 +1175,95 @@ class MapMaker {
         return tileId;
     }
 
-    eraseTile(x, y) {
+    eraseTile(x, y, saveState = true) {
         if (x < 0 || x >= this.mapWidth || y < 0 || y >= this.mapHeight) return;
 
-        // Save state before making changes
-        this.saveState();
+        // Save state before making changes if requested
+        if (saveState) {
+            this.saveState();
+        }
 
-        this.mapData[y][x] = 0;
+        // Check if this is part of a 2x2 tile
+        const tileId = this.mapData[y][x];
+        const def = this.tileDefinitions[tileId];
+        const isPartOf2x2 = def && def.size === 2;
+        
+        // If this is part of a 2x2 tile, we need to find the top-left corner
+        let startX = x;
+        let startY = y;
+        
+        if (isPartOf2x2) {
+            // Find the top-left corner of the 2x2 tile
+            if (x > 0 && this.mapData[y][x-1] === -1) {
+                startX = x - 1;
+            }
+            if (y > 0 && this.mapData[y-1][startX] === -1) {
+                startY = y - 1;
+            }
+            
+            // Erase the entire 2x2 tile
+            for (let dy = 0; dy < 2; dy++) {
+                for (let dx = 0; dx < 2; dx++) {
+                    if (startY + dy < this.mapHeight && startX + dx < this.mapWidth) {
+                        this.mapData[startY + dy][startX + dx] = 0;
+                    }
+                }
+            }
+        } else {
+            // Just erase the single tile
+            this.mapData[y][x] = 0;
+        }
 
         // Apply mirroring
-        if (this.mirrorVertical) {
-            const mirrorY = this.mapHeight - 1 - y;
-            if (mirrorY >= 0 && mirrorY < this.mapHeight) {
-                this.mapData[mirrorY][x] = 0;
+        if (this.mirrorVertical || this.mirrorHorizontal || this.mirrorDiagonal) {
+            // Calculate mirror positions
+            const mirrorY = this.mapHeight - 1 - startY;
+            const mirrorX = this.mapWidth - 1 - startX;
+            
+            // For 2x2 tiles, adjust the mirror position
+            const size = isPartOf2x2 ? 2 : 1;
+            
+            // Helper function to erase a tile and its occupied spaces
+            const eraseMirroredTile = (ty, tx) => {
+                if (ty < 0 || ty >= this.mapHeight || tx < 0 || tx >= this.mapWidth) return;
+                if (size === 2) {
+                    if (tx >= this.mapWidth - 1 || ty >= this.mapHeight - 1) return;
+                    // Erase the entire 2x2 tile
+                    for (let dy = 0; dy < 2; dy++) {
+                        for (let dx = 0; dx < 2; dx++) {
+                            if (ty + dy < this.mapHeight && tx + dx < this.mapWidth) {
+                                this.mapData[ty + dy][tx + dx] = 0;
+                            }
+                        }
+                    }
+                } else {
+                    this.mapData[ty][tx] = 0;
+                }
+            };
+
+            // Apply vertical mirroring - for 2x2 tiles, adjust by 1 tile back in rows
+            if (this.mirrorVertical) {
+                const adjustedY = size === 2 ? mirrorY - 1 : mirrorY;
+                eraseMirroredTile(adjustedY, startX);
+            }
+
+            // Apply horizontal mirroring - for 2x2 tiles, adjust by 1 tile back in columns
+            if (this.mirrorHorizontal) {
+                const adjustedX = size === 2 ? mirrorX - 1 : mirrorX;
+                eraseMirroredTile(startY, adjustedX);
+            }
+
+            // Apply diagonal mirroring - for 2x2 tiles, adjust by 1 tile back in both rows and columns
+            if (this.mirrorDiagonal) {
+                const adjustedY = size === 2 ? mirrorY - 1 : mirrorY;
+                const adjustedX = size === 2 ? mirrorX - 1 : mirrorX;
+                eraseMirroredTile(adjustedY, adjustedX);
             }
         }
 
-        if (this.mirrorHorizontal) {
-            const mirrorX = this.mapWidth - 1 - x;
-            if (mirrorX >= 0 && mirrorX < this.mapWidth) {
-                this.mapData[y][mirrorX] = 0;
-            }
+        if (saveState) {
+            this.draw();
         }
-
-        if (this.mirrorDiagonal) {
-            const mirrorX = this.mapWidth - 1 - x;
-            const mirrorY = this.mapHeight - 1 - y;
-            if (mirrorX >= 0 && mirrorX < this.mapWidth && mirrorY >= 0 && mirrorY < this.mapHeight) {
-                this.mapData[mirrorY][mirrorX] = 0;
-            }
-        }
-
-        this.draw();
     }
 
     clearMap() {
@@ -1326,6 +1426,74 @@ class MapMaker {
 
         // Turn off replace mode
         this.toggleReplaceMode();
+    }
+
+    // Add new methods for the shortcuts
+    setSelectionMode(mode) {
+        this.selectionMode = mode;
+        // Update UI to reflect the change
+        document.querySelectorAll('input[name="selectionMode"]').forEach(radio => {
+            radio.checked = radio.value === mode;
+        });
+    }
+
+    toggleMirroring() {
+        // Get the mirror checkboxes
+        const mirrorCheckboxes = [
+            document.getElementById('mirrorDiagonal'),
+            document.getElementById('mirrorVertical'),
+            document.getElementById('mirrorHorizontal')
+        ];
+        
+        // Store the current states
+        const previousStates = mirrorCheckboxes.map(checkbox => checkbox.checked);
+        
+        // If any mirroring was active, disable all
+        if (previousStates.some(state => state)) {
+            // Store the previous states for later restoration
+            this.previousMirrorStates = previousStates;
+            
+            // Disable all mirroring
+            mirrorCheckboxes.forEach(checkbox => {
+                checkbox.checked = false;
+                checkbox.style.borderColor = '#ff4444'; // Red border for active checkboxes
+            });
+            
+            // Update the internal state
+            this.mirrorDiagonal = false;
+            this.mirrorVertical = false;
+            this.mirrorHorizontal = false;
+        } else {
+            // If we have previous states stored, restore them
+            if (this.previousMirrorStates) {
+                mirrorCheckboxes.forEach((checkbox, index) => {
+                    checkbox.checked = this.previousMirrorStates[index];
+                    checkbox.style.borderColor = ''; // Reset border color
+                });
+                
+                // Update the internal state
+                this.mirrorDiagonal = this.previousMirrorStates[0];
+                this.mirrorVertical = this.previousMirrorStates[1];
+                this.mirrorHorizontal = this.previousMirrorStates[2];
+                
+                // Clear the stored states
+                this.previousMirrorStates = null;
+            } else {
+                // If no previous states, just reset the border colors
+                mirrorCheckboxes.forEach(checkbox => {
+                    checkbox.style.borderColor = '';
+                });
+            }
+        }
+        
+        this.draw();
+    }
+
+    toggleEraseMode() {
+        this.isErasing = !this.isErasing;
+        const eraseBtn = document.getElementById('eraseBtn');
+        eraseBtn.checked = this.isErasing;
+        eraseBtn.parentElement.classList.toggle('active', this.isErasing);
     }
 }
 

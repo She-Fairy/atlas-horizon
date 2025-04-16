@@ -218,8 +218,21 @@
 
 .checkbox-container {
     display: flex;
-    flex-direction: row;
-    gap: 0.5rem;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    transition: all 0.2s ease;
+}
+
+.checkbox-container:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+/* Add styles for checkboxes with red border */
+input[type="checkbox"][style*="border-color: rgb(255, 68, 68)"] {
+    border-color: #ff4444 !important;
 }
 
 .checkbox-container label {
