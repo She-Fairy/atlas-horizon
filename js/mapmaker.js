@@ -6,11 +6,11 @@ class MapMaker {
         
         // Map size configurations
         this.mapSizes = {
-            regular: { width: 33, height: 21 },
+            regular: { width: 21, height: 33 },
             showdown: { width: 60, height: 60 },
-            siege: { width: 39, height: 27 },
-            volley: { width: 25, height: 21 },
-            basket: { width: 17, height: 21 }
+            siege: { width: 27, height: 39 },
+            volley: { width: 21, height: 25 },
+            basket: { width: 21, height: 17 }
         };
         
         // Initialize with default size (regular)
