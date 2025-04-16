@@ -207,7 +207,7 @@
 
 .checkbox-container {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     gap: 0.5rem;
 }
 
@@ -223,32 +223,6 @@
     width: 1rem;
     height: 1rem;
     cursor: pointer;
-}
-
-.hidden-checkbox {
-    position: absolute;
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-
-.hidden-checkbox:checked + img {
-    filter: brightness(0) invert(1) brightness(200%);
-}
-
-.hidden-checkbox:checked ~ img {
-    filter: brightness(0) invert(1) brightness(200%);
-}
-
-label.icon-btn {
-    position: relative;
-}
-
-.hidden-checkbox:checked ~ .icon-btn,
-.hidden-checkbox:checked + .icon-btn,
-.hidden-checkbox:checked {
-    background-color: var(--primary-color);
-    border-color: var(--primary-color);
 }
 
 .toggle-btn.active {

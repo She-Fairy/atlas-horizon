@@ -60,7 +60,13 @@
                 </div>
             </div>
             <div class="tool-section">
-                <h3>Mirror Options</h3>
+                <h3>Tiles</h3>
+                <div id="tileSelector"></div>
+            </div>
+        </div>
+        
+        <div class="map-area">
+            <div class="map-toolbar">
                 <div class="checkbox-container">
                     <label>
                         <input type="checkbox" id="mirrorDiagonal">
@@ -75,29 +81,6 @@
                         Horizontal
                     </label>
                 </div>
-            </div>
-            <div class="tool-section">
-            </div>
-            <div class="tool-section">
-                <h3>Tiles</h3>
-                <div id="tileSelector"></div>
-            </div>
-        </div>
-        
-        <div class="map-area">
-            <div class="map-toolbar">
-                <div class="tool-buttons">
-                    <label class="icon-btn" title="Erase">
-                        <input type="checkbox" id="eraseBtn" class="hidden-checkbox">
-                        <img src="Resources/Additional/Icons/Erase.png" alt="Erase">
-                    </label>
-                    <button id="zoomInBtn" class="icon-btn" title="Zoom In">
-                        <img src="Resources/Additional/Icons/GlassPlus.png" alt="Zoom In">
-                    </button>
-                    <button id="zoomOutBtn" class="icon-btn" title="Zoom Out">
-                        <img src="Resources/Additional/Icons/GlassMinus.png" alt="Zoom Out">
-                    </button>
-                </div>
                 <div class="radio-container">
                     <label class="icon-btn">
                         <input type="radio" name="selectionMode" value="single" checked>
@@ -111,6 +94,18 @@
                         <input type="radio" name="selectionMode" value="rectangle">
                         <img src="Resources/Additional/Icons/Rectangle.png" alt="Rectangle">
                     </label>
+                </div>
+                <div class="tool-buttons">
+                    <label class="icon-btn" title="Erase">
+                        <input type="checkbox" id="eraseBtn">
+                        <img src="Resources/Additional/Icons/Erase.png" alt="Erase">
+                    </label>
+                    <button id="zoomInBtn" class="icon-btn" title="Zoom In">
+                        <img src="Resources/Additional/Icons/GlassPlus.png" alt="Zoom In">
+                    </button>
+                    <button id="zoomOutBtn" class="icon-btn" title="Zoom Out">
+                        <img src="Resources/Additional/Icons/GlassMinus.png" alt="Zoom Out">
+                    </button>
                 </div>
                 <div class="action-buttons">
                     <button id="clearBtn" class="icon-btn" title="Clear Map">
