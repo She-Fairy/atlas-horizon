@@ -1,4 +1,4 @@
-# Atlas Tiler
+# Atlas Mapper
 
 This site is not affiliated with or endorsed by Supercell. Brawl Stars and all related assets belong to Supercell.
 
