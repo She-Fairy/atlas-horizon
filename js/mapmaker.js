@@ -1,9 +1,191 @@
+// Constants for fence logic types
+const FENCE_LOGIC_TYPES = {
+    SIMPLE_BLOCK: 1,    // Logic 1: Block, horizontal, vertical
+    BINARY_CODE: 2,     // Logic 2: Binary code system (0001, 0010, etc.)
+    SIX_PIECE: 3,       // Logic 3: Hor, Ver, TL, TR, BL, BR
+    FOUR_PIECE: 4       // Logic 4: Single, T, TR, R
+};
+
+// Map environments to their fence logic types
+const FENCE_LOGIC_BY_ENVIRONMENT = {
+    // To be filled with actual environment mappings
+    // Example: 'Desert': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
+    'Desert': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
+    'Mine': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
+    'Oasis': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
+    'Grassy_Field': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
+    'City': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
+    'Rertopolis': FENCE_LOGIC_TYPES.BINARY_CODE,
+    'Mortuary': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
+    'Pirate_Ship': FENCE_LOGIC_TYPES.BINARY_CODE,
+    'Arcade': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
+    'Stadium': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
+    'Bazaar': FENCE_LOGIC_TYPES.BINARY_CODE,
+    'Super_City': FENCE_LOGIC_TYPES.BINARY_CODE,
+    'Gift_Shop': FENCE_LOGIC_TYPES.BINARY_CODE,
+    'Bandstand': FENCE_LOGIC_TYPES.BINARY_CODE,
+    'Snowtel': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
+    'Scrapyard': FENCE_LOGIC_TYPES.BINARY_CODE,
+    'Starr_Force': FENCE_LOGIC_TYPES.BINARY_CODE,
+    'Wild_West': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
+    'Water_Park': FENCE_LOGIC_TYPES.SIX_PIECE,
+    'Castle_Courtyard': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
+    'Brawlywood': FENCE_LOGIC_TYPES.FOUR_PIECE,
+    'Fighting_Game': FENCE_LOGIC_TYPES.BINARY_CODE,
+    'Biodome': FENCE_LOGIC_TYPES.BINARY_CODE,
+    'Stunt_Show': FENCE_LOGIC_TYPES.BINARY_CODE,
+    'Deep_Sea': FENCE_LOGIC_TYPES.BINARY_CODE,
+    'Robot_Factory': FENCE_LOGIC_TYPES.BINARY_CODE,
+    'Ghost_Station': FENCE_LOGIC_TYPES.BINARY_CODE,
+    'Candyland': FENCE_LOGIC_TYPES.BINARY_CODE,
+    'The_Hub': FENCE_LOGIC_TYPES.BINARY_CODE,
+    'Rumble_Jungle': FENCE_LOGIC_TYPES.BINARY_CODE,
+    'Enchanted_Woods': FENCE_LOGIC_TYPES.BINARY_CODE,
+    'Circus': FENCE_LOGIC_TYPES.BINARY_CODE,
+    'Starr_Toon': FENCE_LOGIC_TYPES.BINARY_CODE,
+    'Swamp_of_Love': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
+    'Rooftop': FENCE_LOGIC_TYPES.BINARY_CODE,
+    'Coin_Factory': FENCE_LOGIC_TYPES.BINARY_CODE,
+    'Snowtel_2': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
+    'Firedome': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
+    'Super_City_2': FENCE_LOGIC_TYPES.BINARY_CODE,
+    'Spongebob': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
+    'Oddity_Shop': FENCE_LOGIC_TYPES.BINARY_CODE,
+    'Skating_Bowl': FENCE_LOGIC_TYPES.BINARY_CODE,
+    'Hockey': FENCE_LOGIC_TYPES.SIX_PIECE,
+    'Escape_Room': FENCE_LOGIC_TYPES.BINARY_CODE
+};
+
+class FenceLogicHandler {
+    constructor() {
+        this.logicImplementations = {
+            [FENCE_LOGIC_TYPES.SIMPLE_BLOCK]: this.handleSimpleBlockLogic,
+            [FENCE_LOGIC_TYPES.BINARY_CODE]: this.handleBinaryCodeLogic,
+            [FENCE_LOGIC_TYPES.SIX_PIECE]: this.handleSixPieceLogic,
+            [FENCE_LOGIC_TYPES.FOUR_PIECE]: this.handleFourPieceLogic
+        };
+    }
+
+    getFenceImageName(x, y, mapData, environment, isFence = true) {
+        console.log(`Getting fence image for ${isFence ? 'fence' : 'rope'} at (${x},${y}) in ${environment}`);
+        
+        // Determine which logic to use based on environment
+        const logicType = isFence ? FENCE_LOGIC_BY_ENVIRONMENT[environment] : FENCE_LOGIC_TYPES.FOUR_PIECE;
+        console.log(`Using logic type: ${logicType}`);
+        
+        // Get the implementation for this logic type
+        const logicHandler = this.logicImplementations[logicType];
+        if (!logicHandler) {
+            console.error(`No handler found for fence logic type: ${logicType}`);
+            return 'Fence'; // Default fallback
+        }
+
+        // Get connections (true if connected, false if not)
+        const connections = this.getConnections(x, y, mapData, isFence);
+        console.log(`Connections:`, connections);
+        
+        // Call the appropriate logic handler
+        const result = logicHandler.call(this, connections);
+        console.log(`Resulting image name: ${result}`);
+        return result;
+    }
+
+    getConnections(x, y, mapData, isFence) {
+        const height = mapData.length;
+        const width = mapData[0].length;
+        
+        // Helper function to check if a tile is a fence/rope
+        const isSameType = (x, y) => {
+            if (x < 0 || x >= width || y < 0 || y >= height) return false;
+            const tileId = mapData[y][x];
+            return isFence ? (tileId === 7) : (tileId === 9); // Assuming 7 is fence and 9 is rope
+        };
+
+        return {
+            top: isSameType(x, y - 1),
+            right: isSameType(x + 1, y),
+            bottom: isSameType(x, y + 1),
+            left: isSameType(x - 1, y)
+        };
+    }
+
+    handleSimpleBlockLogic(connections) {
+        const { top, right, bottom, left } = connections;
+        
+        // Horizontal case: connected on both sides but not top/bottom
+        if (left && right && !top && !bottom) return 'Horizontal';
+        
+        // Vertical case: connected on top/bottom but not sides
+        if (top && bottom && !left && !right) return 'Vertical';
+        
+        // Default to block for all other cases
+        return 'Fence';
+    }
+
+    handleBinaryCodeLogic(connections) {
+        const { top, right, bottom, left } = connections;
+        
+        // Convert connections to binary string
+        const code = [top, left, right, bottom].map(c => c ? '1' : '0').join('');
+        
+        // Handle special cases first
+        const connectedCount = (top ? 1 : 0) + (right ? 1 : 0) + (bottom ? 1 : 0) + (left ? 1 : 0);
+        
+        if (connectedCount >= 3) {
+            // If two sides are connected, use 0110
+            if (left && right) return 'Fence';
+            // Otherwise use 1001
+            return '1001';
+        }
+
+        // For two or fewer connections
+        if (left && right) return 'Fence';  // Priority to horizontal connection
+        if (!left && !right && !top && !bottom) return 'Fence'; // Default when no side connections
+        
+        // Check if the binary code is one of the valid combinations
+        const validCodes = ['0001', '0010', '0011', '0100', '0101', 'Fence', 
+                           '1000', '1001', '1010', '1100'];
+        
+        return validCodes.includes(code) ? code : '0110'; // Default to 0110 if invalid
+    }
+
+    handleSixPieceLogic(connections) {
+        const { top, right, bottom, left } = connections;
+        
+        // Handle corners first
+        if (top && right && !bottom && !left) return 'TR';
+        if (top && left && !bottom && !right) return 'TL';
+        if (bottom && right && !top && !left) return 'BR';
+        if (bottom && left && !top && !right) return 'BL';
+        
+        // Handle vertical cases
+        if ((top && bottom) || // Connected vertically
+            (top && bottom && (left || right))) { // Three connections with two vertical
+            return 'Ver';
+        }
+        
+        // All other cases use horizontal
+        return 'Fence';
+    }
+
+    handleFourPieceLogic(connections) {
+        const { top, right } = connections;
+        
+        if (top && right) return 'TR';
+        if (top) return 'T';
+        if (right) return 'R';
+        return 'Fence';
+    }
+}
+
 class MapMaker {
     constructor(canvasId) {
         this.canvas = document.getElementById(canvasId);
         this.ctx = this.canvas.getContext('2d');
         this.tileSize = 32;
         this.canvasPadding = 16;  // Add padding for the canvas
+
+        this.tileImages = {};
         
         // Map size configurations
         this.mapSizes = {
@@ -17,6 +199,10 @@ class MapMaker {
         // Initialize with default size (regular)
         this.mapWidth = this.mapSizes.regular.width;
         this.mapHeight = this.mapSizes.regular.height;
+        
+        // Initialize undo/redo stacks
+        this.undoStack = [];
+        this.redoStack = [];
         
         this.zoomLevel = 1;
         this.minZoom = 0.5;
@@ -68,9 +254,38 @@ class MapMaker {
             'Crate': [1, 1.8, 0, -50, 1, 5],
             'Barrel': [1, 1.69, 0, -50, 1, 5],
             'Cactus': [1.1, 1.75, -5, -50, 1, 5],
-            'Fence': [1, 1.75, 0, -50, 1, 5],
             'Water': [1, 1, 0, 0, 1, 5],
+            // Base fence types
+            'Fence': [1, 1.61, 0, -50, 1, 5],
             'Rope Fence': [1, 1.75, 0, -50, 1, 5],
+            // Simple Block Logic variations
+            'Horizontal': [1, 1.26, 0, -12.6, 1, 5],
+            'Vertical': [1, 1.84, 0, -50, 1, 5],
+            // Binary Code Logic variations
+            '0001': [1/1.39, 1.39/1.39, 15, -28, 1, 5],
+            '0010': [1, 1.85, 0, -55, 1, 5],
+            '0011': [1/1.2, 1.85, 17, -55, 1, 5],
+            '0100': [1, 1.85, 0, -55, 1, 5],
+            '0101': [1/1.14, 1.85, 0, -55, 1, 5],
+            '0110': [1, 1.75, 0, -50, 1, 5],
+            '1000': [1/1.39, 1.83/1.39, 15, -30, 1, 5],
+            '1001': [1/1.39, 1.44/1.39, 15, -30, 1, 5],
+            '1010': [1/1.18, 2.1, 16, -80, 1, 5],
+            '1100': [1/1.15, 2.3, 0, -100, 1, 5],
+            // Six Piece Logic variations
+            'TL': [1, 1.75, 0, -50, 1, 5],
+            'TR': [1, 1.75, 0, -50, 1, 5],
+            'BL': [1, 1.75, 0, -50, 1, 5],
+            'BR': [1, 1.75, 0, -50, 1, 5],
+            'Ver': [1, 1.75, 0, -50, 1, 5],
+            // Four Piece Logic variations
+            'T': [1, 1.75, 0, -50, 1, 5],
+            'R': [1, 1.75, 0, -50, 1, 5],
+            // Rope Fence variations
+            'Post': [1, 1.8, 0, -50, 1, 5],
+            'Post_TR': [1.5, 2.75, 0, -145, 1, 5],
+            'Post_R': [1.5, 1.8, 0, -50, 1, 5],
+            'Post_T': [1, 2.75, 0, -145, 1, 5],
             'Skull': [1, 1.08, 0, 0, 1, 5],
             'Unbreakable': [1, 1.75, 0, -50, 1, 5],
             'Blue Spawn': [1.7, 1.7, -27.5, -27.5, 0.85, 5],
@@ -113,55 +328,27 @@ class MapMaker {
 
         // Initialize environment data
         this.environmentObjectiveData = {
-            Desert: {
-                'Gem_Grab': [2, 2, -50, -50, 1, 10],
-                'Showdown': [1, 1.75, 0, -50, 1, 5],
-                'Heist': [2, 2.21, -50, -115, 1, 10],
-                'Bounty': [1.15, 2.0585, -10, -50, 1, 10],
-                'Brawl_Ball': [1.3, 1.495, -20, -20, 1, 10],
-                'Hot_Zone': [7, 7, -300, -300, 1, 10],
-                'Snowtel_Thieves': [4, 4, -150, -150, 1, 10],
-                'Basket_Brawl': [1.3, 1.495, -20, -20, 1, 10],
-                'Volley_Brawl': [1.3, 1.495, -20, -20, 1, 10],
-                'Siege': [2.5, 3.1, -60, -175, 1, 10],
-                'Hold_The_Trophy': [2.5, 2.5, -75, -75, 1, 10]
+            Bazaar: {
+                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
             }
         };
 
         this.environmentTileData = {
-            Desert: {
+            Mine: {
+                'Wall2': [1*1.1, 1.65*1.1, -5, -50, 1, 5],
+                'Cactus': [1, 1.68, 0, -50, 1, 5],
+            },
+            Bazaar: {
                 'Wall': [1, 1.75, 0, -50, 1, 5],
                 'Bush': [1, 1.8, 0, -50, 1, 5],
                 'Wall2': [1, 1.75, 0, -50, 1, 5],
                 'Crate': [1, 1.8, 0, -50, 1, 5],
                 'Barrel': [1, 1.69, 0, -50, 1, 5],
                 'Cactus': [1.1, 1.75, -5, -50, 1, 5],
-                'Fence': [1, 1.75, 0, -50, 1, 5],
+                'Fence': [1, 1.85, 0, -55, 1, 5],
                 'Water': [1, 1, 0, 0, 1, 5],
                 'Rope Fence': [1, 1.75, 0, -50, 1, 5],
                 'Skull': [1, 1.08, 0, 0, 1, 5],
-                'Unbreakable': [1, 1.75, 0, -50, 1, 5],
-                'Blue Spawn': [1.7, 1.7, -27.5, -27.5, 0.85, 5],
-                'Red Spawn': [1.7, 1.7, -27.5, -27.5, 0.85, 5],
-                'Objective': [2, 2.21, -50, -115, 1, 10],
-                'Smoke': [1.5, 1.65, -10, -25, 1, 5],
-                'Heal Pad': [1, 1.12, 0, 0, 1, 5],
-                'Slow Tile': [1, 1.11, 0, 0, 1, 5],
-                'Speed Tile': [1, 1.11, 0, 0, 1, 5],
-                'Spikes': [1, 1.5, 0, -15, 1, 5],
-                'Jump R': [1, 1.12, 0, 0, 1, 5],
-                'Jump L': [1, 1.12, 0, 0, 1, 5],
-                'Jump T': [1, 1.12, 0, 0, 1, 5],
-                'Jump B': [1, 1.12, 0, 0, 1, 5],
-                'Jump BR': [1, 1.12, 0, 0, 1, 5],
-                'Jump TL': [1, 1.12, 0, 0, 1, 5],
-                'Jump BL': [1, 1.12, 0, 0, 1, 5],
-                'Jump TR': [1, 1.12, 0, 0, 1, 5],
-                'Teleporter Blue': [1, 1, 0, 0, 1, 5],
-                'Teleporter Green': [1, 1, 0, 0, 1, 5],
-                'Teleporter Red': [1, 1, 0, 0, 1, 5],
-                'Teleporter Yellow': [1, 1, 0, 0, 1, 5],
-                'Bolt': [1, 1.18, 0, 0, 1, 5]
             }
         };
         
@@ -176,7 +363,7 @@ class MapMaker {
             6: { name: 'Cactus', img: '${env}/Tiles/Cactus.png', size: 1 },
             7: { name: 'Fence', img: '${env}/Fence/Fence.png', size: 1 },
             8: { name: 'Water', img: '${env}/Water/00000000.png', size: 1 },
-            9: { name: 'Rope Fence', img: '${env}/Rope/Rope.png', size: 1 },
+            9: { name: 'Rope Fence', img: '${env}/Rope/Post.png', size: 1 },
             10: { name: 'Skull', img: '${env}/Tiles/Skull.png', size: 1 },
             11: { name: 'Unbreakable', img: 'Global/Unbreakable.png', size: 1 },
             12: { name: 'Blue Spawn', img: 'Global/Spawns/3v3/1.png', size: 1 },
@@ -222,7 +409,62 @@ class MapMaker {
             31: { name: 'Teleporter Yellow', img: 'Global/Teleporters/Yellow.png', size: 2 },
             32: { name: 'Bolt', img: 'Global/Objectives/Bolt.png', size: 1, showInGamemode: 'Siege' }
         };
+
+        this.waterTileFilenames = [
+            "00000000.png",
+            "00000010.png",
+            "00001000.png",
+            "00001010.png",
+            "00001011.png",
+            "00010000.png",
+            "00010010.png",
+            "00010110.png",
+            "00011000.png",
+            "00011010.png",
+            "00011011.png",
+            "00011110.png",
+            "00011111.png",
+            "01000000.png",
+            "01000010.png",
+            "01001000.png",
+            "01001010.png",
+            "01001011.png",
+            "01010000.png",
+            "01010010.png",
+            "01010110.png",
+            "01011000.png",
+            "01011010.png",
+            "01011011.png",
+            "01011110.png",
+            "01011111.png",
+            "01101000.png",
+            "01101010.png",
+            "01101011.png",
+            "01111000.png",
+            "01111010.png",
+            "01111011.png",
+            "01111110.png",
+            "01111111.png",
+            "11010000.png",
+            "11010010.png",
+            "11010110.png",
+            "11011000.png",
+            "11011010.png",
+            "11011011.png",
+            "11011110.png",
+            "11011111.png",
+            "11111000.png",
+            "11111010.png",
+            "11111011.png",
+            "11111110.png",
+            "11111111.png"
+          ];
+          
+          
         
+        // Initialize fence logic handler
+        this.fenceLogicHandler = new FenceLogicHandler();
+
         // Initialize UI and event listeners
         this.initializeUI();
         this.initializeEventListeners();
@@ -233,6 +475,261 @@ class MapMaker {
 
         // Initialize the map maker
         this.initialize();
+        
+        // Preload water tiles
+        this.preloadWaterTiles();
+
+    }
+
+    
+
+    // Add a method to preload all water tile images
+    preloadWaterTiles() {
+        console.log("Preloading water tiles...");
+        this.waterTileFilenames.forEach(filename => {
+            const imagePath = `Resources/${this.environment}/Water/${filename}`;
+            const cacheKey = `water_${filename}`; // Use a specific cache key for water tiles
+            
+            // Create and load the image if it doesn't exist in cache
+            if (!this.tileImages[cacheKey]) {
+                const img = new Image();
+                img.src = imagePath;
+                
+                // Add error handling
+                img.onerror = () => {
+                    console.error(`Failed to load water image: ${imagePath}`);
+                    // Try to load a fallback image
+                    img.src = `Resources/${this.environment}/Water/00000000.png`;
+                };
+                
+                // Store the image in the tileImages object with the cache key
+                this.tileImages[cacheKey] = img;
+            }
+        });
+    }
+
+    // Update the setEnvironment method to preload water tiles when environment changes
+    setEnvironment(environment) {
+        this.environment = environment;
+        this.loadEnvironmentBackgrounds();
+        this.loadTileImages();
+        this.preloadWaterTiles(); // Ensure water tiles are preloaded
+        this.initializeTileSelector();
+        // Force a redraw after a short delay to ensure images are loaded
+        setTimeout(() => this.draw(), 100);
+    }
+
+    // Update the drawTile method to handle water tiles more robustly
+    drawTile(ctx, tileId, x, y) {
+        const def = this.tileDefinitions[tileId];
+        if (!def) return;
+
+        let img;
+        if (tileId === 8) { // Water tile
+            // Initialize the 8-bit code array
+            const code = new Array(8).fill('0');
+            
+            // Check for edge conditions
+            const isTopEdge = y === 0;
+            const isBottomEdge = y === this.mapHeight - 1;
+            const isLeftEdge = x === 0;
+            const isRightEdge = x === this.mapWidth - 1;
+
+            // Check direct connections first
+            const hasTop = !isTopEdge && this.mapData[y - 1][x] === 8;
+            const hasBottom = !isBottomEdge && this.mapData[y + 1][x] === 8;
+            const hasLeft = !isLeftEdge && this.mapData[y][x - 1] === 8;
+            const hasRight = !isRightEdge && this.mapData[y][x + 1] === 8;
+
+            // Set direct connections
+            if (hasTop) code[1] = '1';    // Top
+            if (hasBottom) code[6] = '1'; // Bottom
+            if (hasLeft) code[3] = '1';   // Left
+            if (hasRight) code[4] = '1';  // Right
+
+            // Check corner connections with adjacency rules
+            // Top-left corner
+            if (!isTopEdge && !isLeftEdge && 
+                this.mapData[y - 1][x - 1] === 8 && hasTop && hasLeft) {
+                code[0] = '1';
+            }
+
+            // Top-right corner
+            if (!isTopEdge && !isRightEdge && 
+                this.mapData[y - 1][x + 1] === 8 && hasTop && hasRight) {
+                code[2] = '1';
+            }
+
+            // Bottom-left corner
+            if (!isBottomEdge && !isLeftEdge && 
+                this.mapData[y + 1][x - 1] === 8 && hasBottom && hasLeft) {
+                code[5] = '1';
+            }
+
+            // Bottom-right corner
+            if (!isBottomEdge && !isRightEdge && 
+                this.mapData[y + 1][x + 1] === 8 && hasBottom && hasRight) {
+                code[7] = '1';
+            }
+
+            // Convert code array to string for image name
+            const imageName = code.join('') + '.png';
+            const cacheKey = `water_${imageName}`;
+            
+            // Get the image from the cache
+            img = this.tileImages[cacheKey];
+            
+            // If image doesn't exist in cache, create it
+            if (!img) {
+                const imagePath = `Resources/${this.environment}/Water/${imageName}`;
+                img = new Image();
+                img.src = imagePath;
+                
+                // Add error handling
+                img.onerror = () => {
+                    console.error(`Failed to load water image: ${imagePath}`);
+                    // Try to load a fallback image
+                    img.src = `Resources/${this.environment}/Water/00000000.png`;
+                };
+                
+                // Store in cache
+                this.tileImages[cacheKey] = img;
+            }
+            
+            // If image isn't loaded yet, draw a placeholder
+            if (!img || !img.complete) {
+                ctx.fillStyle = 'rgba(0, 0, 255, 0.1)'; // Reduced opacity from 0.2 to 0.1
+                ctx.fillRect(
+                    x * this.tileSize + this.canvasPadding,
+                    y * this.tileSize + this.canvasPadding,
+                    this.tileSize,
+                    this.tileSize
+                );
+                return;
+            }
+
+            // Get water tile dimensions
+            const dimensions = this.environmentTileData[this.environment]?.['Water'] || 
+                             this.tileData['Water'] ||
+                             [1, 1, 0, 0, 1, 5]; // Default dimensions if none specified
+
+            // Draw the water tile
+            const [scaleX, scaleY, offsetX, offsetY, opacity] = dimensions;
+            const tileSize = this.tileSize;
+            
+            // Calculate drawing dimensions
+            const width = tileSize * scaleX;
+            const height = tileSize * scaleY;
+            
+            // Calculate position with offsets and padding
+            const drawX = x * tileSize + (tileSize * offsetX / 100) + this.canvasPadding;
+            const drawY = y * tileSize + (tileSize * offsetY / 100) + this.canvasPadding;
+
+            // Set opacity and draw the image
+            ctx.globalAlpha = opacity;
+            ctx.drawImage(img, drawX, drawY, width, height);
+            ctx.globalAlpha = 1.0;
+            
+            return;
+        } else if (tileId === 7 || tileId === 9) { // Fence or Rope Fence
+            const isFence = tileId === 7;
+            const imageName = this.fenceLogicHandler.getFenceImageName(x, y, this.mapData, this.environment, isFence);
+            
+            // For rope fence, map the image name to the corresponding Post variation
+            const ropeMapping = {
+                'T': 'Post_T',
+                'R': 'Post_R',
+                'TR': 'Post_TR',
+                'Fence': 'Post'
+            };
+            
+            const finalImageName = isFence ? imageName : (ropeMapping[imageName] || 'Post');
+            const imagePath = `Resources/${this.environment}/${isFence ? 'Fence' : 'Rope'}/${finalImageName}.png`;
+            
+            img = this.tileImages[imagePath];
+            
+            if (!img) {
+                img = new Image();
+                img.onload = () => this.draw();
+                img.src = imagePath;
+                img.onerror = () => {
+                    console.error(`Failed to load ${isFence ? 'fence' : 'rope'} image: ${imagePath}`);
+                    // Load fallback image
+                    img.src = `Resources/${this.environment}/${isFence ? 'Fence' : 'Rope'}/Fence.png`;
+                };
+                this.tileImages[imagePath] = img;
+            }
+            
+            if (!img.complete) {
+                // Draw placeholder
+                ctx.fillStyle = 'rgba(150, 150, 150, 0.2)';
+                ctx.fillRect(
+                    x * this.tileSize + this.canvasPadding,
+                    y * this.tileSize + this.canvasPadding,
+                    this.tileSize,
+                    this.tileSize
+                );
+                return;
+            }
+        } else {
+            img = this.tileImages[tileId];
+        }
+
+        if (!img || !img.complete) return;
+
+        // Get tile dimensions data
+        let dimensions;
+        if (def.name === 'Objective') {
+            dimensions = this.environmentObjectiveData[this.environment]?.[this.gamemode] || 
+                        this.objectiveData[this.gamemode];
+        } else {
+            // For fence and rope fence variations, use the specific variation's dimensions
+            const isFence = tileId === 7;
+            const isRope = tileId === 9;
+            if (isFence || isRope) {
+                const imageName = this.fenceLogicHandler.getFenceImageName(x, y, this.mapData, this.environment, isFence);
+                const ropeMapping = {
+                    'T': 'Post_T',
+                    'R': 'Post_R',
+                    'TR': 'Post_TR',
+                    'Fence': 'Post'
+                };
+                const finalImageName = isFence ? imageName : (ropeMapping[imageName] || 'Post');
+                
+                // First check environment-specific data
+                dimensions = this.environmentTileData[this.environment]?.[finalImageName] ||
+                           // Then check base tile data
+                           this.tileData[finalImageName] ||
+                           // Fall back to base fence/rope fence in environment data
+                           this.environmentTileData[this.environment]?.[isFence ? 'Fence' : 'Rope Fence'] ||
+                           // Finally fall back to base tile data
+                           this.tileData[isFence ? 'Fence' : 'Rope Fence'];
+            } else {
+                dimensions = this.environmentTileData[this.environment]?.[def.name] || 
+                            this.tileData[def.name];
+            }
+        }
+        if (!dimensions) return;
+
+        const [scaleX, scaleY, offsetX, offsetY, opacity, zIndex] = dimensions;
+        const tileSize = this.tileSize;
+
+        // Calculate drawing dimensions
+        const width = tileSize * scaleX * (def.size || 1);
+        const height = tileSize * scaleY * (def.size || 1);
+        
+        // Calculate position with offsets and padding
+        const drawX = x * tileSize + (tileSize * offsetX / 100) + this.canvasPadding;
+        const drawY = y * tileSize + (tileSize * offsetY / 100) + this.canvasPadding;
+
+        // Set opacity
+        ctx.globalAlpha = opacity;
+
+        // Draw the tile
+        ctx.drawImage(img, drawX, drawY, width, height);
+
+        // Reset opacity
+        ctx.globalAlpha = 1;
     }
 
     async initialize() {
@@ -363,7 +860,7 @@ class MapMaker {
             6: { name: 'Cactus', img: '${env}/Tiles/Cactus.png', size: 1 },
             7: { name: 'Fence', img: '${env}/Fence/Fence.png', size: 1 },
             8: { name: 'Water', img: '${env}/Water/00000000.png', size: 1 },
-            9: { name: 'Rope Fence', img: '${env}/Rope/Rope.png', size: 1 },
+            9: { name: 'Rope Fence', img: '${env}/Rope/Post.png', size: 1 },
             10: { name: 'Skull', img: '${env}/Tiles/Skull.png', size: 1 },
             11: { name: 'Unbreakable', img: 'Global/Unbreakable.png', size: 1 },
             12: { name: 'Blue Spawn', img: 'Global/Spawns/3v3/1.png', size: 1 },
@@ -646,28 +1143,14 @@ class MapMaker {
             }
         });
 
-        // Create bound event handlers
-        const boundMouseDown = this.handleMouseDown.bind(this);
-        const boundMouseMove = this.handleMouseMove.bind(this);
-        const boundMouseUp = this.handleMouseUp.bind(this);
-        const boundMouseLeave = this.handleMouseLeave.bind(this);
-
         // Canvas event listeners
-        this.canvas.addEventListener('mousedown', boundMouseDown);
-        this.canvas.addEventListener('mousemove', boundMouseMove);
-        this.canvas.addEventListener('mouseup', boundMouseUp);
-        this.canvas.addEventListener('mouseleave', boundMouseLeave);
+        this.canvas.addEventListener('mousedown', this.handleMouseDown.bind(this));
+        this.canvas.addEventListener('mousemove', this.handleMouseMove.bind(this));
+        this.canvas.addEventListener('mouseup', this.handleMouseUp.bind(this));
+        this.canvas.addEventListener('mouseleave', this.handleMouseLeave.bind(this));
         
         // Add document-level mouse up to ensure we catch the event even if released outside canvas
-        document.addEventListener('mouseup', boundMouseUp);
-
-        // Store the bound handlers so we can remove them later if needed
-        this.boundEventHandlers = {
-            mousedown: boundMouseDown,
-            mousemove: boundMouseMove,
-            mouseup: boundMouseUp,
-            mouseleave: boundMouseLeave
-        };
+        document.addEventListener('mouseup', this.handleMouseUp.bind(this));
     }
 
     saveState() {
@@ -825,8 +1308,7 @@ class MapMaker {
                         const drawY = y * this.tileSize + this.tileSize - drawHeight;
                         
                         // Get tile dimensions from tileData
-                        const tileData = this.environmentTileData[this.environment]?.[draggedTile.name] || 
-                                       this.tileData[draggedTile.name];
+                        const tileData = this.tileData[draggedTile.name];
                         const [scaleX, scaleY] = tileData || [1, 1];
                         
                         this.ctx.drawImage(
@@ -882,9 +1364,21 @@ class MapMaker {
 
     handleMouseUp(event) {
         this.mouseDown = false;
-        const coords = this.getTileCoordinates(event);
-        
-        if (this.isDragging) {
+        if (!this.isDragging && this.isDrawing) {
+            const coords = this.getTileCoordinates(event);
+            if (coords.x >= 0 && coords.x < this.mapWidth && coords.y >= 0 && coords.y < this.mapHeight) {
+                if (this.selectionMode === 'single') {
+                    if (this.isErasing) {
+                        this.eraseTile(coords.x, coords.y);
+                    } else {
+                        this.placeTile(coords.x, coords.y);
+                    }
+                } else {
+                    this.placeTilesInSelection();
+                }
+            }
+        } else if (this.isDragging) {
+            const coords = this.getTileCoordinates(event);
             if (coords.x >= 0 && coords.x < this.mapWidth && coords.y >= 0 && coords.y < this.mapHeight) {
                 // Get the tile definition
                 const def = this.tileDefinitions[this.draggedTileId];
@@ -927,8 +1421,7 @@ class MapMaker {
                     
                     // Helper function to place a tile and its occupied spaces
                     const placeMirroredTile = (ty, tx, mid) => {
-                        if (tx < 0 || tx >= this.mapWidth || ty < 0 || ty >= this.mapHeight) return;
-                        
+                        if (ty < 0 || ty >= this.mapHeight || tx < 0 || tx >= this.mapWidth) return;
                         if (size === 2) {
                             if (tx >= this.mapWidth - 1 || ty >= this.mapHeight - 1) return;
                             // Check if any tiles are occupied
@@ -965,18 +1458,6 @@ class MapMaker {
                         const adjustedX = size === 2 ? mirrorX - 1 : mirrorX;
                         placeMirroredTile(adjustedY, adjustedX, mirrorD);
                     }
-                }
-            }
-        } else if (this.isDrawing) {
-            if (coords.x >= 0 && coords.x < this.mapWidth && coords.y >= 0 && coords.y < this.mapHeight) {
-                if (this.selectionMode === 'single') {
-                    if (this.isErasing) {
-                        this.eraseTile(coords.x, coords.y);
-                    } else {
-                        this.placeTile(coords.x, coords.y);
-                    }
-                } else {
-                    this.placeTilesInSelection();
                 }
             }
         }
@@ -1154,28 +1635,150 @@ class MapMaker {
 
         let img;
         if (tileId === 8) { // Water tile
-            // Get surrounding water tiles
-            const surroundingWater = [
-                y > 0 && x > 0 ? this.mapData[y-1][x-1] === 8 : false, // Top-left
-                y > 0 ? this.mapData[y-1][x] === 8 : false, // Top
-                y > 0 && x < this.mapWidth - 1 ? this.mapData[y-1][x+1] === 8 : false, // Top-right
-                x > 0 ? this.mapData[y][x-1] === 8 : false, // Left
-                x < this.mapWidth - 1 ? this.mapData[y][x+1] === 8 : false, // Right
-                y < this.mapHeight - 1 && x > 0 ? this.mapData[y+1][x-1] === 8 : false, // Bottom-left
-                y < this.mapHeight - 1 ? this.mapData[y+1][x] === 8 : false, // Bottom
-                y < this.mapHeight - 1 && x < this.mapWidth - 1 ? this.mapData[y+1][x+1] === 8 : false // Bottom-right
-            ];
-
-            // Generate image name based on surrounding water
-            const imageName = surroundingWater.map(hasWater => hasWater ? '1' : '0').join('');
+            // Initialize the 8-bit code array
+            const code = new Array(8).fill('0');
             
-            // Get or create the image
-            if (!this.tileImages[`water_${imageName}`]) {
+            // Check for edge conditions
+            const isTopEdge = y === 0;
+            const isBottomEdge = y === this.mapHeight - 1;
+            const isLeftEdge = x === 0;
+            const isRightEdge = x === this.mapWidth - 1;
+
+            // Check direct connections first
+            const hasTop = !isTopEdge && this.mapData[y - 1][x] === 8;
+            const hasBottom = !isBottomEdge && this.mapData[y + 1][x] === 8;
+            const hasLeft = !isLeftEdge && this.mapData[y][x - 1] === 8;
+            const hasRight = !isRightEdge && this.mapData[y][x + 1] === 8;
+
+            // Set direct connections
+            if (hasTop) code[1] = '1';    // Top
+            if (hasBottom) code[6] = '1'; // Bottom
+            if (hasLeft) code[3] = '1';   // Left
+            if (hasRight) code[4] = '1';  // Right
+
+            // Check corner connections with adjacency rules
+            // Top-left corner
+            if (!isTopEdge && !isLeftEdge && 
+                this.mapData[y - 1][x - 1] === 8 && hasTop && hasLeft) {
+                code[0] = '1';
+            }
+
+            // Top-right corner
+            if (!isTopEdge && !isRightEdge && 
+                this.mapData[y - 1][x + 1] === 8 && hasTop && hasRight) {
+                code[2] = '1';
+            }
+
+            // Bottom-left corner
+            if (!isBottomEdge && !isLeftEdge && 
+                this.mapData[y + 1][x - 1] === 8 && hasBottom && hasLeft) {
+                code[5] = '1';
+            }
+
+            // Bottom-right corner
+            if (!isBottomEdge && !isRightEdge && 
+                this.mapData[y + 1][x + 1] === 8 && hasBottom && hasRight) {
+                code[7] = '1';
+            }
+
+            // Convert code array to string for image name
+            const imageName = code.join('') + '.png';
+            const cacheKey = `water_${imageName}`;
+            
+            // Get the image from the cache
+            img = this.tileImages[cacheKey];
+            
+            // If image doesn't exist in cache, create it
+            if (!img) {
+                const imagePath = `Resources/${this.environment}/Water/${imageName}`;
                 img = new Image();
-                img.src = `Resources/${this.environment}/Water/${imageName}.png`;
-                this.tileImages[`water_${imageName}`] = img;
-            } else {
-                img = this.tileImages[`water_${imageName}`];
+                img.src = imagePath;
+                
+                // Add error handling
+                img.onerror = () => {
+                    console.error(`Failed to load water image: ${imagePath}`);
+                    // Try to load a fallback image
+                    img.src = `Resources/${this.environment}/Water/00000000.png`;
+                };
+                
+                // Store in cache
+                this.tileImages[cacheKey] = img;
+            }
+            
+            // If image isn't loaded yet, draw a placeholder
+            if (!img || !img.complete) {
+                ctx.fillStyle = 'rgba(0, 0, 255, 0.1)'; // Reduced opacity from 0.2 to 0.1
+                ctx.fillRect(
+                    x * this.tileSize + this.canvasPadding,
+                    y * this.tileSize + this.canvasPadding,
+                    this.tileSize,
+                    this.tileSize
+                );
+                return;
+            }
+
+            // Get water tile dimensions
+            const dimensions = this.environmentTileData[this.environment]?.['Water'] || 
+                             this.tileData['Water'] ||
+                             [1, 1, 0, 0, 1, 5]; // Default dimensions if none specified
+
+            // Draw the water tile
+            const [scaleX, scaleY, offsetX, offsetY, opacity] = dimensions;
+            const tileSize = this.tileSize;
+            
+            // Calculate drawing dimensions
+            const width = tileSize * scaleX;
+            const height = tileSize * scaleY;
+            
+            // Calculate position with offsets and padding
+            const drawX = x * tileSize + (tileSize * offsetX / 100) + this.canvasPadding;
+            const drawY = y * tileSize + (tileSize * offsetY / 100) + this.canvasPadding;
+
+            // Set opacity and draw the image
+            ctx.globalAlpha = opacity;
+            ctx.drawImage(img, drawX, drawY, width, height);
+            ctx.globalAlpha = 1.0;
+            
+            return;
+        } else if (tileId === 7 || tileId === 9) { // Fence or Rope Fence
+            const isFence = tileId === 7;
+            const imageName = this.fenceLogicHandler.getFenceImageName(x, y, this.mapData, this.environment, isFence);
+            
+            // For rope fence, map the image name to the corresponding Post variation
+            const ropeMapping = {
+                'T': 'Post_T',
+                'R': 'Post_R',
+                'TR': 'Post_TR',
+                'Fence': 'Post'
+            };
+            
+            const finalImageName = isFence ? imageName : (ropeMapping[imageName] || 'Post');
+            const imagePath = `Resources/${this.environment}/${isFence ? 'Fence' : 'Rope'}/${finalImageName}.png`;
+            
+            img = this.tileImages[imagePath];
+            
+            if (!img) {
+                img = new Image();
+                img.onload = () => this.draw();
+                img.src = imagePath;
+                img.onerror = () => {
+                    console.error(`Failed to load ${isFence ? 'fence' : 'rope'} image: ${imagePath}`);
+                    // Load fallback image
+                    img.src = `Resources/${this.environment}/${isFence ? 'Fence' : 'Rope'}/Fence.png`;
+                };
+                this.tileImages[imagePath] = img;
+            }
+            
+            if (!img.complete) {
+                // Draw placeholder
+                ctx.fillStyle = 'rgba(150, 150, 150, 0.2)';
+                ctx.fillRect(
+                    x * this.tileSize + this.canvasPadding,
+                    y * this.tileSize + this.canvasPadding,
+                    this.tileSize,
+                    this.tileSize
+                );
+                return;
             }
         } else {
             img = this.tileImages[tileId];
@@ -1189,8 +1792,31 @@ class MapMaker {
             dimensions = this.environmentObjectiveData[this.environment]?.[this.gamemode] || 
                         this.objectiveData[this.gamemode];
         } else {
-            dimensions = this.environmentTileData[this.environment]?.[def.name] || 
-                        this.tileData[def.name];
+            // For fence and rope fence variations, use the specific variation's dimensions
+            const isFence = tileId === 7;
+            const isRope = tileId === 9;
+            if (isFence || isRope) {
+                const imageName = this.fenceLogicHandler.getFenceImageName(x, y, this.mapData, this.environment, isFence);
+                const ropeMapping = {
+                    'T': 'Post_T',
+                    'R': 'Post_R',
+                    'TR': 'Post_TR',
+                    'Fence': 'Post'
+                };
+                const finalImageName = isFence ? imageName : (ropeMapping[imageName] || 'Post');
+                
+                // First check environment-specific data
+                dimensions = this.environmentTileData[this.environment]?.[finalImageName] ||
+                           // Then check base tile data
+                           this.tileData[finalImageName] ||
+                           // Fall back to base fence/rope fence in environment data
+                           this.environmentTileData[this.environment]?.[isFence ? 'Fence' : 'Rope Fence'] ||
+                           // Finally fall back to base tile data
+                           this.tileData[isFence ? 'Fence' : 'Rope Fence'];
+            } else {
+                dimensions = this.environmentTileData[this.environment]?.[def.name] || 
+                            this.tileData[def.name];
+            }
         }
         if (!dimensions) return;
 
@@ -1276,7 +1902,7 @@ class MapMaker {
 
         // Draw error tiles if showErrors is enabled
         if (this.showErrors) {
-            this.ctx.fillStyle = 'rgba(255, 0, 0, 0.5)';
+            this.ctx.fillStyle = 'rgba(255, 0, 0, 0.3)'; // Adjusted opacity for better visibility
             for (const tilePos of this.errorTiles) {
                 const [x, y] = tilePos.split(',').map(Number);
                 this.ctx.fillRect(
@@ -1312,10 +1938,22 @@ class MapMaker {
     drawSelection() {
         if (!this.selectionStart || !this.selectionEnd) return;
         
-        this.ctx.fillStyle = 'rgba(255, 255, 0, 0.3)';
+        // Create a separate canvas for the selection overlay if it doesn't exist
+        if (!this.selectionCanvas) {
+            this.selectionCanvas = document.createElement('canvas');
+            this.selectionCanvas.width = this.canvas.width;
+            this.selectionCanvas.height = this.canvas.height;
+            this.selectionCtx = this.selectionCanvas.getContext('2d');
+        }
+        
+        // Clear the selection canvas
+        this.selectionCtx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        
+        // Set the selection style
+        this.selectionCtx.fillStyle = 'rgba(255, 255, 0, 0.3)';
         
         if (this.selectionMode === 'single') {
-            this.ctx.fillRect(
+            this.selectionCtx.fillRect(
                 this.selectionEnd.x * this.tileSize + this.canvasPadding,
                 this.selectionEnd.y * this.tileSize + this.canvasPadding,
                 this.tileSize,
@@ -1325,7 +1963,7 @@ class MapMaker {
             // Highlight all tiles that have been hovered over
             for (const tilePos of this.hoveredTiles) {
                 const [x, y] = tilePos.split(',').map(Number);
-                this.ctx.fillRect(
+                this.selectionCtx.fillRect(
                     x * this.tileSize + this.canvasPadding,
                     y * this.tileSize + this.canvasPadding,
                     this.tileSize,
@@ -1340,7 +1978,7 @@ class MapMaker {
             
             for (let y = startY; y <= endY; y++) {
                 for (let x = startX; x <= endX; x++) {
-                    this.ctx.fillRect(
+                    this.selectionCtx.fillRect(
                         x * this.tileSize + this.canvasPadding,
                         y * this.tileSize + this.canvasPadding,
                         this.tileSize,
@@ -1349,6 +1987,9 @@ class MapMaker {
                 }
             }
         }
+        
+        // Draw the selection overlay on top of the main canvas
+        this.ctx.drawImage(this.selectionCanvas, 0, 0);
     }
 
     placeTilesInSelection() {
@@ -1493,7 +2134,6 @@ class MapMaker {
         if (saveState) {
             this.draw();
             this.checkForErrors();
-            this.updateWaterTileImages(); // Update water tiles after placing a tile
         }
     }
 
@@ -1553,7 +2193,6 @@ class MapMaker {
         if (saveState) {
             this.draw();
             this.checkForErrors();
-            this.updateWaterTileImages(); // Update water tiles after erasing a tile
         }
     }
 
@@ -1761,7 +2400,6 @@ class MapMaker {
         // Update UI and reload images
         this.initializeTileSelector();
         this.loadTileImages();
-        this.updateWaterTileImages();
         this.draw();
     }
 
@@ -1770,7 +2408,6 @@ class MapMaker {
         this.loadEnvironmentBackgrounds();
         this.loadTileImages();
         this.initializeTileSelector();
-        this.updateWaterTileImages();
         this.draw();
     }
 
@@ -1993,44 +2630,6 @@ class MapMaker {
             mapContainer.style.alignItems = 'flex-start';
             mapContainer.style.padding = '20px';
         }
-    }
-
-    updateWaterTileImages() {
-        const imageLoadPromises = [];
-
-        for (let y = 0; y < this.mapHeight; y++) {
-            for (let x = 0; x < this.mapWidth; x++) {
-                if (this.mapData[y][x] === 8) { // Water tile ID
-                    // Get surrounding water tiles
-                    const surroundingWater = [
-                        y > 0 && x > 0 ? this.mapData[y-1][x-1] === 8 : false, // Top-left
-                        y > 0 ? this.mapData[y-1][x] === 8 : false, // Top
-                        y > 0 && x < this.mapWidth - 1 ? this.mapData[y-1][x+1] === 8 : false, // Top-right
-                        x > 0 ? this.mapData[y][x-1] === 8 : false, // Left
-                        x < this.mapWidth - 1 ? this.mapData[y][x+1] === 8 : false, // Right
-                        y < this.mapHeight - 1 && x > 0 ? this.mapData[y+1][x-1] === 8 : false, // Bottom-left
-                        y < this.mapHeight - 1 ? this.mapData[y+1][x] === 8 : false, // Bottom
-                        y < this.mapHeight - 1 && x < this.mapWidth - 1 ? this.mapData[y+1][x+1] === 8 : false // Bottom-right
-                    ];
-
-                    // Generate image name based on surrounding water
-                    const imageName = surroundingWater.map(hasWater => hasWater ? '1' : '0').join('');
-                    
-                    // Update the tile's image
-                    const img = new Image();
-                    img.src = `Resources/${this.environment}/Water/${imageName}.png`;
-                    this.tileImages[`water_${imageName}`] = img;
-                    imageLoadPromises.push(new Promise(resolve => {
-                        img.onload = resolve;
-                    }));
-                }
-            }
-        }
-
-        // Wait for all water images to load then draw
-        Promise.all(imageLoadPromises).then(() => {
-            this.draw();
-        });
     }
 }
 
