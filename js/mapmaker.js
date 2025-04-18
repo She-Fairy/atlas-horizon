@@ -233,7 +233,7 @@ class MapMaker {
 
         // Game settings
         this.gamemode = 'Gem_Grab';
-        this.environment = 'Bazaar';
+        this.environment = 'Desert';
 
         // Selection mode
         this.selectionMode = 'single';
