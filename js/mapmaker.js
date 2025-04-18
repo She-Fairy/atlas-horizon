@@ -410,6 +410,7 @@ class MapMaker {
             32: { name: 'Bolt', img: 'Global/Objectives/Bolt.png', size: 1, showInGamemode: 'Siege' }
         };
 
+        // Initialize water tile filenames
         this.waterTileFilenames = [
             "00000000.png",
             "00000010.png",
