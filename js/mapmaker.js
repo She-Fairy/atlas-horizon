@@ -205,9 +205,9 @@ class MapMaker {
         this.redoStack = [];
         
         this.zoomLevel = 1;
-        this.minZoom = 0.5;
-        this.maxZoom = 2;
-        this.zoomStep = 0.25;
+        this.minZoom = 0.25;  // Allow zooming out more
+        this.maxZoom = 3;     // Allow zooming in more
+        this.zoomStep = 0.1;  // Make zoom steps smaller for more gradual zooming
 
         // Initialize canvas size with padding
         this.canvas.width = (this.mapWidth * this.tileSize) + (this.canvasPadding * 2);
@@ -998,8 +998,8 @@ class MapMaker {
 
     fitMapToScreen() {
         const container = this.canvas.parentElement;
-        const containerWidth = container.clientWidth - 32;
-        const containerHeight = container.clientHeight - 32;
+        const containerWidth = container.clientWidth - 40; // Account for padding
+        const containerHeight = container.clientHeight - 40;
         
         const scaleX = containerWidth / this.canvas.width;
         const scaleY = containerHeight / this.canvas.height;
@@ -1009,13 +1009,19 @@ class MapMaker {
     }
 
     updateCanvasZoom() {
-        this.canvas.style.transform = `scale(${this.zoomLevel})`;
-        
         const container = this.canvas.parentElement;
         const mapWidth = this.canvas.width * this.zoomLevel;
         const mapHeight = this.canvas.height * this.zoomLevel;
         
-        if (mapWidth > container.clientWidth - 32 || mapHeight > container.clientHeight - 32) {
+        // Set the canvas size to match zoomed dimensions
+        this.canvas.style.width = `${mapWidth}px`;
+        this.canvas.style.height = `${mapHeight}px`;
+        
+        // Apply zoom transform from top-left corner
+        this.canvas.style.transform = `scale(${this.zoomLevel})`;
+        
+        // Make container scrollable if content is larger than container
+        if (mapWidth > container.clientWidth - 40 || mapHeight > container.clientHeight - 40) {
             container.classList.add('scrollable');
         } else {
             container.classList.remove('scrollable');
@@ -1305,18 +1311,26 @@ class MapMaker {
                     if (img && img.complete) {
                         const aspectRatio = img.height / img.width;
                         const drawHeight = this.tileSize * aspectRatio;
-                        const drawY = y * this.tileSize + this.tileSize - drawHeight;
+                        const baseDrawY = y * this.tileSize + this.tileSize - drawHeight;
                         
                         // Get tile dimensions from tileData
                         const tileData = this.tileData[draggedTile.name];
-                        const [scaleX, scaleY] = tileData || [1, 1];
+                        const [scaleX, scaleY, offsetX = 0, offsetY = 0] = tileData || [1, 1, 0, 0];
+                        
+                        // Calculate width and height based on tile size
+                        const width = this.tileSize * scaleX * (draggedTile.size || 1);
+                        const height = drawHeight * scaleY * (draggedTile.size || 1);
+                        
+                        // Calculate position with offsets
+                        const drawX = x * this.tileSize + (this.tileSize * offsetX / 100) + this.canvasPadding;
+                        const drawY = baseDrawY + (this.tileSize * offsetY / 100) + this.canvasPadding;
                         
                         this.ctx.drawImage(
                             img,
-                            x * this.tileSize + this.canvasPadding,
-                            drawY + this.canvasPadding,
-                            this.tileSize * scaleX,
-                            drawHeight * scaleY
+                            drawX,
+                            drawY,
+                            width,
+                            height
                         );
                     }
                 };
