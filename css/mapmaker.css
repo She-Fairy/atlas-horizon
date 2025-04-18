@@ -367,3 +367,111 @@ label:has(input[type="radio"]:checked) {
     padding: 8px 8px;
     background-color: rgba(var(--primary-color-rgb), 0.25);
 }
+
+.tooltip-floating {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    font-size: 20px;
+    color: var(--text-color-secondary);
+    background-color: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    z-index: 1000;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.tooltip-floating:hover {
+    background-color: var(--surface-color-hover);
+    border-color: var(--primary-color);
+}
+
+.tooltip-floating .tooltip-text {
+    visibility: hidden;
+    opacity: 0;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 8px 12px;
+    position: absolute;
+    bottom: 120%;
+    right: 0;
+    white-space: nowrap;
+    font-size: 0.85rem;
+    font-family: Arial, Helvetica, sans-serif;
+    z-index: 1001;
+    transition: opacity 0.3s ease;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.tooltip-floating .tooltip-text::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    right: 12px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #333 transparent transparent transparent;
+}
+
+.tooltip-floating:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Keyboard shortcuts tooltip styles */
+.shortcuts-tooltip {
+    right: 4rem;
+}
+
+.shortcuts-tooltip img {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+    filter: brightness(0) invert(1);
+}
+
+.shortcuts-text {
+    white-space: normal;
+    width: 250px;
+    text-align: left;
+    padding: 12px;
+}
+
+.shortcuts-text h4 {
+    margin: 0 0 8px 0;
+    color: var(--primary-color);
+    font-size: 1rem;
+}
+
+.shortcuts-text ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.shortcuts-text li {
+    margin: 4px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.shortcuts-text kbd {
+    background-color: #444;
+    border: 1px solid #666;
+    border-radius: 3px;
+    padding: 2px 6px;
+    font-size: 0.8rem;
+    font-family: monospace;
+    min-width: 20px;
+    text-align: center;
+}
