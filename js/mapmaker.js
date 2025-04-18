@@ -330,7 +330,19 @@ class MapMaker {
         this.environmentObjectiveData = {
             Bazaar: {
                 'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
-            }
+            },
+            City: {
+                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
+            },
+            Snowtel: {
+                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
+            },
+            Castle_Courtyard: {
+                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
+            },
+            Arcade: {
+                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
+            },
         };
 
         this.environmentTileData = {
