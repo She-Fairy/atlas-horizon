@@ -15,7 +15,7 @@ const FENCE_LOGIC_BY_ENVIRONMENT = {
     'Oasis': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
     'Grassy_Field': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
     'City': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
-    'Rertopolis': FENCE_LOGIC_TYPES.BINARY_CODE,
+    'Retropolis': FENCE_LOGIC_TYPES.BINARY_CODE,
     'Mortuary': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
     'Pirate_Ship': FENCE_LOGIC_TYPES.BINARY_CODE,
     'Arcade': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
@@ -233,7 +233,7 @@ class MapMaker {
 
         // Game settings
         this.gamemode = 'Gem_Grab';
-        this.environment = 'Desert';
+        this.environment = 'Bazaar';
 
         // Selection mode
         this.selectionMode = 'single';
@@ -249,9 +249,9 @@ class MapMaker {
         // Initialize tile data
         this.tileData = {
             'Wall': [1, 1.75, 0, -50, 1, 5],
-            'Bush': [1, 1.8, 0, -50, 1, 5],
+            'Bush': [1, 1.8, 0, -51, 1, 5],
             'Wall2': [1, 1.75, 0, -50, 1, 5],
-            'Crate': [1, 1.8, 0, -50, 1, 5],
+            'Crate': [1, 1.8, 0, -51, 1, 5],
             'Barrel': [1, 1.69, 0, -50, 1, 5],
             'Cactus': [1.1, 1.75, -5, -50, 1, 5],
             'Water': [1, 1, 0, 0, 1, 5],
@@ -291,7 +291,7 @@ class MapMaker {
             'Blue Spawn': [1.7, 1.7, -27.5, -27.5, 0.85, 5],
             'Red Spawn': [1.7, 1.7, -27.5, -27.5, 0.85, 5],
             'Objective': [2, 2.21, -50, -115, 1, 10],
-            'Smoke': [1.5, 1.65, -10, -25, 1, 5],
+            'Smoke': [1*1.4, 1.1*1.4, -15, -35, 1, 5],
             'Heal Pad': [1, 1.12, 0, 0, 1, 5],
             'Slow Tile': [1, 1.11, 0, 0, 1, 5],
             'Speed Tile': [1, 1.11, 0, 0, 1, 5],
@@ -343,24 +343,51 @@ class MapMaker {
             Arcade: {
                 'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
             },
+            Bandstand: {
+                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
+            },
+            Retropolis: {
+                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
+            },
         };
 
         this.environmentTileData = {
             Mine: {
+                'Wall': [1, 1.8, 0, -51, 1, 5],
                 'Wall2': [1*1.1, 1.65*1.1, -5, -50, 1, 5],
                 'Cactus': [1, 1.68, 0, -50, 1, 5],
             },
-            Bazaar: {
-                'Wall': [1, 1.75, 0, -50, 1, 5],
-                'Bush': [1, 1.8, 0, -50, 1, 5],
-                'Wall2': [1, 1.75, 0, -50, 1, 5],
-                'Crate': [1, 1.8, 0, -50, 1, 5],
-                'Barrel': [1, 1.69, 0, -50, 1, 5],
-                'Cactus': [1.1, 1.75, -5, -50, 1, 5],
+            Arcade: {
+                'Wall': [1, 1.8, 0, -55, 1, 5],
+                'Barrel': [1, 1.91, 0, -61, 1, 5],
+                'Cactus': [1, 1.71, 0, -48, 1, 5],
+                'Skull': [1, 1.51, 0, -45, 1, 5],
+                'Fence': [1, 1.63, 0, -55, 1, 5],
+                'Horizontal': [1.1, 1.54, -5, -45, 1, 5],
+                'Vertical': [1, 1.71, 0, -48, 1, 5],
+            },
+            Bandstand:{
+                'Wall': [1, 1.8, 0, -51, 1, 5],
+                'Wall2': [1, 1.8, 0, -51, 1, 5],
                 'Fence': [1, 1.85, 0, -55, 1, 5],
-                'Water': [1, 1, 0, 0, 1, 5],
-                'Rope Fence': [1, 1.75, 0, -50, 1, 5],
-                'Skull': [1, 1.08, 0, 0, 1, 5],
+                'Skull': [1, 1.59, -2.5, -42.5, 1, 5],
+            },
+            Castle_Courtyard: {
+                'Bush': [1, 1.75, 0, -50, 1, 5],
+                'Cactus': [1, 1.64, 0, -45, 1, 5],
+                'Skull': [1, 1.28, 0, -25, 1, 5],
+                'Crate': [1, 1.75, 0, -55, 1, 5],
+                'Fence': [1, 1.8, 0, -55, 1, 5],
+                'Horizontal': [1, 1.54, 0, -40, 1, 5],
+                'Vertical': [1, 1.75, 0, -50, 1, 5],
+            },
+            Bazaar: {
+                'Wall': [1, 1.8, 0, -51, 1, 5],
+                'Wall2': [1, 1.8, 0, -51, 1, 5],
+                'Fence': [1, 1.85, 0, -55, 1, 5],
+                'Crate': [1*1.1, 1.63*1.1, -5, -50, 1, 5],
+                'Cactus': [1, 1.62, 0, -45, 1, 5],
+                'Skull': [1, 1.59, -2.5, -42.5, 1, 5],
             }
         };
         
