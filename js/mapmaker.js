@@ -348,7 +348,7 @@ class MapMaker {
             },
             Retropolis: {
                 'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
-            },
+            }
         };
 
         this.environmentTileData = {
