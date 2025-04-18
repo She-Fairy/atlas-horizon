@@ -366,8 +366,12 @@ class MapMaker {
             9: { name: 'Rope Fence', img: '${env}/Rope/Post.png', size: 1 },
             10: { name: 'Skull', img: '${env}/Tiles/Skull.png', size: 1 },
             11: { name: 'Unbreakable', img: 'Global/Unbreakable.png', size: 1 },
-            12: { name: 'Blue Spawn', img: 'Global/Spawns/3v3/1.png', size: 1 },
-            13: { name: 'Red Spawn', img: 'Global/Spawns/3v3/2.png', size: 1 },
+            12: { name: 'Blue Spawn', size: 1, getImg: (gamemode) => {
+                return { img: gamemode === 'Showdown' ? 'Global/Spawns/3.png' : 'Global/Spawns/1.png' };
+            }},
+            13: { name: 'Red Spawn', size: 1, getImg: (gamemode) => {
+                return { img: gamemode === 'Showdown' ? 'Global/Spawns/4.png' : 'Global/Spawns/2.png' };
+            }},
             14: { name: 'Objective', size: 1, getImg: (gamemode, y, mapHeight) => {
                 const objectives = {
                     'Gem_Grab': { img: '${env}/Gamemode_Specifics/Gem_Grab.png' },
@@ -864,8 +868,12 @@ class MapMaker {
             9: { name: 'Rope Fence', img: '${env}/Rope/Post.png', size: 1 },
             10: { name: 'Skull', img: '${env}/Tiles/Skull.png', size: 1 },
             11: { name: 'Unbreakable', img: 'Global/Unbreakable.png', size: 1 },
-            12: { name: 'Blue Spawn', img: 'Global/Spawns/3v3/1.png', size: 1 },
-            13: { name: 'Red Spawn', img: 'Global/Spawns/3v3/2.png', size: 1 },
+            12: { name: 'Blue Spawn', size: 1, getImg: (gamemode) => {
+                return { img: gamemode === 'Showdown' ? 'Global/Spawns/3.png' : 'Global/Spawns/1.png' };
+            }},
+            13: { name: 'Red Spawn', size: 1, getImg: (gamemode) => {
+                return { img: gamemode === 'Showdown' ? 'Global/Spawns/4.png' : 'Global/Spawns/2.png' };
+            }},
             14: { name: 'Objective', size: 1, getImg: (gamemode, y, mapHeight) => {
                 const objectives = {
                     'Gem_Grab': { img: '${env}/Gamemode_Specifics/Gem_Grab.png' },
