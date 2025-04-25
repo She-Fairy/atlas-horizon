@@ -1,4 +1,4 @@
-# Hercules
+# Atlas-Horizon
 
 This site is not affiliated with or endorsed by Supercell. Brawl Stars and all related assets belong to Supercell.
 
