@@ -424,12 +424,22 @@ label:has(input[type="radio"]:checked) {
 
 .tooltip-floating:hover .tooltip-text {
     visibility: visible;
+    color: var(--text-color-secondary);
     opacity: 1;
 }
 
 /* Keyboard shortcuts tooltip styles */
 .shortcuts-tooltip {
     right: 4rem;
+}
+
+.disclaimer-tooltip {
+    right: 1rem;
+    color: var(--text-color);
+}
+
+.environments-tooltip {
+    right: 7rem;
 }
 
 .shortcuts-tooltip img {
@@ -475,3 +485,31 @@ label:has(input[type="radio"]:checked) {
     min-width: 20px;
     text-align: center;
 }
+
+.logo {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.logo-img {
+    height: 3rem;
+    width: auto;
+    object-fit: contain;
+}
+
+.environments-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+

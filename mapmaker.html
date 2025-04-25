@@ -4,18 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Atlas Horizon- Map Maker</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/mapmaker.css">
-    <link rel="icon" href="Resources/Additional/Icons/AtlasLogo.ico" type="image/x-icon">
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/mapmaker.css">
+    <link rel="icon" href="./Resources/Additional/Icons/AtlasLogo.ico" type="image/x-icon">
 </head>
 <body>
     <nav>
-        <div class="logo">Atlas Horizon</div>
+        <div class="logo">
+            <img src="./Resources/Additional/Icons/AtlasLogo.png" alt="Atlas Horizon Logo" class="logo-img">
+            Atlas Horizon
+        </div>
         <div class="nav-links">
-            <a href="index.html">Home</a>
-            <a href="mapmaker.html" class="active">Map Maker</a>
-            <a href="map-gallery.html">Map Gallery</a>
-            <a href="my-maps.html">My Maps</a>
+            <a href="./index.html">Home</a>
+            <a href="./mapmaker.html" class="active">Map Maker</a>
+            <a href="./map-gallery.html">Map Gallery</a>
+            <a href="./my-maps.html">My Maps</a>
             <button id="loginBtn" class="login-btn">Login with Discord</button>
         </div>
     </nav>
@@ -139,46 +142,46 @@
                 <div class="radio-container">
                     <label class="icon-btn">
                         <input type="radio" name="selectionMode" value="single" checked>
-                        <img src="Resources/Additional/Icons/Single.png" alt="Single">
+                        <img src="./Resources/Additional/Icons/Single.png" alt="Single">
                     </label>
                     <label class="icon-btn">
                         <input type="radio" name="selectionMode" value="line">
-                        <img src="Resources/Additional/Icons/Line.png" alt="Line">
+                        <img src="./Resources/Additional/Icons/Line.png" alt="Line">
                     </label>
                     <label class="icon-btn">
                         <input type="radio" name="selectionMode" value="rectangle">
-                        <img src="Resources/Additional/Icons/Rectangle.png" alt="Rectangle">
+                        <img src="./Resources/Additional/Icons/Rectangle.png" alt="Rectangle">
                     </label>
                 </div>
                 <div class="tool-buttons">
                     <label class="icon-btn" title="Erase (E)">
                         <input type="checkbox" id="eraseBtn">
-                        <img src="Resources/Additional/Icons/Erase.png" alt="Erase">
+                        <img src="./Resources/Additional/Icons/Erase.png" alt="Erase">
                     </label>
                     <button id="undoBtn" class="icon-btn" title="Undo (Ctrl+Z)">
-                        <img src="Resources/Additional/Icons/Undo.png" alt="Undo">
+                        <img src="./Resources/Additional/Icons/Undo.png" alt="Undo">
                     </button>
                     <button id="redoBtn" class="icon-btn" title="Redo (Ctrl+Y)">
-                        <img src="Resources/Additional/Icons/Redo.png" alt="Redo">
+                        <img src="./Resources/Additional/Icons/Redo.png" alt="Redo">
                     </button>
                     <label class="icon-btn" title="Replace (R)">
                         <input type="checkbox" id="replaceBtn">
-                        <img src="Resources/Additional/Icons/Replace.png" alt="Replace">
+                        <img src="./Resources/Additional/Icons/Replace.png" alt="Replace">
                     </label>
                     <label class="icon-btn" title="Errors (Q)">
                         <input type="checkbox" id="errorsBtn">
-                        <img src="Resources/Additional/Icons/Issues.png" alt="Errors">
+                        <img src="./Resources/Additional/Icons/Issues.png" alt="Errors">
                     </label>
                     <button id="zoomInBtn" class="icon-btn" title="Zoom In (Ctrl++)">
-                        <img src="Resources/Additional/Icons/GlassPlus.png" alt="Zoom In">
+                        <img src="./Resources/Additional/Icons/GlassPlus.png" alt="Zoom In">
                     </button>
                     <button id="zoomOutBtn" class="icon-btn" title="Zoom Out (Ctrl+-)">
-                        <img src="Resources/Additional/Icons/GlassMinus.png" alt="Zoom Out">
+                        <img src="./Resources/Additional/Icons/GlassMinus.png" alt="Zoom Out">
                     </button>
                 </div>
                 <div class="action-buttons">
                     <button id="clearBtn" class="icon-btn" title="Clear Map (Ctrl+Del)">
-                        <img src="Resources/Additional/Icons/Clear.png" alt="Clear">
+                        <img src="./Resources/Additional/Icons/Clear.png" alt="Clear">
                     </button>
                 </div>
             </div>
@@ -189,14 +192,14 @@
             </div>
         </div>
     </div>
-    <div class="tooltip-floating">
+    <div class="tooltip-floating disclaimer-tooltip">
         ?
         <div class="tooltip-text">
             This site is not affiliated with or endorsed by Supercell. Brawl Stars and all related assets belong to Supercell.
         </div>
     </div>
     <div class="tooltip-floating shortcuts-tooltip">
-        <img src="Resources/Additional/Icons/Key.png" alt="Keyboard Shortcuts">
+        <img src="./Resources/Additional/Icons/Key.png" alt="Keyboard Shortcuts">
         <div class="tooltip-text shortcuts-text">
             <h4>Keyboard Shortcuts</h4>
             <ul>
@@ -213,12 +216,26 @@
             </ul>
         </div>
     </div>
+    <div class="tooltip-floating environments-tooltip">
+        <img src="./Resources/Additional/Icons/Env.png" alt="Implemented Environments">
+        <div class="tooltip-text environments-text">
+            <h4>Implemented Environments</h4>
+            <ul class="environments-list">
+                <li>Desert</li>
+                <li>Bazaar</li>
+                <li>Bandstand</li>
+                <li>Castle Courtyard</li>
+                <li>Mine</li>
+                <li>Arcade</li>
+            </ul>
+        </div>
+    </div>
 
     <script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-database-compat.js"></script>
-    <script src="js/config.js"></script>
-    <script src="js/auth.js"></script>
-    <script src="js/mapmaker.js"></script>
+    <script src="./js/config.js"></script>
+    <script src="./js/auth.js"></script>
+    <script src="./js/mapmaker.js"></script>
 </body>
 </html>
