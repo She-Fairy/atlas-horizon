@@ -50,7 +50,7 @@ const FENCE_LOGIC_BY_ENVIRONMENT = {
     'Medieval_Manor': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
     'Super_City_2': FENCE_LOGIC_TYPES.BINARY_CODE,
     'Spongebob': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
-    'Oddity_Shop': FENCE_LOGIC_TYPES.BINARY_CODE,
+    'Oddities Shop': FENCE_LOGIC_TYPES.BINARY_CODE,
     'Skating_Bowl': FENCE_LOGIC_TYPES.BINARY_CODE,
     'Hockey': FENCE_LOGIC_TYPES.SIX_PIECE,
     'Escape_Room': FENCE_LOGIC_TYPES.BINARY_CODE
@@ -199,6 +199,7 @@ class MapMaker {
         // Initialize with default size (regular)
         this.mapWidth = this.mapSizes.regular.width;
         this.mapHeight = this.mapSizes.regular.height;
+        this.mapSize = this.mapSizes.regular;
         
         // Initialize undo/redo stacks
         this.undoStack = [];
@@ -209,9 +210,7 @@ class MapMaker {
         this.maxZoom = 3;     // Allow zooming in more
         this.zoomStep = 0.1;  // Make zoom steps smaller for more gradual zooming
 
-        // Initialize canvas size with padding
-        this.canvas.width = (this.mapWidth * this.tileSize) + (this.canvasPadding * 2);
-        this.canvas.height = (this.mapHeight * this.tileSize) + (this.canvasPadding * 2);
+        this.updateCanvasSize();
 
         // Initialize map data
         this.mapData = Array(this.mapHeight).fill().map(() => Array(this.mapWidth).fill(0));
@@ -240,6 +239,7 @@ class MapMaker {
         this.selectionStart = null;
         this.selectionEnd = null;
         this.hoveredTiles = new Set();
+        this.errorTiles = new Set();
         this.mouseDown = false;
 
         // Environment and background
@@ -256,10 +256,10 @@ class MapMaker {
             'Cactus': [1.1, 1.75, -5, -50, 1, 5],
             'Water': [1, 1, 0, 0, 1, 5],
             // Base fence types
-            'Fence': [1, 1.61, 0, -50, 1, 5],
+            'Fence': [1, 1.61, 0, -40, 1, 5],
             'Rope Fence': [1, 1.75, 0, -50, 1, 5],
             // Simple Block Logic variations
-            'Horizontal': [1, 1.26, 0, -12.6, 1, 5],
+            'Horizontal': [1, 1.26, 0, -7.6, 1, 5],
             'Vertical': [1, 1.84, 0, -50, 1, 5],
             // Binary Code Logic variations
             '0001': [1/1.39, 1.39/1.39, 15, -28, 1, 5],
@@ -418,7 +418,7 @@ class MapMaker {
                     'Heist': { img: '${env}/Gamemode_Specifics/Heist.png' },
                     'Bounty': { img: 'Global/Objectives/Bounty.png' },
                     'Brawl_Ball': { img: '${env}/Gamemode_Specifics/Brawl_Ball.png' },
-                    'Hot_Zone': { img: 'Global/Objectives/Hot_Zone.png' },
+                    'Hot_Zone': { img: 'Global/Objectives/Hot_Zone.png', size: 7 },
                     'Snowtel_Thieves': { 
                         img: `Global/Objectives/${y > mapHeight/2 ? 'SnowtelThievesBlue' : 'SnowtelThievesRed'}.png`,
                         displayImg: 'Global/Objectives/SnowtelThievesBlue.png'
@@ -952,7 +952,8 @@ class MapMaker {
             29: { name: 'Teleporter Green', img: 'Global/Teleporters/Green.png', size: 2 },
             30: { name: 'Teleporter Red', img: 'Global/Teleporters/Red.png', size: 2 },
             31: { name: 'Teleporter Yellow', img: 'Global/Teleporters/Yellow.png', size: 2 },
-            32: { name: 'Bolt', img: 'Global/Objectives/Bolt.png', size: 1, showInGamemode: 'Siege' }
+            32: { name: 'Bolt', img: 'Global/Objectives/Bolt.png', size: 1, showInGamemode: 'Siege' },
+            33: { name: 'Empty2', img: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNgYAAAAAMAASsJTYQAAAAASUVORK5CYII=', size: 1 }
         };
 
         // Tile Adjustments
@@ -1056,6 +1057,25 @@ class MapMaker {
         this.updateCanvasZoom();
     }
 
+    updateCanvasSize() {
+        // Set canvas size to map size plus padding
+        // Add 1 to tileSize to account for pixel rounding and prevent tiles from being cut off
+        const effectiveTileSize = this.tileSize + 1;
+        this.canvas.width = (this.mapWidth * effectiveTileSize) + (this.canvasPadding * 2);
+        this.canvas.height = (this.mapHeight * effectiveTileSize) + (this.canvasPadding * 2);
+        
+        // Update the map container size and alignment
+        const mapContainer = document.getElementById('mapContainer');
+        if (mapContainer) {
+            mapContainer.style.width = `${this.canvas.width}px`;
+            mapContainer.style.height = `${this.canvas.height}px`;
+            mapContainer.style.display = 'flex';
+            mapContainer.style.justifyContent = 'flex-start';
+            mapContainer.style.alignItems = 'flex-start';
+            mapContainer.style.padding = '20px';
+        }
+    }
+
     updateCanvasZoom() {
         const container = this.canvas.parentElement;
         const mapWidth = this.canvas.width * this.zoomLevel;
@@ -1122,10 +1142,11 @@ class MapMaker {
 
         // Map setting listeners
         mapSizeSelect.addEventListener('change', (e) => {
-            const newSize = this.mapSizes[e.target.value];
+            const mapSize = this.mapSizes[e.target.value];
+            this.mapSize === mapSize;
             if (confirm('Changing map size will clear the current map. Continue?')) {
-                this.mapWidth = newSize.width;
-                this.mapHeight = newSize.height;
+                this.mapWidth = mapSize.width;
+                this.mapHeight = mapSize.height;
                 this.canvas.width = this.mapWidth * this.tileSize;
                 this.canvas.height = this.mapHeight * this.tileSize;
                 this.mapData = Array(this.mapHeight).fill().map(() => Array(this.mapWidth).fill(0));
@@ -1178,21 +1199,26 @@ class MapMaker {
                 case 'z':
                     if (e.ctrlKey || e.metaKey) {
                         if (e.shiftKey) {
+                            e.preventDefault();
                             this.redo();
                         } else {
+                            e.preventDefault();
                             this.undo();
                         }
                     }
                     break;
                 case 'y':
                     if (e.ctrlKey || e.metaKey) {
+                        e.preventDefault();
                         this.redo();
                     }
                     break;
                 case 'backspace':
                 case 'delete':
-                    if (e.ctrlKey || e.metaKey) 
+                    if (e.ctrlKey || e.metaKey) {
+                        e.preventDefault();
                         this.clearMap(true);
+                    }
                     break;
             }
         });
@@ -1202,6 +1228,9 @@ class MapMaker {
         this.canvas.addEventListener('mousemove', this.handleMouseMove.bind(this));
         this.canvas.addEventListener('mouseup', this.handleMouseUp.bind(this));
         this.canvas.addEventListener('mouseleave', this.handleMouseLeave.bind(this));
+        
+        // Add right-click event listener to select tile
+        this.canvas.addEventListener('contextmenu', this.handleRightClick.bind(this));
         
         // Add document-level mouse up to ensure we catch the event even if released outside canvas
         document.addEventListener('mouseup', this.handleMouseUp.bind(this));
@@ -1256,7 +1285,25 @@ class MapMaker {
         this.draw();
     }
 
+    handleRightClick(event) {
+        event.preventDefault();
+        const coords = this.getTileCoordinates(event);
+        if (coords.x < 0 || coords.x >= this.mapWidth || coords.y < 0 || coords.y >= this.mapHeight) return;
+
+        if (this.replaceMode) {
+            this.handleReplace(coords.x, coords.y);
+            return;
+        }
+
+        if (this.mapData[coords.y][coords.x] < 1) return;
+
+        this.selectedTile = { id: this.mapData[coords.y][coords.x], ...this.tileDefinitions[this.mapData[coords.y][coords.x]] };
+        document.getElementById('tileSelector').querySelectorAll('.tile-btn').forEach(b => b.classList.remove('selected'));
+        document.getElementById('tileSelector').querySelector(`.tile-btn[id="${this.selectedTile.id}"]`).classList.add('selected');
+    }
+
     handleMouseDown(event) {
+        if (event.button !== 0) return;
         this.mouseDown = true;
         const coords = this.getTileCoordinates(event);
         if (coords.x < 0 || coords.x >= this.mapWidth || coords.y < 0 || coords.y >= this.mapHeight) return;
@@ -1272,6 +1319,7 @@ class MapMaker {
             this.draggedTileId = this.mapData[coords.y][coords.x];
             this.dragStartX = coords.x;
             this.dragStartY = coords.y;
+            this.saveState();
             
             // Get the tile definition to check if it's a 2x2 tile
             const def = this.tileDefinitions[this.draggedTileId];
@@ -1323,7 +1371,7 @@ class MapMaker {
                 }
             }
             
-            this.canvas.style.cursor = 'grabbing';
+            this.canvas.style.cursor = 'crosshair';
             this.draw();
             return;
         }
@@ -1355,33 +1403,42 @@ class MapMaker {
 
             if (draggedTile) {
                 const drawTilePreview = (tileId, x, y) => {
-                    const img = this.tileImages[tileId];
-                    if (img && img.complete) {
-                        const aspectRatio = img.height / img.width;
-                        const drawHeight = this.tileSize * aspectRatio;
-                        const baseDrawY = y * this.tileSize + this.tileSize - drawHeight;
-                        
-                        // Get tile dimensions from tileData
-                        const tileData = this.tileData[draggedTile.name];
-                        const [scaleX, scaleY, offsetX = 0, offsetY = 0] = tileData || [1, 1, 0, 0];
-                        
-                        // Calculate width and height based on tile size
-                        const width = this.tileSize * scaleX * (draggedTile.size || 1);
-                        const height = drawHeight * scaleY * (draggedTile.size || 1);
-                        
-                        // Calculate position with offsets
-                        const drawX = x * this.tileSize + (this.tileSize * offsetX / 100) + this.canvasPadding;
-                        const drawY = baseDrawY + (this.tileSize * offsetY / 100) + this.canvasPadding;
-                        
-                        this.ctx.drawImage(
-                            img,
-                            drawX,
-                            drawY,
-                            width,
-                            height
-                        );
+                    const def = this.tileDefinitions[tileId];
+                    if (!def) return;
+                
+                    let img = this.tileImages[tileId];
+                    if (!img || !img.complete) return;
+                
+                    // Get tile dimensions from environment-specific or base data
+                    let dimensions;
+                    if (def.name === 'Objective') {
+                        dimensions = this.environmentObjectiveData[this.environment]?.[this.gamemode] ||
+                                     this.objectiveData[this.gamemode];
+                    } else {
+                        dimensions = this.environmentTileData[this.environment]?.[def.name] ||
+                                     this.tileData[def.name];
                     }
+                
+                    if (!dimensions) return;
+                
+                    const [scaleX, scaleY, offsetX = 0, offsetY = 0, opacity = 1] = dimensions;
+                    const size = def.size || 1;
+                    const tileSize = this.tileSize;
+                
+                    // Calculate drawing dimensions
+                    const width = tileSize * scaleX * size;
+                    const height = tileSize * scaleY * size;
+                
+                    // Calculate position with offsets and padding
+                    const drawX = x * tileSize + (tileSize * offsetX / 100) + this.canvasPadding;
+                    const drawY = y * tileSize + (tileSize * offsetY / 100) + this.canvasPadding;
+                
+                    // Set opacity and draw the tile
+                    this.ctx.globalAlpha = opacity;
+                    this.ctx.drawImage(img, drawX, drawY, width, height);
+                    this.ctx.globalAlpha = 1.0;
                 };
+                
 
                 // Draw the main dragged tile
                 drawTilePreview(this.draggedTileId, coords.x, coords.y);
@@ -1521,6 +1578,8 @@ class MapMaker {
                         placeMirroredTile(adjustedY, adjustedX, mirrorD);
                     }
                 }
+                this.draw();
+                this.checkForErrors();
             }
         }
         
@@ -1587,6 +1646,7 @@ class MapMaker {
             const btn = document.createElement('button');
             btn.className = 'tile-btn';
             btn.title = def.name;
+            btn.id = id;
             
             if (def.img || def.getImg) {
                 const img = document.createElement('img');
@@ -1619,6 +1679,8 @@ class MapMaker {
 
             container.appendChild(btn);
         });
+
+        document.getElementById('tileSelector').querySelector(`.tile-btn[id="1"]`).classList.add('selected');
     }
 
     loadEnvironmentBackgrounds() {
@@ -1910,17 +1972,31 @@ class MapMaker {
         // Draw the background grid
         for (let y = 0; y < this.mapHeight; y++) {
             for (let x = 0; x < this.mapWidth; x++) {
-                const isDark = (x + y) % 2 === 0;
-                const bgImg = isDark ? this.bgDark : this.bgLight;
+                // Check if this tile should have no background in Brawl Ball mode
+                let skipBackground = false;
+                if (this.gamemode === 'Brawl Ball' && this.mapSize === this.mapSizes.regular) {
+                    const rectStartTiles = [[0, 0], [0, 14], [29, 0], [29, 14]];
+                    for (const [startX, startY] of rectStartTiles) {
+                        if (x >= startX && x < startX + 4 && y >= startY && y < startY + 7) {
+                            skipBackground = true;
+                            break;
+                        }
+                    }
+                }
                 
-                if (bgImg.complete) {
-                    this.ctx.drawImage(
-                        bgImg,
-                        x * this.tileSize + this.canvasPadding,
-                        y * this.tileSize + this.canvasPadding,
-                        this.tileSize,
-                        this.tileSize
-                    );
+                if (!skipBackground) {
+                    const isDark = (x + y) % 2 === 0;
+                    const bgImg = isDark ? this.bgDark : this.bgLight;
+                    
+                    if (bgImg.complete) {
+                        this.ctx.drawImage(
+                            bgImg,
+                            x * this.tileSize + this.canvasPadding,
+                            y * this.tileSize + this.canvasPadding,
+                            this.tileSize,
+                            this.tileSize
+                        );
+                    }
                 }
             }
         }
@@ -2012,7 +2088,7 @@ class MapMaker {
         this.selectionCtx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         
         // Set the selection style
-        this.selectionCtx.fillStyle = 'rgba(255, 255, 0, 0.3)';
+        this.selectionCtx.fillStyle = this.isErasing ? 'rgba(255, 0, 0, 0.4)' : 'rgba(255, 255, 0, 0.4)';
         
         if (this.selectionMode === 'single') {
             this.selectionCtx.fillRect(
@@ -2268,32 +2344,43 @@ class MapMaker {
         }
     }
 
-    saveMap() {
-        if (!firebase.auth().currentUser) {
-            alert('Please login to save your map');
-            return;
-        }
-
-        const mapData = {
-            userId: firebase.auth().currentUser.uid,
-            userName: firebase.auth().currentUser.displayName,
-            created: firebase.database.ServerValue.TIMESTAMP,
-            mapData: this.mapData,
-            size: {
-                width: this.mapWidth,
-                height: this.mapHeight
-            }
-        };
-
+    generateMapId() {
+        const timestampPart = Date.now().toString(36).slice(-4); // optional trimming
+        const randomPart = Math.random().toString(36).substring(2, 8);
+        return timestampPart + randomPart;
+    }
+    
+    async saveMap() {
         try {
-            const newMapRef = firebase.database().ref('maps').push();
-            newMapRef.set(mapData);
+            const mapLinkElement = document.getElementById('mapLink');
+            let mapId;
+    
+            // Check if map is being saved for the first time
+            if (mapLinkElement.innerText === 'she-fairy.github.io/atlas-horizon/map.html') {
+                mapId = this.generateMapId();
+                mapLinkElement.innerText = `https://atlas-horizon.com/map.html?mapId=${mapId}`;
+            } else {
+                const currentUrl = new URL(mapLinkElement.innerText);
+                mapId = currentUrl.searchParams.get('mapId');
+            }
+    
+            const mapData = {
+                name: document.getElementById('mapName').value,
+                size: document.getElementById('mapSize').value,
+                gamemode: document.getElementById('gamemode').value,
+                environment: document.getElementById('environment').value,
+                mapData: this.mapData
+            };
+    
+            await window.Firebase.writeData(`users/${sessionStorage.getItem('user')}/maps/${mapId}`, mapData);
+    
             alert('Map saved successfully!');
         } catch (error) {
             console.error('Error saving map:', error);
             alert('Failed to save map. Please try again.');
         }
     }
+    
 
     exportMap() {
         const mapName = document.getElementById('mapName').value || 'Untitled Map';
@@ -2365,8 +2452,9 @@ class MapMaker {
     }
 
     setGamemode(gamemode) {
+        const previousGamemode = this.gamemode;
         this.gamemode = gamemode;
-        
+    
         // Remove all objectives from the map
         for (let y = 0; y < this.mapHeight; y++) {
             for (let x = 0; x < this.mapWidth; x++) {
@@ -2377,6 +2465,52 @@ class MapMaker {
             }
         }
 
+        const brawlBallChanges = (isBrawlBall) => {
+            let tileId = 0;
+            if (isBrawlBall) tileId = 33;
+            if (this.mapSize === this.mapSizes.regular) {
+                const rectStartTiles = [[0, 0], [0, 14], [29, 0], [29, 14]];
+
+                rectStartTiles.forEach(pos => {
+                    for (let i = 0; i < 4; i++){
+                        for (let j = 0; j < 7; j++){
+                            this.placeTile(pos[0] + i, pos[1] + j, tileId, false);
+                        }
+                    }
+                });
+
+            } else if (this.mapSize === this.mapSizes.showdown) {
+                const rectStartTiles = [[0, 27], [50, 27]];
+
+                rectStartTiles.forEach(pos => {
+                    for (let i = 0; i < 16; i++){
+                        for (let j = 0; j > 9; j++){
+                            this.placeTile(pos[0] + i, pos[1] + j, 8, false);
+                        }
+                        this.placeTile(pos[0 + i], pos[1] + 9, 11, false);
+                    }
+                });
+
+                const goalStartTiles = [[10, 27], [10, 37], [50, 27], [50, 37]];
+
+                goalStartTiles.forEach(pos => {
+                    for (let i = 0; i < 4; i++){
+                        this.placeTile(pos[0] + i, pos[1], 11, false);
+                    }
+                });
+
+                this.saveState();
+            }
+        }
+    
+        // BRAWL BALL: INSERT CUSTOM LOGIC HERE (After clearing objectives)
+        if (previousGamemode === 'Brawl_Ball') {
+            brawlBallChanges(false);
+        }
+        
+        if (this.gamemode === 'Brawl Ball'){
+            brawlBallChanges(true);
+        }
         // Check if there are any spawns on the map
         let hasSpawns = false;
         for (let y = 0; y < this.mapHeight; y++) {
@@ -2388,12 +2522,11 @@ class MapMaker {
             }
             if (hasSpawns) break;
         }
-
+    
         // Place spawns if none exist
         if (!hasSpawns) {
             const middleX = Math.floor(this.mapWidth / 2);
-            
-            // Check if spawn positions are empty
+    
             const canPlaceSpawns = [
                 this.mapData[0][middleX - 2] === 0,
                 this.mapData[0][middleX] === 0,
@@ -2402,30 +2535,32 @@ class MapMaker {
                 this.mapData[this.mapHeight - 1][middleX] === 0,
                 this.mapData[this.mapHeight - 1][middleX + 2] === 0
             ].every(Boolean);
-
+    
             if (canPlaceSpawns) {
-                // Place red spawns on top
                 this.mapData[0][middleX - 2] = 13;
                 this.mapData[0][middleX] = 13;
                 this.mapData[0][middleX + 2] = 13;
-
-                // Place blue spawns on bottom
+    
                 this.mapData[this.mapHeight - 1][middleX - 2] = 12;
                 this.mapData[this.mapHeight - 1][middleX] = 12;
                 this.mapData[this.mapHeight - 1][middleX + 2] = 12;
             }
         }
-
-        // Place objectives based on gamemode
+    
+        // BRAWL BALL: INSERT CUSTOM LOGIC HERE (After handling spawns)
+        if (gamemode === 'Brawl_Ball') {
+            // Add ball spawn location or goal tiles if needed
+        }
+    
         const middleX = Math.floor(this.mapWidth / 2);
         const middleY = Math.floor(this.mapHeight / 2);
-
+    
         const placeObjective = (x, y) => {
             if (this.mapData[y][x] === 0) {
                 this.mapData[y][x] = 14; // Objective tile ID
             }
         };
-
+    
         switch (gamemode) {
             case 'Gem_Grab':
             case 'Bounty':
@@ -2438,32 +2573,43 @@ class MapMaker {
                     placeObjective(middleX, middleY);
                 }
                 break;
-
+    
             case 'Heist':
             case 'Snowtel_Thieves':
-                const row = 4; // 5th row (0-based index)
-                if (this.mapData[row][middleX] === 0 && 
+                const row = 4;
+                if (this.mapData[row][middleX] === 0 &&
                     this.mapData[this.mapHeight - 1 - row][middleX] === 0) {
                     placeObjective(middleX, row);
                     placeObjective(middleX, this.mapHeight - 1 - row);
                 }
                 break;
-
+    
             case 'Siege':
-                const siegeRow = 3; // 4th row (0-based index)
-                if (this.mapData[siegeRow][middleX] === 0 && 
+                const siegeRow = 3;
+                if (this.mapData[siegeRow][middleX] === 0 &&
                     this.mapData[this.mapHeight - 1 - siegeRow][middleX] === 0) {
                     placeObjective(middleX, siegeRow);
                     placeObjective(middleX, this.mapHeight - 1 - siegeRow);
                 }
                 break;
         }
-
+    
+        // BRAWL BALL: INSERT CUSTOM LOGIC HERE (After placing objectives)
+        if (gamemode === 'Brawl_Ball') {
+            // E.g., place goals or special tiles
+        }
+    
         // Update UI and reload images
         this.initializeTileSelector();
         this.loadTileImages();
         this.draw();
+    
+        // BRAWL BALL: INSERT CUSTOM LOGIC HERE (After full setup is done)
+        if (gamemode === 'Brawl_Ball') {
+            // Final post-setup logic or animations
+        }
     }
+    
 
     setEnvironment(environment) {
         this.environment = environment;
@@ -2597,63 +2743,84 @@ class MapMaker {
     // Add method to check for errors
     checkForErrors() {
         if (!this.showErrors) return;
-        
+    
         this.errorTiles.clear();
-        
-        // Check each tile in the map
+    
         for (let y = 0; y < this.mapHeight; y++) {
             for (let x = 0; x < this.mapWidth; x++) {
                 const tileId = this.mapData[y][x];
-                
-                // Skip if the tile is a block or empty
+    
+                // Skip block tiles
                 if (this.isBlock(tileId)) continue;
-                
-                // Count adjacent blocks
-                let blockCount = 0;
-                const blocks = [];
-                
-                // Check all 8 surrounding tiles
-                for (let dy = -1; dy <= 1; dy++) {
-                    for (let dx = -1; dx <= 1; dx++) {
-                        if (dx === 0 && dy === 0) continue;
-                        
-                        const nx = x + dx;
-                        const ny = y + dy;
-                        
-                        if (nx < 0 || nx >= this.mapWidth || ny < 0 || ny >= this.mapHeight) continue;
-                        
-                        const neighborId = this.mapData[ny][nx];
-                        if (this.isBlock(neighborId)) {
-                            blockCount++;
-                            blocks.push({x: nx, y: ny});
-                        }
+    
+                // Get 8 neighbors in clockwise order (starting top-left)
+                const directions = [
+                    { dx: -1, dy: -1 }, // top-left
+                    { dx:  0, dy: -1 }, // top
+                    { dx:  1, dy: -1 }, // top-right
+                    { dx:  1, dy:  0 }, // right
+                    { dx:  1, dy:  1 }, // bottom-right
+                    { dx:  0, dy:  1 }, // bottom
+                    { dx: -1, dy:  1 }, // bottom-left
+                    { dx: -1, dy:  0 }, // left
+                ];
+    
+                // Create circular array of block booleans
+                const neighborBlocks = directions.map(dir => {
+                    const nx = x + dir.dx;
+                    const ny = y + dir.dy;
+                    return this.isBlockAt(nx, ny);
+                });
+    
+                // Shift starting point to avoid false positives from block lines
+                let startIndex = 0;
+                for (let i = 0; i < 7; i++) {
+                    if (neighborBlocks[i] !== neighborBlocks[(i + 1) % 8]) {
+                        startIndex = (i + 1) % 8;
+                        break;
                     }
                 }
+    
+                // Count transitions and total blocks
+                let transitions = -1;
+                let blockCount = 0;
+                for (let i = 0; i < 8; i++) {
+                    const current = neighborBlocks[(startIndex + i) % 8];
+                    const next = neighborBlocks[(startIndex + i + 1) % 8];
+                    if (current !== next) transitions++;
+                    if (next) blockCount++;
+                }
                 
-                // If there are at least 2 blocks, check if they form a continuous line
-                if (blockCount >= 2) {
-                    let hasError = false;
-                    
-                    // Check all pairs of blocks
-                    for (let i = 0; i < blocks.length; i++) {
-                        for (let j = i + 1; j < blocks.length; j++) {
-                            if (blocks[i].x !== x && blocks[j].x !== x && blocks[i].y !== y && blocks[j].y !== y) continue;
-                            // If these two blocks are not connected, we have an error
-                            if (!this.areBlocksConnected(blocks[i].x, blocks[i].y, blocks[j].x, blocks[j].y)) {
-                                hasError = true;
-                                break;
-                            }
-                        }
-                        if (hasError) break;
-                    }
-                    
-                    if (hasError) {
-                        this.errorTiles.add(`${x},${y}`);
-                    }
+                if (transitions > 1 && blockCount === 2){
+                    const trueIndexes = neighborBlocks
+                    .map((val, index) => val ? index : -1)
+                    .filter(index => index !== -1);
+
+                    if (trueIndexes.every(a => a % 2 === 0) && trueIndexes[1] % 4 - trueIndexes[0] % 4 === 2) break;
+                }
+
+                    // Extra helper check for vertical/horizontal aligned blocks
+                const verticalPair = this.isBlockAt(x, y - 1) && this.isBlockAt(x, y + 1);
+                const horizontalPair = this.isBlockAt(x - 1, y) && this.isBlockAt(x + 1, y);
+
+                const fullySurrounded = transitions === 0 && neighborBlocks[startIndex];
+                const disconnected = transitions >= 2;
+                const denseCluster = transitions === 1 && blockCount > 5;
+                const specialCase = transitions === 1 && blockCount === 5 && (verticalPair || horizontalPair);
+
+                if (fullySurrounded || disconnected || denseCluster || specialCase) {
+                    this.errorTiles.add(`${x},${y}`);
                 }
             }
         }
     }
+    
+    isBlockAt(x, y) {
+        if (x < 0 || x >= this.mapWidth || y < 0 || y >= this.mapHeight) return true;
+        return this.isBlock(this.mapData[y][x]);
+    }
+    
+    
 
     // Add toggleShowErrors method
     toggleShowErrors() {
@@ -2672,26 +2839,30 @@ class MapMaker {
             // Check for errors if activated
             this.checkForErrors();
         }
+        // Get the tile coordinates
+        const coords = this.getTileCoordinates(event);
+        if (coords.x < 0 || coords.x >= this.mapWidth || coords.y < 0 || coords.y >= this.mapHeight) return;
         
-        this.draw();
-    }
-
-    // Update the canvas size to include padding and align to top left
-    updateCanvasSize() {
-        // Set canvas size to map size plus padding
-        this.canvas.width = (this.mapWidth * this.tileSize) + (this.canvasPadding * 2);
-        this.canvas.height = (this.mapHeight * this.tileSize) + (this.canvasPadding * 2);
+        // Get the tile ID at the clicked position
+        const tileId = this.mapData[coords.y][coords.x];
+        if (tileId === 0 || tileId === -1) return; // Skip empty and occupied tiles
         
-        // Update the map container size and alignment
-        const mapContainer = document.getElementById('mapContainer');
-        if (mapContainer) {
-            mapContainer.style.width = `${this.canvas.width}px`;
-            mapContainer.style.height = `${this.canvas.height}px`;
-            mapContainer.style.display = 'flex';
-            mapContainer.style.justifyContent = 'flex-start';
-            mapContainer.style.alignItems = 'flex-start';
-            mapContainer.style.padding = '20px';
-        }
+        // Get the tile definition
+        const def = this.tileDefinitions[tileId];
+        if (!def) return;
+        
+        // Set the selected tile
+        this.selectedTile = { id: tileId, ...def };
+        
+        // Update the UI to show the selected tile
+        const container = document.getElementById('tileSelector');
+        container.querySelectorAll('.tile-btn').forEach(b => {
+            if (b.title === def.name) {
+                b.classList.add('selected');
+            } else {
+                b.classList.remove('selected');
+            }
+        });
     }
 }
 

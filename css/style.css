@@ -47,6 +47,15 @@ nav {
     object-fit: contain;
 }
 
+.avatar {
+    height: 3rem;
+    width: auto;
+    object-fit: contain;
+    border-radius: 50%;
+    padding: 1px;
+    border: 2px solid var(--text-color-secondary);
+}
+
 .nav-links {
     display: flex;
     gap: 2rem;
