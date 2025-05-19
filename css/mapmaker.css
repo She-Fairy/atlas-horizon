@@ -109,6 +109,7 @@
     transform-origin: top left;
     image-rendering: pixelated;
     margin: 20px;
+    padding:0;
 }
 
 /* Ensure scrollbars are always visible */

@@ -60,6 +60,22 @@
         </div>
     </div>
 
-    <script src="./js/map-gallery.js"></script>
-</body>
+        <script>
+        const avatar = document.getElementById('avatar');
+        avatar.src = sessionStorage.getItem('avatar');
+        avatar.addEventListener('click', () => {
+            if (confirm('Do you want to log out of this account?')){
+                sessionStorage.clear();
+                window.location.href = './index.html';
+            }
+        })
+    </script>
+
+        <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+
+        <script src="./js/firebase-service.js"></script>
+        <script src="./js/map-gallery.js"></script>
+    </body>
 </html> 

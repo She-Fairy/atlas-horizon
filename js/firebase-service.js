@@ -21,6 +21,7 @@ const db = firebase.database();
 
 // Attach functions to global `Firebase` object
 window.Firebase = {
+  auth: firebase.auth(),
   writeData: async (path, data) => {
     await db.ref(path).set(data);
   },
@@ -32,7 +33,7 @@ window.Firebase = {
 
   readDataOnce: async (path) => {
     const snapshot = await db.ref(path).once('value');
-    return snapshot;
+    return snapshot.val();
   },
 
   listenForChanges: (path, callback) => {

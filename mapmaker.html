@@ -33,7 +33,7 @@
             <div class="tool-section">
                 <h3>Map Settings</h3>
                 <div class="select-container">
-                    <input type="text" id="mapName" placeholder="Map Name">
+                    <input type="text" value="Untitled Map" id="mapName" placeholder="Map Name">
                 </div>
                 <div class="select-container">
                     <label for="mapSize">Map Size:</label>
@@ -127,7 +127,7 @@
                 </div>
             </div>
             <div style="font-family: Arial, Helvetica, sans-serif; font-weight: 900;">
-                Link: <br/> <a id="mapLink" style="font-family: Arial, Helvetica, sans-serif;font-weight: 400; color:var(--primary-color)">she-fairy.github.io/atlas-horizon/map.html</a> 
+                Link: <br/> <a id="mapLink" style="font-family: Arial, Helvetica, sans-serif;font-weight: 400; color:var(--primary-color)">https://she-fairy.github.io/atlas-horizon/map.html</a> 
             </div>
         </div>
         
@@ -239,12 +239,22 @@
         </div>
     </div>
 
-    <script>document.getElementById('avatar').src = sessionStorage.getItem('avatar');</script>
-
+    <script>
+        const avatar = document.getElementById('avatar');
+        avatar.src = sessionStorage.getItem('avatar');
+        avatar.addEventListener('click', () => {
+            if (confirm('Do you want to log out of this account?')){
+                sessionStorage.clear();
+                window.location.href = './index.html';
+            }
+        })
+    </script>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+
     <script src="./js/firebase-service.js"></script>
-    <script src="./js/mapmaker.js"></script>
+    <script type="module" src="./js/mapmaker.js"></script>
 </body>
 </html>

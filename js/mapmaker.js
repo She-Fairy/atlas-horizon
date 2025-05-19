@@ -178,9 +178,19 @@ class FenceLogicHandler {
     }
 }
 
-class MapMaker {
-    constructor(canvasId) {
-        this.canvas = document.getElementById(canvasId);
+export class MapMaker {
+    constructor(canvasId, headless = false) {
+        if (typeof canvasId === 'string') {
+            this.canvas = document.getElementById(canvasId);
+        } else {
+            this.canvas = canvasId;
+        }
+
+        if (!this.canvas) {
+            throw new Error('Canvas not found');
+        }
+
+        this.headless = headless;
         this.ctx = this.canvas.getContext('2d');
         this.tileSize = 32;
         this.canvasPadding = 16;  // Add padding for the canvas
@@ -780,6 +790,7 @@ class MapMaker {
         try {
             await this.loadEnvironmentBackgrounds();
             await this.loadTileImages();
+            if (this.headless) return;
             this.setGamemode(this.gamemode);
         } catch (error) {
             console.error('Error initializing MapMaker:', error);
@@ -1031,6 +1042,7 @@ class MapMaker {
 
     initializeUI() {
         // Initialize gamemode selector
+        if (this.headless) return;
         const gamemodeSelect = document.getElementById('gamemode');
         gamemodeSelect.value = this.gamemode;
         
@@ -1046,6 +1058,7 @@ class MapMaker {
     }
 
     fitMapToScreen() {
+        if (this.headless) return;
         const container = this.canvas.parentElement;
         const containerWidth = container.clientWidth - 40; // Account for padding
         const containerHeight = container.clientHeight - 40;
@@ -1098,6 +1111,7 @@ class MapMaker {
 
     initializeEventListeners() {
         // Tool buttons
+        if (this.headless) return;
         const eraseBtn = document.getElementById('eraseBtn');
         const zoomInBtn = document.getElementById('zoomInBtn');
         const zoomOutBtn = document.getElementById('zoomOutBtn');
@@ -1618,6 +1632,7 @@ class MapMaker {
     }
 
     initializeTileSelector() {
+        if (this.headless) return;
         const container = document.getElementById('tileSelector');
         container.innerHTML = '';
 
@@ -2356,9 +2371,9 @@ class MapMaker {
             let mapId;
     
             // Check if map is being saved for the first time
-            if (mapLinkElement.innerText === 'she-fairy.github.io/atlas-horizon/map.html') {
+            if (mapLinkElement.innerText === 'https://she-fairy.github.io/atlas-horizon/map.html') {
                 mapId = this.generateMapId();
-                mapLinkElement.innerText = `https://atlas-horizon.com/map.html?mapId=${mapId}`;
+                mapLinkElement.innerText = `https://she-fairy.github.io/atlas-horizon/map.html?mapId=${mapId}&user=\n${sessionStorage.getItem('user')}`;
             } else {
                 const currentUrl = new URL(mapLinkElement.innerText);
                 mapId = currentUrl.searchParams.get('mapId');
@@ -2380,53 +2395,64 @@ class MapMaker {
             alert('Failed to save map. Please try again.');
         }
     }
-    
 
-    exportMap() {
-        const mapName = document.getElementById('mapName').value || 'Untitled Map';
+    createMapPNG(code, gamemode, env) {
+        // Set up necessary data (use your existing values or pass them in as needed)
+        const mapWidth = this.mapWidth || code[0].length;
+        const mapHeight = this.mapHeight || code.length;
+        const tileSize = this.tileSize || 32;
+        const canvasPadding = this.canvasPadding || 0;
+
+        const oldGamemode = this.gamemode;
+        const oldEnv = this.environment;
+
+        this.gamemode = gamemode || this.gamemode;
+        this.environment = env || this.environment;
+
+        // Create off-screen canvas
         const canvas = document.createElement('canvas');
-        canvas.width = this.canvas.width;
-        canvas.height = this.canvas.height;
+        canvas.width = mapWidth * tileSize + canvasPadding * 2;
+        canvas.height = mapHeight * tileSize + canvasPadding * 2;
         const ctx = canvas.getContext('2d');
-        
+
         // Draw the background grid
-        for (let y = 0; y < this.mapHeight; y++) {
-            for (let x = 0; x < this.mapWidth; x++) {
+        for (let y = 0; y < mapHeight; y++) {
+            for (let x = 0; x < mapWidth; x++) {
                 const isDark = (x + y) % 2 === 0;
                 const bgImg = isDark ? this.bgDark : this.bgLight;
-                
-                if (bgImg.complete) {
+
+                if (bgImg && bgImg.complete) {
                     ctx.drawImage(
                         bgImg,
-                        x * this.tileSize + this.canvasPadding,
-                        y * this.tileSize + this.canvasPadding,
-                        this.tileSize,
-                        this.tileSize
+                        x * tileSize + canvasPadding,
+                        y * tileSize + canvasPadding,
+                        tileSize,
+                        tileSize
                     );
                 }
             }
         }
-        
+
         // Group tiles by z-index
         const tilesByZIndex = new Map();
-        for (let y = 0; y < this.mapHeight; y++) {
-            for (let x = 0; x < this.mapWidth; x++) {
-                const tileId = this.mapData[y][x];
+        for (let y = 0; y < mapHeight; y++) {
+            for (let x = 0; x < mapWidth; x++) {
+                const tileId = code[y][x];
                 if (tileId === 0 || tileId === -1) continue;
-                
-                const def = this.tileDefinitions[tileId];
+
+                const def = this.tileDefinitions?.[tileId];
                 if (!def) continue;
-                
+
                 let dimensions;
                 if (def.name === 'Objective') {
-                    dimensions = this.environmentObjectiveData[this.environment]?.[this.gamemode] || 
-                                this.objectiveData[this.gamemode];
+                    dimensions = this.environmentObjectiveData?.[this.environment]?.[this.gamemode] ||
+                                this.objectiveData?.[this.gamemode];
                 } else {
-                    dimensions = this.environmentTileData[this.environment]?.[def.name] || 
-                                this.tileData[def.name];
+                    dimensions = this.environmentTileData?.[this.environment]?.[def.name] ||
+                                this.tileData?.[def.name];
                 }
                 if (!dimensions) continue;
-                
+
                 const zIndex = dimensions[5] || 0;
                 if (!tilesByZIndex.has(zIndex)) {
                     tilesByZIndex.set(zIndex, []);
@@ -2434,20 +2460,30 @@ class MapMaker {
                 tilesByZIndex.get(zIndex).push({ x, y, tileId });
             }
         }
-        
+
         // Draw tiles in z-index order
         Array.from(tilesByZIndex.keys())
             .sort((a, b) => a - b)
             .forEach(zIndex => {
                 tilesByZIndex.get(zIndex).forEach(({ x, y, tileId }) => {
-                    this.drawTile(ctx, tileId, x, y);
+                    this.drawTile(ctx, tileId, x, y); // assumes drawTile doesn't depend on a specific canvas
                 });
             });
-        
-        // Create a download link
+
+        this.gamemode = oldGamemode;
+        this.environment = oldEnv;
+
+        return canvas.toDataURL('image/png');
+    }
+
+
+    exportMap(code = this.mapData, gamemode, env) {
+        const mapName = document.getElementById('mapName').value || 'Untitled Map';
+        const dataUrl = this.createMapPNG(code, gamemode, env);
+
         const link = document.createElement('a');
         link.download = `${mapName}.png`;
-        link.href = canvas.toDataURL('image/png');
+        link.href = dataUrl;
         link.click();
     }
 
@@ -2866,7 +2902,290 @@ class MapMaker {
     }
 }
 
-// Initialize the map maker when the page loads
 window.addEventListener('load', () => {
-    new MapMaker('mapCanvas');
+    window.mapMaker = new MapMaker('mapCanvas');
+    const urlParams = new URLSearchParams(window.location.search);
+    const mapId = urlParams.get('id') || null;
+    const user = urlParams.get('user') || null;
+
+    if (mapId && user === sessionStorage.getItem('user')) {
+        window.Firebase.readDataOnce(`users/${user}/maps/${mapId}`)
+            .then(data => {
+                if (data) {
+                    window.mapMaker.mapData = data.mapData;
+                    window.mapMaker.mapName = data.name;
+                    window.mapMaker.mapSize = data.size;
+                    window.mapMaker.setGamemode(data.gamemode);
+                    window.mapMaker.setEnvironment(data.environment);
+                    document.getElementById('mapName').value = data.name;
+                    document.getElementById('mapSize').value = data.size;
+                    document.getElementById('gamemode').value = data.gamemode;
+                    document.getElementById('environment').value = data.environment;
+                    document.getElementById('mapLink').innerText = `https://she-fairy.github.io/atlas-horizon/map.html?mapId=${mapId}&user=\n${user}`;
+                    window.mapMaker.draw()
+                } else {
+                    alert('Map not found.');
+                }
+            })
+            .catch(error => {
+                console.error('Error loading map:', error);
+                alert('Failed to load map. Please try again.');
+            });
+    } else {
+        window.mapMaker.initialize();
+    }
 });
+
+window.MapmakerService = {
+    // Cache for loaded images
+    tileImages: {},
+    
+    // Constants and data needed for rendering
+    tileSize: 32,
+    canvasPadding: 16,
+    
+    // Tile definitions and data (these will be initialized on first use)
+    tileDefinitions: null,
+    tileData: null,
+    environmentTileData: null,
+    objectiveData: null,
+    environmentObjectiveData: null,
+    fenceLogicHandler: null,
+    bgDark: null,
+    bgLight: null,
+    
+    
+    // Create a PNG representation of a map
+    async createMapPNG(code, gamemode, env) {
+        // Make sure we're initialized
+        await this.initialize();
+        
+        // Set up necessary data
+        const mapWidth = code[0].length;
+        const mapHeight = code.length;
+        
+        // Create off-screen canvas
+        const canvas = document.createElement('canvas');
+        canvas.width = mapWidth * this.tileSize + this.canvasPadding * 2;
+        canvas.height = mapHeight * this.tileSize + this.canvasPadding * 2;
+        const ctx = canvas.getContext('2d');
+        
+        // Draw the background grid
+        for (let y = 0; y < mapHeight; y++) {
+            for (let x = 0; x < mapWidth; x++) {
+                const isDark = (x + y) % 2 === 0;
+                const bgImg = isDark ? this.bgDark : this.bgLight;
+                
+                if (bgImg && bgImg.complete) {
+                    ctx.drawImage(
+                        bgImg,
+                        x * this.tileSize + this.canvasPadding,
+                        y * this.tileSize + this.canvasPadding,
+                        this.tileSize,
+                        this.tileSize
+                    );
+                }
+            }
+        }
+        
+        // Group tiles by z-index
+        const tilesByZIndex = new Map();
+        for (let y = 0; y < mapHeight; y++) {
+            for (let x = 0; x < mapWidth; x++) {
+                const tileId = code[y][x];
+                if (tileId === 0 || tileId === -1) continue;
+                
+                const def = this.tileDefinitions?.[tileId];
+                if (!def) continue;
+                
+                let dimensions;
+                if (def.name === 'Objective') {
+                    dimensions = this.environmentObjectiveData?.[env]?.[gamemode] ||
+                                this.objectiveData?.[gamemode];
+                } else {
+                    dimensions = this.environmentTileData?.[env]?.[def.name] ||
+                                this.tileData?.[def.name];
+                }
+                if (!dimensions) continue;
+                
+                const zIndex = dimensions[5] || 0;
+                if (!tilesByZIndex.has(zIndex)) {
+                    tilesByZIndex.set(zIndex, []);
+                }
+                tilesByZIndex.get(zIndex).push({ x, y, tileId });
+            }
+        }
+        
+        // Draw tiles in z-index order
+        const drawPromises = [];
+        Array.from(tilesByZIndex.keys())
+            .sort((a, b) => a - b)
+            .forEach(zIndex => {
+                tilesByZIndex.get(zIndex).forEach(({ x, y, tileId }) => {
+                    const promise = this.drawTile(ctx, tileId, x, y, code, gamemode, env);
+                    drawPromises.push(promise);
+                });
+            });
+        
+        // Wait for all tiles to be drawn
+        await Promise.all(drawPromises);
+        
+        return canvas.toDataURL('image/png');
+    },
+    
+    // Draw a single tile
+    async drawTile(ctx, tileId, x, y, mapData, gamemode, environment) {
+        const def = this.tileDefinitions[tileId];
+        if (!def) return Promise.resolve();
+        
+        let img;
+        
+        // Handle special cases for water, fence, and rope fence
+        if (tileId === 8) { // Water
+            // Water tile logic (simplified)
+            const imagePath = `Resources/${environment}/Water/00000000.png`;
+            img = await this.loadImage(imagePath);
+        } else if (tileId === 7 || tileId === 9) { // Fence or Rope Fence
+            const isFence = tileId === 7;
+            const imageName = this.getFenceImageName(x, y, mapData, environment, isFence);
+            
+            // For rope fence, map the image name to the corresponding Post variation
+            const ropeMapping = {
+                'T': 'Post_T',
+                'R': 'Post_R',
+                'TR': 'Post_TR',
+                'Fence': 'Post'
+            };
+            
+            const finalImageName = isFence ? imageName : (ropeMapping[imageName] || 'Post');
+            const imagePath = `Resources/${environment}/${isFence ? 'Fence' : 'Rope'}/${finalImageName}.png`;
+            
+            img = await this.loadImage(imagePath);
+        } else {
+            // Regular tile
+            if (!this.tileImages[tileId]) {
+                const imagePath = `Resources/Tiles/${def.name}.png`;
+                this.tileImages[tileId] = await this.loadImage(imagePath);
+            }
+            img = this.tileImages[tileId];
+        }
+        
+        if (!img || !img.complete) return Promise.resolve();
+        
+        // Get tile dimensions data
+        let dimensions;
+        if (def.name === 'Objective') {
+            dimensions = this.environmentObjectiveData?.[environment]?.[gamemode] || 
+                        this.objectiveData?.[gamemode];
+        } else {
+            // For fence and rope fence variations, use the specific variation's dimensions
+            const isFence = tileId === 7;
+            const isRope = tileId === 9;
+            if (isFence || isRope) {
+                const imageName = this.getFenceImageName(x, y, mapData, environment, isFence);
+                const ropeMapping = {
+                    'T': 'Post_T',
+                    'R': 'Post_R',
+                    'TR': 'Post_TR',
+                    'Fence': 'Post'
+                };
+                const finalImageName = isFence ? imageName : (ropeMapping[imageName] || 'Post');
+                
+                // First check environment-specific data
+                dimensions = this.environmentTileData[environment]?.[finalImageName] ||
+                           // Then check base tile data
+                           this.tileData[finalImageName] ||
+                           // Fall back to base fence/rope fence in environment data
+                           this.environmentTileData[environment]?.[isFence ? 'Fence' : 'Rope Fence'] ||
+                           // Finally fall back to base tile data
+                           this.tileData[isFence ? 'Fence' : 'Rope Fence'];
+            } else {
+                dimensions = this.environmentTileData[environment]?.[def.name] || 
+                            this.tileData[def.name];
+            }
+        }
+        if (!dimensions) return Promise.resolve();
+        
+        const [scaleX, scaleY, offsetX, offsetY, opacity, zIndex] = dimensions;
+        
+        // Calculate drawing dimensions
+        const width = this.tileSize * scaleX * (def.size || 1);
+        const height = this.tileSize * scaleY * (def.size || 1);
+        
+        // Calculate position with offsets and padding
+        const drawX = x * this.tileSize + (this.tileSize * offsetX / 100) + this.canvasPadding;
+        const drawY = y * this.tileSize + (this.tileSize * offsetY / 100) + this.canvasPadding;
+        
+        // Set opacity
+        ctx.globalAlpha = opacity;
+        
+        // Draw the tile
+        ctx.drawImage(img, drawX, drawY, width, height);
+        
+        // Reset opacity
+        ctx.globalAlpha = 1;
+        
+        return Promise.resolve();
+    },
+    
+    // Helper function to load an image and return a promise
+    loadImage(src) {
+        if (this.tileImages[src]) {
+            return Promise.resolve(this.tileImages[src]);
+        }
+        
+        return new Promise((resolve) => {
+            const img = new Image();
+            img.onload = () => {
+                this.tileImages[src] = img;
+                resolve(img);
+            };
+            img.onerror = () => {
+                console.error(`Failed to load image: ${src}`);
+                resolve(null); // Resolve with null on error
+            };
+            img.src = src;
+        });
+    },
+    
+    // Simplified version of the fence logic handler
+    getFenceImageName(x, y, mapData, environment, isFence = true) {
+        // Get connections (true if connected, false if not)
+        const connections = this.getFenceConnections(x, y, mapData, isFence);
+        
+        // Use simple logic for all environments
+        return this.handleSimpleFenceLogic(connections);
+    },
+    
+    getFenceConnections(x, y, mapData, isFence) {
+        const height = mapData.length;
+        const width = mapData[0].length;
+        
+        // Helper function to check if a tile is a fence/rope
+        const isSameType = (x, y) => {
+            if (x < 0 || x >= width || y < 0 || y >= height) return false;
+            const tileId = mapData[y][x];
+            return isFence ? (tileId === 7) : (tileId === 9);
+        };
+        
+        return {
+            top: isSameType(x, y - 1),
+            right: isSameType(x + 1, y),
+            bottom: isSameType(x, y + 1),
+            left: isSameType(x - 1, y)
+        };
+    },
+    
+    handleSimpleFenceLogic(connections) {
+        const { top, right, bottom, left } = connections;
+        
+        // Horizontal case: connected on both sides but not top/bottom
+        if (left && right && !top && !bottom) return 'Horizontal';
+        
+        // Vertical case: connected on top/bottom but not sides
+        if (top && bottom && !left && !right) return 'Vertical';
+        
+        // Default to block for all other cases
+        return 'Fence';
+    }
+};
