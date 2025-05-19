@@ -41,6 +41,23 @@
         </div>
     </div>
 
+    <script>
+        // Check if user is logged in
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = sessionStorage.getItem('user');
+            if (user) {
+                // User is logged in
+                document.getElementById('loginBtn').style.display = 'none';
+                document.getElementById('avatar').style.display = 'block';
+                document.getElementById('avatar').src = user.avatar;
+            } else {
+                // User is not logged in
+                document.getElementById('loginBtn').style.display = 'block';
+                document.getElementById('avatar').style.display = 'none';
+            }
+        });
+        </script>
+
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>

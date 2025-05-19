@@ -58,7 +58,8 @@
 /* Map Card */
 
 .maps-grid {
-    padding: 1.5rem;
+    padding: 1.5rem ;
+    padding-bottom: 5rem;
     overflow-y: auto;
     height: 60rem;
 }
@@ -86,4 +87,44 @@
 
 .card-map-creator {
     font-size: 1rem;
+}
+
+
+#mapsGrid::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+
+#mapsGrid::-webkit-scrollbar-track {
+    background: var(--surface-color);
+}
+
+#mapsGrid::-webkit-scrollbar-thumb {
+    background-color: var(--border-color);
+    border-radius: 6px;
+    border: 3px solid var(--surface-color);
+}
+
+#mapsGrid::-webkit-scrollbar-thumb:hover {
+    background-color: var(--primary-color);
+}
+
+
+::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--surface-color);
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: var(--border-color);
+    border-radius: 6px;
+    border: 3px solid var(--surface-color);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: var(--primary-color);
 }

@@ -133,15 +133,15 @@
     </div>
 
         <script>
-        const avatar = document.getElementById('avatar');
-        avatar.src = sessionStorage.getItem('avatar');
-        avatar.addEventListener('click', () => {
-            if (confirm('Do you want to log out of this account?')){
-                sessionStorage.clear();
-                window.location.href = './index.html';
-            }
-        })
-    </script>
+            const avatar = document.getElementById('avatar');
+            avatar.src = sessionStorage.getItem('avatar');
+            avatar.addEventListener('click', () => {
+                if (confirm('Do you want to log out of this account?')){
+                    sessionStorage.clear();
+                    window.location.href = './index.html';
+                }
+            })
+        </script>
 
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>

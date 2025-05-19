@@ -10,42 +10,65 @@
 </head>
 <body>
     <nav>
-        <div class="logo">Atlas Horizon</div>
+        <div class="logo">
+            <img src="./Resources/Additional/Icons/AtlasLogo.png" alt="Atlas Horizon Logo" class="logo-img">
+            Atlas Horizon
+        </div>
         <div class="nav-links">
             <a href="./index.html">Home</a>
             <a href="./mapmaker.html">Map Maker</a>
             <a href="./map-gallery.html" class="active">Map Gallery</a>
-            <a href="./my-maps.html" >My Maps</a>
-            <button class="login-btn">Login with Discord</button>
+            <a href="./my-maps.html">My Maps</a>
+            <button id="loginBtn" class="login-btn">Login with Discord</button>
+            <input class="avatar" type="image" id="avatar" alt="Avatar" />
         </div>
     </nav>
 
     <div class="gallery-container">
         <div class="gallery-header">
             <div class="search-bar">
-                <input type="text" placeholder="Search maps...">
+                <input type="text" id="searchInput" placeholder="Search maps..." class="search-input">
             </div>
             <div class="filter-controls">
-                <select name="gamemode">
-                    <option value="all">All Game Modes</option>
-                    <option value="Gem_Grab">Gem Grab</option>
-                    <option value="Showdown">Showdown</option>
-                    <option value="Heist">Heist</option>
-                    <option value="Bounty">Bounty</option>
-                    <option value="Brawl_Ball">Brawl Ball</option>
-                    <option value="Hot_Zone">Hot Zone</option>
-                    <option value="Snowtel_Thieves">Snowtel Thieves</option>
-                    <option value="Basket_Brawl">Basket Brawl</option>
-                    <option value="Volley_Brawl">Volley Brawl</option>
-                    <option value="Siege">Siege</option>
-                    <option value="Hold_The_Trophy">Hold The Trophy</option>
-                </select>
-                <select name="environment">
-                    <option value="all">All Environments</option>
-                    <option value="Desert">Desert</option>
-                    <option value="Mine">Mine</option>
-                    <option value="Mortuary">Mortuary</option>
-                </select>
+                <div class="select-container">
+                    <label for="gamemodeFilter">Game Mode:</label>
+                    <select id="gamemodeFilter" name="gamemode">
+                        <option value="all">All Game Modes</option>
+                        <option value="Gem_Grab">Gem Grab</option>
+                        <option value="Showdown">Showdown</option>
+                        <option value="Heist">Heist</option>
+                        <option value="Bounty">Bounty</option>
+                        <option value="Brawl_Ball">Brawl Ball</option>
+                        <option value="Hot_Zone">Hot Zone</option>
+                        <option value="Snowtel_Thieves">Snowtel Thieves</option>
+                        <option value="Basket_Brawl">Basket Brawl</option>
+                        <option value="Volley_Brawl">Volley Brawl</option>
+                        <option value="Siege">Siege</option>
+                        <option value="Hold_The_Trophy">Hold The Trophy</option>
+                    </select>
+                </div>
+                <div class="select-container">
+                    <label for="environmentFilter">Environment:</label>
+                    <select id="environmentFilter" name="environment">
+                        <option value="all">All Environments</option>
+                        <option value="Desert">Desert</option>
+                        <option value="Mine">Mine</option>
+                        <option value="Mortuary">Mortuary</option>
+                        <option value="Oasis">Oasis</option>
+                        <option value="Grassy_Field">Grassy Field</option>
+                        <option value="City">City</option>
+                        <option value="Retropolis">Retropolis</option>
+                        <option value="Arcade">Arcade</option>
+                        <option value="Stadium">Stadium</option>
+                        <option value="Bazaar">Bazaar</option>
+                        <option value="Bandstand">Bandstand</option>
+                        <option value="Snowtel">Snowtel</option>
+                        <option value="Wild_West">Wild West</option>
+                        <option value="Castle_Courtyard">Castle Courtyard</option>
+                        <option value="Swamp_of_Love">Swamp of Love</option>
+                        <option value="Oddities Shop">Oddities Shop</option>
+                    </select>
+                </div>
             </div>
         </div>
 
@@ -54,13 +77,13 @@
         </div>
 
         <div class="pagination">
-            <button class="pagination-btn" data-action="prev">Previous</button>
+            <button class="pagination-btn text-btn" data-action="prev">Previous</button>
             <span class="pagination-info">Page 1 of 1</span>
-            <button class="pagination-btn" data-action="next">Next</button>
+            <button class="pagination-btn text-btn" data-action="next">Next</button>
         </div>
     </div>
 
-        <script>
+    <script>
         const avatar = document.getElementById('avatar');
         avatar.src = sessionStorage.getItem('avatar');
         avatar.addEventListener('click', () => {
@@ -70,6 +93,23 @@
             }
         })
     </script>
+
+    <script>
+        // Check if user is logged in
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = sessionStorage.getItem('user');
+            if (user) {
+                // User is logged in
+                document.getElementById('loginBtn').style.display = 'none';
+                document.getElementById('avatar').style.display = 'block';
+                document.getElementById('avatar').src = sessionStorage.getItem('avatar');
+            } else {
+                // User is not logged in
+                document.getElementById('loginBtn').style.display = 'block';
+                document.getElementById('avatar').style.display = 'none';
+            }
+        });
+        </script>
 
         <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
         <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>

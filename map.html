@@ -63,7 +63,7 @@
                 // User is logged in
                 document.getElementById('loginBtn').style.display = 'none';
                 document.getElementById('avatar').style.display = 'block';
-                document.getElementById('avatar').src = user.avatar;
+                document.getElementById('avatar').src = sessionStorage.getItem('avatar');
             } else {
                 // User is not logged in
                 document.getElementById('loginBtn').style.display = 'block';
