@@ -20,7 +20,7 @@
             <a href="./map-gallery.html" class="active">Map Gallery</a>
             <a href="./my-maps.html">My Maps</a>
             <button id="loginBtn" class="login-btn">Login with Discord</button>
-            <input class="avatar" type="image" id="avatar" alt="Avatar" />
+            <input class="avatar" type="image" id="avatar" alt="Avatar" style="display: none;" />
         </div>
     </nav>
 
@@ -108,6 +108,10 @@
                 document.getElementById('loginBtn').style.display = 'block';
                 document.getElementById('avatar').style.display = 'none';
             }
+        });
+
+        document.getElementById('loginBtn').addEventListener('click', () => {
+            window.location.href = 'https://discord.com/oauth2/authorize?client_id=1293658198393487420&response_type=code&redirect_uri=https%3A%2F%2Fshe-fairy.github.io%2Fatlas-horizon%2Fauth%2Fdiscord%2Fcallback.html&scope=identify';
         });
         </script>
 

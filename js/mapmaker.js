@@ -303,6 +303,7 @@ export class MapMaker {
             'Unbreakable': [1, 1.75, 0, -50, 1, 5],
             'Blue Spawn': [1.7, 1.7, -27.5, -27.5, 0.85, 5],
             'Red Spawn': [1.7, 1.7, -27.5, -27.5, 0.85, 5],
+            'Trio Spawn': [1.7, 1.7, -27.5, -27.5, 0.85, 5],
             'Objective': [2, 2.21, -50, -115, 1, 10],
             'Smoke': [1*1.4, 1.1*1.4, -15, -35, 1, 5],
             'Heal Pad': [1, 1.12, 0, 0, 1, 5],
@@ -463,7 +464,8 @@ export class MapMaker {
             29: { name: 'Teleporter Green', img: 'Global/Teleporters/Green.png', size: 2 },
             30: { name: 'Teleporter Red', img: 'Global/Teleporters/Red.png', size: 2 },
             31: { name: 'Teleporter Yellow', img: 'Global/Teleporters/Yellow.png', size: 2 },
-            32: { name: 'Bolt', img: 'Global/Objectives/Bolt.png', size: 1, showInGamemode: 'Siege' }
+            32: { name: 'Bolt', img: 'Global/Objectives/Bolt.png', size: 1, showInGamemode: 'Siege' },
+            36: { name: 'Trio Spawn', size: 1, showInGamemode: 'Showdown', img: 'Global/Spawns/1.png' }
         };
 
         // Initialize water tile filenames
@@ -607,219 +609,6 @@ export class MapMaker {
         this.initializeTileSelector();
         // Force a redraw after a short delay to ensure images are loaded
         setTimeout(() => this.draw(), 100);
-    }
-
-    // Update the drawTile method to handle water tiles more robustly
-    drawTile(ctx, tileId, x, y) {
-        const def = this.tileDefinitions[tileId];
-        if (!def) return;
-
-        let img;
-        if (tileId === 8) { // Water tile
-            // Initialize the 8-bit code array
-            const code = new Array(8).fill('0');
-            
-            // Check for edge conditions
-            const isTopEdge = y === 0;
-            const isBottomEdge = y === this.mapHeight - 1;
-            const isLeftEdge = x === 0;
-            const isRightEdge = x === this.mapWidth - 1;
-
-            // Check direct connections first
-            const hasTop = !isTopEdge && this.mapData[y - 1][x] === 8;
-            const hasBottom = !isBottomEdge && this.mapData[y + 1][x] === 8;
-            const hasLeft = !isLeftEdge && this.mapData[y][x - 1] === 8;
-            const hasRight = !isRightEdge && this.mapData[y][x + 1] === 8;
-
-            // Set direct connections
-            if (hasTop) code[1] = '1';    // Top
-            if (hasBottom) code[6] = '1'; // Bottom
-            if (hasLeft) code[3] = '1';   // Left
-            if (hasRight) code[4] = '1';  // Right
-
-            // Check corner connections with adjacency rules
-            // Top-left corner
-            if (!isTopEdge && !isLeftEdge && 
-                this.mapData[y - 1][x - 1] === 8 && hasTop && hasLeft) {
-                code[0] = '1';
-            }
-
-            // Top-right corner
-            if (!isTopEdge && !isRightEdge && 
-                this.mapData[y - 1][x + 1] === 8 && hasTop && hasRight) {
-                code[2] = '1';
-            }
-
-            // Bottom-left corner
-            if (!isBottomEdge && !isLeftEdge && 
-                this.mapData[y + 1][x - 1] === 8 && hasBottom && hasLeft) {
-                code[5] = '1';
-            }
-
-            // Bottom-right corner
-            if (!isBottomEdge && !isRightEdge && 
-                this.mapData[y + 1][x + 1] === 8 && hasBottom && hasRight) {
-                code[7] = '1';
-            }
-
-            // Convert code array to string for image name
-            const imageName = code.join('') + '.png';
-            const cacheKey = `water_${imageName}`;
-            
-            // Get the image from the cache
-            img = this.tileImages[cacheKey];
-            
-            // If image doesn't exist in cache, create it
-            if (!img) {
-                const imagePath = `Resources/${this.environment}/Water/${imageName}`;
-                img = new Image();
-                img.src = imagePath;
-                
-                // Add error handling
-                img.onerror = () => {
-                    console.error(`Failed to load water image: ${imagePath}`);
-                    // Try to load a fallback image
-                    img.src = `Resources/${this.environment}/Water/00000000.png`;
-                };
-                
-                // Store in cache
-                this.tileImages[cacheKey] = img;
-            }
-            
-            // If image isn't loaded yet, draw a placeholder
-            if (!img || !img.complete) {
-                ctx.fillStyle = 'rgba(0, 0, 255, 0.1)'; // Reduced opacity from 0.2 to 0.1
-                ctx.fillRect(
-                    x * this.tileSize + this.canvasPadding,
-                    y * this.tileSize + this.canvasPadding,
-                    this.tileSize,
-                    this.tileSize
-                );
-                return;
-            }
-
-            // Get water tile dimensions
-            const dimensions = this.environmentTileData[this.environment]?.['Water'] || 
-                             this.tileData['Water'] ||
-                             [1, 1, 0, 0, 1, 5]; // Default dimensions if none specified
-
-            // Draw the water tile
-            const [scaleX, scaleY, offsetX, offsetY, opacity] = dimensions;
-            const tileSize = this.tileSize;
-            
-            // Calculate drawing dimensions
-            const width = tileSize * scaleX;
-            const height = tileSize * scaleY;
-            
-            // Calculate position with offsets and padding
-            const drawX = x * tileSize + (tileSize * offsetX / 100) + this.canvasPadding;
-            const drawY = y * tileSize + (tileSize * offsetY / 100) + this.canvasPadding;
-
-            // Set opacity and draw the image
-            ctx.globalAlpha = opacity;
-            ctx.drawImage(img, drawX, drawY, width, height);
-            ctx.globalAlpha = 1.0;
-            
-            return;
-        } else if (tileId === 7 || tileId === 9) { // Fence or Rope Fence
-            const isFence = tileId === 7;
-            const imageName = this.fenceLogicHandler.getFenceImageName(x, y, this.mapData, this.environment, isFence);
-            
-            // For rope fence, map the image name to the corresponding Post variation
-            const ropeMapping = {
-                'T': 'Post_T',
-                'R': 'Post_R',
-                'TR': 'Post_TR',
-                'Fence': 'Post'
-            };
-            
-            const finalImageName = isFence ? imageName : (ropeMapping[imageName] || 'Post');
-            const imagePath = `Resources/${this.environment}/${isFence ? 'Fence' : 'Rope'}/${finalImageName}.png`;
-            
-            img = this.tileImages[imagePath];
-            
-            if (!img) {
-                img = new Image();
-                img.onload = () => this.draw();
-                img.src = imagePath;
-                img.onerror = () => {
-                    console.error(`Failed to load ${isFence ? 'fence' : 'rope'} image: ${imagePath}`);
-                    // Load fallback image
-                    img.src = `Resources/${this.environment}/${isFence ? 'Fence' : 'Rope'}/Fence.png`;
-                };
-                this.tileImages[imagePath] = img;
-            }
-            
-            if (!img.complete) {
-                // Draw placeholder
-                ctx.fillStyle = 'rgba(150, 150, 150, 0.2)';
-                ctx.fillRect(
-                    x * this.tileSize + this.canvasPadding,
-                    y * this.tileSize + this.canvasPadding,
-                    this.tileSize,
-                    this.tileSize
-                );
-                return;
-            }
-        } else {
-            img = this.tileImages[tileId];
-        }
-
-        if (!img || !img.complete) return;
-
-        // Get tile dimensions data
-        let dimensions;
-        if (def.name === 'Objective') {
-            dimensions = this.environmentObjectiveData[this.environment]?.[this.gamemode] || 
-                        this.objectiveData[this.gamemode];
-        } else {
-            // For fence and rope fence variations, use the specific variation's dimensions
-            const isFence = tileId === 7;
-            const isRope = tileId === 9;
-            if (isFence || isRope) {
-                const imageName = this.fenceLogicHandler.getFenceImageName(x, y, this.mapData, this.environment, isFence);
-                const ropeMapping = {
-                    'T': 'Post_T',
-                    'R': 'Post_R',
-                    'TR': 'Post_TR',
-                    'Fence': 'Post'
-                };
-                const finalImageName = isFence ? imageName : (ropeMapping[imageName] || 'Post');
-                
-                // First check environment-specific data
-                dimensions = this.environmentTileData[this.environment]?.[finalImageName] ||
-                           // Then check base tile data
-                           this.tileData[finalImageName] ||
-                           // Fall back to base fence/rope fence in environment data
-                           this.environmentTileData[this.environment]?.[isFence ? 'Fence' : 'Rope Fence'] ||
-                           // Finally fall back to base tile data
-                           this.tileData[isFence ? 'Fence' : 'Rope Fence'];
-            } else {
-                dimensions = this.environmentTileData[this.environment]?.[def.name] || 
-                            this.tileData[def.name];
-            }
-        }
-        if (!dimensions) return;
-
-        const [scaleX, scaleY, offsetX, offsetY, opacity, zIndex] = dimensions;
-        const tileSize = this.tileSize;
-
-        // Calculate drawing dimensions
-        const width = tileSize * scaleX * (def.size || 1);
-        const height = tileSize * scaleY * (def.size || 1);
-        
-        // Calculate position with offsets and padding
-        const drawX = x * tileSize + (tileSize * offsetX / 100) + this.canvasPadding;
-        const drawY = y * tileSize + (tileSize * offsetY / 100) + this.canvasPadding;
-
-        // Set opacity
-        ctx.globalAlpha = opacity;
-
-        // Draw the tile
-        ctx.drawImage(img, drawX, drawY, width, height);
-
-        // Reset opacity
-        ctx.globalAlpha = 1;
     }
 
     async initialize() {
@@ -1000,7 +789,8 @@ export class MapMaker {
             30: { name: 'Teleporter Red', img: 'Global/Teleporters/Red.png', size: 2 },
             31: { name: 'Teleporter Yellow', img: 'Global/Teleporters/Yellow.png', size: 2 },
             32: { name: 'Bolt', img: 'Global/Objectives/Bolt.png', size: 1, showInGamemode: 'Siege' },
-            33: { name: 'Empty2', img: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNgYAAAAAMAASsJTYQAAAAASUVORK5CYII=', size: 1 }
+            33: { name: 'Empty2', img: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNgYAAAAAMAASsJTYQAAAAASUVORK5CYII=', size: 1 },
+            36: { name: 'Trio Spawn', size: 1, showInGamemode: 'Showdown', img: 'Global/Spawns/1.png' }
         };
 
         // Load all tile images
@@ -1178,29 +968,37 @@ export class MapMaker {
                 this.mapData   = Array(this.mapHeight).fill().map(() => Array(this.mapWidth).fill(0));
 
                 // ——— Showdown ↔ other: adjust Objective tile + data sizes ———
-                const isShowdown    = size => size === this.mapSizes.showdown;
-                const in2x2ModeNew  = isShowdown(newSize) && ['Gem_Grab','Brawl_Ball'].includes(this.gamemode);
-                const in2x2ModePrev = isShowdown(prevSize) && ['Gem_Grab','Brawl_Ball'].includes(this.gamemode);
+                const isShowdown = size => size === this.mapSizes.showdown;
+                const wasShrunk    = isShowdown(prevSize);
 
-                if (in2x2ModeNew) {
-                    this.tileDefinitions[14].size = 2;
-                    this.objectiveData.width           = 1;
-                    this.objectiveData.height          = 1;
-                    this.environmentObjectiveData.width  = 1;
-                    this.environmentObjectiveData.height = 1;
-                }
-                else if (in2x2ModePrev) {
+                if (wasShrunk) {
                     this.tileDefinitions[14].size = 1;
-                    this.objectiveData.width           = 2;
-                    this.objectiveData.height          = 2;
-                    this.environmentObjectiveData.width  = 2;
-                    this.environmentObjectiveData.height = 2;
+                    this.objectiveData[this.gamemode][0] = 2; // width
+                    this.objectiveData[this.gamemode][1] = 2; // height
+                    this.objectiveData[this.gamemode][2] = -50; 
+                    this.objectiveData[this.gamemode][3] = -50;
+                    this.objectiveData.Brawl_Ball[0] = 1.3;
+                    this.objectiveData.Brawl_Ball[1] = 1.495;
+                    this.objectiveData.Brawl_Ball[2] = -20;
+                    this.objectiveData.Brawl_Ball[3] = -20; 
+                } else {
+                    this.tileDefinitions[14].size = 2;
+                    // restore original width/height
+                    this.objectiveData.Gem_Grab[0] = 1;
+                    this.objectiveData.Gem_Grab[1] = 1;
+                    this.objectiveData.Gem_Grab[2] = 0;
+                    this.objectiveData.Gem_Grab[3] = 0;
+                    this.objectiveData.Brawl_Ball[0] = 0.65;
+                    this.objectiveData.Brawl_Ball[1] = 0.7475;
+                    this.objectiveData.Brawl_Ball[2] = 30;
+                    this.objectiveData.Brawl_Ball[3] = 30;
                 }
+
                 // ————————————————————————————————————————————————
 
                 this.updateCanvasSize();
                 this.fitMapToScreen();
-                this.draw();
+                this.setGamemode(this.gamemode);
             } else {
                 // reset dropdown if cancelled
                 e.target.value = Object.entries(this.mapSizes)
@@ -1689,7 +1487,7 @@ export class MapMaker {
         // Define the order of tiles
         const tileOrder = [
             'Wall', 'Wall2', 'Unbreakable', 'Crate', 'Barrel', 'Fence', 'Rope Fence',
-            'Bush', 'Cactus', 'Water', 'Skull', 'Blue Spawn', 'Red Spawn', 'Objective',
+            'Bush', 'Cactus', 'Water', 'Skull', 'Blue Spawn', 'Red Spawn', 'Trio Spawn', 'Objective',
             'Smoke', 'Heal Pad', 'Slow Tile', 'Speed Tile', 'Spikes',
             'Jump R', 'Jump L', 'Jump T', 'Jump B',
             'Jump BR', 'Jump TL', 'Jump BL', 'Jump TR',
@@ -2625,36 +2423,125 @@ export class MapMaker {
 
         // SHOWDOWN MAP - Brawl Ball
         if (this.mapSize === this.mapSizes.showdown && isBrawl) {
-            const left = 0, right = this.mapWidth - 3;
             this.goalImages.push(
-                { name: 'goal5v5Red', x: left, y: middleY - 2, w: 3, h: 5, offsetX: -25, offsetY: 0 },
-                { name: 'goal5v5Blue', x: right, y: middleY - 2, w: 3, h: 5, offsetX: 0, offsetY: 0 }
+            { name: 'goal5v5Blue', x: 12, y: middleY - 8, w: 3, h: 17, offsetX: -10, offsetY: -8 },
+            { name: 'goal5v5Red',  x: this.mapWidth - 15, y: middleY - 8, w: 3, h: 17, offsetX:  10, offsetY: -8 }
+            );
+
+            // ← add this:
+            await Promise.all(
+            this.goalImages.map(g => this.preloadGoalImage(g.name, this.environment))
             );
         }
 
-        // Objective placement logic
-        const placeObjective = (x, y) => {
-            if (this.mapData[y][x] === 0) this.mapData[y][x] = 14;
-        };
+        this.applyDefaultLayoutIfEmpty();
 
-        const centeredModes = ['Gem_Grab', 'Brawl_Ball'];
-        if (centeredModes.includes(gamemode) && this.mapSize === this.mapSizes.showdown) {
-            // Showdown: place objectives in a 2×2 block at top-left
-            for (let dy = 0; dy < 2; dy++) {
-                for (let dx = 0; dx < 2; dx++) {
-                    placeObjective(dx, dy);
-                }
-            }
-        } else if (['Gem_Grab', 'Brawl_Ball', 'Bounty', 'Hot_Zone', 'Hold_The_Trophy', 'Basket_Brawl', 'Volley_Brawl'].includes(gamemode) && this.mapSize !== this.mapSizes.showdown) {
-            placeObjective(middleX, middleY);
-        }
 
         this.initializeTileSelector();
         this.loadTileImages();
         this.draw();
     }
 
+    applyDefaultLayoutIfEmpty() {
+        const { mapWidth, mapHeight } = this;
+        const midX = Math.floor(mapWidth / 2);
+        const topY = 0;
+        const bottomY = mapHeight - 1;
 
+        // Place spawns for regular maps
+        if (this.mapSize === this.mapSizes.regular) {
+            if (this.gamemode === 'Duels') {
+                this.mapData[topY][midX] = 13;      // Red
+                this.mapData[bottomY][midX] = 12;   // Blue
+                if (this.mapData[topY][midX - 2] === 13) {
+                    this.mapData[topY][midX - 2] = 0;
+                }
+                if (this.mapData[topY][midX + 2] === 13) {
+                    this.mapData[topY][midX + 2] = 0;
+                }
+                if (this.mapData[bottomY][midX - 2] === 12) {
+                    this.mapData[bottomY][midX - 2] = 0;
+                }
+                if (this.mapData[bottomY][midX + 2] === 12) {
+                    this.mapData[bottomY][midX + 2] = 0;
+                }
+            } else if (this.gamemode === 'Brawl_Ball') {
+                this.mapData[8][midX] = 13;      // Red
+                this.mapData[bottomY - 8][midX] = 12;   // Blue
+                this.mapData[8][midX - 2] = 13;  // Red
+                this.mapData[bottomY - 8][midX - 2] = 12; // Blue
+                this.mapData[8][midX + 2] = 13;  // Red
+                this.mapData[bottomY - 8][midX + 2] = 12; // Blue
+                for (let x = 0; x < mapWidth; x++) {
+                    if (this.mapData[0][x] === 13) {
+                        this.mapData[0][x] = 0;
+                    }
+                }
+                for (let x = 0; x < mapWidth; x++) {
+                    if (this.mapData[bottomY][x] === 12) {
+                        this.mapData[bottomY][x] = 0;
+                    }
+                }
+            } else {
+                [midX - 2, midX, midX + 2].forEach(x => {
+                    this.mapData[topY][x] = 13;
+                    this.mapData[bottomY][x] = 12;
+                });
+            }
+
+            // Center objectives
+            const centerY = Math.floor(mapHeight / 2);
+            const centerX = midX;
+            const objectiveModes = [
+                'Gem_Grab', 'Brawl_Ball', 'Bounty', 'Hot_Zone',
+                'Hold_The_Trophy', 'Basket_Brawl', 'Volley_Brawl'
+            ];
+            if (objectiveModes.includes(this.gamemode)) {
+                this.mapData[centerY][centerX] = 14;
+            }
+            if (this.gamemode === 'Heist' || this.gamemode === 'Snowtel_Thieves') {
+                this.mapData[4][centerX] = 14;
+                this.mapData[mapHeight - 5][centerX] = 14;
+            }
+        }
+
+        // Showdown-specific Brawl Ball setup
+        if (this.mapSize === this.mapSizes.showdown && this.gamemode === 'Brawl_Ball') {
+            const centerX = Math.floor(mapWidth / 2);
+            const centerY = Math.floor(mapHeight / 2);
+            const topLeft = centerX - 1;
+            const topTop = centerY - 1;
+            this.mapData[topTop][topLeft] = 14;
+
+            // Unbreakables on col 10 and mirrored
+            for (let y = centerY - 8; y <= centerY + 7; y++) {
+                this.mapData[y][10] = 11;
+                this.mapData[y][mapWidth - 11] = 11;
+            }
+            // Extend Unbreakables
+            for (let x = 10; x <= 14; x++) {
+                this.mapData[centerY + 8][x] = 11;
+                this.mapData[centerY + 8][mapWidth - x - 1] = 11;
+                this.mapData[centerY - 8][x] = 11;
+                this.mapData[centerY - 8][mapWidth - x - 1] = 11;
+            }
+
+            // Fill water from edges to col 1–9 and col width-10–width
+            for (let y = 0; y < mapHeight; y++) {
+                for (let x = 0; x <= 9; x++) this.mapData[y][x] = 8;
+                for (let x = mapWidth - 10; x < mapWidth; x++) this.mapData[y][x] = 8;
+            }
+
+        } else if (this.mapSize === this.mapSizes.showdown && this.gamemode === 'Gem_Grab') {
+            // Gem Grab-specific setup
+            const centerX = Math.floor(mapWidth / 2);
+            const centerY = Math.floor(mapHeight / 2);
+            const topLeft = centerX - 1;
+            const topTop = centerY - 1;
+            this.mapData[topTop][topLeft] = 14;
+        }
+        this.draw();
+    }
     
 
     setEnvironment(environment) {

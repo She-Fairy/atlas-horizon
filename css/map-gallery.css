@@ -155,22 +155,20 @@
 /* Text Buttons */
 .text-btn {
     padding: 0.5rem 1rem;
-}
-
-.text-btn:active {
-    outline: 1px solid var(--primary-color);
-}
-
-/* Form Elements */
-input[type="text"],
-.select-container select {
-    width: 100%;
-    padding: 0.6rem;
     border: 1px solid var(--border-color);
     border-radius: 4px;
     background-color: var(--surface-color);
     color: var(--text-color);
-    transition: border-color 0.2s, background-color 0.2s;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.text-btn:hover {
+    background-color: var(--surface-color-hover);
+    border-color: var(--primary-color);
 }
 
 /* Select Container */
