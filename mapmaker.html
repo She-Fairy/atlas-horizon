@@ -9,6 +9,11 @@
     <link rel="icon" href="./Resources/Additional/Icons/AtlasLogo.ico" type="image/x-icon">
 </head>
 <body>
+    <script>
+        if (sessionStorage.getItem('user') === null) {
+            window.location.href = 'https://discord.com/oauth2/authorize?client_id=1293658198393487420&response_type=code&redirect_uri=https%3A%2F%2Fshe-fairy.github.io%2Fatlas-horizon%2Fauth%2Fdiscord%2Fcallback.html&scope=identify';
+        }
+    </script>
     <nav>
         <div class="logo">
             <img src="./Resources/Additional/Icons/AtlasLogo.png" alt="Atlas Horizon Logo" class="logo-img">
@@ -19,7 +24,7 @@
             <a href="./mapmaker.html" class="active">Map Maker</a>
             <a href="./map-gallery.html">Map Gallery</a>
             <a href="./my-maps.html">My Maps</a>
-            <button id="loginBtn" class="login-btn">Login with Discord</button>
+            <input class="avatar" type="image" id="avatar" alt="Avatar">
         </div>
     </nav>
 
@@ -28,7 +33,7 @@
             <div class="tool-section">
                 <h3>Map Settings</h3>
                 <div class="select-container">
-                    <input type="text" id="mapName" placeholder="Map Name">
+                    <input type="text" value="Untitled Map" id="mapName" placeholder="Map Name">
                 </div>
                 <div class="select-container">
                     <label for="mapSize">Map Size:</label>
@@ -101,9 +106,9 @@
                         <option value="Snowtel_2">Snowtel 2</option>
                         <option value="Medieval Manor">Medieval Manor</option>
                         <option value="Super_City_2">Super City 2</option>
-                        <option value="Spongebob">Spongebob</option>
-                        <option value="Oddity_Shop">Oddity Shop</option>
-                        <option value="Skating_Bowl">Skating Bowl</option>
+                        <option value="Spongebob">Spongebob</option> -->
+                        <option value="Oddities Shop">Oddities Shop</option>
+                        <!-- <option value="Skating_Bowl">Skating Bowl</option>
                         <option value="Hockey">Hockey</option>
                         <option value="Escape_Room">Escape Room</option> -->
                     </select>
@@ -120,6 +125,9 @@
                         Download Map
                     </button>
                 </div>
+            </div>
+            <div style="font-family: Arial, Helvetica, sans-serif; font-weight: 900;">
+                Link: <br/> <a id="mapLink" style="font-family: Arial, Helvetica, sans-serif;font-weight: 400; color:var(--primary-color)">https://she-fairy.github.io/atlas-horizon/map.html</a> 
             </div>
         </div>
         
@@ -231,11 +239,22 @@
         </div>
     </div>
 
-    <script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-database-compat.js"></script>
-    <script src="./js/config.js"></script>
-    <script src="./js/auth.js"></script>
-    <script src="./js/mapmaker.js"></script>
+    <script>
+        const avatar = document.getElementById('avatar');
+        avatar.src = sessionStorage.getItem('avatar');
+        avatar.addEventListener('click', () => {
+            if (confirm('Do you want to log out of this account?')){
+                sessionStorage.clear();
+                window.location.href = './index.html';
+            }
+        })
+    </script>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+
+    <script src="./js/firebase-service.js"></script>
+    <script type="module" src="./js/mapmaker.js"></script>
 </body>
 </html>

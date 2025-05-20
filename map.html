@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Atlas Horizon- Home</title>
+    <title>Atlas Horizon - Map View</title>
     <link rel="icon" href="./Resources/Additional/Icons/AtlasLogo.ico" type="image/x-icon">
     <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/map.css">
 </head>
 <body>
     <nav>
@@ -14,7 +15,7 @@
             Atlas Horizon
         </div>
         <div class="nav-links">
-            <a href="./index.html" class="active">Home</a>
+            <a href="./index.html">Home</a>
             <a href="./mapmaker.html">Map Maker</a>
             <a href="./map-gallery.html">Map Gallery</a>
             <a href="./my-maps.html">My Maps</a>
@@ -23,15 +24,21 @@
         </div>
     </nav>
 
-    <main class="home-container">
-        <div class="hero-section">
-            <img src="./Resources/Additional/Icons/AtlasLogo.png" alt="Atlas Horizon Logo" class="hero-logo">
-            <h1>Welcome to Atlas Horizon Mapmaker</h1>
-            <p>Create, share, and discover amazing Brawl Stars maps!</p>
-            <div class="cta-buttons">
-                <a href="./mapmaker.html" class="cta-button">Start Creating</a>
-                <a href="./map-gallery.html" class="cta-button secondary">Browse Maps</a>
+    <main class="map-view-container">
+        <div class="map-details">
+            <h1 id="mapTitle">Map Title</h1>
+            <p id="mapInfo">Created by: <span id="mapAuthor">Author</span></p>
+            <div id="mapDetails">
+                <p>Gamemode: <span id="mapGamemode">Gem Grab</span></p>
+                <p>Environment: <span id="mapEnvironment">Desert</span></p>
             </div>
+        </div>
+        <div class="map-display">
+            <img id="mapImage" />
+        </div>
+        <div class="map-actions">
+            <a href="#" id="downloadMapBtn" class="action-button">Download Map</a>
+            <a href="#" id="openMapBtn" class="action-button secondary">Clone This Map</a>
         </div>
     </main>
 
@@ -42,6 +49,12 @@
         </div>
     </div>
 
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+
+    <script src="./js/firebase-service.js"></script>
+    <script type="module" src="./js/map.js"></script>
     <script>
         // Check if user is logged in
         document.addEventListener('DOMContentLoaded', () => {
@@ -58,24 +71,17 @@
             }
         });
 
+        // Handle login button click
+        document.getElementById('loginBtn').addEventListener('click', () => {
+            window.location.href = 'https://discord.com/oauth2/authorize?client_id=1293658198393487420&response_type=code&redirect_uri=https%3A%2F%2Fshe-fairy.github.io%2Fatlas-horizon%2Fauth%2Fdiscord%2Fcallback.html&scope=identify';
+        });
+        
         // Handle avatar click for logout
         document.getElementById('avatar').addEventListener('click', () => {
             if (confirm('Do you want to log out of this account?')){
                 sessionStorage.clear();
                 window.location.href = './index.html';
             }
-        });
-        </script>
-
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-
-    <script src="./js/firebase-service.js"></script>
-    <script src="./js/main.js"></script>
-    <script>
-        document.getElementById('loginBtn').addEventListener('click', () => {
-            window.location.href = 'https://discord.com/oauth2/authorize?client_id=1293658198393487420&response_type=code&redirect_uri=https%3A%2F%2Fshe-fairy.github.io%2Fatlas-horizon%2Fauth%2Fdiscord%2Fcallback.html&scope=identify';
         });
     </script>
 </body>

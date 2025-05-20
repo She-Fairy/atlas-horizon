@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Discord OAuth Callback</title>
+  <!-- Firebase libraries -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <script src="/js/firebase-service.js"></script>
+</head>
+<body>
+  <h1>Wait a second bishling...</h1>
+
+  <script>
+    async function handleDiscordCallback() {
+      const params = new URLSearchParams(window.location.search);
+      const code = params.get("code");
+
+      if (!code) {
+        document.body.innerHTML = "<p>Missing code in URL.</p>";
+        return;
+      }
+
+      const redirectUri = "http://127.0.0.1:5500/auth/discord/callback.html";
+
+      try {
+        console.log("Sending code to OAuth worker...");
+        const res = await fetch("https://discord-oauth-worker.shefairies.workers.dev", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ code, redirect_uri: redirectUri })
+        });
+
+        console.log("Response status:", res.status);
+        if (!res.ok) {
+          const errorText = await res.text();
+          console.error("Worker returned error:", errorText);
+          document.body.innerHTML = `<p>OAuth worker error: ${errorText}</p>`;
+          return;
+        }
+
+        const { tokenData, userData, firebaseToken } = await res.json();
+        console.log("Received from worker:", { tokenData, userData, firebaseToken });
+
+        if (!userData || !firebaseToken) {
+          document.body.innerHTML = "<p>Login failed. Try again.</p>";
+          return;
+        }
+
+        console.log("Signing in with Firebase custom token...");
+        await firebase.auth().signInWithCustomToken(firebaseToken)
+          .catch((err) => {
+            console.error("Firebase signIn error:", err.code, err.message);
+          });
+        console.log("Firebase sign-in successful");
+
+        sessionStorage.setItem("user", userData.id);
+        sessionStorage.setItem("username", userData.username);
+        sessionStorage.setItem("avatar", `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`);
+
+        const snapshot = await Firebase.readDataOnce("users/" + userData.id);
+        console.log("Firebase snapshot for user:", snapshot);
+
+        if (snapshot) {
+          console.log("User already exists");
+        } else {
+          await Firebase.writeData("users/" + userData.id, {
+            id: userData.id,
+            username: userData.username,
+            discriminator: userData.discriminator,
+            avatar: userData.avatar
+          });
+          console.log("User created successfully");
+        }
+
+        // ✅ Safe to redirect after Firebase sign-in and DB operations complete
+        window.location.href = "../../../index.html";
+
+      } catch (err) {
+        console.error("OAuth Error", err);
+        document.body.innerHTML = "<p>Error occurred. See console.</p>";
+      }
+    }
+
+    handleDiscordCallback();
+  </script>
+</body>
+</html>
