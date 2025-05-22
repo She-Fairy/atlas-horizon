@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (user === localStorage.getItem('user')) {
         document.getElementById('openMapBtn').textContent = 'Open in Map Maker';
         document.getElementById('openMapBtn').onclick = () => {
-            window.location.href = `https://she-fairy.github.io/atlas-horizon/mapmaker.html?id=${mapId}&user=${user}`;
+            window.location.href = urlParams.replace('map.html', 'mapmaker.html');
         };
     }
 
