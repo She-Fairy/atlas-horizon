@@ -11,16 +11,9 @@
 </head>
 <body>
     <script>
-        if (sessionStorage.getItem('user') === null) {
-            if (localStorage.getItem("user") === null) {
+        if (localStorage.getItem('user') === null) {
             window.location.href = "https://discord.com/oauth2/authorize?client_id=1293658198393487420&response_type=code&redirect_uri=https%3A%2F%2Fshe-fairy.github.io%2Fatlas-horizon%2Fauth%2Fdiscord%2Fcallback.html&scope=identify";
-        } else {
-            sessionStorage.setItem("user", localStorage.getItem("user"));
-            sessionStorage.setItem("avatar", localStorage.getItem("avatar"));
-            sessionStorage.setItem("username", localStorage.getItem("username"));
-            }
         }
-        
     </script>
     <nav>
         <div class="logo">
@@ -142,10 +135,10 @@
 
         <script>
             const avatar = document.getElementById('avatar');
-            avatar.src = sessionStorage.getItem('avatar');
+            avatar.src = localStorage.getItem('avatar');
             avatar.addEventListener('click', () => {
                 if (confirm('Do you want to log out of this account?')){
-                    sessionStorage.clear();
+                    localStorage.clear();
                     window.location.href = './index.html';
                 }
             })

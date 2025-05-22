@@ -60,9 +60,6 @@
         localStorage.setItem("user", userData.id);
         localStorage.setItem("username", userData.username);
         localStorage.setItem("avatar", `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`);
-        sessionStorage.setItem("user", userData.id);
-        sessionStorage.setItem("username", userData.username);
-        sessionStorage.setItem("avatar", `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`);
 
         const snapshot = await Firebase.readDataOnce("users/" + userData.id);
         console.log("Firebase snapshot for user:", snapshot);
