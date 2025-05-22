@@ -1,13 +1,13 @@
 import { generateMapImage } from './map-renderer.js';
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('load', () => {
     const urlParams = new URLSearchParams(window.location.search);
     const mapId = urlParams.get('id');
     const user = urlParams.get('user');
 
     if (!mapId) return showError('Map Not Found');
 
-    if (user === sessionStorage.getItem('user')) {
+    if (user === localStorage.getItem('user')) {
         document.getElementById('openMapBtn').textContent = 'Open in Map Maker';
         document.getElementById('openMapBtn').onclick = () => {
             window.location.href = `https://she-fairy.github.io/atlas-horizon/mapmaker.html?id=${mapId}&user=${user}`;
