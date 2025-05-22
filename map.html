@@ -57,20 +57,6 @@
     <script src="./js/firebase-service.js"></script>
     <script type="module" src="./js/map.js"></script>
     <script>
-        // Check if user is logged in
-        document.addEventListener('DOMContentLoaded', () => {
-            const user = sessionStorage.getItem('user');
-            if (user) {
-                // User is logged in
-                document.getElementById('loginBtn').style.display = 'none';
-                document.getElementById('avatar').style.display = 'block';
-                document.getElementById('avatar').src = sessionStorage.getItem('avatar');
-            } else {
-                // User is not logged in
-                document.getElementById('loginBtn').style.display = 'block';
-                document.getElementById('avatar').style.display = 'none';
-            }
-        });
 
         // Handle login button click
         document.getElementById('loginBtn').addEventListener('click', () => {
@@ -80,7 +66,7 @@
         // Handle avatar click for logout
         document.getElementById('avatar').addEventListener('click', () => {
             if (confirm('Do you want to log out of this account?')){
-                sessionStorage.clear();
+                localStorage.clear();
                 window.location.href = './index.html';
             }
         });

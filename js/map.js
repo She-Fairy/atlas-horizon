@@ -18,6 +18,17 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
+    if (localStorage.getItem('user') !== null) {
+        // User is logged in
+        document.getElementById('loginBtn').style.display = 'none';
+        document.getElementById('avatar').style.display = 'block';
+        document.getElementById('avatar').src = localStorage.getItem('avatar');
+    } else {
+        // User is not logged in
+        document.getElementById('loginBtn').style.display = 'block';
+        document.getElementById('avatar').style.display = 'none';
+    }
+
     Firebase.readDataOnce(`users/${user}/maps/${mapId}`).then(async (mapData) => {
         if (!mapData) return showError('Map Not Found');
 
