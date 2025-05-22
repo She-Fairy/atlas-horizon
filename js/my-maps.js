@@ -1,6 +1,6 @@
 import {generateMapImage} from './map-renderer.js';
 
-async function postMapsByUser(user = sessionStorage.getItem('user')) {
+async function postMapsByUser(user = localStorage.getItem('user')) {
     console.log('Attempting to fetch maps for user:', user);
     
     try {
@@ -86,7 +86,7 @@ window.addEventListener('load', () => {
     console.log('MapmakerService available:', typeof MapmakerService !== 'undefined');
 
     // Check if user is in session storage
-    const user = sessionStorage.getItem('user');
+    const user = localStorage.getItem('user');
     console.log('User from session storage:', user);
     
     // Then try to load real data if Firebase is available
