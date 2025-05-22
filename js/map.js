@@ -10,8 +10,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (user === sessionStorage.getItem('user')) {
         document.getElementById('openMapBtn').textContent = 'Open in Map Maker';
         document.getElementById('openMapBtn').onclick = () => {
-            urlParams = urlParams.replace('map', 'mapmaker');
-            window.locaction.href = urlParams;
+            let newLocation = urlParams.replace('map', 'mapmaker');
+            window.locaction.href = newLocation;
         };
     }
 
