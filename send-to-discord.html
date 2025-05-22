@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atlas Horizon- Gallery</title>
+    <link rel="icon" href="./Resources/Additional/Icons/AtlasLogo.ico" type="image/x-icon">
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/map-gallery.css">
+    <base href="https://she-fairy.github.io/atlas-horizon/">
+</head>
+<body> 
+    <script>
+        if (localStorage.getItem("user") === null) {
+            window.location.href = "https://discord.com/oauth2/authorize?client_id=1293658198393487420&response_type=code&redirect_uri=https%3A%2F%2Fshe-fairy.github.io%2Fatlas-horizon%2Fauth%2Fdiscord%2Fcallback.html&scope=identify";
+        } else {
+            sessionStorage.setItem("user", localStorage.getItem("user"));
+            sessionStorage.setItem("avatar", localStorage.getItem("avatar"));
+            sessionStorage.setItem("username", localStorage.getItem("username"));
+        }
+    </script>
+</body>
+</html>
