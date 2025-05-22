@@ -2252,7 +2252,7 @@ export class MapMaker {
             // Check if map is being saved for the first time
             if (mapLinkElement.innerText === 'https://she-fairy.github.io/atlas-horizon/map.html') {
                 mapId = this.generateMapId();
-                mapLinkElement.innerText = `https://she-fairy.github.io/atlas-horizon/map.html?mapId=${mapId}&user=\n${sessionStorage.getItem('user')}`;
+                mapLinkElement.innerText = `https://she-fairy.github.io/atlas-horizon/map.html?mapId=${mapId}&user=\n${localStorage.getItem('user')}`;
             } else {
                 const currentUrl = new URL(mapLinkElement.innerText);
                 mapId = currentUrl.searchParams.get('mapId');
@@ -2266,7 +2266,7 @@ export class MapMaker {
                 mapData: this.mapData
             };
     
-            await window.Firebase.writeData(`users/${sessionStorage.getItem('user')}/maps/${mapId}`, mapData);
+            await window.Firebase.writeData(`users/${localStorage.getItem('user')}/maps/${mapId}`, mapData);
     
             alert('Map saved successfully!');
         } catch (error) {
@@ -2661,7 +2661,7 @@ export class MapMaker {
 
     // Add method to check if a tile is a block
     isBlock(tileId) {
-        const blockIds = [1, 3, 4, 5, 6, 8, 9, 11]; // IDs for Wall, Wall2, Crate, Barrel, Cactus, Water, Fence, Rope Fence, Unbreakable
+        const blockIds = [1, 3, 4, 5, 6, 7, 8, 9, 11]; // IDs for Wall, Wall2, Crate, Barrel, Cactus, Water, Fence, Rope Fence, Unbreakable
         return blockIds.includes(tileId);
     }
     
@@ -2805,7 +2805,7 @@ window.addEventListener('load', () => {
     const mapId = urlParams.get('id') || null;
     const user = urlParams.get('user') || null;
 
-    if (mapId && user === sessionStorage.getItem('user')) {
+    if (mapId && user === localStorage.getItem('user')) {
         window.Firebase.readDataOnce(`users/${user}/maps/${mapId}`)
             .then(async data => {
                 if (!data) return alert('Map not found.');
@@ -2840,8 +2840,8 @@ window.addEventListener('load', () => {
                 if (data) {
                     data.name += `by- ${user}`;
                     let newId = window.mapMaker.generateMapId();
-                    await window.Firebase.writeData(`users/${sessionStorage.getItem('user')}/maps/${newId}`, data);
-                    window.location.href = `https://she-fairy.github.io/atlas-horizon/map.html?mapId=${newId}&user=${sessionStorage.getItem('username')}`;
+                    await window.Firebase.writeData(`users/${localStorage.getItem('user')}/maps/${newId}`, data);
+                    window.location.href = `https://she-fairy.github.io/atlas-horizon/map.html?mapId=${newId}&user=${localStorage.getItem('username')}`;
                 }
             })
     }
