@@ -42,9 +42,11 @@
     border-radius: 0.5rem;
     padding: 1.5rem;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    object-fit: contain;
 }
 
+#mapImage {
+    object-fit: contain;
+}
 
 .map-actions {
     display: flex;
