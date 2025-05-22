@@ -1400,6 +1400,7 @@ export class MapMaker {
                     const mirrorH = this.getMirroredTileId(this.draggedTileId, 'horizontal');
                     const mirrorD = this.getMirroredTileId(this.draggedTileId, 'diagonal');
                     
+                    
                     // Helper function to place a tile and its occupied spaces
                     const placeMirroredTile = (ty, tx, mid) => {
                         if (ty < 0 || ty >= this.mapHeight || tx < 0 || tx >= this.mapWidth) return;
@@ -2428,8 +2429,8 @@ export class MapMaker {
         // SHOWDOWN MAP - Brawl Ball
         if (this.mapSize === this.mapSizes.showdown && isBrawl) {
             this.goalImages.push(
-            { name: 'goal5v5Blue', x: 12, y: middleY - 8, w: 3, h: 17, offsetX: -10, offsetY: -8 },
-            { name: 'goal5v5Red',  x: this.mapWidth - 15, y: middleY - 8, w: 3, h: 17, offsetX:  10, offsetY: -8 }
+            { name: 'goal5v5Blue', x: 12, y: middleY - 8, w: 3, h: 18, offsetX: -10, offsetY: -8 },
+            { name: 'goal5v5Red',  x: this.mapWidth - 15, y: middleY - 8, w: 3, h: 18, offsetX:  10, offsetY: -8 }
             );
 
             // ← add this:
@@ -2518,16 +2519,16 @@ export class MapMaker {
             this.mapData[topTop][topLeft] = 14;
 
             // Unbreakables on col 10 and mirrored
-            for (let y = centerY - 8; y <= centerY + 7; y++) {
+            for (let y = centerY - 9; y <= centerY + 7; y++) {
                 this.mapData[y][10] = 11;
                 this.mapData[y][mapWidth - 11] = 11;
             }
             // Extend Unbreakables
             for (let x = 10; x <= 14; x++) {
-                this.mapData[centerY + 8][x] = 11;
-                this.mapData[centerY + 8][mapWidth - x - 1] = 11;
-                this.mapData[centerY - 8][x] = 11;
-                this.mapData[centerY - 8][mapWidth - x - 1] = 11;
+                this.mapData[centerY + 7][x] = 11;
+                this.mapData[centerY + 7][mapWidth - x - 1] = 11;
+                this.mapData[centerY - 9][x] = 11;
+                this.mapData[centerY - 9][mapWidth - x - 1] = 11;
             }
 
             // Fill water from edges to col 1–9 and col width-10–width
