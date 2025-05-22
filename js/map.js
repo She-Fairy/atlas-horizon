@@ -1,11 +1,15 @@
 import { generateMapImage } from './map-renderer.js';
 
-document.addEventListener('load', () => {
+document.addEventListener('DOMContentLoaded', () => {
     const urlParams = new URLSearchParams(window.location.search);
     const mapId = urlParams.get('id');
     const user = urlParams.get('user');
 
     if (!mapId) return showError('Map Not Found');
+
+    console.log('from URL:', user, typeof user);
+    console.log('from storage:', localStorage.getItem('user'), typeof localStorage.getItem('user'));
+    console.log('equal:', user === localStorage.getItem('user'));
 
     if (user === localStorage.getItem('user')) {
         document.getElementById('openMapBtn').textContent = 'Open in Map Maker';
