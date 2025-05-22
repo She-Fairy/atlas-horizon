@@ -1538,6 +1538,10 @@ export class MapMaker {
                 this.selectedTile = { id: parseInt(id), ...def };
                 container.querySelectorAll('.tile-btn').forEach(b => b.classList.remove('selected'));
                 btn.classList.add('selected');
+                if (!this.replaceMode && this.isErasing) {
+                    this.isErasing = false;
+                    eraseBtn.parentElement.classList.remove('active');
+                }
             });
 
             container.appendChild(btn);
