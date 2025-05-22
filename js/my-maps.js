@@ -84,17 +84,13 @@ window.addEventListener('load', () => {
     console.log('Page loaded');
     console.log('Firebase available:', typeof Firebase !== 'undefined');
     console.log('MapmakerService available:', typeof MapmakerService !== 'undefined');
-
-    // Check if user is in session storage
-    const user = localStorage.getItem('user');
-    console.log('User from session storage:', user);
     
     // Then try to load real data if Firebase is available
     if (typeof Firebase !== 'undefined') {
-        if (user) {
+        if (localStorage.getItem('user') !== null) {
             postMapsByUser(user);
         } else {
-            console.log('No user found in session storage, skipping Firebase data fetch');
+            console.log('No user found in local storage, skipping Firebase data fetch');
         }
     } else {
         console.warn('Firebase not available, only test data will be shown');
