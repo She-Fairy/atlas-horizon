@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (user === sessionStorage.getItem('user')) {
         document.getElementById('openMapBtn').textContent = 'Open in Map Maker';
         document.getElementById('openMapBtn').onclick = () => {
-            window.location.href = `mapmaker.html?id=${mapId}&user=${user}`;
+            window.location.href = `./mapmaker.html?id=${mapId}&user=${user}`;
         };
     }
 
