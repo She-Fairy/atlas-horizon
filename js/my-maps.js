@@ -81,14 +81,11 @@ function createCard(name, user, image) {
 }
 
 window.addEventListener('load', () => {
-    console.log('Page loaded');
-    console.log('Firebase available:', typeof Firebase !== 'undefined');
-    console.log('MapmakerService available:', typeof MapmakerService !== 'undefined');
     
     // Then try to load real data if Firebase is available
     if (typeof Firebase !== 'undefined') {
         if (localStorage.getItem('user') !== null) {
-            postMapsByUser(user);
+            postMapsByUser(localStorage.getItem('user'));
         } else {
             console.log('No user found in local storage, skipping Firebase data fetch');
         }
