@@ -10,8 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (user === sessionStorage.getItem('user')) {
         document.getElementById('openMapBtn').textContent = 'Open in Map Maker';
         document.getElementById('openMapBtn').onclick = () => {
-            let newLocation = urlParams.replace('map', 'mapmaker');
-            window.locaction.href = newLocation;
+            window.locaction.href = `https://she-fairy.github.io/atlas-horizon/mapmaker.html?id=${mapId}&user=${user}`;
         };
     }
 
