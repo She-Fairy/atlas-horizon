@@ -2439,7 +2439,8 @@ export class MapMaker {
             );
         }
 
-        this.applyDefaultLayoutIfEmpty();
+        if (this.mapData.every(row => row.every(tile => tile === 0))) 
+            this.applyDefaultLayoutIfEmpty();
 
 
         this.initializeTileSelector();
