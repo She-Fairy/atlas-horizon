@@ -2383,9 +2383,11 @@ export class MapMaker {
 
 
         // Remove objectives
-        for (let y = 0; y < this.mapHeight; y++) {
-            for (let x = 0; x < this.mapWidth; x++) {
-                if (this.mapData[y][x] === 14) this.mapData[y][x] = 0;
+        if (this.mapData.every(row => row.every(tile => tile === 0))) {
+            for (let y = 0; y < this.mapHeight; y++) {
+                for (let x = 0; x < this.mapWidth; x++) {
+                    if (this.mapData[y][x] === 14) this.mapData[y][x] = 0;
+                }
             }
         }
 
