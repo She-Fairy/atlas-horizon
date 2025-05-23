@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (user === localStorage.getItem('user')) {
         document.getElementById('openMapBtn').textContent = 'Open in Map Maker';
         document.getElementById('openMapBtn').onclick = () => {
-            window.location.href = window.location.replace('map.html', 'mapmaker.html');
+            window.location.href = window.location.href.replace('map.html', 'mapmaker.html');
         };
     }
 
