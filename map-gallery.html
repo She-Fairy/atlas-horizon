@@ -86,10 +86,10 @@
 
     <script>
         const avatar = document.getElementById('avatar');
-        avatar.src = sessionStorage.getItem('avatar');
+        avatar.src = localStorage.getItem('avatar');
         avatar.addEventListener('click', () => {
             if (confirm('Do you want to log out of this account?')){
-                sessionStorage.clear();
+                localStorage.clear();
                 window.location.href = './index.html';
             }
         })
@@ -98,12 +98,12 @@
     <script>
         // Check if user is logged in
         document.addEventListener('DOMContentLoaded', () => {
-            const user = sessionStorage.getItem('user');
+            const user = localStorage.getItem('user');
             if (user) {
                 // User is logged in
                 document.getElementById('loginBtn').style.display = 'none';
                 document.getElementById('avatar').style.display = 'block';
-                document.getElementById('avatar').src = sessionStorage.getItem('avatar');
+                document.getElementById('avatar').src = localStorage.getItem('avatar');
             } else {
                 // User is not logged in
                 document.getElementById('loginBtn').style.display = 'block';

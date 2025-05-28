@@ -667,8 +667,8 @@ export class MapMaker {
             'Rope Fence': [1, 1.75, 0, regularDownAdjust, 1, 5],
             'Skull': [1, 1.08, 0, 0, 1, 5],
             'Unbreakable': [1, 1.75, 0, regularDownAdjust, 1, 5],
-            'Blue Spawn': [1.7, 1.7, -27.5, -27.5, 0.85, 5],
-            'Red Spawn': [1.7, 1.7, -27.5, -27.5, 0.85, 5],
+            'Blue Spawn': [1.7, 1.7, -30, -30, 0.85, 5],
+            'Red Spawn': [1.7, 1.7, -30, -30, 0.85, 5],
             'Objective': [2, 2.21, -50, -115, 1, 10],
             'Smoke': [1.5, 1.65, -10, -25, 1, 5],
             'Heal Pad': [1, 1.12, 0, 0, 1, 5],
@@ -2257,7 +2257,7 @@ export class MapMaker {
             // Check if map is being saved for the first time
             if (mapLinkElement.innerText === 'https://she-fairy.github.io/atlas-horizon/map.html') {
                 mapId = this.generateMapId();
-                mapLinkElement.innerText = `https://she-fairy.github.io/atlas-horizon/map.html?mapId=${mapId}&user=\n${localStorage.getItem('user')}`;
+                mapLinkElement.innerText = `https://she-fairy.github.io/atlas-horizon/map.html?mapId=${mapId}&user=${localStorage.getItem('user')}`;
             } else {
                 const currentUrl = new URL(mapLinkElement.innerText);
                 mapId = currentUrl.searchParams.get('mapId');
