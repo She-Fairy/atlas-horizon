@@ -2810,7 +2810,7 @@ export class MapMaker {
 window.addEventListener('load', () => {
     window.mapMaker = new MapMaker('mapCanvas');
     const urlParams = new URLSearchParams(window.location.search);
-    const mapId = urlParams.get('id') || null;
+    const mapId = urlParams.get('mapId') || null;
     const user = urlParams.get('user') || null;
 
     if (mapId && user === localStorage.getItem('user')) {
@@ -2835,7 +2835,7 @@ window.addEventListener('load', () => {
                 document.getElementById('mapSize').value = data.size;
                 document.getElementById('gamemode').value = data.gamemode;
                 document.getElementById('environment').value = data.environment;
-                document.getElementById('mapLink').innerText = `https://she-fairy.github.io/atlas-horizon/map.html?mapId=${mapId}&user=\n${user}`;
+                document.getElementById('mapLink').innerText = `https://she-fairy.github.io/atlas-horizon/map.html?mapId=${mapId}&user=${user}`;
                 window.mapMaker.draw()
             })
             .catch(error => {
