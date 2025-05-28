@@ -2257,7 +2257,7 @@ export class MapMaker {
             // Check if map is being saved for the first time
             if (mapLinkElement.innerText === 'https://she-fairy.github.io/atlas-horizon/map.html') {
                 mapId = this.generateMapId();
-                mapLinkElement.innerText = `https://she-fairy.github.io/atlas-horizon/map.html?mapId=${mapId}&user=${localStorage.getItem('user')}`;
+                mapLinkElement.innerText = `https://she-fairy.github.io/atlas-horizon/map.html?id=${mapId}&user=${localStorage.getItem('user')}`;
             } else {
                 const currentUrl = new URL(mapLinkElement.innerText);
                 mapId = currentUrl.searchParams.get('mapId');
@@ -2810,7 +2810,7 @@ export class MapMaker {
 window.addEventListener('load', () => {
     window.mapMaker = new MapMaker('mapCanvas');
     const urlParams = new URLSearchParams(window.location.search);
-    const mapId = urlParams.get('mapId') || null;
+    const mapId = urlParams.get('id') || null;
     const user = urlParams.get('user') || null;
 
     if (mapId && user === localStorage.getItem('user')) {
@@ -2835,7 +2835,7 @@ window.addEventListener('load', () => {
                 document.getElementById('mapSize').value = data.size;
                 document.getElementById('gamemode').value = data.gamemode;
                 document.getElementById('environment').value = data.environment;
-                document.getElementById('mapLink').innerText = `https://she-fairy.github.io/atlas-horizon/map.html?mapId=${mapId}&user=${user}`;
+                document.getElementById('mapLink').innerText = `https://she-fairy.github.io/atlas-horizon/map.html?id=${mapId}&user=${user}`;
                 window.mapMaker.draw()
             })
             .catch(error => {
@@ -2849,7 +2849,7 @@ window.addEventListener('load', () => {
                     data.name += `by- ${user}`;
                     let newId = window.mapMaker.generateMapId();
                     await window.Firebase.writeData(`users/${localStorage.getItem('user')}/maps/${newId}`, data);
-                    window.location.href = `https://she-fairy.github.io/atlas-horizon/map.html?mapId=${newId}&user=${localStorage.getItem('username')}`;
+                    window.location.href = `https://she-fairy.github.io/atlas-horizon/map.html?id=${newId}&user=${localStorage.getItem('username')}`;
                 }
             })
     }
