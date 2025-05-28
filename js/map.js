@@ -2,7 +2,7 @@ import { generateMapImage } from './map-renderer.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     const urlParams = new URLSearchParams(window.location.search);
-    const mapId = urlParams.get('id');
+    const mapId = urlParams.get('mapId');
     const user = urlParams.get('user');
 
     if (!mapId) return showError('Map Not Found');
