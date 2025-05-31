@@ -2260,7 +2260,7 @@ export class MapMaker {
                 mapLinkElement.innerText = `https://she-fairy.github.io/atlas-horizon/map.html?id=${mapId}&user=${localStorage.getItem('user')}`;
             } else {
                 const currentUrl = new URL(mapLinkElement.innerText);
-                mapId = currentUrl.searchParams.get('mapId');
+                mapId = currentUrl.searchParams.get('id');
             }
     
             const mapData = {
