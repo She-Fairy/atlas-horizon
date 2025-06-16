@@ -1874,32 +1874,39 @@ export class MapMaker {
             }
 
         } else if (tileId === 45) {
-                const imageName = this.fenceLogicHandler.getFenceImageName(x, y, this.mapData, this.environment, false, true);
-                
-                const imagePath = `Resources/${this.environment}/Fence_5v5/${imageName}.png`;
-                
-                img = this.tileImages[imagePath];
-                
-                if (!img) {
-                    img = new Image();
-                    img.onload = () => this.draw();
-                    img.src = imagePath;
-                    img.onerror = () => {
-                        console.error(`Failed to load border fence image: ${imagePath}`);
-                        // Load fallback image
-                        img.src = `Resources/${this.environment}Fence_5v5/BFence.png`;
-                    };
-                    this.tileImages[imagePath] = img;
-                }
-                
-                if (!img.complete || img.naturalWidth === 0) {
-                    // Wait for image to load before drawing
-                    img.onload = () => {
-                        this.drawTile(this.ctx, tileId, x, y); // Or whatever your method is to redraw that tile
-                    };
-                    return;
-                }
-            } else {
+            // Check if BFence is allowed in current environment
+            const def = this.tileDefinitions[tileId];
+            if (!def.showInEnvironment || !def.showInEnvironment.includes(this.environment)) {
+                console.warn(`BFence not supported in environment: ${this.environment}`);
+                return;
+            }
+
+            const imageName = this.fenceLogicHandler.getFenceImageName(x, y, this.mapData, this.environment, false, true);
+            
+            const imagePath = `Resources/${this.environment}/Fence_5v5/${imageName}.png`;
+            
+            img = this.tileImages[imagePath];
+            
+            if (!img) {
+                img = new Image();
+                img.onload = () => this.draw();
+                img.src = imagePath;
+                img.onerror = () => {
+                    console.error(`Failed to load border fence image: ${imagePath}`);
+                    // Load fallback image
+                    img.src = `Resources/${this.environment}/Fence_5v5/BFence.png`;
+                };
+                this.tileImages[imagePath] = img;
+            }
+            
+            if (!img.complete || img.naturalWidth === 0) {
+                // Wait for image to load before drawing
+                img.onload = () => {
+                    this.drawTile(this.ctx, tileId, x, y); // Or whatever your method is to redraw that tile
+                };
+                return;
+            }
+        } else {
             img = this.tileImages[tileId];
         }
 
