@@ -837,12 +837,10 @@ export class MapMaker {
             
             // Load each tile image
             Object.entries(this.tileDefinitions).forEach(([id, def]) => {
-                if (!def.img && !def.getImg) {
+                if (!def.img && !def.getImg || def.showInEnvironment && !def.showInEnvironment.includes(this.environment)) {
                     onLoad(); // Skip tiles without images
                     return;
                 }
-
-                if (def.showInEnvironment && !def.showInEnvironment.includes(this.environment)) return;
                 
                 const img = new Image();
                 if (def.img) {
