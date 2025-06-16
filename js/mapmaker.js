@@ -841,6 +841,8 @@ export class MapMaker {
                     onLoad(); // Skip tiles without images
                     return;
                 }
+
+                if (def.showInEnvironment && !def.showInEnvironment.includes(this.environment)) return;
                 
                 const img = new Image();
                 if (def.img) {
