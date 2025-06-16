@@ -53,6 +53,22 @@ export async function generateMapImage(mapData, size = 'regular', gamemode = 'Ge
     await renderer.loadTileImages();
     renderer.preloadWaterTiles();
 
+    // Filter out tiles that aren't allowed in this environment
+    const filteredTileImages = {};
+    for (const [tileId, img] of Object.entries(renderer.tileImages)) {
+      const def = renderer.tileDefinitions[tileId];
+      if (!def) continue;
+      
+      // Skip tiles that are restricted to specific environments
+      if (def.showInEnvironment && !def.showInEnvironment.includes(environment)) continue;
+      
+      // Skip tiles that are restricted to specific gamemodes
+      if (def.showInGamemode && def.showInGamemode !== gamemode) continue;
+      
+      filteredTileImages[tileId] = img;
+    }
+    renderer.tileImages = filteredTileImages;
+
     await Promise.all(
       Object.values(renderer.tileImages).map(waitForImage)
     );
