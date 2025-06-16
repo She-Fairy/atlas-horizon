@@ -36,6 +36,10 @@ window.Firebase = {
     return snapshot.val();
   },
 
+  deleteData: async (path) => {
+    await db.ref(path).remove();
+  },
+
   listenForChanges: (path, callback) => {
     db.ref(path).on('value', snapshot => callback(snapshot.val()));
   },

@@ -41,6 +41,7 @@
                     <select id="mapSize">
                         <option value="regular">Regular</option>
                         <option value="showdown">Showdown</option>
+                        <option style="color:blueviolet" value="arena">Brawl Arena</option>
                         <option value="siege">Siege</option>
                         <option value="volley">Volley Brawl</option>
                         <option value="basket">Basket Brawl</option>
@@ -58,17 +59,19 @@
                         <option value="Knockout">Knockout</option>
                         <option value="Wipeout">Wipeout</option>
                         <option value="Duels">Duels</option>
+                        <option style="color:blueviolet" value="Brawl_Arena">Brawl Arena</option>
                         <option value="Snowtel_Thieves">Snowtel Thieves</option>
-                        <option value="Basket_Brawl">Basket Brawl</option>
+                        <!-- <option value="Basket_Brawl">Basket Brawl</option> -->
                         <option value="Volley_Brawl">Volley Brawl</option>
-                        <option value="Siege">Siege</option>
-                        <option value="Hold_The_Trophy">Hold The Trophy</option>
+                        <!-- <option value="Siege">Siege</option> -->
+                        <!-- <option value="Hold_The_Trophy">Hold The Trophy</option> -->
                     </select>
                 </div>
                 <div class="select-container">
                     <label for="environment">Environment:</label>
                     <select id="environment">
                         <option value="Desert">Desert</option>
+                        <option value="Wasteland">Wasteland</option>
                         <option value="Mine">Mine</option>
                         <option value="Oasis">Oasis</option>
                         <option value="Grassy_Field">Grassy Field</option>
@@ -82,15 +85,16 @@
                         <!-- <option value="Super_City">Super City</option>
                         <option value="Gift_Shop">Gift Shop</option> -->
                         <option value="Bandstand">Bandstand</option> 
+                        <option value="Holiday">Holiday</option>
                         <option value="Snowtel">Snowtel</option>
                         <!-- <option value="Scrapyard">Scrapyard</option>
                         <option value="Starr_Force">Starr Force</option> -->
                         <option value="Wild_West">Wild West</option>
                         <!-- <option value="Water_Park">Water Park</option> -->
                         <option value="Castle_Courtyard">Castle Courtyard</option>
-                        <!-- <option value="Brawlywood">Brawlywood</option>
+                        <!-- <option value="Brawlywood">Brawlywood</option> -->
                         <option value="Fighting_Game">Fighting Game</option>
-                        <option value="Biodome">Biodome</option>
+                        <!-- <option value="Biodome">Biodome</option>
                         <option value="Stunt_Show">Stunt Show</option>
                         <option value="Deep_Sea">Deep Sea</option>
                         <option value="Robot_Factory">Robot Factory</option>
@@ -104,14 +108,15 @@
                         <option value="Swamp_of_Love">Swamp of Love</option>
                         <!-- <option value="Rooftop">Rooftop</option>
                         <option value="Coin_Factory">Coin Factory</option>
-                        <option value="Snowtel_2">Snowtel 2</option>
+                        <option value="Ice_Island">Ice_Island</option>
                         <option value="Medieval Manor">Medieval Manor</option>
                         <option value="Super_City_2">Super City 2</option>
                         <option value="Spongebob">Spongebob</option> -->
-                        <option value="Oddities Shop">Oddities Shop</option>
+                        <option value="Oddities_Shop">Oddities Shop</option>
                         <!-- <option value="Skating_Bowl">Skating Bowl</option>
                         <option value="Hockey">Hockey</option>
                         <option value="Escape_Room">Escape Room</option> -->
+                        <option value="Tropical_Island">Tropical Island</option>
                     </select>
                 </div>
             </div>
@@ -146,6 +151,12 @@
                     <label>
                         <input type="checkbox" id="mirrorHorizontal">
                         Horizontal
+                    </label>
+                </div>
+                <div class="tool-buttons">
+                    <label for="blue2RedBtn" title="Blue2Red (N)">
+                        <input type="checkbox" id="blue2RedBtn">
+                        <img src="./Resources/Additional/Icons/BlueToRed.png" alt="Blue2Red">
                     </label>
                 </div>
                 <div class="radio-container">
@@ -218,6 +229,7 @@
                 <li><kbd>R</kbd> Toggle Replace Mode</li>
                 <li><kbd>E</kbd> Toggle Erase Mode</li>
                 <li><kbd>M</kbd> Toggle Mirroring</li>
+                <li><kbd>N</kbd> Toggle Blue to Red Mirroring</li>
                 <li><kbd>Q</kbd> Toggle Error Check</li>
                 <li><kbd>Ctrl</kbd> + <kbd>Z</kbd> Undo</li>
                 <li><kbd>Ctrl</kbd> + <kbd>Y</kbd> Redo</li>
@@ -225,20 +237,31 @@
             </ul>
         </div>
     </div>
-    <div class="tooltip-floating environments-tooltip">
+    <!-- <div class="tooltip-floating environments-tooltip">
         <img src="./Resources/Additional/Icons/Env.png" alt="Implemented Environments">
         <div class="tooltip-text environments-text">
             <h4>Implemented Environments</h4>
             <ul class="environments-list">
                 <li>Desert</li>
+                <li>Mine</li>
+                <li>Oasis</li>
+                <li>Grassy Field</li>
+                <li>City</li>
+                <li>Retropolis</li>
+                <li>Mortuary</li>
+                <li>Stadium</li>
+                <li>Arcade</li>
                 <li>Bazaar</li>
                 <li>Bandstand</li>
+                <li>Snowtel</li>
+                <li>Wild West</li>
                 <li>Castle Courtyard</li>
-                <li>Mine</li>
-                <li>Arcade</li>
+                <li>Swamp of Love</li>
+                <li>Oddities Shop</li>
+                <li>Tropical Island</li>
             </ul>
         </div>
-    </div>
+    </div> -->
 
     <script>
         const avatar = document.getElementById('avatar');

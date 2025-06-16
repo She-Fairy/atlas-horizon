@@ -14,6 +14,8 @@ const FENCE_LOGIC_BY_ENVIRONMENT = {
     'Mine': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
     'Oasis': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
     'Grassy_Field': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
+    'Wasteland': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
+    'Holiday': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
     'City': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
     'Retropolis': FENCE_LOGIC_TYPES.BINARY_CODE,
     'Mortuary': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
@@ -46,14 +48,20 @@ const FENCE_LOGIC_BY_ENVIRONMENT = {
     'Swamp_of_Love': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
     'Rooftop': FENCE_LOGIC_TYPES.BINARY_CODE,
     'Coin_Factory': FENCE_LOGIC_TYPES.BINARY_CODE,
-    'Snowtel_2': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
+    'Ice_Island': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
     'Medieval_Manor': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
     'Super_City_2': FENCE_LOGIC_TYPES.BINARY_CODE,
     'Spongebob': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
-    'Oddities Shop': FENCE_LOGIC_TYPES.BINARY_CODE,
+    'Oddities_Shop': FENCE_LOGIC_TYPES.BINARY_CODE,
     'Skating_Bowl': FENCE_LOGIC_TYPES.BINARY_CODE,
     'Hockey': FENCE_LOGIC_TYPES.SIX_PIECE,
-    'Escape_Room': FENCE_LOGIC_TYPES.BINARY_CODE
+    'Escape_Room': FENCE_LOGIC_TYPES.BINARY_CODE,
+    'Tropical_Island': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
+    'Brawl_Arena': FENCE_LOGIC_TYPES.SIX_PIECE
+};
+
+const BORDER_FENCE_LOGIC_BY_ENVIRONMENT = {
+    'Tropical_Island': FENCE_LOGIC_TYPES.BINARY_CODE,
 };
 
 class FenceLogicHandler {
@@ -66,11 +74,11 @@ class FenceLogicHandler {
         };
     }
 
-    getFenceImageName(x, y, mapData, environment, isFence = true) {
+    getFenceImageName(x, y, mapData, environment, isFence = true, isBorder = false) {
         console.log(`Getting fence image for ${isFence ? 'fence' : 'rope'} at (${x},${y}) in ${environment}`);
         
         // Determine which logic to use based on environment
-        const logicType = isFence ? FENCE_LOGIC_BY_ENVIRONMENT[environment] : FENCE_LOGIC_TYPES.FOUR_PIECE;
+        const logicType = isBorder ? BORDER_FENCE_LOGIC_BY_ENVIRONMENT[environment] : isFence ? FENCE_LOGIC_BY_ENVIRONMENT[environment] : FENCE_LOGIC_TYPES.FOUR_PIECE;
         console.log(`Using logic type: ${logicType}`);
         
         // Get the implementation for this logic type
@@ -81,16 +89,16 @@ class FenceLogicHandler {
         }
 
         // Get connections (true if connected, false if not)
-        const connections = this.getConnections(x, y, mapData, isFence);
+        const connections = this.getConnections(x, y, mapData, isFence, isBorder, environment);
         console.log(`Connections:`, connections);
         
         // Call the appropriate logic handler
-        const result = logicHandler.call(this, connections);
+        const result = isBorder ? 'B' + logicHandler.call(this, connections) : logicHandler.call(this, connections);
         console.log(`Resulting image name: ${result}`);
         return result;
     }
 
-    getConnections(x, y, mapData, isFence) {
+    getConnections(x, y, mapData, isFence, isBorder, environment) {
         const height = mapData.length;
         const width = mapData[0].length;
         
@@ -98,6 +106,8 @@ class FenceLogicHandler {
         const isSameType = (x, y) => {
             if (x < 0 || x >= width || y < 0 || y >= height) return false;
             const tileId = mapData[y][x];
+            if (environment === 'Brawl_Arena') return tileId === 40 || tileId === 43 || tileId === 44;
+            if (isBorder) return tileId === 45;
             return isFence ? (tileId === 7) : (tileId === 9); // Assuming 7 is fence and 9 is rope
         };
 
@@ -159,8 +169,8 @@ class FenceLogicHandler {
         if (bottom && left && !top && !right) return 'BL';
         
         // Handle vertical cases
-        if ((top && bottom) || // Connected vertically
-            (top && bottom && (left || right))) { // Three connections with two vertical
+        if ((top || bottom) && (!right && !left) || // Connected vertically and not horizontally
+            (top && bottom && (left || right))) { // Three connections with two vertical 
             return 'Ver';
         }
         
@@ -201,6 +211,7 @@ export class MapMaker {
         this.mapSizes = {
             regular: { width: 21, height: 33 },
             showdown: { width: 60, height: 60 },
+            arena: { width: 59, height: 59 },
             siege: { width: 27, height: 39 },
             volley: { width: 21, height: 25 },
             basket: { width: 21, height: 17 }
@@ -239,10 +250,11 @@ export class MapMaker {
         this.mirrorVertical = false;
         this.mirrorHorizontal = false;
         this.mirrorDiagonal = false;
+        this.blue2Red = false;
 
         // Game settings
         this.gamemode = 'Gem_Grab';
-        this.environment = 'Desert';
+        this.environment = 'Fighting_Game';
         this.goalImages = [];
         this.goalImageCache = {}; // key: goalName+env, value: loaded Image
 
@@ -266,13 +278,13 @@ export class MapMaker {
             'Wall2': [1, 1.75, 0, -50, 1, 5],
             'Crate': [1, 1.8, 0, -51, 1, 5],
             'Barrel': [1, 1.69, 0, -42.5, 1, 5],
-            'Cactus': [1.1, 1.75, -5, -50, 1, 5],
+            'Cactus': [1*1.1, 1.67*1.1, -5, -51, 1, 5],
             'Water': [1, 1, 0, 0, 1, 5],
             // Base fence types
             'Fence': [1, 1.61, 0, -40, 1, 5],
             'Rope Fence': [1, 1.75, 0, -50, 1, 5],
             // Simple Block Logic variations
-            'Horizontal': [1, 1.26, 0, -7.6, 1, 5],
+            'Horizontal': [1.05, 1.323, -2.5, -12.5, 1, 5],
             'Vertical': [1, 1.84, 0, -50, 1, 5],
             // Binary Code Logic variations
             '0001': [1/1.39, 1.39/1.39, 15, -28, 1, 5],
@@ -296,13 +308,26 @@ export class MapMaker {
             'R': [1, 1.75, 0, -50, 1, 5],
             // Rope Fence variations
             'Post': [1, 1.8, 0, -50, 1, 5],
-            'Post_TR': [1.5, 2.75, 0, -145, 1, 5],
+            'Post_TR': [1.5, 2.47, 0, -116.75, 1, 5],
             'Post_R': [1.5, 1.8, 0, -50, 1, 5],
-            'Post_T': [1, 2.75, 0, -145, 1, 5],
+            'Post_T': [1, 2.47, 0, -116.75, 1, 5],
+            // Border Fence Variations Binary Code
+            'B0001': [1, 1.6, 0, -55, 1, 5],
+            'B0010': [1, 1.8, 0, -55, 1, 5],
+            'B0011': [1, 1.5, 0, -55, 1, 5],
+            'B0100': [1, 1.8, 0, -55, 1, 5],
+            'B0101': [1, 1.5, 0, -55, 1, 5],
+            'B1000': [1, 1.8, 0, -55, 1, 5],
+            'B1001': [1, 1.05, 0, -55, 1, 5],
+            'B1010': [1, 2, 0, -75, 1, 5],
+            'B1100': [1, 2, 0, -75, 1, 5],
+            'BFence': [1, 1.80, 0, -55, 1, 5],
             'Skull': [1, 1.08, 0, 0, 1, 5],
             'Unbreakable': [1, 1.75, 0, -50, 1, 5],
-            'Blue Spawn': [1.7, 1.7, -27.5, -27.5, 0.85, 5],
-            'Red Spawn': [1.7, 1.7, -27.5, -27.5, 0.85, 5],
+            'Blue Spawn': [1.7, 1.7, -35, -35, 0.85, 5],
+            'Red Spawn': [1.7, 1.7, -35, -35, 0.85, 5],
+            'Blue Respawn': [1.7, 1.7, -35, -35, 0.85, 5],
+            'Red Respawn': [1.7, 1.7, -35, -35, 0.85, 5],
             'Trio Spawn': [1.7, 1.7, -27.5, -27.5, 0.85, 5],
             'Objective': [2, 2.21, -50, -115, 1, 10],
             'Smoke': [1*1.4, 1.1*1.4, -15, -35, 1, 5],
@@ -322,18 +347,25 @@ export class MapMaker {
             'Teleporter Green': [1, 1, 0, 0, 1, 5],
             'Teleporter Red': [1, 1, 0, 0, 1, 5],
             'Teleporter Yellow': [1, 1, 0, 0, 1, 5],
-            'Bolt': [1, 1.18, 0, 0, 1, 5]
+            'Bolt': [1, 1.18, 0, 0, 1, 5],
+            'Box': [1, 1.75, 0, -50, 1, 5],
+            'Boss Zone': [7, 7, -300, -300, 1, 10],
+            'Monster Zone': [7, 7, -300, -300, 1, 10],
+            'Track': [1, 1, 0, 0, 1, 2],
+            'Base Ike Blue': [5, 6.12, -200, -270, 1, 10],
+            'Small Ike Blue': [3, 3.82, -100, -145, 1, 10],
+            'Base Ike Red': [5, 6.12, -200, -270, 1, 10],
+            'Small Ike Red': [3, 3.4825, -100, -110, 1, 10],
         };
 
         // Initialize objective data
         this.objectiveData = {
             'Gem_Grab': [2, 2, -50, -50, 1, 10],
-            'Showdown': [1, 1.75, 0, -50, 1, 5],
             'Heist': [2, 2.21, -50, -115, 1, 10],
             'Bounty': [1.15, 2.0585, -10, -50, 1, 10],
-            'Brawl_Ball': [1.3, 1.495, -20, -20, 1, 10],
+            'Brawl_Ball': [1.3, 1.495, -15, -20, 1, 10],
             'Hot_Zone': [7, 7, -300, -300, 1, 10],
-            'Snowtel_Thieves': [4, 4, -150, -150, 1, 10],
+            'Snowtel_Thieves': [4, 4, -150, -150, 1, 2],
             'Basket_Brawl': [1.3, 1.495, -20, -20, 1, 10],
             'Volley_Brawl': [1.3, 1.495, -20, -20, 1, 10],
             'Siege': [2.5, 3.1, -60, -175, 1, 10],
@@ -362,6 +394,16 @@ export class MapMaker {
             },
             Retropolis: {
                 'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
+            },
+            Oddities_Shop: {
+                'Gem_Grab': [2.7, 2.376, -85, -70, 1, 10]
+            },
+            Swamp_of_Love: {
+                'Gem_Grab': [2*1.1, 2.09*1.1, -55, -60, 1, 10]
+            },
+            Fighting_Game: {
+                'Gem_Grab': [2*1.1, 2.09*1.1, -55, -60, 1, 10],
+                'Heist': [2*0.9, 3.56*0.9, -37.5, -95, 1, 10]
             }
         };
 
@@ -384,7 +426,7 @@ export class MapMaker {
                 'Wall': [1, 1.8, 0, -51, 1, 5],
                 'Wall2': [1, 1.8, 0, -51, 1, 5],
                 'Fence': [1, 1.85, 0, -55, 1, 5],
-                'Skull': [1, 1.59, -2.5, -42.5, 1, 5],
+                'Skull': [1*1.1, 1.59*1.1, -5, -42.5, 1, 5],
             },
             Castle_Courtyard: {
                 'Bush': [1, 1.75, 0, -50, 1, 5],
@@ -401,7 +443,121 @@ export class MapMaker {
                 'Fence': [1, 1.85, 0, -55, 1, 5],
                 'Crate': [1*1.1, 1.63*1.1, -5, -50, 1, 5],
                 'Cactus': [1, 1.62, 0, -45, 1, 5],
-                'Skull': [1, 1.59, -2.5, -42.5, 1, 5],
+                'Skull': [1*1.1, 1.59*1.1, -5, -42.5, 1, 5],
+            },
+            Oddities_Shop: {
+                'Wall': [1, 1.8, 0, -51, 1, 5],
+                'Wall2': [1, 1.88, 0, -58.5, 1, 5],
+                'Fence': [1, 1.80, 0, -55, 1, 5],
+                'Crate': [1, 1.63, 0, -55, 1, 5],
+                'Cactus': [1, 1.62, 0, -50, 1, 5],
+                '0001': [1, 1.6, 0, -55, 1, 5],
+                '0010': [1, 1.8, 0, -55, 1, 5],
+                '0011': [1, 1.5, 0, -55, 1, 5],
+                '0100': [1, 1.8, 0, -55, 1, 5],
+                '0101': [1, 1.5, 0, -55, 1, 5],
+                '1000': [1, 1.8, 0, -55, 1, 5],
+                '1001': [1, 1.05, 0, -55, 1, 5],
+                '1010': [1, 2, 0, -75, 1, 5],
+                '1100': [1, 2, 0, -75, 1, 5],
+                'Post': [1, 1.75, 0, -50, 1, 5],
+                'Post_TR': [1.5, 2.565, 0, -132.5, 1, 5],
+                'Post_R': [1.5, 1.7475, 0, -50, 1, 5],
+                'Post_T': [1, 2.61, 0, -130, 1, 5],
+            },
+            Swamp_of_Love: {
+                'Horizontal': [1.05, 1.323, -2.5, -25, 1, 5],
+                'Cactus': [1*1.2, 1.36*1.2, -10, -40, 1, 5]
+            },
+            Tropical_Island: {
+                'Cactus': [1.8, 2.45, -40, -100, 1, 5.5],
+                'Skull': [1*1.1, 1.59*1.1, -5, -42.5, 1, 5],
+                'Post': [1, 2, 0, -75, 1, 5],
+                'Post_TR': [2/1.465, 2.18, 0, -92.5, 1, 5],
+                'Post_R': [2/1.465, 2, 0, -75, 1, 5],
+                'Post_T': [1, 2.18, 0, -92.5, 1, 5],
+                'Horizontal': [1, 1.26, 0, -10, 1, 5],                
+            },
+            Oasis: {
+                'Wall2': [1, 1.8, 0, -50, 1, 5],
+                'Skull': [1*1.1, 1.59*1.1, -5, -42.5, 1, 5],
+            },
+            City: {
+              'Horizontal': [1.05, 1.323, -2.5, -15, 1, 5],
+              'Cactus': [1, 2.2, 0, -82.5, 1, 5],
+              'Wall': [1, 1.76, 0, -50, 1, 5],
+            },
+            Retropolis: {
+                'Wall2': [1, 1.79, 0, -51, 1, 5],
+                'Barrel': [1, 1.81, 0, -51, 1, 5],
+                'Cactus': [1, 2.2, 0, -82.5, 1, 5],
+                'Skull': [1, 1.51, 0, -45, 1, 5],
+                'Fence': [1, 1.49, 0, -45, 1, 5],
+                '0001': [1/1.39, 1.39/1.39, 15, -28, 1, 5],
+                '0010': [1, 1.49, 0, -45, 1, 5],
+                '0011': [1, 1.5, 0, -45, 1, 5],
+                '0100': [1, 1.49, 0, -45, 1, 5],
+                '0101': [1, 1.5, 0, -45, 1, 5],
+                '0110': [1, 1.75, 0, -50, 1, 5],
+                '1000': [1/1.39, 1.83/1.39, 15, -30, 1, 5],
+                '1001': [1/1.39, 1.44/1.39, 15, -30, 1, 5],
+                '1010': [1, 1.65, 0, -60, 1, 5],
+                '1100': [1, 1.65, 0, -60, 1, 5],
+            },
+            Mortuary: {
+                'Wall': [1, 1.8, 0, -51, 1, 5],
+                'Wall2': [1, 1.8, 0, -51, 1, 5],
+                'Cactus': [1*1.1, 1.42*1.1, -5, -27.5, 1, 5],
+                'Skull': [1, 1.49, 0, -20, 1, 5],
+                'Horizontal': [1, 1.67, 0, -37.5, 1, 5],
+                'Fence': [1, 1.85, 0, -55, 1, 5]
+            },
+            Stadium: {
+                'Cactus': [1, 2.2, 0, -82.5, 1, 5],
+                'Fence': [1, 1.63, 0, -55, 1, 5],
+                'Horizontal': [1.1, 1.54, -5, -45, 1, 5],
+                'Vertical': [1, 1.71, 0, -48, 1, 5],
+                'Wall': [1, 1.8, 0, -51, 1, 5],
+                'Wall2': [1, 1.79, 0, -51, 1, 5],
+                'Barrel': [1, 1.81, 0, -51, 1, 5],
+            },
+            Snowtel: {
+                'Horizontal': [1.05, 1.323, -2.5, -15, 1, 5],
+                'Wall': [1, 1.8, 0, -51, 1, 5],
+                'Wall2': [1, 1.8, 0, -51, 1, 5],
+                'Skull': [1*1.1, 1.22*1.1, -5, -30, 1, 5]
+            },
+            Wild_West: {
+                'Wall': [1*1.1, 1.63*1.1, -5, -50, 1, 5],
+                'Wall2': [1*1.1, 1.63*1.1, -5, -50, 1, 5],
+                'Skull': [1*1.1, 1.22*1.1, -5, -5, 1, 5]
+            },
+            Holiday: {
+                'Wall': [1*1.05, 1.73*1.05, -2.5, -55, 1, 5],
+                'Wall2': [1*1.1, 1.64*1.1, -5, -50, 1, 5],
+                'Barrel': [1, 1.83, 0, -52, 1, 5],
+                'Skull': [1*1.1, 1.22*1.1, -5, -5, 1, 5]
+            },
+            Fighting_Game: {
+                'Cactus': [1*1.1, 1.63*1.1, -5, -50, 1, 5],
+                'Bush': [1, 1.75, 0, -50, 1, 5],
+                'Skull': [1, 1.7, 0, -49, 1, 5],
+                'Barrel': [1, 1.75, 0, -50, 1, 5],
+                'Post': [1*0.6, 2.83*0.6, 20, -50, 1, 5],
+                'Post_TR': [1*1.15, 1.87*1.15, 20, -95, 1, 5],
+                'Post_R': [1*1.15, 1.48*1.15, 20, -50, 1, 5],
+                'Post_T': [1*0.6, 3.58*0.6, 20, -95, 1, 5],
+                'Fence': [1, 1.7, 0, -47.5, 1, 5],
+                '0001': [1/1.39, 1.39/1.39, 15, -28, 1, 5],
+                '0010': [1, 1.7, 0, -47.5, 1, 5],
+                '0011': [1*0.875, 2*0.85, 15.25, -48, 1, 5],
+                '0100': [1, 1.7, 0, -47.5, 1, 5],
+                '0101': [1*0.875, 2*0.85, 0, -48, 1, 5],
+                '0110': [1, 1.75, 0, -50, 1, 5],
+                '1000': [1/1.39, 1.83/1.39, 15, -30, 1, 5],
+                '1001': [1/1.39, 1.44/1.39, 15, -30, 1, 5],
+                '1010': [1*0.875, 2.47*0.85, 15.25, -87.5, 1, 5],
+                '1100': [1*0.875, 2.47*0.85, 0, -87.5, 1, 5],
             }
         };
         
@@ -428,7 +584,6 @@ export class MapMaker {
             14: { name: 'Objective', size: 1, getImg: (gamemode, y, mapHeight) => {
                 const objectives = {
                     'Gem_Grab': { img: '${env}/Gamemode_Specifics/Gem_Grab.png' },
-                    'Showdown': { img: 'Global/Objectives/Box.png' },
                     'Heist': { img: '${env}/Gamemode_Specifics/Heist.png' },
                     'Bounty': { img: 'Global/Objectives/Bounty.png' },
                     'Brawl_Ball': { img: '${env}/Gamemode_Specifics/Brawl_Ball.png' },
@@ -465,7 +620,18 @@ export class MapMaker {
             30: { name: 'Teleporter Red', img: 'Global/Teleporters/Red.png', size: 2 },
             31: { name: 'Teleporter Yellow', img: 'Global/Teleporters/Yellow.png', size: 2 },
             32: { name: 'Bolt', img: 'Global/Objectives/Bolt.png', size: 1, showInGamemode: 'Siege' },
-            36: { name: 'Trio Spawn', size: 1, showInGamemode: 'Showdown', img: 'Global/Spawns/1.png' }
+            36: { name: 'Trio Spawn', size: 1, showInGamemode: 'Showdown', img: 'Global/Spawns/1.png' },
+            37: { name: 'Box', img: 'Global/Objectives/Box.png', showInGamemode: 'Showdown', size: 1},
+            38: { name: 'Boss Zone', img: 'Global/Arena/Boss_Zone.png', showInGamemode: 'Brawl_Arena', size: 1},
+            39: { name: 'Monster Zone', img: 'Global/Arena/Monster_Zone.png', showInGamemode: 'Brawl_Arena', size: 1},
+            40: { name: 'Track', img: 'Global/Arena/Track/Blue/Fence.png', showInGamemode: 'Brawl_Arena', size: 1},
+            41: { name: 'Blue Respawn', img: 'Global/Spawns/5.png', showInGamemode: 'Brawl_Ball', size: 1},
+            42: { name: 'Red Respawn', img: 'Global/Spawns/6.png', showInGamemode: 'Brawl_Ball', size: 1},
+            43: { name: 'Base Ike Blue', img: 'Global/Arena/Base_Ike_Blue.png', showInGamemode: 'Brawl_Arena', size: 1 },
+            44: { name: 'Small Ike Blue', img: 'Global/Arena/Small_Ike_Blue.png', showInGamemode: 'Brawl_Arena', size: 1 },
+            45: { name: 'BFence', img: '${env}/Fence_5v5/BFence.png', showInEnvironment: ['Tropical_Island'], size: 1 },
+            46: { name: 'Base Ike Red', img: 'Global/Arena/Base_Ike_Red.png', showInGamemode: 'Brawl_Arena', size: 1 },
+            47: { name: 'Small Ike Red', img: 'Global/Arena/Small_Ike_Red.png', showInGamemode: 'Brawl_Arena', size: 1 },
         };
 
         // Initialize water tile filenames
@@ -653,146 +819,6 @@ export class MapMaker {
         this.tileImages = {};
         const imageLoadPromises = [];
 
-        let regularDownAdjust = -50;
-        // Standard tile dimensions [width, height, horAdjust, verAdjust, opacity, zIndex]
-        this.tileData = {
-            'Wall': [1, 1.75, 0, regularDownAdjust, 1, 5],
-            'Bush': [1, 1.8, 0, regularDownAdjust, 1, 5],
-            'Wall2': [1, 1.75, 0, regularDownAdjust, 1, 5],
-            'Crate': [1, 1.8, 0, regularDownAdjust, 1, 5],
-            'Barrel': [1, 1.69, 0, regularDownAdjust, 1, 5],
-            'Cactus': [1.1, 1.75, -5, regularDownAdjust, 1, 5],
-            'Fence': [1, 1.75, 0, regularDownAdjust, 1, 5],
-            'Water': [1, 1, 0, 0, 1, 5],
-            'Rope Fence': [1, 1.75, 0, regularDownAdjust, 1, 5],
-            'Skull': [1, 1.08, 0, 0, 1, 5],
-            'Unbreakable': [1, 1.75, 0, regularDownAdjust, 1, 5],
-            'Blue Spawn': [1.7, 1.7, -30, -30, 0.85, 5],
-            'Red Spawn': [1.7, 1.7, -30, -30, 0.85, 5],
-            'Objective': [2, 2.21, -50, -115, 1, 10],
-            'Smoke': [1.5, 1.65, -10, -25, 1, 5],
-            'Heal Pad': [1, 1.12, 0, 0, 1, 5],
-            'Slow Tile': [1, 1.11, 0, 0, 1, 5],
-            'Speed Tile': [1, 1.11, 0, 0, 1, 5],
-            'Spikes': [1, 1.5, 0, -15, 1, 5],
-            'Jump R': [1, 1.12, 0, 0, 1, 5],
-            'Jump L': [1, 1.12, 0, 0, 1, 5],
-            'Jump T': [1, 1.12, 0, 0, 1, 5],
-            'Jump B': [1, 1.12, 0, 0, 1, 5],
-            'Jump BR': [1, 1.12, 0, 0, 1, 5],
-            'Jump TL': [1, 1.12, 0, 0, 1, 5],
-            'Jump BL': [1, 1.12, 0, 0, 1, 5],
-            'Jump TR': [1, 1.12, 0, 0, 1, 5],
-            'Teleporter Blue': [1, 1, 0, 0, 1, 5],
-            'Teleporter Green': [1, 1, 0, 0, 1, 5],
-            'Teleporter Red': [1, 1, 0, 0, 1, 5],
-            'Teleporter Yellow': [1, 1, 0, 0, 1, 5],
-            'Bolt': [1, 1.18, 0, 0, 1, 5]
-        };
-
-        // Standard objective dimensions [width, height, horAdjust, verAdjust, opacity, zIndex]
-        this.objectiveData = {
-            'Gem_Grab': [2, 2, -50, -50, 1, 10],
-            'Showdown': [1, 1.75, 0, regularDownAdjust, 1, 5],
-            'Heist': [2, 2.21, -50, -115, 1, 10],
-            'Bounty': [1.15, 2.0585, -10, -50, 1, 10],
-            'Brawl_Ball': [1.3, 1.495, -20, -20, 1, 10],
-            'Hot_Zone': [7, 7, -300, -300, 1, 10],
-            'Snowtel_Thieves': [4, 4, -150, -150, 1, 10],
-            'Basket_Brawl': [1.3, 1.495, -20, -20, 1, 10],
-            'Volley_Brawl': [1.3, 1.495, -20, -20, 1, 10],
-            'Siege': [2.5, 3.1, -60, -175, 1, 10],
-            'Hold_The_Trophy': [2.5, 2.5, -75, -75, 1, 10]
-        };
-
-        // Environment-specific overrides
-        this.environmentTileData = {
-            'Mine': {
-                'Wall': [1, 1.9, 0, regularDownAdjust, 1, 1],
-                'Bush': [1, 1.5, 0, regularDownAdjust, 1, 2]
-                // Add more overrides as needed
-            },
-            'Mortuary': {
-                'Wall': [1, 1.8, 0, regularDownAdjust, 1, 1],
-                'Skull': [1, 1.4, 0, -16, 0.9, 1]
-                // Add more overrides as needed
-            }
-            // Add more environments as needed
-        };
-
-        this.environmentObjectiveData = {
-            'Mine': {
-                'Gem_Grab': [1.3, 1.5, 0, -20, 1, 1],
-                'Heist': [1.4, 1.6, 0, -24, 1, 1]
-                // Add more overrides as needed
-            }
-            // Add more environments as needed
-        };
-
-        // Tile definitions with images and sizes
-        this.tileDefinitions = {
-            0: { name: 'Empty' },
-            1: { name: 'Wall', img: '${env}/Tiles/Wall.png', size: 1 },
-            2: { name: 'Bush', img: '${env}/Tiles/Bush.png', size: 1 },
-            3: { name: 'Wall2', img: '${env}/Tiles/Wall2.png', size: 1 },
-            4: { name: 'Crate', img: '${env}/Tiles/Crate.png', size: 1 },
-            5: { name: 'Barrel', img: '${env}/Tiles/Barrel.png', size: 1 },
-            6: { name: 'Cactus', img: '${env}/Tiles/Cactus.png', size: 1 },
-            7: { name: 'Fence', img: '${env}/Fence/Fence.png', size: 1 },
-            8: { name: 'Water', img: '${env}/Water/00000000.png', size: 1 },
-            9: { name: 'Rope Fence', img: '${env}/Rope/Post.png', size: 1 },
-            10: { name: 'Skull', img: '${env}/Tiles/Skull.png', size: 1 },
-            11: { name: 'Unbreakable', img: 'Global/Unbreakable.png', size: 1 },
-            12: { name: 'Blue Spawn', size: 1, getImg: (gamemode) => {
-                return { img: gamemode === 'Showdown' ? 'Global/Spawns/3.png' : 'Global/Spawns/1.png' };
-            }},
-            13: { name: 'Red Spawn', size: 1, getImg: (gamemode) => {
-                return { img: gamemode === 'Showdown' ? 'Global/Spawns/4.png' : 'Global/Spawns/2.png' };
-            }},
-            14: { name: 'Objective', size: 1, getImg: (gamemode, y, mapHeight) => {
-                const objectives = {
-                    'Gem_Grab': { img: '${env}/Gamemode_Specifics/Gem_Grab.png' },
-                    'Showdown': { img: 'Global/Objectives/Box.png' },
-                    'Heist': { img: '${env}/Gamemode_Specifics/Heist.png' },
-                    'Bounty': { img: 'Global/Objectives/Bounty.png' },
-                    'Brawl_Ball': { img: '${env}/Gamemode_Specifics/Brawl_Ball.png' },
-                    'Hot_Zone': { img: 'Global/Objectives/Hot_Zone.png' },
-                    'Snowtel_Thieves': { 
-                        img: `Global/Objectives/${y > mapHeight/2 ? 'SnowtelThievesBlue' : 'SnowtelThievesRed'}.png`,
-                        displayImg: 'Global/Objectives/SnowtelThievesBlue.png'
-                    },
-                    'Basket_Brawl': { img: 'Global/Objectives/Basket_Brawl.png' },
-                    'Volley_Brawl': { img: 'Global/Objectives/Volley_Brawl.png' },
-                    'Siege': { 
-                        img: `Global/Objectives/${y > mapHeight/2 ? 'IkeBlue' : 'IkeRed'}.png`,
-                        displayImg: 'Global/Objectives/IkeRed.png'
-                    },
-                    'Hold_The_Trophy': { img: 'Global/Objectives/Hold_The_Trophy.png' }
-                };
-                return objectives[gamemode];
-            }},
-            15: { name: 'Smoke', img: 'Global/Special_Tiles/Smoke.png', size: 1 },
-            16: { name: 'Heal Pad', img: 'Global/Special_Tiles/HealPad.png', size: 2 },
-            17: { name: 'Slow Tile', img: 'Global/Special_Tiles/SlowTile.png', size: 1 },
-            18: { name: 'Speed Tile', img: 'Global/Special_Tiles/SpeedTile.png', size: 1 },
-            19: { name: 'Spikes', img: 'Global/Special_Tiles/Spikes.png', size: 1 },
-            20: { name: 'Jump R', img: 'Global/Jumpads/R.png', size: 2 },
-            21: { name: 'Jump L', img: 'Global/Jumpads/L.png', size: 2 },
-            22: { name: 'Jump T', img: 'Global/Jumpads/T.png', size: 2 },
-            23: { name: 'Jump B', img: 'Global/Jumpads/B.png', size: 2 },
-            24: { name: 'Jump BR', img: 'Global/Jumpads/BR.png', size: 2 },
-            25: { name: 'Jump TL', img: 'Global/Jumpads/TL.png', size: 2 },
-            26: { name: 'Jump BL', img: 'Global/Jumpads/BL.png', size: 2 },
-            27: { name: 'Jump TR', img: 'Global/Jumpads/TR.png', size: 2 },
-            28: { name: 'Teleporter Blue', img: 'Global/Teleporters/Blue.png', size: 2 },
-            29: { name: 'Teleporter Green', img: 'Global/Teleporters/Green.png', size: 2 },
-            30: { name: 'Teleporter Red', img: 'Global/Teleporters/Red.png', size: 2 },
-            31: { name: 'Teleporter Yellow', img: 'Global/Teleporters/Yellow.png', size: 2 },
-            32: { name: 'Bolt', img: 'Global/Objectives/Bolt.png', size: 1, showInGamemode: 'Siege' },
-            33: { name: 'Empty2', img: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNgYAAAAAMAASsJTYQAAAAASUVORK5CYII=', size: 1 },
-            36: { name: 'Trio Spawn', size: 1, showInGamemode: 'Showdown', img: 'Global/Spawns/1.png' }
-        };
-
         // Load all tile images
         this.tileImages = {};
         
@@ -925,6 +951,7 @@ export class MapMaker {
         const mirrorVertical = document.getElementById('mirrorVertical');
         const mirrorHorizontal = document.getElementById('mirrorHorizontal');
         const mirrorDiagonal = document.getElementById('mirrorDiagonal');
+        const blue2Red = document.getElementById('blue2RedBtn');
 
         // Map settings
         const mapSizeSelect = document.getElementById('mapSize');
@@ -954,6 +981,7 @@ export class MapMaker {
         mirrorVertical.addEventListener('change', (e) => this.mirrorVertical = e.target.checked);
         mirrorHorizontal.addEventListener('change', (e) => this.mirrorHorizontal = e.target.checked);
         mirrorDiagonal.addEventListener('change', (e) => this.mirrorDiagonal = e.target.checked);
+        blue2Red.addEventListener('change', () =>  this.toggleBlue2Red());
 
         // Map setting listeners
         mapSizeSelect.addEventListener('change', (e) => {
@@ -969,18 +997,42 @@ export class MapMaker {
 
                 // ——— Showdown ↔ other: adjust Objective tile + data sizes ———
                 const isShowdown = size => size === this.mapSizes.showdown;
-                const wasShrunk    = isShowdown(prevSize);
+                const isShowdownNow = isShowdown(newSize);
 
-                if (wasShrunk) {
+                if (!isShowdownNow) {
                     this.tileDefinitions[14].size = 1;
-                    this.objectiveData[this.gamemode][0] = 2; // width
-                    this.objectiveData[this.gamemode][1] = 2; // height
-                    this.objectiveData[this.gamemode][2] = -50; 
-                    this.objectiveData[this.gamemode][3] = -50;
+                    this.objectiveData.Gem_Grab[0] = 2; // width
+                    this.objectiveData.Gem_Grab[1] = 2; // height
+                    this.objectiveData.Gem_Grab[2] = -50; 
+                    this.objectiveData.Gem_Grab[3] = -50;
                     this.objectiveData.Brawl_Ball[0] = 1.3;
                     this.objectiveData.Brawl_Ball[1] = 1.495;
-                    this.objectiveData.Brawl_Ball[2] = -20;
+                    this.objectiveData.Brawl_Ball[2] = -15;
                     this.objectiveData.Brawl_Ball[3] = -20; 
+                    this.objectiveData.Basket_Brawl[0] = 1.3;
+                    this.objectiveData.Basket_Brawl[1] = 1.495;
+                    this.objectiveData.Basket_Brawl[2] = -15;
+                    this.objectiveData.Basket_Brawl[3] = -20; 
+                    this.objectiveData.Volley_Brawl[0] = 1.3;
+                    this.objectiveData.Volley_Brawl[1] = 1.495;
+                    this.objectiveData.Volley_Brawl[2] = -15;
+                    this.objectiveData.Volley_Brawl[3] = -20; 
+                    this.objectiveData.Hot_Zone[0] = 7;
+                    this.objectiveData.Hot_Zone[1] = 7;
+                    this.objectiveData.Hot_Zone[2] = -300;
+                    this.objectiveData.Hot_Zone[3] = -300; 
+                    this.objectiveData.Bounty[0] = 1.15;
+                    this.objectiveData.Bounty[1] = 2.0585;
+                    this.objectiveData.Bounty[2] = -10;
+                    this.objectiveData.Bounty[3] = -50;
+                    this.objectiveData.Heist[0] = 2;
+                    this.objectiveData.Heist[1] = 2.21;
+                    this.objectiveData.Heist[2] = -50;
+                    this.objectiveData.Heist[3] = -115; 
+                    this.objectiveData.Snowtel_Thieves[0] = 4;
+                    this.objectiveData.Snowtel_Thieves[1] = 4;
+                    this.objectiveData.Snowtel_Thieves[2] = -150;
+                    this.objectiveData.Snowtel_Thieves[3] = -150; 
                 } else {
                     this.tileDefinitions[14].size = 2;
                     // restore original width/height
@@ -992,6 +1044,30 @@ export class MapMaker {
                     this.objectiveData.Brawl_Ball[1] = 0.7475;
                     this.objectiveData.Brawl_Ball[2] = 30;
                     this.objectiveData.Brawl_Ball[3] = 30;
+                    this.objectiveData.Basket_Brawl[0] = 0.65;
+                    this.objectiveData.Basket_Brawl[1] = 0.7475;
+                    this.objectiveData.Basket_Brawl[2] = 30;
+                    this.objectiveData.Basket_Brawl[3] = 30;
+                    this.objectiveData.Volley_Brawl[0] = 0.65;
+                    this.objectiveData.Volley_Brawl[1] = 0.7475;
+                    this.objectiveData.Volley_Brawl[2] = 30;
+                    this.objectiveData.Volley_Brawl[3] = 30;
+                    this.objectiveData.Hot_Zone[0] = 3.5;
+                    this.objectiveData.Hot_Zone[1] = 3.5;
+                    this.objectiveData.Hot_Zone[2] = -250;
+                    this.objectiveData.Hot_Zone[3] = -250;
+                    this.objectiveData.Bounty[0] = 0.575;
+                    this.objectiveData.Bounty[1] = 1.02925;
+                    this.objectiveData.Bounty[2] = 41.5;
+                    this.objectiveData.Bounty[3] = 35;
+                    this.objectiveData.Heist[0] = 1;
+                    this.objectiveData.Heist[1] = 1.105;
+                    this.objectiveData.Heist[2] = 0;
+                    this.objectiveData.Heist[3] = -20; 
+                    this.objectiveData.Snowtel_Thieves[0] = 2;
+                    this.objectiveData.Snowtel_Thieves[1] = 2;
+                    this.objectiveData.Snowtel_Thieves[2] = -100;
+                    this.objectiveData.Snowtel_Thieves[3] = -100; 
                 }
 
                 // ————————————————————————————————————————————————
@@ -1039,6 +1115,9 @@ export class MapMaker {
                     break;
                 case 'm':
                     this.toggleMirroring();
+                    break;
+                case 'n':
+                    this.toggleBlue2Red();
                     break;
                 case 'q':
                     this.toggleShowErrors();
@@ -1487,13 +1566,13 @@ export class MapMaker {
 
         // Define the order of tiles
         const tileOrder = [
-            'Wall', 'Wall2', 'Unbreakable', 'Crate', 'Barrel', 'Fence', 'Rope Fence',
-            'Bush', 'Cactus', 'Water', 'Skull', 'Blue Spawn', 'Red Spawn', 'Trio Spawn', 'Objective',
+            'Wall', 'Wall2', 'Unbreakable', 'Crate', 'Barrel', 'Fence', 'BFence', 'Rope Fence',
+            'Bush', 'Cactus', 'Water', 'Skull', 'Blue Spawn', 'Blue Respawn', 'Red Spawn', 'Red Respawn', 'Trio Spawn', 'Objective', 'Box', 'Boss Zone', 'Monster Zone', 'Track',
             'Smoke', 'Heal Pad', 'Slow Tile', 'Speed Tile', 'Spikes',
             'Jump R', 'Jump L', 'Jump T', 'Jump B',
             'Jump BR', 'Jump TL', 'Jump BL', 'Jump TR',
             'Teleporter Blue', 'Teleporter Green', 'Teleporter Red', 'Teleporter Yellow',
-            'Bolt'
+            'Bolt', 'Base Ike Blue', 'Base Ike Red', 'Small Ike Blue', 'Small Ike Red'
         ];
 
         // Create buttons in the specified order
@@ -1506,6 +1585,7 @@ export class MapMaker {
 
             if (id === '0' || id === '-1') return; // Skip empty and occupied tiles
             if (def.showInGamemode && def.showInGamemode !== this.gamemode) return;
+            if (def.showInEnvironment && !def.showInEnvironment.includes(this.environment)) return;
 
             const btn = document.createElement('button');
             btn.className = 'tile-btn';
@@ -1618,7 +1698,7 @@ export class MapMaker {
     }
 
 
-    drawTile(ctx, tileId, x, y) {
+    drawTile(ctx, tileId, x, y, red = false) {
         const def = this.tileDefinitions[tileId];
         if (!def) return;
 
@@ -1695,14 +1775,11 @@ export class MapMaker {
             }
             
             // If image isn't loaded yet, draw a placeholder
-            if (!img || !img.complete) {
-                ctx.fillStyle = 'rgba(0, 0, 255, 0.1)'; // Reduced opacity from 0.2 to 0.1
-                ctx.fillRect(
-                    x * this.tileSize + this.canvasPadding,
-                    y * this.tileSize + this.canvasPadding,
-                    this.tileSize,
-                    this.tileSize
-                );
+            if (!img.complete || img.naturalWidth === 0) {
+                // Wait for image to load before drawing
+                img.onload = () => {
+                    this.drawTile(this.ctx, tileId, x, y); // Or whatever your method is to redraw that tile
+                };
                 return;
             }
 
@@ -1758,18 +1835,71 @@ export class MapMaker {
                 this.tileImages[imagePath] = img;
             }
             
-            if (!img.complete) {
-                // Draw placeholder
-                ctx.fillStyle = 'rgba(150, 150, 150, 0.2)';
-                ctx.fillRect(
-                    x * this.tileSize + this.canvasPadding,
-                    y * this.tileSize + this.canvasPadding,
-                    this.tileSize,
-                    this.tileSize
-                );
+            if (!img.complete || img.naturalWidth === 0) {
+                // Wait for image to load before drawing
+                img.onload = () => {
+                    this.drawTile(this.ctx, tileId, x, y); // Or whatever your method is to redraw that tile
+                };
                 return;
             }
-        } else {
+        } else if (tileId === 40) {
+            const imageName = this.fenceLogicHandler.getFenceImageName(x, y, this.mapData, 'Brawl_Arena');
+
+            const pathColor = red ? 'Red' : 'Blue';
+            const imagePath = `Resources/Global/Arena/Track/${pathColor}/${imageName}.png`;
+            console.log(`Drawing tile ${tileId} at (${x},${y}), red=${red}, image=${imagePath}`);
+
+
+            
+            img = this.tileImages[imagePath];
+            
+            if (!img) {
+                img = new Image();
+                img.onload = () => this.draw();
+                img.src = imagePath;
+                img.onerror = () => {
+                    console.error(`Failed to load track image: ${imagePath}`);
+                    // Load fallback image
+                    img.src = `Resources/Global/Arena/Track/Blue/Fence.png`;
+                };
+                this.tileImages[imagePath] = img;
+            }
+            
+            if (!img.complete || img.naturalWidth === 0) {
+                // Wait for image to load before drawing
+                img.onload = () => {
+                    this.drawTile(this.ctx, tileId, x, y); // Or whatever your method is to redraw that tile
+                };
+                return;
+            }
+
+        } else if (tileId === 45) {
+                const imageName = this.fenceLogicHandler.getFenceImageName(x, y, this.mapData, this.environment, false, true);
+                
+                const imagePath = `Resources/${this.environment}/Fence_5v5/${imageName}.png`;
+                
+                img = this.tileImages[imagePath];
+                
+                if (!img) {
+                    img = new Image();
+                    img.onload = () => this.draw();
+                    img.src = imagePath;
+                    img.onerror = () => {
+                        console.error(`Failed to load border fence image: ${imagePath}`);
+                        // Load fallback image
+                        img.src = `Resources/${this.environment}Fence_5v5/BFence.png`;
+                    };
+                    this.tileImages[imagePath] = img;
+                }
+                
+                if (!img.complete || img.naturalWidth === 0) {
+                    // Wait for image to load before drawing
+                    img.onload = () => {
+                        this.drawTile(this.ctx, tileId, x, y); // Or whatever your method is to redraw that tile
+                    };
+                    return;
+                }
+            } else {
             img = this.tileImages[tileId];
         }
 
@@ -1778,30 +1908,30 @@ export class MapMaker {
         // Get tile dimensions data
         let dimensions;
         if (def.name === 'Objective') {
-            dimensions = this.environmentObjectiveData[this.environment]?.[this.gamemode] || 
-                        this.objectiveData[this.gamemode];
+            dimensions = this.environmentObjectiveData[this.environment]?.[this.gamemode] || this.objectiveData[this.gamemode];
         } else {
             // For fence and rope fence variations, use the specific variation's dimensions
             const isFence = tileId === 7;
             const isRope = tileId === 9;
-            if (isFence || isRope) {
-                const imageName = this.fenceLogicHandler.getFenceImageName(x, y, this.mapData, this.environment, isFence);
+            const isBorder = tileId === 45;
+            if (isFence || isRope || isBorder) {
+                const imageName = this.fenceLogicHandler.getFenceImageName(x, y, this.mapData, this.environment, isFence, isBorder);
                 const ropeMapping = {
                     'T': 'Post_T',
                     'R': 'Post_R',
                     'TR': 'Post_TR',
                     'Fence': 'Post'
                 };
-                const finalImageName = isFence ? imageName : (ropeMapping[imageName] || 'Post');
+                const finalImageName = isBorder ? imageName : isFence ? imageName : (ropeMapping[imageName] || 'Post');
                 
                 // First check environment-specific data
                 dimensions = this.environmentTileData[this.environment]?.[finalImageName] ||
                            // Then check base tile data
                            this.tileData[finalImageName] ||
                            // Fall back to base fence/rope fence in environment data
-                           this.environmentTileData[this.environment]?.[isFence ? 'Fence' : 'Rope Fence'] ||
+                           this.environmentTileData[this.environment]?.[isBorder ? 'BFence' : isFence ? 'Fence' : 'Rope Fence'] ||
                            // Finally fall back to base tile data
-                           this.tileData[isFence ? 'Fence' : 'Rope Fence'];
+                           this.tileData[isBorder ? 'BFence' : isFence ? 'Fence' : 'Rope Fence'];
             } else {
                 dimensions = this.environmentTileData[this.environment]?.[def.name] || 
                             this.tileData[def.name];
@@ -1891,11 +2021,77 @@ export class MapMaker {
                 }
                 if (!dimensions) continue;
 
-                const zIndex = dimensions[5] || 0;
+                let originalZ = dimensions[5] || 0;
+                let lastInRow = !Number.isInteger(originalZ);
+                let zIndex = lastInRow ? originalZ - 0.5 : originalZ;
+
                 if (!tilesByZIndex.has(zIndex)) {
                     tilesByZIndex.set(zIndex, []);
                 }
-                tilesByZIndex.get(zIndex).push({ x, y, tileId });
+                tilesByZIndex.get(zIndex).push({ x, y, tileId, lastInRow, red: false });
+
+            }
+        }
+
+        function getTileAt(zIndex, x, y) {
+            const tiles = tilesByZIndex.get(zIndex);
+            if (!tiles) return null;
+
+            return tiles.find(tile => tile.x === x && tile.y === y) || null;
+        }
+
+        if (this.gamemode === 'Brawl_Arena'){
+            const getTrackConnections = (x, y) => {
+                const height = this.mapData.length;
+                const width = this.mapData[0].length;
+                
+                // Helper function to check if a tile is a fence/rope
+                const isSameType = (x, y) => {
+                    if (x < 0 || x >= width || y < 0 || y >= height) return false;
+                    const id = this.mapData[y][x];
+                    return id === 40;
+                };
+
+                return {
+                    top: isSameType(x, y - 1),
+                    right: isSameType(x + 1, y),
+                    bottom: isSameType(x, y + 1),
+                    left: isSameType(x - 1, y)
+                };
+            };
+
+            for (let y = 0; y < this.mapHeight; y++) {
+                for (let x = 0; x < this.mapWidth; x++) {
+                    if (this.mapData[y][x] === 47){
+                        let firstRun = true;
+                        const addRedToConnections = (x, y) => {
+                            if (!firstRun) {
+                                const tile = getTileAt(2, x, y);
+                                if (!tile) {
+                                    console.log('No tile at', x, y);
+                                    return;
+                                }
+                                if (tile.red) {
+                                    console.log('Already red:', x, y);
+                                    return;
+                                }
+
+                                tile.red = true;
+                                console.log('Marked red at', x, y);  // ✅ <--- IMPORTANT
+                            }   
+
+                            firstRun = false;
+                            const { top, right, bottom, left } = getTrackConnections(x, y);
+                            if (top) addRedToConnections(x, y - 1);
+                            if (right) addRedToConnections(x + 1, y);
+                            if (bottom) addRedToConnections(x, y + 1);
+                            if (left) addRedToConnections(x - 1, y);
+                        };
+
+                        console.log("Starting red propagation at", x, y);
+                        addRedToConnections(x, y);
+                    }
+                }
             }
         }
 
@@ -1903,10 +2099,52 @@ export class MapMaker {
         Array.from(tilesByZIndex.keys())
             .sort((a, b) => a - b)
             .forEach(zIndex => {
-                tilesByZIndex.get(zIndex).forEach(({ x, y, tileId }) => {
-                    this.drawTile(this.ctx, tileId, x, y);
+                const tiles = tilesByZIndex.get(zIndex);
+
+                // Group tiles by row (y value)
+                const rows = new Map();
+
+                tiles.forEach(tile => {
+                    const { y } = tile;
+                    if (!rows.has(y)) {
+                        rows.set(y, []);
+                    }
+                    rows.get(y).push(tile);
                 });
+
+                // Draw tiles row by row
+                Array.from(rows.keys())
+                    .sort((a, b) => a - b)
+                    .forEach(y => {
+                        const rowTiles = rows.get(y);
+
+                        // Separate regular and lastInRow tiles
+                        const normalTiles = [];
+                        const lastInRowTiles = [];
+
+                        rowTiles.forEach(tile => {
+                            if (tile.lastInRow) {
+                                lastInRowTiles.push(tile);
+                            } else {
+                                normalTiles.push(tile);
+                            }
+                        });
+
+                        // Sort both groups by x
+                        normalTiles.sort((a, b) => a.x - b.x);
+                        lastInRowTiles.sort((a, b) => a.x - b.x); // Optional, just in case of multiple
+
+                        [...normalTiles, ...lastInRowTiles].forEach(({ x, y, tileId }) => {
+                            const tile = getTileAt(2, x, y);
+                            const red = tile?.red ?? false;
+
+                            this.drawTile(this.ctx, tileId, x, y, red);
+                            console.log(`Drawing tile ${tileId} at (${x},${y}) with red=${red}`);
+
+                        });
+                    });
             });
+
             
 
         // Draw error tiles if showErrors is enabled
@@ -2176,7 +2414,7 @@ export class MapMaker {
 
     getMirroredTileId(tileId, direction) {
         const def = this.tileDefinitions[tileId];
-        if (!def) return tileId;
+        if (!def && !this.blue2Red) return tileId;
 
         // Handle jump pad mirroring
         if (def.name.startsWith('Jump')) {
@@ -2197,6 +2435,19 @@ export class MapMaker {
             const mirroredDef = Object.entries(this.tileDefinitions)
                 .find(([_, d]) => d.name === `Jump ${mirroredDirection}`);
             return mirroredDef ? parseInt(mirroredDef[0]) : tileId;
+        }
+
+        if (this.blue2Red) {
+            switch (tileId){
+                case 12: return 13;
+                case 13: return 12;
+                case 41: return 42;
+                case 42: return 41;
+                case 43: return 46;
+                case 46: return 43;
+                case 44: return 47;
+                case 47: return 44;
+            }
         }
 
         return tileId;
@@ -2292,60 +2543,198 @@ export class MapMaker {
         // Draw background
         for (let y = 0; y < this.mapHeight; y++) {
             for (let x = 0; x < this.mapWidth; x++) {
-            const isDark = (x + y) % 2 === 0;
-            const bgImg = isDark ? this.bgDark : this.bgLight;
+                const isDark = (x + y) % 2 === 0;
+                const bgImg = isDark ? this.bgDark : this.bgLight;
 
-            // Skip Brawl Ball corners in regular size
-            if (
-                this.gamemode === 'Brawl_Ball' &&
-                this.mapSize === this.mapSizes.regular
-            ) {
-                const atTop = y < 4;
-                const atBottom = y >= this.mapHeight - 4;
-                const atLeft = x < 7;
-                const atRight = x >= this.mapWidth - 7;
-                if ((atTop || atBottom) && (atLeft || atRight)) continue;
-            }
+                // Skip Brawl Ball corners in regular size
+                if (
+                    this.gamemode === 'Brawl_Ball' &&
+                    this.mapSize === this.mapSizes.regular
+                ) {
+                    const atTop = y < 4;
+                    const atBottom = y >= this.mapHeight - 4;
+                    const atLeft = x < 7;
+                    const atRight = x >= this.mapWidth - 7;
+                    if ((atTop || atBottom) && (atLeft || atRight)) continue;
+                }
 
-            if (bgImg?.complete) {
-                ctx.drawImage(
-                bgImg,
-                x * tileSize + padding,
-                y * tileSize + padding,
-                tileSize,
-                tileSize
-                );
-            }
+                if (bgImg?.complete) {
+                    ctx.drawImage(
+                        bgImg,
+                        x * tileSize + padding,
+                        y * tileSize + padding,
+                        tileSize,
+                        tileSize
+                    );
+                }
             }
         }
 
-        // Draw map tiles
+        // Group tiles by z-index
+        const tilesByZIndex = new Map();
         for (let y = 0; y < this.mapHeight; y++) {
             for (let x = 0; x < this.mapWidth; x++) {
-            this.drawTile(ctx, this.mapData[y][x], x, y);
+                const tileId = this.mapData[y][x];
+                if (tileId === 0 || tileId === -1) continue;
+
+                const def = this.tileDefinitions[tileId];
+                if (!def) continue;
+
+                let dimensions;
+                if (def.name === 'Objective') {
+                    dimensions = this.environmentObjectiveData[this.environment]?.[this.gamemode] || 
+                                this.objectiveData[this.gamemode];
+                } else {
+                    dimensions = this.environmentTileData[this.environment]?.[def.name] || 
+                                this.tileData[def.name];
+                }
+                if (!dimensions) continue;
+
+                let originalZ = dimensions[5] || 0;
+                let lastInRow = !Number.isInteger(originalZ);
+                let zIndex = lastInRow ? originalZ - 0.5 : originalZ;
+
+                if (!tilesByZIndex.has(zIndex)) {
+                    tilesByZIndex.set(zIndex, []);
+                }
+                tilesByZIndex.get(zIndex).push({ x, y, tileId, lastInRow, red: false });
+
             }
         }
+
+        function getTileAt(zIndex, x, y) {
+            const tiles = tilesByZIndex.get(zIndex);
+            if (!tiles) return null;
+
+            return tiles.find(tile => tile.x === x && tile.y === y) || null;
+        }
+
+        if (this.gamemode === 'Brawl_Arena'){
+            const getTrackConnections = (x, y) => {
+                const height = this.mapData.length;
+                const width = this.mapData[0].length;
+                
+                // Helper function to check if a tile is a fence/rope
+                const isSameType = (x, y) => {
+                    if (x < 0 || x >= width || y < 0 || y >= height) return false;
+                    const id = this.mapData[y][x];
+                    return id === 40;
+                };
+
+                return {
+                    top: isSameType(x, y - 1),
+                    right: isSameType(x + 1, y),
+                    bottom: isSameType(x, y + 1),
+                    left: isSameType(x - 1, y)
+                };
+            };
+
+            for (let y = 0; y < this.mapHeight; y++) {
+                for (let x = 0; x < this.mapWidth; x++) {
+                    if (this.mapData[y][x] === 47){
+                        let firstRun = true;
+                        const addRedToConnections = (x, y) => {
+                            if (!firstRun) {
+                                const tile = getTileAt(2, x, y);
+                                if (!tile) {
+                                    console.log('No tile at', x, y);
+                                    return;
+                                }
+                                if (tile.red) {
+                                    console.log('Already red:', x, y);
+                                    return;
+                                }
+
+                                tile.red = true;
+                                console.log('Marked red at', x, y);  // ✅ <--- IMPORTANT
+                            }   
+
+                            firstRun = false;
+                            const { top, right, bottom, left } = getTrackConnections(x, y);
+                            if (top) addRedToConnections(x, y - 1);
+                            if (right) addRedToConnections(x + 1, y);
+                            if (bottom) addRedToConnections(x, y + 1);
+                            if (left) addRedToConnections(x - 1, y);
+                        };
+
+                        console.log("Starting red propagation at", x, y);
+                        addRedToConnections(x, y);
+                    }
+                }
+            }
+        }
+
+        // Draw tiles in z-index order
+        Array.from(tilesByZIndex.keys())
+            .sort((a, b) => a - b)
+            .forEach(zIndex => {
+                const tiles = tilesByZIndex.get(zIndex);
+
+                // Group tiles by row (y value)
+                const rows = new Map();
+
+                tiles.forEach(tile => {
+                    const { y } = tile;
+                    if (!rows.has(y)) {
+                        rows.set(y, []);
+                    }
+                    rows.get(y).push(tile);
+                });
+
+                // Draw tiles row by row
+                Array.from(rows.keys())
+                    .sort((a, b) => a - b)
+                    .forEach(y => {
+                        const rowTiles = rows.get(y);
+
+                        // Separate regular and lastInRow tiles
+                        const normalTiles = [];
+                        const lastInRowTiles = [];
+
+                        rowTiles.forEach(tile => {
+                            if (tile.lastInRow) {
+                                lastInRowTiles.push(tile);
+                            } else {
+                                normalTiles.push(tile);
+                            }
+                        });
+
+                        // Sort both groups by x
+                        normalTiles.sort((a, b) => a.x - b.x);
+                        lastInRowTiles.sort((a, b) => a.x - b.x); // Optional, just in case of multiple
+
+                        [...normalTiles, ...lastInRowTiles].forEach(({ x, y, tileId }) => {
+                            const tile = getTileAt(2, x, y);
+                            const red = tile?.red ?? false;
+
+                            this.drawTile(ctx, tileId, x, y, red);
+                            console.log(`Drawing tile ${tileId} at (${x},${y}) with red=${red}`);
+
+                        });
+                    });
+            });
 
         // Draw goal images if any
         if (this.goalImages?.length) {
             for (const goal of this.goalImages) {
-            const img =
-                this.goalImageCache[`${goal.name}_${this.environment}`] ||
-                this.goalImageCache[goal.name];
-            if (!img || !img.complete) continue;
+                const img =
+                    this.goalImageCache[`${goal.name}_${this.environment}`] ||
+                    this.goalImageCache[goal.name];
+                if (!img || !img.complete) continue;
 
-            ctx.drawImage(
-                img,
-                goal.x * tileSize + padding + (goal.offsetX || 0),
-                goal.y * tileSize + padding + (goal.offsetY || 0),
-                (goal.w || 1) * tileSize,
-                (goal.h || 1) * tileSize
-            );
+                ctx.drawImage(
+                    img,
+                    goal.x * tileSize + padding + (goal.offsetX || 0),
+                    goal.y * tileSize + padding + (goal.offsetY || 0),
+                    (goal.w || 1) * tileSize,
+                    (goal.h || 1) * tileSize
+                );
             }
         }
 
         return canvas.toDataURL('image/png');
-        }
+    }
+
 
 
 
@@ -2391,6 +2780,17 @@ export class MapMaker {
             }
         }
 
+        Object.entries(this.tileDefinitions).forEach(([key, value]) => {
+            if (value.showInGamemode && value.showInGamemode !== this.gamemode) {
+                for (let y = 0; y < this.mapHeight; y++) {
+                    for (let x = 0; x < this.mapWidth; x++) {
+                        if (this.mapData[y][x] === parseInt(key)) this.mapData[y][x] = 0;
+                    }
+                }
+            }
+        });
+
+
         const middleX = Math.floor(this.mapWidth / 2);
         const middleY = Math.floor(this.mapHeight / 2);
 
@@ -2408,13 +2808,36 @@ export class MapMaker {
                         }
                     }
                 }
+                let red = { name: 'goalRed', x: middleX - 3, y: 0, w: 7, h: 3.5, offsetX: 0, offsetY: -20 };
+                let blue = { name: 'goalBlue', x: middleX - 3, y: this.mapHeight - 5, w: 7, h: 3.5, offsetX: 0, offsetY: -10 };
+
+                if (this.environment === 'Stadium'){
+                    red = { name: 'goalRed', x: middleX - 3, y: 0, w: 7, h: 4.5, offsetX: 0, offsetY: -20 };
+                    blue = { name: 'goalBlue', x: middleX - 3, y: this.mapHeight - 4, w: 7, h: 4.5, offsetX: 0, offsetY: -10 };
+                }
                 this.goalImages.push(
-                    { name: 'goalRed', x: middleX - 3, y: 0, w: 7, h: 3.5, offsetX: 0, offsetY: -20 },
-                    { name: 'goalBlue', x: middleX - 3, y: this.mapHeight - 5, w: 7, h: 3.5, offsetX: 0, offsetY: -10 }
+                    red, blue
                 );
                 await Promise.all(
                     this.goalImages.map(goal => this.preloadGoalImage(goal.name, this.environment))
                 );
+
+                // Clear previous spawn tiles
+                this.placeTile(middleX, 0, 42, false);                      // Red
+                this.placeTile(middleX, this.mapHeight - 1, 41, false);     // Blue
+                this.placeTile(middleX - 2, 0, 42, false);                  // Red
+                this.placeTile(middleX - 2, this.mapHeight - 1, 41, false); // Blue
+                this.placeTile(middleX + 2, 0, 42, false);                  // Red
+                this.placeTile(middleX + 2, this.mapHeight - 1, 41, false); // Blue
+
+                // Place spawn tiles
+                this.placeTile(middleX, 8, 13, false);      // Red
+                this.placeTile(middleX, this.mapHeight - 9, 12, false);   // Blue
+                this.placeTile(middleX - 2, 8, 13, false);                              // Red
+                this.placeTile(middleX - 2, this.mapHeight - 9, 12, false); // Blue
+                this.placeTile(middleX + 2, 8, 13, false);                              // Red
+                this.placeTile(middleX + 2, this.mapHeight - 9, 12, false); // Blue
+
             } else if (wasBrawl) {
                 for (const [startX, startY] of corners) {
                     for (let y = 0; y < 4; y++) {
@@ -2441,7 +2864,7 @@ export class MapMaker {
             );
         }
 
-        if (this.mapData.every(row => row.every(tile => tile === 0))) 
+        if (this.mapData.every(row => row.every(tile => tile === 0 || tile === 14 || tile === 13 || tile === 12 || tile === 33))) 
             this.applyDefaultLayoutIfEmpty();
 
 
@@ -2455,6 +2878,8 @@ export class MapMaker {
         const midX = Math.floor(mapWidth / 2);
         const topY = 0;
         const bottomY = mapHeight - 1;
+
+        this.mapData = Array.from({ length: mapHeight }, () => Array(mapWidth).fill(0));
 
         // Place spawns for regular maps
         if (this.mapSize === this.mapSizes.regular) {
@@ -2505,11 +2930,10 @@ export class MapMaker {
                 'Hold_The_Trophy', 'Basket_Brawl', 'Volley_Brawl'
             ];
             if (objectiveModes.includes(this.gamemode)) {
-                this.mapData[centerY][centerX] = 14;
-            }
-            if (this.gamemode === 'Heist' || this.gamemode === 'Snowtel_Thieves') {
-                this.mapData[4][centerX] = 14;
-                this.mapData[mapHeight - 5][centerX] = 14;
+                this.placeTile(centerX, centerY, 14, false); // Place objective tile
+            } else if (this.gamemode === 'Heist' || this.gamemode === 'Snowtel_Thieves') {
+                this.placeTile(centerX, 4, 14, false);
+                this.placeTile(centerX, mapHeight - 5, 14, false);
             }
         }
 
@@ -2540,7 +2964,7 @@ export class MapMaker {
                 for (let x = mapWidth - 10; x < mapWidth; x++) this.mapData[y][x] = 8;
             }
 
-        } else if (this.mapSize === this.mapSizes.showdown && this.gamemode === 'Gem_Grab') {
+        } else if (this.mapSize === this.mapSizes.showdown && (this.gamemode === 'Gem_Grab' || this.gamemode === 'Bounty' || this.gamemode === 'Hot_Zone')) {
             // Gem Grab-specific setup
             const centerX = Math.floor(mapWidth / 2);
             const centerY = Math.floor(mapHeight / 2);
@@ -2658,6 +3082,13 @@ export class MapMaker {
         }
         
         this.draw();
+    }
+
+    toggleBlue2Red() {
+        this.blue2Red = !this.blue2Red;
+        const blue2RedBtn = document.getElementById('blue2RedBtn');
+        blue2RedBtn.checked = this.blue2Red;
+        blue2RedBtn.parentElement.classList.toggle('active', this.blue2Red);
     }
 
     toggleEraseMode() {

@@ -1,6 +1,6 @@
 import { generateMapImage } from './map-renderer.js';
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     const urlParams = new URLSearchParams(window.location.search);
     const mapId = urlParams.get('id');
     const user = urlParams.get('user');
@@ -16,7 +16,15 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('openMapBtn').onclick = () => {
             window.location.href = window.location.href.replace('map.html', 'mapmaker.html');
         };
+        document.getElementById('deleteMapBtn').style.display = 'inline-block';
     }
+
+    document.getElementById('deleteMapBtn').onclick = async () => {
+            if (confirm('Are you sure you want to delete this map?')){
+                await Firebase.deleteData(`users/${user}/maps/${mapId}`);
+                window.location.href = 'index.html';
+            }
+        };
 
     if (localStorage.getItem('user') !== null) {
         // User is logged in
@@ -29,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('avatar').style.display = 'none';
     }
 
-    Firebase.readDataOnce(`users/${user}/maps/${mapId}`).then(async (mapData) => {
+    await Firebase.readDataOnce(`users/${user}/maps/${mapId}`).then(async (mapData) => {
         if (!mapData) return showError('Map Not Found');
 
         document.getElementById('mapTitle').textContent = mapData.name || 'Untitled Map';

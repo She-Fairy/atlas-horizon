@@ -36,6 +36,38 @@
     gap: 0.75rem;
 }
 
+label[for='blue2RedBtn'] {
+    width: 36px;
+    height: 36px;
+    padding: 0px;
+    border: 1px solid var(--border-color);
+    border-radius: 0.25rem;
+    background-color: var(--surface-color);
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+label[for='blue2RedBtn'] img {
+    width: 23px;
+    height: 23px;
+    object-fit: contain;
+    filter: brightness(0.9)
+}
+
+label[for='blue2RedBtn']:hover {
+    background-color: var(--surface-color-hover);
+    border-color: var(--primary-color);
+}
+
+label[for='blue2RedBtn'].active {
+    background-color: var(--surface-color-hover);
+    border-color: var(--primary-color);
+}
+
 .icon-btn {
     width: 36px;
     height: 36px;
