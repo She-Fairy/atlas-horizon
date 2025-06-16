@@ -1874,10 +1874,10 @@ export class MapMaker {
             }
 
         } else if (tileId === 45) {
-            // Check if BFence is allowed in current environment
+            // Robust check: Only try to draw BFence if allowed in this environment
             const def = this.tileDefinitions[tileId];
             if (!def.showInEnvironment || !def.showInEnvironment.includes(this.environment)) {
-                console.warn(`BFence not supported in environment: ${this.environment}`);
+                // Do not attempt to load or draw BFence if not supported in this environment
                 return;
             }
 
