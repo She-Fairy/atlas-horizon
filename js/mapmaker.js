@@ -75,11 +75,9 @@ class FenceLogicHandler {
     }
 
     getFenceImageName(x, y, mapData, environment, isFence = true, isBorder = false) {
-        console.log(`Getting fence image for ${isFence ? 'fence' : 'rope'} at (${x},${y}) in ${environment}`);
         
         // Determine which logic to use based on environment
         const logicType = isBorder ? BORDER_FENCE_LOGIC_BY_ENVIRONMENT[environment] : isFence ? FENCE_LOGIC_BY_ENVIRONMENT[environment] : FENCE_LOGIC_TYPES.FOUR_PIECE;
-        console.log(`Using logic type: ${logicType}`);
         
         // Get the implementation for this logic type
         const logicHandler = this.logicImplementations[logicType];
@@ -90,11 +88,9 @@ class FenceLogicHandler {
 
         // Get connections (true if connected, false if not)
         const connections = this.getConnections(x, y, mapData, isFence, isBorder, environment);
-        console.log(`Connections:`, connections);
         
         // Call the appropriate logic handler
         const result = isBorder ? 'B' + logicHandler.call(this, connections) : logicHandler.call(this, connections);
-        console.log(`Resulting image name: ${result}`);
         return result;
     }
 
@@ -1812,7 +1808,6 @@ export class MapMaker {
 
             const pathColor = red ? 'Red' : 'Blue';
             const imagePath = `Resources/Global/Arena/Track/${pathColor}/${imageName}.png`;
-            console.log(`Drawing tile ${tileId} at (${x},${y}), red=${red}, image=${imagePath}`);
 
 
             
@@ -2040,16 +2035,13 @@ export class MapMaker {
                             if (!firstRun) {
                                 const tile = getTileAt(2, x, y);
                                 if (!tile) {
-                                    console.log('No tile at', x, y);
                                     return;
                                 }
                                 if (tile.red) {
-                                    console.log('Already red:', x, y);
                                     return;
                                 }
 
                                 tile.red = true;
-                                console.log('Marked red at', x, y);  // ✅ <--- IMPORTANT
                             }   
 
                             firstRun = false;
@@ -2060,7 +2052,6 @@ export class MapMaker {
                             if (left) addRedToConnections(x - 1, y);
                         };
 
-                        console.log("Starting red propagation at", x, y);
                         addRedToConnections(x, y);
                     }
                 }
@@ -2111,7 +2102,6 @@ export class MapMaker {
                             const red = tile?.red ?? false;
 
                             this.drawTile(this.ctx, tileId, x, y, red);
-                            console.log(`Drawing tile ${tileId} at (${x},${y}) with red=${red}`);
 
                         });
                     });
@@ -2609,16 +2599,13 @@ export class MapMaker {
                             if (!firstRun) {
                                 const tile = getTileAt(2, x, y);
                                 if (!tile) {
-                                    console.log('No tile at', x, y);
                                     return;
                                 }
                                 if (tile.red) {
-                                    console.log('Already red:', x, y);
                                     return;
                                 }
 
                                 tile.red = true;
-                                console.log('Marked red at', x, y);  // ✅ <--- IMPORTANT
                             }   
 
                             firstRun = false;
@@ -2629,7 +2616,6 @@ export class MapMaker {
                             if (left) addRedToConnections(x - 1, y);
                         };
 
-                        console.log("Starting red propagation at", x, y);
                         addRedToConnections(x, y);
                     }
                 }
@@ -2680,7 +2666,6 @@ export class MapMaker {
                             const red = tile?.red ?? false;
 
                             this.drawTile(ctx, tileId, x, y, red);
-                            console.log(`Drawing tile ${tileId} at (${x},${y}) with red=${red}`);
 
                         });
                     });
