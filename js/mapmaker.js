@@ -1654,41 +1654,6 @@ export class MapMaker {
         });
     }
 
-    loadTileImages() {
-        this.tileImages = {};
-        const imageLoadPromises = [];
-
-        Object.entries(this.tileDefinitions).forEach(([id, def]) => {
-            if (!def.img && !def.getImg) return;
-
-            const img = new Image();
-            if (def.img) {
-                img.src = `Resources/${def.img.replace('${env}', this.environment)}`;
-            } else if (def.getImg) {
-                const imgData = def.getImg(this.gamemode, 0, this.mapHeight);
-                if (imgData) {
-                    img.src = `Resources/${imgData.img.replace('${env}', this.environment)}`;
-                }
-            }
-
-            img.onerror = () => {
-                if (this.environment !== 'Desert' && (def.img || '').includes('${env}')) {
-                    img.src = `Resources/${(def.img || '').replace('${env}', 'Desert')}`;
-                }
-            };
-
-            this.tileImages[id] = img;
-            imageLoadPromises.push(new Promise(resolve => {
-                img.onload = resolve;
-            }));
-        });
-
-        // Wait for all images to load then draw
-        Promise.all(imageLoadPromises).then(() => {
-            this.draw();
-        });
-    }
-
     setCanvas(newCanvas) {
         this.canvas = newCanvas;
         this.ctx    = newCanvas.getContext('2d');
