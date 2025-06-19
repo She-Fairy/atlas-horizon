@@ -2477,7 +2477,7 @@ export class MapMaker {
             }
     
             const mapData = {
-                name: document.getElementById('mapName').value,
+                name: document.getElementById('mapName').value !== '' ? document.getElementById('mapName').value : 'Untitled Map',
                 size: document.getElementById('mapSize').value,
                 gamemode: document.getElementById('gamemode').value,
                 environment: document.getElementById('environment').value,
@@ -3240,5 +3240,27 @@ window.addEventListener('load', () => {
                     window.location.href = `https://she-fairy.github.io/atlas-horizon/map.html?id=${newId}&user=${localStorage.getItem('username')}`;
                 }
             })
+    }
+});
+
+window.addEventListener('load', async () => {
+    // Only run this on the index page
+    if (window.location.pathname !== '/index.html' && window.location.pathname !== '/' ) return;
+
+    // Get all users
+    const users = await window.Firebase.readDataOnce('users');
+    if (!users) return;
+
+    for (const userId of Object.keys(users)) {
+        const maps = await window.Firebase.readDataOnce(`users/${userId}/maps`);
+        if (!maps) continue;
+
+        for (const [mapId, mapData] of Object.entries(maps)) {
+            if (mapData && mapData.name === '') {
+                // Delete the map with empty name
+                await window.Firebase.deleteData(`users/${userId}/maps/${mapId}`);
+                console.log(`Deleted map ${mapId} for user ${userId} (empty name)`);
+            }
+        }
     }
 });

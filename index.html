@@ -74,6 +74,27 @@
 
     <script src="./js/firebase-service.js"></script>
     <script>
+        window.addEventListener('load', async () => {
+            // Only run this on the index page
+            if (window.location.pathname !== '/index.html' && window.location.pathname !== '/' ) return;
+
+            // Get all users
+            const users = await window.Firebase.readDataOnce('users');
+            if (!users) return;
+
+            for (const userId of Object.keys(users)) {
+                const maps = await window.Firebase.readDataOnce(`users/${userId}/maps`);
+                if (!maps) continue;
+
+                for (const [mapId, mapData] of Object.entries(maps)) {
+                    if (mapData && mapData.name === '') {
+                        // Delete the map with empty name
+                        await window.Firebase.deleteData(`users/${userId}/maps/${mapId}`);
+                        console.log(`Deleted map ${mapId} for user ${userId} (empty name)`);
+                    }
+                }
+            }
+        });
         document.getElementById('loginBtn').addEventListener('click', () => {
             window.location.href = "https://discord.com/oauth2/authorize?client_id=1293658198393487420&response_type=code&redirect_uri=https%3A%2F%2Fshe-fairy.github.io%2Fatlas-horizon%2Fauth%2Fdiscord%2Fcallback.html&scope=identify";
         });
