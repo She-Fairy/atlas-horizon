@@ -3242,25 +3242,3 @@ window.addEventListener('load', () => {
             })
     }
 });
-
-window.addEventListener('load', async () => {
-    // Only run this on the index page
-    if (window.location.pathname !== '/index.html' && window.location.pathname !== '/' ) return;
-
-    // Get all users
-    const users = await window.Firebase.readDataOnce('users');
-    if (!users) return;
-
-    for (const userId of Object.keys(users)) {
-        const maps = await window.Firebase.readDataOnce(`users/${userId}/maps`);
-        if (!maps) continue;
-
-        for (const [mapId, mapData] of Object.entries(maps)) {
-            if (mapData && mapData.name === '') {
-                // Delete the map with empty name
-                await window.Firebase.deleteData(`users/${userId}/maps/${mapId}`);
-                console.log(`Deleted map ${mapId} for user ${userId} (empty name)`);
-            }
-        }
-    }
-});
