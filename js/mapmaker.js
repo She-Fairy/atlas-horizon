@@ -829,9 +829,26 @@ export class MapMaker {
                     // Skip tiles without images
                     return;
                 }
-                // If already loaded or loading, skip
+                // For dynamic tiles (getImg), always reload
+                if (def.getImg) {
+                    const img = new Image();
+                    const imgData = def.getImg(this.gamemode, 0, this.mapHeight);
+                    if (imgData) {
+                        img.src = `Resources/${imgData.img.replace('${env}', this.environment)}`;
+                    }
+                    img.onload = onLoad;
+                    img.onerror = () => {
+                        if (this.environment !== 'Desert' && (imgData?.img || '').includes('${env}')) {
+                            img.src = `Resources/${(imgData?.img || '').replace('${env}', 'Desert')}`;
+                        } else {
+                            onLoad();
+                        }
+                    };
+                    this.tileImages[id] = img;
+                    return;
+                }
+                // For static tiles, use cache if present
                 if (this.tileImages[id] && (this.tileImages[id].complete || this.tileImages[id].src)) {
-                    // If image is already loaded or loading, just wait for it to load if not complete
                     if (this.tileImages[id].complete) {
                         onLoad();
                     } else {
@@ -843,11 +860,6 @@ export class MapMaker {
                 const img = new Image();
                 if (def.img) {
                     img.src = `Resources/${def.img.replace('${env}', this.environment)}`;
-                } else if (def.getImg) {
-                    const imgData = def.getImg(this.gamemode, 0, this.mapHeight);
-                    if (imgData) {
-                        img.src = `Resources/${imgData.img.replace('${env}', this.environment)}`;
-                    }
                 }
                 img.onload = onLoad;
                 img.onerror = () => {
@@ -3230,7 +3242,7 @@ window.addEventListener('load', () => {
                 console.error('Error loading map:', error);
                 alert('Failed to load map. Please try again.');
             });
-    } else if (mapId && user) {
+    } else if (mapId && user){
         window.Firebase.readDataOnce(`users/${user}/maps/${mapId}`)
             .then(async data => {
                 if (data) {
