@@ -713,7 +713,7 @@ export class MapMaker {
 
         this.waterTileFilenames.forEach(filename => {
             const imagePath = `Resources/${this.environment}/Water/${filename}`;
-            const cacheKey = `water_${filename}`;
+            const cacheKey = `${this.environment}_water_${filename}`;
 
             // Skip if already loaded with the same path
             if (this.tileImagePaths[cacheKey] === imagePath && this.tileImages[cacheKey]?.complete) {
