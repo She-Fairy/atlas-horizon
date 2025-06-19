@@ -708,26 +708,21 @@ export class MapMaker {
 
     // Add a method to preload all water tile images
     preloadWaterTiles() {
-        console.log("Preloading water tiles...");
+        if (!this.tileImages) this.tileImages = {};
         this.waterTileFilenames.forEach(filename => {
             const imagePath = `Resources/${this.environment}/Water/${filename}`;
-            const cacheKey = `water_${filename}`; // Use a specific cache key for water tiles
-            
-            // Create and load the image if it doesn't exist in cache
-            if (!this.tileImages[cacheKey]) {
-                const img = new Image();
-                img.src = imagePath;
-                
-                // Add error handling
-                img.onerror = () => {
-                    console.error(`Failed to load water image: ${imagePath}`);
-                    // Try to load a fallback image
-                    img.src = `Resources/${this.environment}/Water/00000000.png`;
-                };
-                
-                // Store the image in the tileImages object with the cache key
-                this.tileImages[cacheKey] = img;
+            const cacheKey = `water_${filename}`;
+            // Only create/load if not already present
+            if (this.tileImages[cacheKey] && (this.tileImages[cacheKey].complete || this.tileImages[cacheKey].src)) {
+                return;
             }
+            const img = new Image();
+            img.src = imagePath;
+            img.onerror = () => {
+                console.error(`Failed to load water image: ${imagePath}`);
+                img.src = `Resources/${this.environment}/Water/00000000.png`;
+            };
+            this.tileImages[cacheKey] = img;
         });
     }
 
@@ -812,17 +807,15 @@ export class MapMaker {
     }
 
     async loadTileImages() {
-        this.tileImages = {};
+        if (!this.tileImages) this.tileImages = {};
         const imageLoadPromises = [];
 
-        // Load all tile images
-        this.tileImages = {};
-        
         // Return a Promise that resolves when all images are loaded
         return new Promise((resolve) => {
             let loadedCount = 0;
-            const totalImages = Object.keys(this.tileDefinitions).length;
-            
+            const tileDefs = Object.entries(this.tileDefinitions);
+            const totalImages = tileDefs.filter(([id, def]) => (def.img || def.getImg) && (!def.showInEnvironment || def.showInEnvironment.includes(this.environment))).length;
+
             const onLoad = () => {
                 loadedCount++;
                 if (loadedCount === totalImages) {
@@ -830,14 +823,23 @@ export class MapMaker {
                     resolve();
                 }
             };
-            
-            // Load each tile image
-            Object.entries(this.tileDefinitions).forEach(([id, def]) => {
+
+            tileDefs.forEach(([id, def]) => {
                 if (!def.img && !def.getImg || def.showInEnvironment && !def.showInEnvironment.includes(this.environment)) {
-                    onLoad(); // Skip tiles without images
+                    // Skip tiles without images
                     return;
                 }
-                
+                // If already loaded or loading, skip
+                if (this.tileImages[id] && (this.tileImages[id].complete || this.tileImages[id].src)) {
+                    // If image is already loaded or loading, just wait for it to load if not complete
+                    if (this.tileImages[id].complete) {
+                        onLoad();
+                    } else {
+                        this.tileImages[id].addEventListener('load', onLoad, { once: true });
+                        this.tileImages[id].addEventListener('error', onLoad, { once: true });
+                    }
+                    return;
+                }
                 const img = new Image();
                 if (def.img) {
                     img.src = `Resources/${def.img.replace('${env}', this.environment)}`;
@@ -847,16 +849,14 @@ export class MapMaker {
                         img.src = `Resources/${imgData.img.replace('${env}', this.environment)}`;
                     }
                 }
-                
                 img.onload = onLoad;
                 img.onerror = () => {
                     if (this.environment !== 'Desert' && (def.img || '').includes('${env}')) {
                         img.src = `Resources/${(def.img || '').replace('${env}', 'Desert')}`;
                     } else {
-                        onLoad(); // Count as loaded even if it fails
+                        onLoad();
                     }
                 };
-                
                 this.tileImages[id] = img;
             });
         });
