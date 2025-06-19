@@ -713,15 +713,21 @@ export class MapMaker {
 
         this.waterTileFilenames.forEach(filename => {
             const imagePath = `Resources/${this.environment}/Water/${filename}`;
-            const cacheKey = `${this.environment}_water_${filename}`;
+            const cacheKey = `water_${filename}`; // drawTile expects this key
 
-            // Skip if already loaded with the same path
+            // If already loaded for current environment and finished, skip
             if (this.tileImagePaths[cacheKey] === imagePath && this.tileImages[cacheKey]?.complete) {
                 return;
             }
 
             const img = new Image();
-            img.src = imagePath;
+
+            // Redraw once all water images are loaded
+            img.onload = () => {
+                if (Object.values(this.tileImages).every(i => i.complete)) {
+                    this.draw?.();
+                }
+            };
 
             img.onerror = () => {
                 console.error(`Failed to load water image: ${imagePath}`);
@@ -730,6 +736,7 @@ export class MapMaker {
                 this.tileImagePaths[cacheKey] = fallbackPath;
             };
 
+            img.src = imagePath;
             this.tileImages[cacheKey] = img;
             this.tileImagePaths[cacheKey] = imagePath;
         });
@@ -3244,7 +3251,6 @@ window.addEventListener('load', () => {
                 window.mapMaker.updateCanvasSize();
                 window.mapMaker.fitMapToScreen();
 
-                await window.mapMaker.setGamemode(data.gamemode);
                 window.mapMaker.setEnvironment(data.environment);
 
                 document.getElementById('mapName').value = data.name;
@@ -3252,7 +3258,8 @@ window.addEventListener('load', () => {
                 document.getElementById('gamemode').value = data.gamemode;
                 document.getElementById('environment').value = data.environment;
                 document.getElementById('mapLink').innerText = `https://she-fairy.github.io/atlas-horizon/map.html?id=${mapId}&user=${user}`;
-                window.mapMaker.draw()
+                window.mapMaker.draw();
+                await window.mapMaker.setGamemode(data.gamemode);
             })
             .catch(error => {
                 console.error('Error loading map:', error);
