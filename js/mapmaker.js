@@ -3230,7 +3230,7 @@ window.addEventListener('load', () => {
                 console.error('Error loading map:', error);
                 alert('Failed to load map. Please try again.');
             });
-    } else {
+    } else if (mapId && user) {
         window.Firebase.readDataOnce(`users/${user}/maps/${mapId}`)
             .then(async data => {
                 if (data) {
