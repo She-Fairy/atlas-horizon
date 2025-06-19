@@ -709,51 +709,72 @@ export class MapMaker {
     // Add a method to preload all water tile images
     preloadWaterTiles() {
         if (!this.tileImages) this.tileImages = {};
+        if (!this.tileImagePaths) this.tileImagePaths = {};
+
         this.waterTileFilenames.forEach(filename => {
             const imagePath = `Resources/${this.environment}/Water/${filename}`;
             const cacheKey = `water_${filename}`;
-            // Only create/load if not already present
-            if (this.tileImages[cacheKey] && (this.tileImages[cacheKey].complete || this.tileImages[cacheKey].src)) {
+
+            // Skip if already loaded with the same path
+            if (this.tileImagePaths[cacheKey] === imagePath && this.tileImages[cacheKey]?.complete) {
                 return;
             }
+
             const img = new Image();
             img.src = imagePath;
+
             img.onerror = () => {
                 console.error(`Failed to load water image: ${imagePath}`);
-                img.src = `Resources/${this.environment}/Water/00000000.png`;
+                const fallbackPath = `Resources/${this.environment}/Water/00000000.png`;
+                img.src = fallbackPath;
+                this.tileImagePaths[cacheKey] = fallbackPath;
             };
+
             this.tileImages[cacheKey] = img;
+            this.tileImagePaths[cacheKey] = imagePath;
         });
     }
 
+
     async preloadGoalImage(name, environment) {
+        if (!this.goalImageCache) this.goalImageCache = {};
+        if (!this.tileImagePaths) this.tileImagePaths = {};
+
         const key = `${name}_${environment}`;
         const fallbackKey = `${name}`;
+        const primaryPath = `Resources/Global/Goals/${name}${environment}.png`;
+        const fallbackPath = `Resources/Global/Goals/${name}.png`;
 
-        if (this.goalImageCache[key]) return this.goalImageCache[key];
-        if (this.goalImageCache[fallbackKey]) return this.goalImageCache[fallbackKey];
+        // If already loaded with the correct path, return
+        if (this.goalImageCache[key] && this.tileImagePaths[key] === primaryPath) {
+            return this.goalImageCache[key];
+        }
+        if (this.goalImageCache[fallbackKey] && this.tileImagePaths[fallbackKey] === fallbackPath) {
+            return this.goalImageCache[fallbackKey];
+        }
 
         const img = new Image();
-        const primary = `Resources/Global/Goals/${name}${environment}.png`;
-        const fallback = `Resources/Global/Goals/${name}.png`;
 
         return new Promise((resolve) => {
             img.onload = () => {
                 this.goalImageCache[key] = img;
+                this.tileImagePaths[key] = primaryPath;
                 resolve(img);
             };
             img.onerror = () => {
                 const fallbackImg = new Image();
                 fallbackImg.onload = () => {
                     this.goalImageCache[fallbackKey] = fallbackImg;
+                    this.tileImagePaths[fallbackKey] = fallbackPath;
                     resolve(fallbackImg);
                 };
                 fallbackImg.onerror = () => resolve(null);
-                fallbackImg.src = fallback;
+                fallbackImg.src = fallbackPath;
             };
-            img.src = primary;
+            img.src = primaryPath;
         });
     }
+
 
 
 
