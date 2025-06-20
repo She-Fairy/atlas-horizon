@@ -1,10 +1,5 @@
 import {generateMapImage} from './map-renderer.js';
 
-function timestampFromMapId(mapId) {
-  // Take the first 4 chars and parse base36 to number
-  return parseInt(mapId.slice(0, 4), 36);
-}
-
 async function postMapsByUser(user = localStorage.getItem('user')) {
     const maps = await Firebase.readDataOnce(`users/${user}/maps`);
     if (!maps) return;
@@ -16,8 +11,9 @@ async function postMapsByUser(user = localStorage.getItem('user')) {
 
     // Get mapIds and sort by extracted timestamp (early to late)
     const sortedMapIds = Object.keys(maps).sort((a, b) => {
-    return timestampFromMapId(b) - timestampFromMapId(a);
+        return Number(b) - Number(a); // descending order (largest first)
     });
+
 
     let mapCount = 0;
 

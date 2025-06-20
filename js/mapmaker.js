@@ -2485,9 +2485,24 @@ export class MapMaker {
     }
 
     generateMapId() {
-        const timestampPart = Date.now().toString(36).slice(-4); // optional trimming
-        const randomPart = Math.random().toString(36).substring(2, 8);
-        return timestampPart + randomPart;
+        return Firebase.readDataOnce(`users/${localStorage.getItem('user')}/maps`).then(maps => {
+            if (!maps) {
+                // No maps yet, start from 1 or any base id
+                return '1';
+            }
+            
+            // Get all keys (map IDs)
+            const mapIds = Object.keys(maps);
+
+            // Convert IDs to numbers (assumes IDs are numeric strings)
+            const numericIds = mapIds.map(id => Number(id)).filter(n => !isNaN(n));
+            
+            // Find max numeric ID
+            const maxId = numericIds.length ? Math.max(...numericIds) : 0;
+
+            // Return max + 1 as string
+            return String(maxId + 1);
+            });
     }
     
     async saveMap() {
