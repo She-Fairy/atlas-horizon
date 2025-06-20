@@ -54,11 +54,12 @@ async function postMapsByUser(user = localStorage.getItem('user')) {
                 container.appendChild(card);
             }
         }
+        
     }
+    alert(`✅ Successfully loaded ${mapCount} maps for user: ${user}`);
     } catch (error) {
         console.error('Error in postMapsByUser:', error);
     }
-    alert(`✅ Successfully loaded ${mapCount} maps for user: ${user}`);
 }
 
 function createCard(name, user, image) {
