@@ -16,12 +16,15 @@ async function postMapsByUser(user = localStorage.getItem('user')) {
     const container = document.getElementById('mapsGrid');
     container.innerHTML = ''; // clear existing content if any
 
+    let mapCount = 0;
+
     // Process each map one by one
     for (const mapId in maps) {
         console.log('Processing map ID:', mapId);
         console.log('Processing map Name:', maps[mapId].name);
         if (maps.hasOwnProperty(mapId)) {
             const mapData = maps[mapId];
+            mapCount++;
 
             try {
                 // Create PNG data URL - now using await since it's async
@@ -55,6 +58,7 @@ async function postMapsByUser(user = localStorage.getItem('user')) {
     } catch (error) {
         console.error('Error in postMapsByUser:', error);
     }
+    alert(`✅ Successfully loaded ${mapCount} maps for user: ${user}`);
 }
 
 function createCard(name, user, image) {
