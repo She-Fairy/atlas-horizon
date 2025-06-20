@@ -713,21 +713,15 @@ export class MapMaker {
 
         this.waterTileFilenames.forEach(filename => {
             const imagePath = `Resources/${this.environment}/Water/${filename}`;
-            const cacheKey = `water_${filename}`; // drawTile expects this key
+            const cacheKey = `${this.environment}_water_${filename}`;
 
-            // If already loaded for current environment and finished, skip
+            // Skip if already loaded with the same path
             if (this.tileImagePaths[cacheKey] === imagePath && this.tileImages[cacheKey]?.complete) {
                 return;
             }
 
             const img = new Image();
-
-            // Redraw once all water images are loaded
-            img.onload = () => {
-                if (Object.values(this.tileImages).every(i => i.complete)) {
-                    this.draw?.();
-                }
-            };
+            img.src = imagePath;
 
             img.onerror = () => {
                 console.error(`Failed to load water image: ${imagePath}`);
@@ -736,7 +730,6 @@ export class MapMaker {
                 this.tileImagePaths[cacheKey] = fallbackPath;
             };
 
-            img.src = imagePath;
             this.tileImages[cacheKey] = img;
             this.tileImagePaths[cacheKey] = imagePath;
         });
@@ -1755,7 +1748,7 @@ export class MapMaker {
             
             // If image doesn't exist in cache, create it
             if (!img) {
-                const imagePath = `Resources/${this.environment}/Water/${imageName}`;
+                const imagePath = `Resources/${this.environment}/Water/${imageName}.png`;
                 img = new Image();
                 img.src = imagePath;
                 
