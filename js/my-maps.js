@@ -6,7 +6,6 @@ async function postMapsByUser(user = localStorage.getItem('user')) {
     try {
         const maps = await Firebase.readDataOnce(`users/${user}/maps`);
         console.log('Maps data received:', maps);
-        alert("Total maps fetched: " + Object.keys(maps).length);
         
         // Make sure maps is an object
         if (!maps) {
@@ -42,7 +41,7 @@ async function postMapsByUser(user = localStorage.getItem('user')) {
                 });
                 container.appendChild(card);
             } catch (error) {
-                console.error(`Error creating PNG for map ${mapId}:, error`);
+                alert(`❌ Error for map ${mapId}: ${error.message}`);
                 // Create a card with error placeholder
                 const card = createCard(mapData.name, mapData.user, 'Resources/Additional/Icons/UserPfp.png');
                 card.classList.add('error-card');
