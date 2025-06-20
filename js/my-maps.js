@@ -25,9 +25,9 @@ async function postMapsByUser(user = localStorage.getItem('user')) {
     // Process each map one by one
     for (const mapId in sortedMapIds) {
         console.log('Processing map ID:', mapId);
-        console.log('Processing map Name:', maps[mapId].name);
+        console.log('Processing map Name:', sortedMapIds[mapId].name);
         if (maps.hasOwnProperty(mapId)) {
-            const mapData = maps[mapId];
+            const mapData = sortedMapIds[mapId];
             mapCount++;
 
             try {
