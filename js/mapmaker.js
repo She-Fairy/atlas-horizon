@@ -1748,7 +1748,7 @@ export class MapMaker {
             
             // If image doesn't exist in cache, create it
             if (!img) {
-                const imagePath = `Resources/${this.environment}/Water/${imageName}.png`;
+                const imagePath = `Resources/${this.environment}/Water/${imageName}`;
                 img = new Image();
                 img.src = imagePath;
                 
