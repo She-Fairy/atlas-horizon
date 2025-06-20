@@ -5,8 +5,8 @@ async function postMapsByUser(user = localStorage.getItem('user')) {
     
     try {
         const maps = await Firebase.readDataOnce(`users/${user}/maps`);
-        alert('Maps data received: ' + JSON.stringify(maps));
-        
+        splitAndAlert('Maps data received: ' + JSON.stringify(maps));
+
         if (!maps) {
             alert('No maps found for user');
             return;
@@ -16,8 +16,8 @@ async function postMapsByUser(user = localStorage.getItem('user')) {
         container.innerHTML = '';
 
         for (const mapId in maps) {
-            alert('Processing map ID: ' + mapId);
-            alert('Processing map Name: ' + maps[mapId].name);
+            console.log('Processing map ID: ' + mapId);
+            console.log('Processing map Name: ' + maps[mapId].name);
             if (maps.hasOwnProperty(mapId)) {
                 const mapData = maps[mapId];
 
@@ -89,3 +89,9 @@ window.addEventListener('load', () => {
         alert('Firebase not available, only test data will be shown');
     }
 });
+
+function splitAndAlert(message, chunkSize = 1000) {
+    for (let i = 0; i < message.length; i += chunkSize) {
+        alert(message.slice(i, i + chunkSize));
+    }
+}
