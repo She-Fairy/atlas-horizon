@@ -16,10 +16,14 @@ async function postMapsByUser(user = localStorage.getItem('user')) {
     const container = document.getElementById('mapsGrid');
     container.innerHTML = ''; // clear existing content if any
 
+    const sortedMapIds = Object.keys(maps).sort((a, b) => {
+        return timestampFromMapId(a) - timestampFromMapId(b);
+    });
+
     let mapCount = 0;
 
     // Process each map one by one
-    for (const mapId in maps) {
+    for (const mapId in sortedMapIds) {
         console.log('Processing map ID:', mapId);
         console.log('Processing map Name:', maps[mapId].name);
         if (maps.hasOwnProperty(mapId)) {
@@ -100,3 +104,8 @@ window.addEventListener('load', () => {
         console.warn('Firebase not available, only test data will be shown');
     }
 });
+
+function timestampFromMapId(mapId) {
+  // Take the first 4 chars and parse base36 to number
+  return parseInt(mapId.slice(0, 4), 36);
+}
