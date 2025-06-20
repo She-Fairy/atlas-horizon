@@ -14,36 +14,40 @@ async function postMapsByUser(user = localStorage.getItem('user')) {
 
     // Get mapIds and sort by extracted timestamp (early to late)
     const sortedMapIds = Object.keys(maps).sort((a, b) => {
-    return timestampFromMapId(a) - timestampFromMapId(b);
+    return timestampFromMapId(b) - timestampFromMapId(a);
     });
 
-    const username = await Firebase.readDataOnce(`users/${user}/username`);
-
     for (const mapId of sortedMapIds) {
-    const mapData = maps[mapId];
-    try {
-        const pngDataUrl = await generateMapImage(
-        mapData.mapData,
-        mapData.size,
-        mapData.gamemode,
-        mapData.environment
-        );
-        const mapName = mapData.name || 'unnamed';
-        const card = createCard(mapName, username, pngDataUrl);
-        card.addEventListener('click', () => {
-        window.location.href = 'map.html?id=' + mapId + '&user=' + user;
-        });
-        container.appendChild(card);
-    } catch (error) {
-        alert(`❌ Error for map ${mapId}: ${error.message}`);
-        const card = createCard(mapData.name, mapData.user, 'Resources/Additional/Icons/UserPfp.png');
-        card.classList.add('error-card');
-        card.addEventListener('click', () => {
-        window.location.href = 'map.html?id=' + mapId + '&user=' + user;
-        });
-        container.appendChild(card);
+        const mapData = maps[mapId];
+        if (!mapData) {
+            console.warn(`Skipping mapId ${mapId}: no mapData`);
+            continue;
+        }
+        try {
+            // your existing processing here
+            const pngDataUrl = await generateMapImage(
+            mapData.mapData,
+            mapData.size,
+            mapData.gamemode,
+            mapData.environment
+            );
+            const mapName = mapData.name || 'unnamed';
+            const card = createCard(mapName, username, pngDataUrl);
+            card.addEventListener('click', () => {
+            window.location.href = 'map.html?id=' + mapId + '&user=' + user;
+            });
+            container.appendChild(card);
+        } catch (error) {
+            alert(`❌ Error for map ${mapId}: ${error.message}`);
+            const card = createCard(mapData.name, mapData.user, 'Resources/Additional/Icons/UserPfp.png');
+            card.classList.add('error-card');
+            card.addEventListener('click', () => {
+            window.location.href = 'map.html?id=' + mapId + '&user=' + user;
+            });
+            container.appendChild(card);
+        }
     }
-    }   
+
     alert(`✅ Successfully loaded ${mapCount} maps for user: ${user}`);
 }
 
