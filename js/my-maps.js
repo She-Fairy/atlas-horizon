@@ -17,8 +17,11 @@ async function postMapsByUser(user = localStorage.getItem('user')) {
     return timestampFromMapId(b) - timestampFromMapId(a);
     });
 
+    let mapCount = 0;
+
     for (const mapId of sortedMapIds) {
         const mapData = maps[mapId];
+        mapCount++;
         if (!mapData) {
             console.warn(`Skipping mapId ${mapId}: no mapData`);
             continue;
