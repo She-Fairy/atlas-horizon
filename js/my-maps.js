@@ -14,12 +14,8 @@ async function postMapsByUser(user = localStorage.getItem('user')) {
         return Number(b) - Number(a); // descending order (largest first)
     });
 
-
-    let mapCount = 0;
-
     for (const mapId of sortedMapIds) {
         const mapData = maps[mapId];
-        mapCount++;
         if (!mapData) {
             console.warn(`Skipping mapId ${mapId}: no mapData`);
             continue;
@@ -48,8 +44,6 @@ async function postMapsByUser(user = localStorage.getItem('user')) {
             container.appendChild(card);
         }
     }
-
-    alert(`✅ Successfully loaded ${mapCount} maps for user: ${user}`);
 }
 
 function createCard(name, user, image) {
