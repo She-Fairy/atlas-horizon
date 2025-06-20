@@ -5,7 +5,17 @@ async function postMapsByUser(user = localStorage.getItem('user')) {
     
     try {
         const maps = await Firebase.readDataOnce(`users/${user}/maps`);
-        splitAndAlert('Maps data received: ' + JSON.stringify(maps));
+        const mapsToAlert = {};
+
+    for (const mapId in maps) {
+        if (maps.hasOwnProperty(mapId)) {
+            const { mapData, ...rest } = maps[mapId]; // exclude mapData
+            mapsToAlert[mapId] = rest;
+        }
+    }
+
+splitAndAlert('Maps data received: ' + JSON.stringify(mapsToAlert, null, 2));
+
 
         if (!maps) {
             alert('No maps found for user');
