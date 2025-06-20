@@ -1,69 +1,50 @@
 import {generateMapImage} from './map-renderer.js';
 
+function timestampFromMapId(mapId) {
+  // Take the first 4 chars and parse base36 to number
+  return parseInt(mapId.slice(0, 4), 36);
+}
+
 async function postMapsByUser(user = localStorage.getItem('user')) {
-    console.log('Attempting to fetch maps for user:', user);
-    
-    try {
-        const maps = await Firebase.readDataOnce(`users/${user}/maps`);
-        console.log('Maps data received:', maps);
-        
-        // Make sure maps is an object
-        if (!maps) {
-            console.log('No maps found for user');
-            return;
-        }
+    const maps = await Firebase.readDataOnce(`users/${user}/maps`);
+    if (!maps) return;
 
     const container = document.getElementById('mapsGrid');
-    container.innerHTML = ''; // clear existing content if any
+    container.innerHTML = '';
 
+    // Get mapIds and sort by extracted timestamp (early to late)
     const sortedMapIds = Object.keys(maps).sort((a, b) => {
-        return timestampFromMapId(a) - timestampFromMapId(b);
+    return timestampFromMapId(a) - timestampFromMapId(b);
     });
 
-    let mapCount = 0;
+    const username = await Firebase.readDataOnce(`users/${user}/username`);
 
-    // Process each map one by one
-    for (const mapId in sortedMapIds) {
-        console.log('Processing map ID:', mapId);
-        console.log('Processing map Name:', sortedMapIds[mapId].name);
-        if (maps.hasOwnProperty(mapId)) {
-            const mapData = sortedMapIds[mapId];
-            mapCount++;
-
-            try {
-                // Create PNG data URL - now using await since it's async
-                const pngDataUrl = await generateMapImage(
-                    mapData.mapData, 
-                    mapData.size, 
-                    mapData.gamemode, 
-                    mapData.environment
-                );  
-                
-                let mapName = mapData.name || 'unnamed';
-
-                const card = createCard(mapName, (await Firebase.readDataOnce(`users/${user}/username`)), pngDataUrl);
-                card.addEventListener('click', () => {
-                    window.location.href = 'map.html?id=' + mapId + '&user=' + user;
-
-                });
-                container.appendChild(card);
-            } catch (error) {
-                alert(`❌ Error for map ${mapId}: ${error.message}`);
-                // Create a card with error placeholder
-                const card = createCard(mapData.name, mapData.user, 'Resources/Additional/Icons/UserPfp.png');
-                card.classList.add('error-card');
-                card.addEventListener('click', () => {
-                    window.location.href = 'map.html?id=' + mapId + '&user=' + user;
-                });
-                container.appendChild(card);
-            }
-        }
-        
-    }
-    alert(`✅ Successfully loaded ${mapCount} maps for user: ${user}`);
+    for (const mapId of sortedMapIds) {
+    const mapData = maps[mapId];
+    try {
+        const pngDataUrl = await generateMapImage(
+        mapData.mapData,
+        mapData.size,
+        mapData.gamemode,
+        mapData.environment
+        );
+        const mapName = mapData.name || 'unnamed';
+        const card = createCard(mapName, username, pngDataUrl);
+        card.addEventListener('click', () => {
+        window.location.href = 'map.html?id=' + mapId + '&user=' + user;
+        });
+        container.appendChild(card);
     } catch (error) {
-        console.error('Error in postMapsByUser:', error);
+        alert(`❌ Error for map ${mapId}: ${error.message}`);
+        const card = createCard(mapData.name, mapData.user, 'Resources/Additional/Icons/UserPfp.png');
+        card.classList.add('error-card');
+        card.addEventListener('click', () => {
+        window.location.href = 'map.html?id=' + mapId + '&user=' + user;
+        });
+        container.appendChild(card);
     }
+    }   
+    alert(`✅ Successfully loaded ${mapCount} maps for user: ${user}`);
 }
 
 function createCard(name, user, image) {
@@ -104,8 +85,3 @@ window.addEventListener('load', () => {
         console.warn('Firebase not available, only test data will be shown');
     }
 });
-
-function timestampFromMapId(mapId) {
-  // Take the first 4 chars and parse base36 to number
-  return parseInt(mapId.slice(0, 4), 36);
-}
