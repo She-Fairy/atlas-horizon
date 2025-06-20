@@ -9,6 +9,8 @@ async function postMapsByUser(user = localStorage.getItem('user')) {
     const maps = await Firebase.readDataOnce(`users/${user}/maps`);
     if (!maps) return;
 
+    const username = await Firebase.readDataOnce(`users/${user}/username`);
+
     const container = document.getElementById('mapsGrid');
     container.innerHTML = '';
 
@@ -35,7 +37,7 @@ async function postMapsByUser(user = localStorage.getItem('user')) {
             mapData.environment
             );
             const mapName = mapData.name || 'unnamed';
-            const card = createCard(mapName, username, pngDataUrl);
+            const card = createCard(mapName, user.username, pngDataUrl);
             card.addEventListener('click', () => {
             window.location.href = 'map.html?id=' + mapId + '&user=' + user;
             });
