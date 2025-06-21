@@ -2388,25 +2388,16 @@ export class MapMaker {
         }
     }
 
-    generateMapId() {
-        return Firebase.readDataOnce(`users/${localStorage.getItem('user')}/maps`).then(maps => {
-            if (!maps) {
-                // No maps yet, start from 1 or any base id
-                return '1';
-            }
-            
-            // Get all keys (map IDs)
-            const mapIds = Object.keys(maps);
+    async generateMapId() {
+        const maps = await Firebase.readDataOnce(`users/${localStorage.getItem('user')}/maps`);
 
-            // Convert IDs to numbers (assumes IDs are numeric strings)
-            const numericIds = mapIds.map(id => Number(id)).filter(n => !isNaN(n));
-            
-            // Find max numeric ID
-            const maxId = numericIds.length ? Math.max(...numericIds) : 0;
+        if (!maps) return 1;
 
-            // Return max + 1 as string
-            return String(maxId + 1);
-            });
+        const mapIds = Object.keys(maps);
+        const numericIds = mapIds.map(id => Number(id)).filter(n => !isNaN(n));
+        const maxId = numericIds.length ? Math.max(...numericIds) : 0;
+
+        return maxId + 1;
     }
     
     async saveMap() {
@@ -2416,7 +2407,7 @@ export class MapMaker {
     
             // Check if map is being saved for the first time
             if (mapLinkElement.innerText === 'https://she-fairy.github.io/atlas-horizon/map.html') {
-                mapId = this.generateMapId();
+                mapId = await this.generateMapId();
                 mapLinkElement.innerText = `https://she-fairy.github.io/atlas-horizon/map.html?id=${mapId}&user=${localStorage.getItem('user')}`;
             } else {
                 const currentUrl = new URL(mapLinkElement.innerText);
