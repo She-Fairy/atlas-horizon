@@ -1549,7 +1549,7 @@ export class MapMaker {
                 btn.classList.add('selected');
                 if (!this.replaceMode && this.isErasing) {
                     this.isErasing = false;
-                    eraseBtn.parentElement.classList.remove('active');
+                    document.getElementById('eraseBtn').parentElement.classList.remove('active');
                 }
             });
 
