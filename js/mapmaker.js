@@ -1008,103 +1008,7 @@ export class MapMaker {
         blue2Red.addEventListener('change', () =>  this.toggleBlue2Red());
 
         // Map setting listeners
-        mapSizeSelect.addEventListener('change', (e) => {
-            const newSize = this.mapSizes[e.target.value];
-            if (!newSize) return;
-
-            if (confirm('Changing map size will clear the current map. Continue?')) {
-                const prevSize = this.mapSize;
-                this.mapSize   = newSize;
-                this.mapWidth  = newSize.width;
-                this.mapHeight = newSize.height;
-                this.mapData   = Array(this.mapHeight).fill().map(() => Array(this.mapWidth).fill(0));
-
-                // ——— Showdown ↔ other: adjust Objective tile + data sizes ———
-                const isShowdown = size => size === this.mapSizes.showdown;
-                const isShowdownNow = isShowdown(newSize);
-
-                if (!isShowdownNow) {
-                    this.tileDefinitions[14].size = 1;
-                    this.objectiveData.Gem_Grab[0] = 2; // width
-                    this.objectiveData.Gem_Grab[1] = 2; // height
-                    this.objectiveData.Gem_Grab[2] = -50; 
-                    this.objectiveData.Gem_Grab[3] = -50;
-                    this.objectiveData.Brawl_Ball[0] = 1.3;
-                    this.objectiveData.Brawl_Ball[1] = 1.495;
-                    this.objectiveData.Brawl_Ball[2] = -15;
-                    this.objectiveData.Brawl_Ball[3] = -20; 
-                    this.objectiveData.Basket_Brawl[0] = 1.3;
-                    this.objectiveData.Basket_Brawl[1] = 1.495;
-                    this.objectiveData.Basket_Brawl[2] = -15;
-                    this.objectiveData.Basket_Brawl[3] = -20; 
-                    this.objectiveData.Volley_Brawl[0] = 1.3;
-                    this.objectiveData.Volley_Brawl[1] = 1.495;
-                    this.objectiveData.Volley_Brawl[2] = -15;
-                    this.objectiveData.Volley_Brawl[3] = -20; 
-                    this.objectiveData.Hot_Zone[0] = 7;
-                    this.objectiveData.Hot_Zone[1] = 7;
-                    this.objectiveData.Hot_Zone[2] = -300;
-                    this.objectiveData.Hot_Zone[3] = -300; 
-                    this.objectiveData.Bounty[0] = 1.15;
-                    this.objectiveData.Bounty[1] = 2.0585;
-                    this.objectiveData.Bounty[2] = -10;
-                    this.objectiveData.Bounty[3] = -50;
-                    this.objectiveData.Heist[0] = 2;
-                    this.objectiveData.Heist[1] = 2.21;
-                    this.objectiveData.Heist[2] = -50;
-                    this.objectiveData.Heist[3] = -115; 
-                    this.objectiveData.Snowtel_Thieves[0] = 4;
-                    this.objectiveData.Snowtel_Thieves[1] = 4;
-                    this.objectiveData.Snowtel_Thieves[2] = -150;
-                    this.objectiveData.Snowtel_Thieves[3] = -150; 
-                } else {
-                    this.tileDefinitions[14].size = 2;
-                    // restore original width/height
-                    this.objectiveData.Gem_Grab[0] = 1;
-                    this.objectiveData.Gem_Grab[1] = 1;
-                    this.objectiveData.Gem_Grab[2] = 0;
-                    this.objectiveData.Gem_Grab[3] = 0;
-                    this.objectiveData.Brawl_Ball[0] = 0.65;
-                    this.objectiveData.Brawl_Ball[1] = 0.7475;
-                    this.objectiveData.Brawl_Ball[2] = 30;
-                    this.objectiveData.Brawl_Ball[3] = 30;
-                    this.objectiveData.Basket_Brawl[0] = 0.65;
-                    this.objectiveData.Basket_Brawl[1] = 0.7475;
-                    this.objectiveData.Basket_Brawl[2] = 30;
-                    this.objectiveData.Basket_Brawl[3] = 30;
-                    this.objectiveData.Volley_Brawl[0] = 0.65;
-                    this.objectiveData.Volley_Brawl[1] = 0.7475;
-                    this.objectiveData.Volley_Brawl[2] = 30;
-                    this.objectiveData.Volley_Brawl[3] = 30;
-                    this.objectiveData.Hot_Zone[0] = 3.5;
-                    this.objectiveData.Hot_Zone[1] = 3.5;
-                    this.objectiveData.Hot_Zone[2] = -250;
-                    this.objectiveData.Hot_Zone[3] = -250;
-                    this.objectiveData.Bounty[0] = 0.575;
-                    this.objectiveData.Bounty[1] = 1.02925;
-                    this.objectiveData.Bounty[2] = 41.5;
-                    this.objectiveData.Bounty[3] = 35;
-                    this.objectiveData.Heist[0] = 1;
-                    this.objectiveData.Heist[1] = 1.105;
-                    this.objectiveData.Heist[2] = 0;
-                    this.objectiveData.Heist[3] = -20; 
-                    this.objectiveData.Snowtel_Thieves[0] = 2;
-                    this.objectiveData.Snowtel_Thieves[1] = 2;
-                    this.objectiveData.Snowtel_Thieves[2] = -100;
-                    this.objectiveData.Snowtel_Thieves[3] = -100; 
-                }
-
-                // ————————————————————————————————————————————————
-
-                this.updateCanvasSize();
-                this.fitMapToScreen();
-                this.setGamemode(this.gamemode);
-            } else {
-                // reset dropdown if cancelled
-                e.target.value = Object.entries(this.mapSizes)
-                    .find(([k, v]) => v.width === this.mapWidth && v.height === this.mapHeight)[0];
-            }
-        });
+        mapSizeSelect.addEventListener('change', (e) => this.setSize(e.target.value));
 
 
         gamemodeSelect.addEventListener('change', async (e) => await this.setGamemode(e.target.value));
@@ -2765,7 +2669,7 @@ export class MapMaker {
         });
     }
 
-    async setGamemode(gamemode) {
+    async setGamemode(gamemode, apply = true) {
         const previousGamemode = this.gamemode;
         this.gamemode = gamemode;
         this.goalImages = [];
@@ -2864,7 +2768,7 @@ export class MapMaker {
             );
         }
 
-        if (this.mapData.every(row => row.every(tile => tile === 0 || tile === 14 || tile === 13 || tile === 12 || tile === 33))) 
+        if (apply && (this.mapData.every(row => row.every(tile => tile === 0 || tile === 14 || tile === 13 || tile === 12 || tile === 33)))) 
             this.applyDefaultLayoutIfEmpty();
 
 
@@ -2975,6 +2879,103 @@ export class MapMaker {
         this.draw();
     }
     
+    setSize(size) {
+        const newSize = this.mapSizes[size];
+            if (!newSize) return;
+
+            if (confirm('Changing map size will clear the current map. Continue?')) {
+                const prevSize = this.mapSize;
+                this.mapSize   = newSize;
+                this.mapWidth  = newSize.width;
+                this.mapHeight = newSize.height;
+                this.mapData   = Array(this.mapHeight).fill().map(() => Array(this.mapWidth).fill(0));
+
+                // ——— Showdown ↔ other: adjust Objective tile + data sizes ———
+                const isShowdown = size => size === this.mapSizes.showdown;
+                const isShowdownNow = isShowdown(newSize);
+
+                if (!isShowdownNow) {
+                    this.tileDefinitions[14].size = 1;
+                    this.objectiveData.Gem_Grab[0] = 2; // width
+                    this.objectiveData.Gem_Grab[1] = 2; // height
+                    this.objectiveData.Gem_Grab[2] = -50; 
+                    this.objectiveData.Gem_Grab[3] = -50;
+                    this.objectiveData.Brawl_Ball[0] = 1.3;
+                    this.objectiveData.Brawl_Ball[1] = 1.495;
+                    this.objectiveData.Brawl_Ball[2] = -15;
+                    this.objectiveData.Brawl_Ball[3] = -20; 
+                    this.objectiveData.Basket_Brawl[0] = 1.3;
+                    this.objectiveData.Basket_Brawl[1] = 1.495;
+                    this.objectiveData.Basket_Brawl[2] = -15;
+                    this.objectiveData.Basket_Brawl[3] = -20; 
+                    this.objectiveData.Volley_Brawl[0] = 1.3;
+                    this.objectiveData.Volley_Brawl[1] = 1.495;
+                    this.objectiveData.Volley_Brawl[2] = -15;
+                    this.objectiveData.Volley_Brawl[3] = -20; 
+                    this.objectiveData.Hot_Zone[0] = 7;
+                    this.objectiveData.Hot_Zone[1] = 7;
+                    this.objectiveData.Hot_Zone[2] = -300;
+                    this.objectiveData.Hot_Zone[3] = -300; 
+                    this.objectiveData.Bounty[0] = 1.15;
+                    this.objectiveData.Bounty[1] = 2.0585;
+                    this.objectiveData.Bounty[2] = -10;
+                    this.objectiveData.Bounty[3] = -50;
+                    this.objectiveData.Heist[0] = 2;
+                    this.objectiveData.Heist[1] = 2.21;
+                    this.objectiveData.Heist[2] = -50;
+                    this.objectiveData.Heist[3] = -115; 
+                    this.objectiveData.Snowtel_Thieves[0] = 4;
+                    this.objectiveData.Snowtel_Thieves[1] = 4;
+                    this.objectiveData.Snowtel_Thieves[2] = -150;
+                    this.objectiveData.Snowtel_Thieves[3] = -150; 
+                } else {
+                    this.tileDefinitions[14].size = 2;
+                    // restore original width/height
+                    this.objectiveData.Gem_Grab[0] = 1;
+                    this.objectiveData.Gem_Grab[1] = 1;
+                    this.objectiveData.Gem_Grab[2] = 0;
+                    this.objectiveData.Gem_Grab[3] = 0;
+                    this.objectiveData.Brawl_Ball[0] = 0.65;
+                    this.objectiveData.Brawl_Ball[1] = 0.7475;
+                    this.objectiveData.Brawl_Ball[2] = 30;
+                    this.objectiveData.Brawl_Ball[3] = 30;
+                    this.objectiveData.Basket_Brawl[0] = 0.65;
+                    this.objectiveData.Basket_Brawl[1] = 0.7475;
+                    this.objectiveData.Basket_Brawl[2] = 30;
+                    this.objectiveData.Basket_Brawl[3] = 30;
+                    this.objectiveData.Volley_Brawl[0] = 0.65;
+                    this.objectiveData.Volley_Brawl[1] = 0.7475;
+                    this.objectiveData.Volley_Brawl[2] = 30;
+                    this.objectiveData.Volley_Brawl[3] = 30;
+                    this.objectiveData.Hot_Zone[0] = 3.5;
+                    this.objectiveData.Hot_Zone[1] = 3.5;
+                    this.objectiveData.Hot_Zone[2] = -250;
+                    this.objectiveData.Hot_Zone[3] = -250;
+                    this.objectiveData.Bounty[0] = 0.575;
+                    this.objectiveData.Bounty[1] = 1.02925;
+                    this.objectiveData.Bounty[2] = 41.5;
+                    this.objectiveData.Bounty[3] = 35;
+                    this.objectiveData.Heist[0] = 1;
+                    this.objectiveData.Heist[1] = 1.105;
+                    this.objectiveData.Heist[2] = 0;
+                    this.objectiveData.Heist[3] = -20; 
+                    this.objectiveData.Snowtel_Thieves[0] = 2;
+                    this.objectiveData.Snowtel_Thieves[1] = 2;
+                    this.objectiveData.Snowtel_Thieves[2] = -100;
+                    this.objectiveData.Snowtel_Thieves[3] = -100; 
+                }
+
+                // ————————————————————————————————————————————————
+
+                this.updateCanvasSize();
+                this.fitMapToScreen();
+                this.setGamemode(this.gamemode);
+            } else {
+                // reset dropdown if cancelled
+                e.target.value = Object.entries(this.mapSizes)
+                    .find(([k, v]) => v.width === this.mapWidth && v.height === this.mapHeight)[0];
+            }
+        }
 
     setEnvironment(environment) {
         this.environment = environment;
@@ -3251,7 +3252,7 @@ window.addEventListener('load', () => {
 
                 const sizeKey = data.size;  // e.g. "regular"
                 const newSize  = window.mapMaker.mapSizes[sizeKey];
-                window.mapMaker.mapSize   = newSize;
+                window.mapMaker.setSize(newSize);
                 window.mapMaker.mapWidth  = newSize.width;
                 window.mapMaker.mapHeight = newSize.height;
                 window.mapMaker.mapData   = data.mapData;
@@ -3267,7 +3268,7 @@ window.addEventListener('load', () => {
                 document.getElementById('environment').value = data.environment;
                 document.getElementById('mapLink').innerText = `https://she-fairy.github.io/atlas-horizon/map.html?id=${mapId}&user=${user}`;
                 window.mapMaker.draw();
-                await window.mapMaker.setGamemode(data.gamemode);
+                await window.mapMaker.setGamemode(data.gamemode, false);
             })
             .catch(error => {
                 console.error('Error loading map:', error);
