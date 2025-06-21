@@ -2870,12 +2870,11 @@ export class MapMaker {
         this.draw();
     }
     
-    setSize(size) {
+    setSize(size, changing = true) {
         const newSize = this.mapSizes[size];
             if (!newSize) return;
 
-            if (confirm('Changing map size will clear the current map. Continue?')) {
-                const prevSize = this.mapSize;
+            if (!changing || confirm('Changing map size will clear the current map. Continue?')) {
                 this.mapSize   = newSize;
                 this.mapWidth  = newSize.width;
                 this.mapHeight = newSize.height;
@@ -3243,7 +3242,7 @@ window.addEventListener('load', () => {
 
                 const sizeKey = data.size;  // e.g. "regular"
                 const newSize  = window.mapMaker.mapSizes[sizeKey];
-                window.mapMaker.setSize(newSize);
+                window.mapMaker.setSize(sizeKey, false);
                 window.mapMaker.mapWidth  = newSize.width;
                 window.mapMaker.mapHeight = newSize.height;
                 window.mapMaker.mapData   = data.mapData;
