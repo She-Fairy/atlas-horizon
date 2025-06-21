@@ -1547,10 +1547,8 @@ export class MapMaker {
                 this.selectedTile = { id: parseInt(id), ...def };
                 container.querySelectorAll('.tile-btn').forEach(b => b.classList.remove('selected'));
                 btn.classList.add('selected');
-                if (!this.replaceMode && this.isErasing) {
-                    this.isErasing = false;
-                    document.getElementById('eraseBtn').parentElement.classList.remove('active');
-                }
+                this.toggleEraseMode(false);
+                
             });
 
             container.appendChild(btn);
@@ -3084,8 +3082,8 @@ export class MapMaker {
         blue2RedBtn.parentElement.classList.toggle('active', this.blue2Red);
     }
 
-    toggleEraseMode() {
-        this.isErasing = !this.isErasing;
+    toggleEraseMode(state = !this.isErasing) {
+        this.isErasing = state;
         const eraseBtn = document.getElementById('eraseBtn');
         eraseBtn.checked = this.isErasing;
         eraseBtn.parentElement.classList.toggle('active', this.isErasing);
