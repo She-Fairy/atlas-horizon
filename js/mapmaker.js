@@ -2717,21 +2717,23 @@ export class MapMaker {
                     this.goalImages.map(goal => this.preloadGoalImage(goal.name, this.environment))
                 );
 
-                // Clear previous spawn tiles
-                this.placeTile(middleX, 0, 42, false);                      // Red
-                this.placeTile(middleX, this.mapHeight - 1, 41, false);     // Blue
-                this.placeTile(middleX - 2, 0, 42, false);                  // Red
-                this.placeTile(middleX - 2, this.mapHeight - 1, 41, false); // Blue
-                this.placeTile(middleX + 2, 0, 42, false);                  // Red
-                this.placeTile(middleX + 2, this.mapHeight - 1, 41, false); // Blue
+                if (apply) {
+                    // Clear previous spawn tiles
+                    this.placeTile(middleX, 0, 42, false);                      // Red
+                    this.placeTile(middleX, this.mapHeight - 1, 41, false);     // Blue
+                    this.placeTile(middleX - 2, 0, 42, false);                  // Red
+                    this.placeTile(middleX - 2, this.mapHeight - 1, 41, false); // Blue
+                    this.placeTile(middleX + 2, 0, 42, false);                  // Red
+                    this.placeTile(middleX + 2, this.mapHeight - 1, 41, false); // Blue
 
-                // Place spawn tiles
-                this.placeTile(middleX, 8, 13, false);      // Red
-                this.placeTile(middleX, this.mapHeight - 9, 12, false);   // Blue
-                this.placeTile(middleX - 2, 8, 13, false);                              // Red
-                this.placeTile(middleX - 2, this.mapHeight - 9, 12, false); // Blue
-                this.placeTile(middleX + 2, 8, 13, false);                              // Red
-                this.placeTile(middleX + 2, this.mapHeight - 9, 12, false); // Blue
+                    // Place spawn tiles
+                    this.placeTile(middleX, 8, 13, false);      // Red
+                    this.placeTile(middleX, this.mapHeight - 9, 12, false);   // Blue
+                    this.placeTile(middleX - 2, 8, 13, false);                              // Red
+                    this.placeTile(middleX - 2, this.mapHeight - 9, 12, false); // Blue
+                    this.placeTile(middleX + 2, 8, 13, false);                              // Red
+                    this.placeTile(middleX + 2, this.mapHeight - 9, 12, false); // Blue
+                }
 
             } else if (wasBrawl) {
                 for (const [startX, startY] of corners) {
