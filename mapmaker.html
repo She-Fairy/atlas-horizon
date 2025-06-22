@@ -160,17 +160,21 @@
                     </label>
                 </div>
                 <div class="radio-container">
-                    <label class="icon-btn">
+                    <label class="icon-btn" title="Single (1)">
                         <input type="radio" name="selectionMode" value="single" checked>
                         <img src="./Resources/Additional/Icons/Single.png" alt="Single">
                     </label>
-                    <label class="icon-btn">
+                    <label class="icon-btn" title="Line (2)">
                         <input type="radio" name="selectionMode" value="line">
                         <img src="./Resources/Additional/Icons/Line.png" alt="Line">
                     </label>
-                    <label class="icon-btn">
+                    <label class="icon-btn" title="Rectangle (3)">
                         <input type="radio" name="selectionMode" value="rectangle">
                         <img src="./Resources/Additional/Icons/Rectangle.png" alt="Rectangle">
+                    </label>
+                    <label class="icon-btn" title="Fill (4)">
+                        <input type="radio" name="selectionMode" value="fill">
+                        <img src="./Resources/Additional/Icons/Bucket.png" alt="Fill">
                     </label>
                 </div>
                 <div class="tool-buttons">
@@ -223,9 +227,13 @@
         <div class="tooltip-text shortcuts-text">
             <h4>Keyboard Shortcuts</h4>
             <ul>
+                <li><kbd>Ctrl/Shift</kbd> + <kbd>1</kbd> Diagonal</li>
+                <li><kbd>Ctrl/Shift</kbd> + <kbd>2</kbd> Vertical</li>
+                <li><kbd>Ctrl/Shift</kbd> + <kbd>3</kbd> Horizontal</li>
                 <li><kbd>1</kbd> Single Selection</li>
                 <li><kbd>2</kbd> Line Selection</li>
                 <li><kbd>3</kbd> Rectangle Selection</li>
+                <li><kbd>4</kbd> Fill Selection</li>
                 <li><kbd>R</kbd> Toggle Replace Mode</li>
                 <li><kbd>E</kbd> Toggle Erase Mode</li>
                 <li><kbd>M</kbd> Toggle Mirroring</li>
@@ -237,31 +245,6 @@
             </ul>
         </div>
     </div>
-    <!-- <div class="tooltip-floating environments-tooltip">
-        <img src="./Resources/Additional/Icons/Env.png" alt="Implemented Environments">
-        <div class="tooltip-text environments-text">
-            <h4>Implemented Environments</h4>
-            <ul class="environments-list">
-                <li>Desert</li>
-                <li>Mine</li>
-                <li>Oasis</li>
-                <li>Grassy Field</li>
-                <li>City</li>
-                <li>Retropolis</li>
-                <li>Mortuary</li>
-                <li>Stadium</li>
-                <li>Arcade</li>
-                <li>Bazaar</li>
-                <li>Bandstand</li>
-                <li>Snowtel</li>
-                <li>Wild West</li>
-                <li>Castle Courtyard</li>
-                <li>Swamp of Love</li>
-                <li>Oddities Shop</li>
-                <li>Tropical Island</li>
-            </ul>
-        </div>
-    </div> -->
 
     <script>
         const avatar = document.getElementById('avatar');

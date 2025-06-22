@@ -1025,50 +1025,85 @@ export class MapMaker {
         document.addEventListener('keydown', (e) => {
             if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
             
-            switch(e.key.toLowerCase()) {
-                case '1':
+           switch (e.code) {
+                case 'Digit1':
+                case 'Numpad1':
+                    if (e.shiftKey || e.ctrlKey || e.metaKey) {
+                        e.preventDefault();
+                        this.mirrorDiagonal = !this.mirrorDiagonal;
+                        document.getElementById('mirrorDiagonal').checked = this.mirrorDiagonal;
+                        return;
+                    }
                     this.setSelectionMode('single');
                     break;
-                case '2':
+
+                case 'Digit2':
+                case 'Numpad2':
+                    if (e.shiftKey || e.ctrlKey || e.metaKey) {
+                        e.preventDefault();
+                        this.mirrorVertical = !this.mirrorVertical;
+                        document.getElementById('mirrorVertical').checked = this.mirrorVertical;
+                        return;
+                    }
                     this.setSelectionMode('line');
                     break;
-                case '3':
+
+                case 'Digit3':
+                case 'Numpad3':
+                    if (e.shiftKey || e.ctrlKey || e.metaKey) {
+                        e.preventDefault();
+                        this.mirrorHorizontal = !this.mirrorHorizontal;
+                        document.getElementById('mirrorHorizontal').checked = this.mirrorHorizontal;
+                        return;
+                    }
                     this.setSelectionMode('rectangle');
                     break;
-                case 'r':
+                    
+                case 'Digit4':
+                case 'Numpad4':
+                    this.setSelectionMode('fill');
+                    break;
+
+                case 'KeyR':
                     this.toggleReplaceMode();
                     break;
-                case 'e':
+
+                case 'KeyE':
                     this.toggleEraseMode();
                     break;
-                case 'm':
+
+                case 'KeyM':
                     this.toggleMirroring();
                     break;
-                case 'n':
+
+                case 'KeyN':
                     this.toggleBlue2Red();
                     break;
-                case 'q':
+
+                case 'KeyQ':
                     this.toggleShowErrors();
                     break;
-                case 'z':
+
+                case 'KeyZ':
                     if (e.ctrlKey || e.metaKey) {
+                        e.preventDefault();
                         if (e.shiftKey) {
-                            e.preventDefault();
                             this.redo();
                         } else {
-                            e.preventDefault();
                             this.undo();
                         }
                     }
                     break;
-                case 'y':
+
+                case 'KeyY':
                     if (e.ctrlKey || e.metaKey) {
                         e.preventDefault();
                         this.redo();
                     }
                     break;
-                case 'backspace':
-                case 'delete':
+
+                case 'Backspace':
+                case 'Delete':
                     if (e.ctrlKey || e.metaKey) {
                         e.preventDefault();
                         this.clearMap(true);
@@ -1076,6 +1111,8 @@ export class MapMaker {
                     break;
             }
         });
+        
+
 
         // Canvas event listeners
         this.canvas.addEventListener('mousedown', this.handleMouseDown.bind(this));
@@ -1182,7 +1219,7 @@ export class MapMaker {
         }
 
         // Check if we're starting to drag an existing tile
-        if (!this.isErasing && this.mapData[coords.y][coords.x] !== 0) {
+        if (!this.isErasing && this.mapData[coords.y][coords.x] !== 0 && this.selectionMode !== 'fill') {
             this.isDragging = true;
             this.draggedTileId = this.mapData[coords.y][coords.x];
             this.dragStartX = coords.x;
@@ -1255,7 +1292,8 @@ export class MapMaker {
             this.hoveredTiles.clear();
             this.hoveredTiles.add(`${coords.x},${coords.y}`);
         }
-        
+    
+
         this.draw();
         this.drawSelection();
     }
@@ -2184,7 +2222,54 @@ export class MapMaker {
                     }
                 }
             }
+        } else if (this.selectionMode === 'fill') {
+            const tileId = this.mapData[this.selectionEnd.y][this.selectionEnd.x];
+
+            const getConnectionsOfSameTile = (x, y, tileId) => {
+                const height = this.mapData.length;
+                const width = this.mapData[0].length;
+
+                const isSameType = (x, y) => {
+                    if (x < 0 || x >= width || y < 0 || y >= height) return false;
+                    const id = this.mapData[y][x];
+                    return id === tileId;
+                };
+
+                return {
+                    top: isSameType(x, y - 1),
+                    right: isSameType(x + 1, y),
+                    bottom: isSameType(x, y + 1),
+                    left: isSameType(x - 1, y)
+                };
+            };
+
+            const fill = (x, y) => {
+                if (x < 0 || x >= this.mapWidth || y < 0 || y >= this.mapHeight) {
+                    return;
+                }
+
+                const currentTile = this.mapData[y][x];
+                if (currentTile !== tileId) {
+                    return;
+                }
+
+                if (this.isErasing) {
+                    this.eraseTile(x, y, false);
+                } else {
+                    this.placeTile(x, y, null, false);
+                }
+
+                const { top, right, bottom, left } = getConnectionsOfSameTile(x, y, tileId);
+
+                if (top) fill(x, y - 1);
+                if (right) fill(x + 1, y);
+                if (bottom) fill(x, y + 1);
+                if (left) fill(x - 1, y);
+            };
+
+            fill(this.selectionEnd.x, this.selectionEnd.y);
         }
+            
         
         // Draw after all tiles are placed
         this.draw();
