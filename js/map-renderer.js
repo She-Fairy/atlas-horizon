@@ -3,6 +3,7 @@ import { MapMaker } from './mapmaker.js';
 const MAP_SIZES = {
   regular: { width: 21, height: 33 },
   showdown: { width: 60, height: 60 },
+  arena: { width: 59, height: 59 },
   siege: { width: 27, height: 39 },
   volley: { width: 21, height: 25 },
   basket: { width: 21, height: 17 },
