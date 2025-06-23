@@ -233,6 +233,7 @@ export class MapMaker {
         this.mapData = Array(this.mapHeight).fill().map(() => Array(this.mapWidth).fill(0));
         
         this.selectedTile = { id: 1, name: 'Wall', color: '#666666' };
+        this.selectedTiles = [];
         this.isErasing = false;
         this.isDragging = false;
         this.isDrawing = false;
@@ -702,6 +703,12 @@ export class MapMaker {
 
         this.baseObjectiveData           = { ...this.objectiveData };
         this.baseEnvironmentObjectiveData = { ...this.environmentObjectiveData };
+
+        this.isSelectDragging = false;
+        this.selectDragStart = null;
+        this.selectDragOffset = {x: 0, y: 0};
+        this.selectDragTiles = [];
+        this.selectDragLastPos = null;
     }
 
     
@@ -1064,6 +1071,11 @@ export class MapMaker {
                     this.setSelectionMode('fill');
                     break;
 
+                case 'Digit5':
+                case 'Numpad5':
+                    this.setSelectionMode('select');
+                    break;
+
                 case 'KeyR':
                     this.toggleReplaceMode();
                     break;
@@ -1197,7 +1209,50 @@ export class MapMaker {
         if (event.button !== 0) return;
         this.mouseDown = true;
         const coords = this.getTileCoordinates(event);
+        
         if (coords.x < 0 || coords.x >= this.mapWidth || coords.y < 0 || coords.y >= this.mapHeight) return;
+
+        if (this.selectionMode === 'select' && this.selectedTiles.length > 0 && this.selectedTiles.some(t => t.x === coords.x && t.y === coords.y)) {
+            // Start select-drag
+            this.isSelectDragging = true;
+            this.selectDragStart = { ...coords };
+            this.selectDragLastPos = { ...coords };
+            this.selectDragTiles = this.selectedTiles.map(t => ({ ...t })); // deep copy
+
+            // Remove tiles from map (including mirrored tiles)
+            for (const t of this.selectDragTiles) {
+                this.mapData[t.y][t.x] = 0;
+                // Mirroring logic for erasing
+                const size = this.tileDefinitions[t.id]?.size || 1;
+                const mirrorY = this.mapHeight - 1 - t.y;
+                const mirrorX = this.mapWidth - 1 - t.x;
+                if (this.mirrorVertical) {
+                    const adjustedY = size === 2 ? mirrorY - 1 : mirrorY;
+                    if (adjustedY >= 0 && adjustedY < this.mapHeight)
+                        this.mapData[adjustedY][t.x] = 0;
+                }
+                if (this.mirrorHorizontal) {
+                    const adjustedX = size === 2 ? mirrorX - 1 : mirrorX;
+                    if (adjustedX >= 0 && adjustedX < this.mapWidth)
+                        this.mapData[t.y][adjustedX] = 0;
+                }
+                if (this.mirrorDiagonal) {
+                    const adjustedY = size === 2 ? mirrorY - 1 : mirrorY;
+                    const adjustedX = size === 2 ? mirrorX - 1 : mirrorX;
+                    if (adjustedX >= 0 && adjustedX < this.mapWidth && adjustedY >= 0 && adjustedY < this.mapHeight)
+                        this.mapData[adjustedY][adjustedX] = 0;
+                }
+            }
+            this.draw();
+            // Draw ghost tiles at original positions
+            this.drawSelectDragGhost(0, 0);
+            return;
+        }
+
+        if (this.selectionMode !== 'select' || !this.selectedTiles.some(t => t.x === coords.x && t.y === coords.y)) {
+            this.selectedTiles = [];
+        }
+
         if (this.gamemode === 'Brawl_Ball' && this.mapSize === this.mapSizes.regular) {
             const { x, y } = coords;
             const atTop    = y < 4;
@@ -1219,7 +1274,7 @@ export class MapMaker {
         }
 
         // Check if we're starting to drag an existing tile
-        if (!this.isErasing && this.mapData[coords.y][coords.x] !== 0 && this.selectionMode !== 'fill') {
+        if (!this.isErasing && this.mapData[coords.y][coords.x] !== 0 && this.selectionMode !== 'fill' && this.selectionMode !== 'select') {
             this.isDragging = true;
             this.draggedTileId = this.mapData[coords.y][coords.x];
             this.dragStartX = coords.x;
@@ -1302,75 +1357,24 @@ export class MapMaker {
         const coords = this.getTileCoordinates(event);
         if (coords.x < 0 || coords.x >= this.mapWidth || coords.y < 0 || coords.y >= this.mapHeight) return;
         
+        if (this.isSelectDragging) {
+            const offsetX = coords.x - this.selectDragStart.x;
+            const offsetY = coords.y - this.selectDragStart.y;
+            this.selectDragOffset = { x: offsetX, y: offsetY };
+            this.draw();
+            this.drawSelectDragGhost(offsetX, offsetY);
+            this.selectDragLastPos = { ...coords };
+            return;
+        }
+
         if (this.isDragging) {
             this.draw(); // Redraw the base map
-            
-            // Draw preview
+
             const draggedTile = this.tileDefinitions[this.draggedTileId];
-
             if (draggedTile) {
-                const drawTilePreview = (tileId, x, y) => {
-                    const def = this.tileDefinitions[tileId];
-                    if (!def) return;
-                
-                    let img = this.tileImages[tileId];
-                    if (!img || !img.complete) return;
-                
-                    // Get tile dimensions from environment-specific or base data
-                    let dimensions;
-                    if (def.name === 'Objective') {
-                        dimensions = this.environmentObjectiveData[this.environment]?.[this.gamemode] ||
-                                     this.objectiveData[this.gamemode];
-                    } else {
-                        dimensions = this.environmentTileData[this.environment]?.[def.name] ||
-                                     this.tileData[def.name];
-                    }
-                
-                    if (!dimensions) return;
-                
-                    const [scaleX, scaleY, offsetX = 0, offsetY = 0, opacity = 1] = dimensions;
-                    const size = def.size || 1;
-                    const tileSize = this.tileSize;
-                
-                    // Calculate drawing dimensions
-                    const width = tileSize * scaleX * size;
-                    const height = tileSize * scaleY * size;
-                
-                    // Calculate position with offsets and padding
-                    const drawX = x * tileSize + (tileSize * offsetX / 100) + this.canvasPadding;
-                    const drawY = y * tileSize + (tileSize * offsetY / 100) + this.canvasPadding;
-                
-                    // Set opacity and draw the tile
-                    this.ctx.globalAlpha = opacity;
-                    this.ctx.drawImage(img, drawX, drawY, width, height);
-                    this.ctx.globalAlpha = 1.0;
-                };
-                
+                this.drawTilePreview(this.draggedTileId, coords.x, coords.y, 0.7); // 0.7 alpha for preview
 
-                // Draw the main dragged tile
-                drawTilePreview(this.draggedTileId, coords.x, coords.y);
-                
-                // Show mirrored previews with correct directions
-                if (this.mirrorVertical) {
-                    const mirrorY = this.mapHeight - 1 - coords.y;
-                    const mirrorTileId = this.getMirroredTileId(this.draggedTileId, 'vertical');
-                    const adjustedY = draggedTile.size === 2 ? mirrorY - 1 : mirrorY;
-                    drawTilePreview(mirrorTileId, coords.x, adjustedY);
-                }
-                if (this.mirrorHorizontal) {
-                    const mirrorX = this.mapWidth - 1 - coords.x;
-                    const mirrorTileId = this.getMirroredTileId(this.draggedTileId, 'horizontal');
-                    const adjustedX = draggedTile.size === 2 ? mirrorX - 1 : mirrorX;
-                    drawTilePreview(mirrorTileId, adjustedX, coords.y);
-                }
-                if (this.mirrorDiagonal) {
-                    const mirrorX = this.mapWidth - 1 - coords.x;
-                    const mirrorY = this.mapHeight - 1 - coords.y;
-                    const mirrorTileId = this.getMirroredTileId(this.draggedTileId, 'diagonal');
-                    const adjustedX = draggedTile.size === 2 ? mirrorX - 1 : mirrorX;
-                    const adjustedY = draggedTile.size === 2 ? mirrorY - 1 : mirrorY;
-                    drawTilePreview(mirrorTileId, adjustedX, adjustedY);
-                }
+                // ...mirroring logic, use this.drawTilePreview for each mirrored tile
             }
             return;
         }
@@ -1390,6 +1394,53 @@ export class MapMaker {
 
     handleMouseUp(event) {
         this.mouseDown = false;
+        if (this.isSelectDragging) {
+            const offsetX = this.selectDragOffset.x;
+            const offsetY = this.selectDragOffset.y;
+            for (const t of this.selectDragTiles) {
+                const newX = t.x + offsetX;
+                const newY = t.y + offsetY;
+                if (
+                    newX >= 0 && newX < this.mapWidth &&
+                    newY >= 0 && newY < this.mapHeight
+                ) {
+                    this.mapData[newY][newX] = t.id;
+
+                    // Mirroring logic
+                    const size = this.tileDefinitions[t.id]?.size || 1;
+                    const mirrorY = this.mapHeight - 1 - newY;
+                    const mirrorX = this.mapWidth - 1 - newX;
+
+                    if (this.mirrorVertical) {
+                        const adjustedY = size === 2 ? mirrorY - 1 : mirrorY;
+                        const mirrorId = this.getMirroredTileId(t.id, 'vertical');
+                        if (adjustedY >= 0 && adjustedY < this.mapHeight)
+                            this.mapData[adjustedY][newX] = mirrorId;
+                    }
+                    if (this.mirrorHorizontal) {
+                        const adjustedX = size === 2 ? mirrorX - 1 : mirrorX;
+                        const mirrorId = this.getMirroredTileId(t.id, 'horizontal');
+                        if (adjustedX >= 0 && adjustedX < this.mapWidth)
+                            this.mapData[newY][adjustedX] = mirrorId;
+                    }
+                    if (this.mirrorDiagonal) {
+                        const adjustedY = size === 2 ? mirrorY - 1 : mirrorY;
+                        const adjustedX = size === 2 ? mirrorX - 1 : mirrorX;
+                        const mirrorId = this.getMirroredTileId(t.id, 'diagonal');
+                        if (adjustedX >= 0 && adjustedX < this.mapWidth && adjustedY >= 0 && adjustedY < this.mapHeight)
+                            this.mapData[adjustedY][adjustedX] = mirrorId;
+                    }
+                }
+            }
+            this.isSelectDragging = false;
+            this.selectDragStart = null;
+            this.selectDragOffset = {x: 0, y: 0};
+            this.selectDragTiles = [];
+            this.selectedTiles = [];
+            this.draw();
+            return;
+        }
+        
         if (!this.isDragging && this.isDrawing) {
             const coords = this.getTileCoordinates(event);
             if (coords.x >= 0 && coords.x < this.mapWidth && coords.y >= 0 && coords.y < this.mapHeight) {
@@ -2106,6 +2157,12 @@ export class MapMaker {
                 );
             }
         }
+
+        if (this.selectionMode === 'select' && !this.mouseDown) {
+            this.selectionStart = this.selectedTiles[0];
+            this.selectionEnd = this.selectedTiles[this.selectedTiles.length - 1];
+            this.drawSelection();
+        }
     }
 
     getTileCoordinates(event) {
@@ -2144,31 +2201,13 @@ export class MapMaker {
         
         // Set the selection style
         this.selectionCtx.fillStyle = this.isErasing ? 'rgba(255, 0, 0, 0.4)' : 'rgba(255, 255, 0, 0.4)';
-        
-        if (this.selectionMode === 'single') {
-            this.selectionCtx.fillRect(
-                this.selectionEnd.x * this.tileSize + this.canvasPadding,
-                this.selectionEnd.y * this.tileSize + this.canvasPadding,
-                this.tileSize,
-                this.tileSize
-            );
-        } else if (this.selectionMode === 'line') {
-            // Highlight all tiles that have been hovered over
-            for (const tilePos of this.hoveredTiles) {
-                const [x, y] = tilePos.split(',').map(Number);
-                this.selectionCtx.fillRect(
-                    x * this.tileSize + this.canvasPadding,
-                    y * this.tileSize + this.canvasPadding,
-                    this.tileSize,
-                    this.tileSize
-                );
-            }
-        } else if (this.selectionMode === 'rectangle') {
+
+        // If still drawing, show full rectangle/area as before
+        if (this.isDrawing && (this.selectionMode === 'rectangle' || this.selectionMode === 'select')) {
             const startX = Math.min(this.selectionStart.x, this.selectionEnd.x);
             const startY = Math.min(this.selectionStart.y, this.selectionEnd.y);
             const endX = Math.max(this.selectionStart.x, this.selectionEnd.x);
             const endY = Math.max(this.selectionStart.y, this.selectionEnd.y);
-            
             for (let y = startY; y <= endY; y++) {
                 for (let x = startX; x <= endX; x++) {
                     this.selectionCtx.fillRect(
@@ -2179,6 +2218,48 @@ export class MapMaker {
                     );
                 }
             }
+        } else if (this.selectionMode === 'select' && this.selectedTiles.length > 0) {
+            // After selection, only cover actual selected (non-empty) tiles
+            for (const t of this.selectedTiles) {
+                this.selectionCtx.fillRect(
+                    t.x * this.tileSize + this.canvasPadding,
+                    t.y * this.tileSize + this.canvasPadding,
+                    this.tileSize,
+                    this.tileSize
+                );
+            }
+        } else if (this.selectionMode === 'rectangle') {
+            const startX = Math.min(this.selectionStart.x, this.selectionEnd.x);
+            const startY = Math.min(this.selectionStart.y, this.selectionEnd.y);
+            const endX = Math.max(this.selectionStart.x, this.selectionEnd.x);
+            const endY = Math.max(this.selectionStart.y, this.selectionEnd.y);
+            for (let y = startY; y <= endY; y++) {
+                for (let x = startX; x <= endX; x++) {
+                    this.selectionCtx.fillRect(
+                        x * this.tileSize + this.canvasPadding,
+                        y * this.tileSize + this.canvasPadding,
+                        this.tileSize,
+                        this.tileSize
+                    );
+                }
+            }
+        } else if (this.selectionMode === 'line') {
+            for (const tilePos of this.hoveredTiles) {
+                const [x, y] = tilePos.split(',').map(Number);
+                this.selectionCtx.fillRect(
+                    x * this.tileSize + this.canvasPadding,
+                    y * this.tileSize + this.canvasPadding,
+                    this.tileSize,
+                    this.tileSize
+                );
+            }
+        } else if (this.selectionMode === 'single' || this.selectionMode === 'fill') {
+            this.selectionCtx.fillRect(
+                this.selectionEnd.x * this.tileSize + this.canvasPadding,
+                this.selectionEnd.y * this.tileSize + this.canvasPadding,
+                this.tileSize,
+                this.tileSize
+            );
         }
         
         // Draw the selection overlay on top of the main canvas
@@ -2268,6 +2349,23 @@ export class MapMaker {
             };
 
             fill(this.selectionEnd.x, this.selectionEnd.y);
+        } else if (this.selectionMode === 'select') {
+            const startX = Math.min(this.selectionStart.x, this.selectionEnd.x);
+            const startY = Math.min(this.selectionStart.y, this.selectionEnd.y);
+            const endX = Math.max(this.selectionStart.x, this.selectionEnd.x);
+            const endY = Math.max(this.selectionStart.y, this.selectionEnd.y);
+            
+            for (let y = startY; y <= endY; y++) {
+                for (let x = startX; x <= endX; x++) {
+                    if (this.mapData[y][x] !== 0 && this.mapData[y][x] !== -1 && this.mapData[y][x] !== 33) {
+                        this.selectedTiles.push({
+                            x: x, 
+                            y: y,
+                            id: this.mapData[y][x]
+                        });
+                    }
+                }
+            }
         }
             
         
@@ -3311,6 +3409,82 @@ export class MapMaker {
                 b.classList.remove('selected');
             }
         });
+    }
+
+    drawTilePreview(tileId, x, y, alpha = 0.75) {
+        const def = this.tileDefinitions[tileId];
+        if (!def) return;
+
+        let img = this.tileImages[tileId];
+        if (!img || !img.complete) return;
+
+        // Get tile dimensions from environment-specific or base data
+        let dimensions;
+        if (def.name === 'Objective') {
+            dimensions = this.environmentObjectiveData[this.environment]?.[this.gamemode] ||
+                         this.objectiveData[this.gamemode];
+        } else {
+            dimensions = this.environmentTileData[this.environment]?.[def.name] ||
+                         this.tileData[def.name];
+        }
+
+        if (!dimensions) return;
+
+        const [scaleX, scaleY, offsetX = 0, offsetY = 0, opacity = 1] = dimensions;
+        const size = def.size || 1;
+        const tileSize = this.tileSize;
+
+        // Calculate drawing dimensions
+        const width = tileSize * scaleX * size;
+        const height = tileSize * scaleY * size;
+
+        // Calculate position with offsets and padding
+        const drawX = x * tileSize + (tileSize * offsetX / 100) + this.canvasPadding;
+        const drawY = y * tileSize + (tileSize * offsetY / 100) + this.canvasPadding;
+
+        // Set opacity and draw the tile
+        this.ctx.save();
+        this.ctx.globalAlpha = alpha * opacity;
+        this.ctx.drawImage(img, drawX, drawY, width, height);
+        this.ctx.restore();
+    }
+
+    drawSelectDragGhost(offsetX, offsetY) {
+        for (const t of this.selectDragTiles) {
+            const newX = t.x + offsetX;
+            const newY = t.y + offsetY;
+            if (
+                newX >= 0 && newX < this.mapWidth &&
+                newY >= 0 && newY < this.mapHeight
+            ) {
+                this.drawTilePreview(t.id, newX, newY, 0.5);
+
+                // Mirroring logic
+                const size = this.tileDefinitions[t.id]?.size || 1;
+                const mirrorY = this.mapHeight - 1 - newY;
+                const mirrorX = this.mapWidth - 1 - newX;
+
+                if (this.mirrorVertical) {
+                    const adjustedY = size === 2 ? mirrorY - 1 : mirrorY;
+                    const mirrorId = this.getMirroredTileId(t.id, 'vertical');
+                    if (adjustedY >= 0 && adjustedY < this.mapHeight)
+                        this.drawTilePreview(mirrorId, newX, adjustedY, 0.5);
+                }
+                if (this.mirrorHorizontal) {
+                    const adjustedX = size === 2 ? mirrorX - 1 : mirrorX;
+                    const mirrorId = this.getMirroredTileId(t.id, 'horizontal');
+                    if (adjustedX >= 0 && adjustedX < this.mapWidth)
+                        this.drawTilePreview(mirrorId, adjustedX, newY, 0.5);
+                }
+                if (this.mirrorDiagonal) {
+                    const adjustedY = size === 2 ? mirrorY - 1 : mirrorY;
+                    const adjustedX = size === 2 ? mirrorX - 1 : mirrorX;
+                    const mirrorId = this.getMirroredTileId(t.id, 'diagonal');
+                    if (adjustedX >= 0 && adjustedX < this.mapWidth && adjustedY >= 0 && adjustedY < this.mapHeight)
+                        this.drawTilePreview(mirrorId, adjustedX, adjustedY, 0.5);
+                }
+            }
+        }
     }
 }
 

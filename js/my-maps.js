@@ -29,7 +29,7 @@ async function postMapsByUser(user = localStorage.getItem('user')) {
             mapData.environment
             );
             const mapName = mapData.name || 'unnamed';
-            const card = createCard(mapName, user.username, pngDataUrl);
+            const card = createCard(mapName, username, pngDataUrl);
             card.addEventListener('click', () => {
             window.location.href = 'map.html?id=' + mapId + '&user=' + user;
             });
