@@ -2397,7 +2397,7 @@ export class MapMaker {
             // Check if any of the 4 tiles are occupied
             for (let dy = 0; dy < 2; dy++) {
                 for (let dx = 0; dx < 2; dx++) {
-                    if (this.mapData[y + dy][x + dx] !== 0) return;
+                    this.mapData[y + dy][x + dx] = 0;
                 }
             }
         }
