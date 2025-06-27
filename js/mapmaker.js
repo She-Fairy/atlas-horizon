@@ -2532,32 +2532,57 @@ export class MapMaker {
         if (saveState) {
             this.saveState();
         }
-        
+
+        const tileId = this.mapData[y][x];
+        const def = this.tileDefinitions[tileId];
+        if (def && def.size === 2) {
+            // For 2x2 tiles, we need to clear all 4 tiles
+
+            this.mapData[y][x + 1] = 0;
+            this.mapData[y + 1][x] = 0;
+            this.mapData[y + 1][x + 1] = 0;
+        }
         this.mapData[y][x] = 0;
-        
+
         // Handle mirroring for regular tiles
-        if (this.mirrorVertical || this.mirrorHorizontal || this.mirrorDiagonal) {
+         if (this.mirrorVertical || this.mirrorHorizontal || this.mirrorDiagonal) {
             const mirrorY = this.mapHeight - 1 - y;
             const mirrorX = this.mapWidth - 1 - x;
             
             if (this.mirrorVertical) {
+                if (def && def.size === 2) {
+                    this.mapData[mirrorY - 1][x] = 0;
+                    this.mapData[mirrorY - 1][x + 1] = 0;
+                    this.mapData[mirrorY][x + 1] = 0;
+                }
                 this.mapData[mirrorY][x] = 0;
             }
             
             if (this.mirrorHorizontal) {
+                if (def && def.size === 2) {
+                    this.mapData[y + 1][mirrorX] = 0;
+                    this.mapData[y][mirrorX - 1] = 0;
+                    this.mapData[y + 1][mirrorX - 1] = 0;
+                }
                 this.mapData[y][mirrorX] = 0;
             }
             
             if (this.mirrorDiagonal) {
+                if (def && def.size === 2) {
+                    this.mapData[mirrorY - 1][mirrorX - 1] = 0;
+                    this.mapData[mirrorY - 1][mirrorX] = 0;
+                    this.mapData[mirrorY][mirrorX - 1] = 0;
+                }
                 this.mapData[mirrorY][mirrorX] = 0;
             }
         }
-        
+
         if (saveState) {
             this.draw();
             this.checkForErrors();
         }
     }
+
 
     clearMap(confirmed = false) {
         if (confirmed || confirm('Are you sure you want to clear the map?')) {
