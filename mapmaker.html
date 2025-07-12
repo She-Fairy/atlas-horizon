@@ -2,19 +2,20 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
     <title>Atlas Horizon- Map Maker</title>
     <link rel="stylesheet" href="./css/style.css">
     <link rel="stylesheet" href="./css/mapmaker.css">
     <link rel="icon" href="./Resources/Additional/Icons/AtlasLogo.ico" type="image/x-icon">
-    <base href="https://she-fairy.github.io/atlas-horizon/">
+    <!-- <base href="https://she-fairy.github.io/atlas-horizon/"> -->
 </head>
 <body>
-    <script>
+    <!-- <script>
         if (localStorage.getItem('user') === null) {
             window.location.href = "https://discord.com/oauth2/authorize?client_id=1293658198393487420&response_type=code&redirect_uri=https%3A%2F%2Fshe-fairy.github.io%2Fatlas-horizon%2Fauth%2Fdiscord%2Fcallback.html&scope=identify";
         }
-    </script>
+    </script> -->
     <nav>
         <div class="logo">
             <img src="./Resources/Additional/Icons/AtlasLogo.png" alt="Atlas Horizon Logo" class="logo-img">
@@ -130,6 +131,9 @@
                     <button id="exportBtn" class="text-btn" title="Export as PNG (Ctrl+E)">
                         Download Map
                     </button>
+                    <button id="clearBtn" class="text-btn" title="Clear Map (Ctrl+Del)">
+                        Clear Map
+                    </button>
                 </div>
             </div>
             <div style="font-family: Arial, Helvetica, sans-serif; font-weight: 900;">
@@ -200,16 +204,15 @@
                         <input type="checkbox" id="errorsBtn">
                         <img src="./Resources/Additional/Icons/Issues.png" alt="Errors">
                     </label>
+                    <label class="icon-btn" title="Guides (W)">
+                        <input type="checkbox" id="guidesBtn">
+                        <img src="./Resources/Additional/Icons/Grid.png" alt="Guides">
+                    </label>
                     <button id="zoomInBtn" class="icon-btn" title="Zoom In (Ctrl++)">
                         <img src="./Resources/Additional/Icons/GlassPlus.png" alt="Zoom In">
                     </button>
                     <button id="zoomOutBtn" class="icon-btn" title="Zoom Out (Ctrl+-)">
                         <img src="./Resources/Additional/Icons/GlassMinus.png" alt="Zoom Out">
-                    </button>
-                </div>
-                <div class="action-buttons">
-                    <button id="clearBtn" class="icon-btn" title="Clear Map (Ctrl+Del)">
-                        <img src="./Resources/Additional/Icons/Clear.png" alt="Clear">
                     </button>
                 </div>
             </div>

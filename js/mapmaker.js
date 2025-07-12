@@ -264,6 +264,9 @@ export class MapMaker {
         this.errorTiles = new Set();
         this.mouseDown = false;
 
+        this.showErrors = false;
+        this.showGuides = false; 
+
         // Environment and background
         this.bgDark = new Image();
         this.bgLight = new Image();
@@ -977,6 +980,7 @@ export class MapMaker {
         const saveBtn = document.getElementById('saveBtn');
         const exportBtn = document.getElementById('exportBtn');
         const errorsBtn = document.getElementById('errorsBtn');
+        const guidesBtn = document.getElementById('guidesBtn');
 
         // Mirror checkboxes
         const mirrorVertical = document.getElementById('mirrorVertical');
@@ -1007,6 +1011,7 @@ export class MapMaker {
         saveBtn.addEventListener('click', () => this.saveMap());
         exportBtn.addEventListener('click', async () => await this.exportMap());
         errorsBtn.addEventListener('click', () => this.toggleShowErrors());
+        guidesBtn.addEventListener('click', () => this.toggleGuides());
 
         // Mirror listeners
         mirrorVertical.addEventListener('change', (e) => this.mirrorVertical = e.target.checked);
@@ -1096,6 +1101,10 @@ export class MapMaker {
                     this.toggleShowErrors();
                     break;
 
+                case 'KeyW':
+                    this.toggleGuides();
+                    break;
+
                 case 'KeyZ':
                     if (e.ctrlKey || e.metaKey) {
                         e.preventDefault();
@@ -1127,16 +1136,21 @@ export class MapMaker {
 
 
         // Canvas event listeners
+        // Mouse events
         this.canvas.addEventListener('mousedown', this.handleMouseDown.bind(this));
         this.canvas.addEventListener('mousemove', this.handleMouseMove.bind(this));
         this.canvas.addEventListener('mouseup', this.handleMouseUp.bind(this));
         this.canvas.addEventListener('mouseleave', this.handleMouseLeave.bind(this));
-        
-        // Add right-click event listener to select tile
         this.canvas.addEventListener('contextmenu', this.handleRightClick.bind(this));
-        
-        // Add document-level mouse up to ensure we catch the event even if released outside canvas
+
+        // Document-level mouseup fallback
         document.addEventListener('mouseup', this.handleMouseUp.bind(this));
+
+        // Touch events
+        this.canvas.addEventListener('touchstart', this.handleTouchStart.bind(this), { passive: false });
+        this.canvas.addEventListener('touchmove', this.handleTouchMove.bind(this), { passive: false });
+        this.canvas.addEventListener('touchend', this.handleTouchEnd.bind(this), {passive: false });
+        this.canvas.addEventListener('touchcancel', this.handleTouchCancel.bind(this));
     }
 
     saveState() {
@@ -1189,7 +1203,9 @@ export class MapMaker {
     }
 
     handleRightClick(event) {
-        event.preventDefault();
+        if (event.cancleable) {
+            event.preventDefault();
+        }
         const coords = this.getTileCoordinates(event);
         if (coords.x < 0 || coords.x >= this.mapWidth || coords.y < 0 || coords.y >= this.mapHeight) return;
 
@@ -1566,6 +1582,59 @@ export class MapMaker {
             this.draw();
         }
     }
+
+    handleTouchStart(e) {
+        if (e.touches.length > 1) return; // Ignore multi-touch
+        e.preventDefault();
+
+        const touch = e.touches[0];
+        const simulatedEvent = {
+            button: 0,
+            clientX: touch.clientX,
+            clientY: touch.clientY,
+        };
+
+        this.handleMouseDown(simulatedEvent);
+    }
+
+    handleTouchMove(e) {
+        if (e.touches.length > 1) return;
+        e.preventDefault();
+
+        const touch = e.touches[0];
+        const simulatedEvent = {
+            clientX: touch.clientX,
+            clientY: touch.clientY,
+        };
+
+        this.handleMouseMove(simulatedEvent);
+    }
+
+    handleTouchEnd(e) {
+        e.preventDefault && e.preventDefault();
+
+        // touchend has changedTouches: the touches that just ended
+        const touch = e.changedTouches[0];
+        if (!touch) {
+            this.handleMouseUp(e); // fallback, no coordinates
+            return;
+        }
+
+        const simulatedEvent = {
+            clientX: touch.clientX,
+            clientY: touch.clientY,
+            // You can add button if your mouse handler expects it
+            button: 0,
+        };
+
+        this.handleMouseUp(simulatedEvent);
+    }
+
+
+    handleTouchCancel(e) {
+        this.handleMouseLeave();
+    }
+
 
     zoom(delta) {
         const oldZoom = this.zoomLevel;
@@ -2049,8 +2118,7 @@ export class MapMaker {
             for (let y = 0; y < this.mapHeight; y++) {
                 for (let x = 0; x < this.mapWidth; x++) {
                     if (this.mapData[y][x] === 47){
-                        let firstRun = true;
-                        const addRedToConnections = (x, y) => {
+                        const addRedToConnections = (x, y, firstRun = false) => {
                             if (!firstRun) {
                                 const tile = getTileAt(2, x, y);
                                 if (!tile) {
@@ -2071,7 +2139,10 @@ export class MapMaker {
                             if (left) addRedToConnections(x - 1, y);
                         };
 
-                        addRedToConnections(x, y);
+                        addRedToConnections(x + 1, y, true);
+                        addRedToConnections(x - 1, y, true);
+                        addRedToConnections(x, y + 1, true);
+                        addRedToConnections(x, y - 1, true);
                     }
                 }
             }
@@ -2162,6 +2233,32 @@ export class MapMaker {
             this.selectionStart = this.selectedTiles[0];
             this.selectionEnd = this.selectedTiles[this.selectedTiles.length - 1];
             this.drawSelection();
+        }
+
+
+        if (this.showGuides || this.isDragging || this.isSelectDragging) {
+            this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.85)'; // semi-transparent white
+            this.ctx.lineWidth = 1;
+
+            // Calculate central tile coordinates
+            const centerX = (this.mapWidth / 2);
+            const centerY = (this.mapHeight / 2);
+
+            // Convert to canvas pixel coordinates
+            const centerXCanvas = centerX * this.tileSize + this.canvasPadding;
+            const centerYCanvas = centerY * this.tileSize + this.canvasPadding;
+
+            // Vertical center line
+            this.ctx.beginPath();
+            this.ctx.moveTo(centerXCanvas + 0.5, 0);
+            this.ctx.lineTo(centerXCanvas + 0.5, this.canvas.height);
+            this.ctx.stroke();
+
+            // Horizontal center line
+            this.ctx.beginPath();
+            this.ctx.moveTo(0, centerYCanvas + 0.5);
+            this.ctx.lineTo(this.canvas.width, centerYCanvas + 0.5);
+            this.ctx.stroke();
         }
     }
 
@@ -3295,6 +3392,14 @@ export class MapMaker {
         const eraseBtn = document.getElementById('eraseBtn');
         eraseBtn.checked = this.isErasing;
         eraseBtn.parentElement.classList.toggle('active', this.isErasing);
+    }
+
+    toggleGuides(state = !this.showGuides) {
+        this.showGuides = state;
+        const guidesBtn = document.getElementById('guidesBtn');
+        guidesBtn.checked = this.showGuides;
+        guidesBtn.parentElement.classList.toggle('active', this.showGuides);
+        this.draw();
     }
 
     // Add method to check if a tile is a block
