@@ -308,14 +308,4 @@ nav {
     text-align: center;
 }
 
-
-* {
-  -webkit-user-drag: none; /* for Safari/Chrome */
-  user-drag: none;
-  -webkit-user-select: none; /* disable text selection */
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-
   
