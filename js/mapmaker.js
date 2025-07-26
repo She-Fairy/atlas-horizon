@@ -1142,6 +1142,10 @@ export class MapMaker {
         this.canvas.addEventListener('mouseup', this.handleMouseUp.bind(this));
         this.canvas.addEventListener('mouseleave', this.handleMouseLeave.bind(this));
         this.canvas.addEventListener('contextmenu', this.handleRightClick.bind(this));
+        this.canvas.addEventListener('dragstart', e => {
+          e.preventDefault();
+        });
+
 
         // Document-level mouseup fallback
         document.addEventListener('mouseup', this.handleMouseUp.bind(this));
@@ -1203,9 +1207,8 @@ export class MapMaker {
     }
 
     handleRightClick(event) {
-        if (event.cancleable) {
-            event.preventDefault();
-        }
+        event.preventDefault();
+        
         const coords = this.getTileCoordinates(event);
         if (coords.x < 0 || coords.x >= this.mapWidth || coords.y < 0 || coords.y >= this.mapHeight) return;
 
