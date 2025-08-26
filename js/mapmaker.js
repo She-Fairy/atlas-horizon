@@ -400,7 +400,7 @@ export class MapMaker {
                 'Gem_Grab': [2.7, 2.376, -85, -70, 1, 10]
             },
             The_Hub: {
-                'Gem_Grab': [2.7, 2.376, -85, -70, 1, 10],
+                'Gem_Grab': [2.7, 2.376, -85, -70, 1, 10]
             },
             Swamp_of_Love: {
                 'Gem_Grab': [2*1.1, 2.09*1.1, -55, -60, 1, 10]
