@@ -649,6 +649,7 @@ export class MapMaker {
             45: { name: 'BFence', img: '${env}/Fence_5v5/BFence.png', showInEnvironment: ['Tropical_Island'], size: 1 },
             46: { name: 'Base Ike Red', img: 'Global/Arena/Base_Ike_Red.png', showInGamemode: 'Brawl_Arena', size: 1 },
             47: { name: 'Small Ike Red', img: 'Global/Arena/Small_Ike_Red.png', showInGamemode: 'Brawl_Arena', size: 1 },
+            48: { name: 'BFence', img: '${env}/Fence_5v5/BFence.png', showInEnvironment: ['Super_City_2'], size: 1 },
         };
 
         // Initialize water tile filenames
