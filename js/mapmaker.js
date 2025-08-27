@@ -61,6 +61,7 @@ const FENCE_LOGIC_BY_ENVIRONMENT = {
 };
 
 const BORDER_FENCE_LOGIC_BY_ENVIRONMENT = {
+    'Bazaar': FENCE_LOGIC_TYPES.BINARY_CODE,
     'Super_City_2': FENCE_LOGIC_TYPES.BINARY_CODE,
     'Tropical_Island': FENCE_LOGIC_TYPES.BINARY_CODE,
 };
@@ -448,6 +449,17 @@ export class MapMaker {
                 'Crate': [1*1.1, 1.63*1.1, -5, -50, 1, 5],
                 'Cactus': [1, 1.62, 0, -45, 1, 5],
                 'Skull': [1*1.1, 1.59*1.1, -5, -42.5, 1, 5],
+                'B0001': [1 / 1.39, 1.39 / 1.39, 15, -28, 1, 5],
+                'B0010': [1, 1.85, 0, -55, 1, 5],
+                'B0011': [1 / 1.2, 1.85, 17, -55, 1, 5],
+                'B0100': [1, 1.85, 0, -55, 1, 5],
+                'B0101': [1 / 1.14, 1.85, 0, -55, 1, 5],
+                'B0110': [1, 1.75, 0, -50, 1, 5],
+                'B1000': [1 / 1.39, 1.83 / 1.39, 15, -30, 1, 5],
+                'B1001': [1 / 1.39, 1.44 / 1.39, 15, -30, 1, 5],
+                'B1010': [1 / 1.18, 2.1, 16, -80, 1, 5],
+                'B1100': [1 / 1.15, 2.1, 0, -80, 1, 5],
+                'BFence': [1, 1.9, 0, -56.01, 1, 5],
             },
             Oddities_Shop: {
                 'Wall': [1, 1.8, 0, -51, 1, 5],
@@ -682,7 +694,7 @@ export class MapMaker {
             42: { name: 'Red Respawn', img: 'Global/Spawns/6.png', showInGamemode: 'Brawl_Ball', size: 1},
             43: { name: 'Base Ike Blue', img: 'Global/Arena/Base_Ike_Blue.png', showInGamemode: 'Brawl_Arena', size: 1 },
             44: { name: 'Small Ike Blue', img: 'Global/Arena/Small_Ike_Blue.png', showInGamemode: 'Brawl_Arena', size: 1 },
-            45: { name: 'BFence', img: '${env}/Fence_5v5/BFence.png', showInEnvironment: ['Tropical_Island', 'Super_City_2'], size: 1 },
+            45: { name: 'BFence', img: '${env}/Fence_5v5/BFence.png', showInEnvironment: ['Tropical_Island', 'Super_City_2', 'Bazaar'], size: 1 },
             46: { name: 'Base Ike Red', img: 'Global/Arena/Base_Ike_Red.png', showInGamemode: 'Brawl_Arena', size: 1 },
             47: { name: 'Small Ike Red', img: 'Global/Arena/Small_Ike_Red.png', showInGamemode: 'Brawl_Arena', size: 1 },
         };
