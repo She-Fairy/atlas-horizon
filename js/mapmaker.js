@@ -403,6 +403,9 @@ export class MapMaker {
             The_Hub: {
                 'Gem_Grab': [2.7, 2.376, -85, -70, 1, 10]
             },
+            Stunt_Show: {
+                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
+            },
             Swamp_of_Love: {
                 'Gem_Grab': [2*1.1, 2.09*1.1, -55, -60, 1, 10]
             },
