@@ -372,7 +372,6 @@ export class MapMaker {
             'Volley_Brawl': [1.3, 1.495, -20, -20, 1, 10],
             'Siege': [2.5, 3.1, -60, -175, 1, 10],
             'Hold_The_Trophy': [2.5, 2.5, -75, -75, 1, 10]
-            'Dodgebrawl': [1.3, 1.495, -15, -20, 1, 10],
         };
 
         // Initialize environment data
@@ -678,7 +677,6 @@ export class MapMaker {
                     'Heist': { img: '${env}/Gamemode_Specifics/Heist.png' },
                     'Bounty': { img: 'Global/Objectives/Bounty.png' },
                     'Brawl_Ball': { img: '${env}/Gamemode_Specifics/Brawl_Ball.png' },
-                    'Dodgebrawl': { img: 'Global/Objectives/Dodgebrawl.png' },
                     'Hot_Zone': { img: 'Global/Objectives/Hot_Zone.png', size: 7 },
                     'Snowtel_Thieves': { 
                         img: `Global/Objectives/${y > mapHeight/2 ? 'SnowtelThievesBlue' : 'SnowtelThievesRed'}.png`,
@@ -692,7 +690,6 @@ export class MapMaker {
                     },
                     'Hold_The_Trophy': { img: 'Global/Objectives/Hold_The_Trophy.png' }
                 };
-                    
                 return objectives[gamemode];
             }},
             15: { name: 'Smoke', img: 'Global/Special_Tiles/Smoke.png', size: 1 },
