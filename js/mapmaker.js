@@ -678,6 +678,7 @@ export class MapMaker {
                     'Heist': { img: '${env}/Gamemode_Specifics/Heist.png' },
                     'Bounty': { img: 'Global/Objectives/Bounty.png' },
                     'Brawl_Ball': { img: '${env}/Gamemode_Specifics/Brawl_Ball.png' },
+                    'Dodgebrawl': { img: 'Global/Objectives/Dodgebrawl.png' },
                     'Hot_Zone': { img: 'Global/Objectives/Hot_Zone.png', size: 7 },
                     'Snowtel_Thieves': { 
                         img: `Global/Objectives/${y > mapHeight/2 ? 'SnowtelThievesBlue' : 'SnowtelThievesRed'}.png`,
@@ -690,8 +691,8 @@ export class MapMaker {
                         displayImg: 'Global/Objectives/IkeRed.png'
                     },
                     'Hold_The_Trophy': { img: 'Global/Objectives/Hold_The_Trophy.png' }
-                    'Dodgebrawl': { img: 'Global/Objectives/Dodgebrawl.png' },
                 };
+                    
                 return objectives[gamemode];
             }},
             15: { name: 'Smoke', img: 'Global/Special_Tiles/Smoke.png', size: 1 },
