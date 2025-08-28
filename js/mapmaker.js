@@ -404,7 +404,7 @@ export class MapMaker {
                 'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
             },
             The_Hub: {
-                'Gem_Grab': [2.7, 2.376, -85, -70, 1, 10]
+                'Gem_Grab': [2.4, 2.4, -64, -70, 1, 10],
             },
             Stunt_Show: {
                 'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
