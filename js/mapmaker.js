@@ -586,7 +586,6 @@ export class MapMaker {
                 'Post_TR': [1.5, 2.4, 4, -109, 1, 5],
                 'Post_R': [1.5, 1.8, 0, -50, 1, 5],
                 'Post_T': [1, 2.4, 0, -108, 1, 5],
-      },
             },
             Swamp_of_Love: {
                 'Horizontal': [1.05, 1.323, -2.5, -25, 1, 5],
