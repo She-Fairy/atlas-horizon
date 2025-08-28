@@ -412,6 +412,9 @@ export class MapMaker {
             The_Hub: {
                 'Gem_Grab': [2.4, 2.4, -64, -70, 1, 10],
             },
+            Brawlywood: {
+                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
+            },
             Enchanted_Woods: {
                 'Gem_Grab': [2.3, 2.3, -64, -60, 1, 10],
             },
