@@ -400,6 +400,9 @@ export class MapMaker {
             Oddities_Shop: {
                 'Gem_Grab': [2.7, 2.376, -85, -70, 1, 10]
             },
+            Super_City_2: {
+                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
+            },
             The_Hub: {
                 'Gem_Grab': [2.7, 2.376, -85, -70, 1, 10]
             },
