@@ -49,7 +49,7 @@ const FENCE_LOGIC_BY_ENVIRONMENT = {
     'Rooftop': FENCE_LOGIC_TYPES.BINARY_CODE,
     'Coin_Factory': FENCE_LOGIC_TYPES.BINARY_CODE,
     'Ice_Island': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
-    'Medieval_Manor': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
+    'Medieval_Manor': FENCE_LOGIC_TYPES.BINARY_CODE,
     'Super_City_2': FENCE_LOGIC_TYPES.BINARY_CODE,
     'Spongebob': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
     'Oddities_Shop': FENCE_LOGIC_TYPES.BINARY_CODE,
@@ -62,6 +62,7 @@ const FENCE_LOGIC_BY_ENVIRONMENT = {
 
 const BORDER_FENCE_LOGIC_BY_ENVIRONMENT = {
     'Bazaar': FENCE_LOGIC_TYPES.BINARY_CODE,
+    'Medieval_Manor': FENCE_LOGIC_TYPES.BINARY_CODE,
     'Super_City_2': FENCE_LOGIC_TYPES.BINARY_CODE,
     'Tropical_Island': FENCE_LOGIC_TYPES.BINARY_CODE,
 };
@@ -400,6 +401,9 @@ export class MapMaker {
             Oddities_Shop: {
                 'Gem_Grab': [2.7, 2.376, -85, -70, 1, 10]
             },
+            Medieval_Manor: {
+                'Gem_Grab': [2.7, 2.376, -85, -70, 1, 10],
+            },
             Super_City_2: {
                 'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
             },
@@ -517,6 +521,24 @@ export class MapMaker {
                 'Post_R': [1.5, 1.8, 0, -50, 1, 5],
                 'Post_T': [1, 2.1, 0, -75.6, 1, 5],
                 'Post_TR': [1.5, 2.1, 0, -75.6, 1, 5],
+            },     
+            Medieval_Manor: {
+                'Cactus': [1.1, 1.6, -5, -36, 1, 5],
+                '0001': [1.2, 1.5, -9, -35, 1, 5],
+                '0010': [1, 1.5, 0, -30, 1, 5],
+                '0011': [1, 1.5, 0, -30, 1, 5],
+                '0100': [1, 1.5, 0, -30, 1, 5],
+                '0101': [1, 1.5, 0, -30, 1, 5],
+                '1000': [1.2, 1.5, -9, -35, 1, 5],
+                '1001': [1.2, 1.5, -9, -35, 1, 5],
+                '1010': [1, 1.5, 0, -30, 1, 5],
+                '1100': [1, 1.5, 0, -30, 1, 5],
+                'Fence': [1, 1.5, 0, -30, 1, 5],
+                'BFence': [1, 1.6, 0, -28, 1, 5],
+                'Post': [1, 1.8, 0, -50, 1, 5],
+                'Post_TR': [1.5, 2.47, 0, -118.75, 1, 5],
+                'Post_R': [1.5, 1.8, 0, -50, 1, 5],
+                'Post_T': [1, 2.47, 0, -118.75, 1, 5],
             },
             Super_City_2: {
                 'Wall': [1, 1.8, 0, -51, 1, 5],
@@ -789,7 +811,7 @@ export class MapMaker {
             42: { name: 'Red Respawn', img: 'Global/Spawns/6.png', showInGamemode: 'Brawl_Ball', size: 1},
             43: { name: 'Base Ike Blue', img: 'Global/Arena/Base_Ike_Blue.png', showInGamemode: 'Brawl_Arena', size: 1 },
             44: { name: 'Small Ike Blue', img: 'Global/Arena/Small_Ike_Blue.png', showInGamemode: 'Brawl_Arena', size: 1 },
-            45: { name: 'BFence', img: '${env}/Fence_5v5/BFence.png', showInEnvironment: ['Tropical_Island', 'Super_City_2', 'Bazaar',], size: 1 },
+            45: { name: 'BFence', img: '${env}/Fence_5v5/BFence.png', showInEnvironment: ['Tropical_Island', 'Super_City_2', 'Bazaar', 'Medieval_Manor',], size: 1 },
             46: { name: 'Base Ike Red', img: 'Global/Arena/Base_Ike_Red.png', showInGamemode: 'Brawl_Arena', size: 1 },
             47: { name: 'Small Ike Red', img: 'Global/Arena/Small_Ike_Red.png', showInGamemode: 'Brawl_Arena', size: 1 },
         };
