@@ -43,6 +43,7 @@ const FENCE_LOGIC_BY_ENVIRONMENT = {
     'The_Hub': FENCE_LOGIC_TYPES.BINARY_CODE,
     'Rumble_Jungle': FENCE_LOGIC_TYPES.BINARY_CODE,
     'Enchanted_Woods': FENCE_LOGIC_TYPES.BINARY_CODE,
+    'Ranger_Ranch': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
     'Circus': FENCE_LOGIC_TYPES.BINARY_CODE,
     'Starr_Toon': FENCE_LOGIC_TYPES.BINARY_CODE,
     'Swamp_of_Love': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
@@ -522,6 +523,14 @@ export class MapMaker {
                 'Post_T': [1, 2.1, 0, -75.6, 1, 5],
                 'Post_TR': [1.5, 2.1, 0, -75.6, 1, 5],
             },     
+            Ranger_Ranch: {
+                'Wall': [1, 1.8, 0, -51, 1, 5],
+                'Skull': [1, 1.81, 0, -51, 1, 5],
+                'Post': [1, 1.8, 0, -50, 1, 5],
+                'Post_TR': [1.5, 2.47, 0, -118, 1, 5],
+                'Post_R': [1.5, 1.8, 0, -50, 1, 5],
+                'Post_T': [1, 2.47, 0, -118, 1, 5],
+            },
             Medieval_Manor: {
                 'Cactus': [1.1, 1.6, -5, -36, 1, 5],
                 '0001': [1.3, 1.5, -14, -35, 1, 5],
