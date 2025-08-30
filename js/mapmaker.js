@@ -530,7 +530,7 @@ export class MapMaker {
                 'Crate': [1, 1.8, 0, -51, 1, 5],
                 'Barrel': [1, 1.8, 0, -51, 1, 5],
                 'Cactus': [1, 1.8, 0, -51, 1, 5],
-                'Skull': [1, 1.8, 0, -51, 1, 5],
+                'Skull': [1, 1.8, 0, -58, 1, 5],
                 'Horizontal': [1, 1.54, 0, -40, 1, 5],
             },     
            Ranger_Ranch: {
