@@ -831,7 +831,8 @@ export class MapMaker {
                     'Hold_The_Trophy': { img: 'Global/Objectives/Hold_The_Trophy.png' }
                 };
                 return objectives[gamemode];
-            }},
+               },
+            },
             15: { name: 'Smoke', img: 'Global/Special_Tiles/Smoke.png', size: 1 },
             16: { name: 'Heal Pad', img: 'Global/Special_Tiles/HealPad.png', size: 2 },
             17: { name: 'Slow Tile', img: 'Global/Special_Tiles/SlowTile.png', size: 1 },
