@@ -403,6 +403,9 @@ export class MapMaker {
             Oddities_Shop: {
                 'Gem_Grab': [2.7, 2.376, -85, -70, 1, 10]
             },
+            Ghost_Station: {
+                'Gem_Grab': [2.7, 2.376, -85, -70, 1, 10],
+            },
             Medieval_Manor: {
                 'Gem_Grab': [2.7, 2.376, -85, -70, 1, 10],
             },
