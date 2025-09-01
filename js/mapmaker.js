@@ -375,6 +375,7 @@ export class MapMaker {
             'Volley_Brawl': [1.3, 1.495, -20, -20, 1, 10],
             'Siege': [2.5, 3.1, -60, -175, 1, 10],
             'Hold_The_Trophy': [2.5, 2.5, -75, -75, 1, 10]
+            'Dodgebrawl': [1.3, 1.495, -15, -20, 1, 10],
         };
 
         // Initialize environment data
