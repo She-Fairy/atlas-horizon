@@ -830,6 +830,8 @@ export class MapMaker {
                         displayImg: 'Global/Objectives/IkeRed.png'
                     },
                     'Hold_The_Trophy': { img: 'Global/Objectives/Hold_The_Trophy.png' }
+                    },
+                    'Dodgebrawl': { img: 'Global/Objectives/Dodgebrawl.png' },
                 };
                 return objectives[gamemode];
             }},
