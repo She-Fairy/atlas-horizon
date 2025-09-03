@@ -422,6 +422,9 @@ export class MapMaker {
             The_Hub: {
                 'Gem_Grab': [2.4, 2.4, -64, -70, 1, 10],
             },
+            Rumble_Jungle: {
+                'Gem_Grab': [2.7, 2.376, -85, -70, 1, 10],
+            },
             Brawlywood: {
                 'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
             },
