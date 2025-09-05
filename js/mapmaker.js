@@ -340,6 +340,7 @@ export class MapMaker {
             'Slow Tile': [1, 1.11, 0, 0, 1, 5],
             'Speed Tile': [1, 1.11, 0, 0, 1, 5],
             'Spikes': [1, 1.5, 0, -15, 1, 5],
+            'Bumper': [1, 1.8, 0, -50, 1, 5],
             'Jump R': [1, 1.12, 0, 0, 1, 5],
             'Jump L': [1, 1.12, 0, 0, 1, 5],
             'Jump T': [1, 1.12, 0, 0, 1, 5],
@@ -353,6 +354,8 @@ export class MapMaker {
             'Teleporter Red': [1, 1, 0, 0, 1, 5],
             'Teleporter Yellow': [1, 1, 0, 0, 1, 5],
             'Bolt': [1, 1.18, 0, 0, 1, 5],
+            'TokenBlue': [1.7, 1.7, -35, -35, 1, 7],
+            'TokenRed': [1.7, 1.7, -35, -35, 1, 7],
             'Box': [1, 1.75, 0, -50, 1, 5],
             'Boss Zone': [7, 7, -300, -300, 1, 10],
             'Monster Zone': [7, 7, -300, -300, 1, 10],
@@ -371,10 +374,15 @@ export class MapMaker {
             'Brawl_Ball': [1.3, 1.495, -15, -20, 1, 10],
             'Hot_Zone': [7, 7, -300, -300, 1, 10],
             'Snowtel_Thieves': [4, 4, -150, -150, 1, 2],
+            'Token_Run': [4, 4, -150, -150, 1, 2],
             'Basket_Brawl': [1.3, 1.495, -20, -20, 1, 10],
             'Volley_Brawl': [1.3, 1.495, -20, -20, 1, 10],
-            'Siege': [2.5, 3.1, -60, -175, 1, 10],
+            'Siege': {
+                upper: [2 * 1.2, 2.64 * 1.2, -50, -135, 1, 10],  // Blue Ike (upper part) - slightly smaller
+                lower: [2 * 1.2, 2.83 * 1.2, -95, -135, 1, 10]   // Red Ike (lower part) - slightly larger
+            },
             'Hold_The_Trophy': [2.5, 2.5, -75, -75, 1, 10],
+            'Hockey': [1.3, 1.495, -15, -20, 1, 10],
             'Dodgebrawl': [1.3, 1.495, -15, -20, 1, 10],
         };
 
@@ -715,6 +723,10 @@ export class MapMaker {
                 '1010': [1, 2.3, 0, -105, 1, 5],
                 '1100': [1, 2.3, 0, -105, 1, 5],
                 'Fence': [1, 1.8, 0, -55, 1, 5],
+                'Post': [0.9, 1.8, 5, -70, 1, 5],
+                'Post_TR': [1.5, 2.3, 8, -120, 1, 5],
+                'Post_R': [1.5, 1.8, 6, -70, 1, 5],
+                'Post_T': [0.9, 2.3, 5, -120, 1, 5],
             },
             Enchanted_Woods: {
                 'Wall': [1, 1.8, 0, -51, 1, 5],
@@ -866,9 +878,14 @@ export class MapMaker {
                     },
                     'Basket_Brawl': { img: 'Global/Objectives/Basket_Brawl.png' },
                     'Volley_Brawl': { img: 'Global/Objectives/Volley_Brawl.png' },
+                    'Hockey': { img: 'Global/Objectives/Hockey.png' },
                     'Siege': { 
                         img: `Global/Objectives/${y > mapHeight/2 ? 'IkeBlue' : 'IkeRed'}.png`,
                         displayImg: 'Global/Objectives/IkeRed.png'
+                    },
+                    'Token_Run': { 
+                        img: `Global/Objectives/${y > mapHeight/2 ? 'TokenRunRed' : 'TokenRunBlue'}.png`,
+                        displayImg: 'Global/Objectives/TokenRunBlue.png'
                     },
                     'Hold_The_Trophy': { img: 'Global/Objectives/Hold_The_Trophy.png' }
                 };
@@ -893,18 +910,23 @@ export class MapMaker {
             30: { name: 'Teleporter Red', img: 'Global/Teleporters/Red.png', size: 2 },
             31: { name: 'Teleporter Yellow', img: 'Global/Teleporters/Yellow.png', size: 2 },
             32: { name: 'Bolt', img: 'Global/Objectives/Bolt.png', size: 1, showInGamemode: 'Siege' },
+            34: { name: 'TokenBlue', img: 'Global/Objectives/TokenBlue.png', size: 1, showInGamemode: 'Token_Run' },
+            35: { name: 'TokenRed', img: 'Global/Objectives/TokenRed.png', size: 1, showInGamemode: 'Token_Run' },
             36: { name: 'Trio Spawn', size: 1, showInGamemode: 'Showdown', img: 'Global/Spawns/1.png' },
             37: { name: 'Box', img: 'Global/Objectives/Box.png', showInGamemode: 'Showdown', size: 1},
             38: { name: 'Boss Zone', img: 'Global/Arena/Boss_Zone.png', showInGamemode: 'Brawl_Arena', size: 1},
             39: { name: 'Monster Zone', img: 'Global/Arena/Monster_Zone.png', showInGamemode: 'Brawl_Arena', size: 1},
             40: { name: 'Track', img: 'Global/Arena/Track/Blue/Fence.png', showInGamemode: 'Brawl_Arena', size: 1},
-            41: { name: 'Blue Respawn', img: 'Global/Spawns/5.png', showInGamemode: 'Brawl_Ball', size: 1},
-            42: { name: 'Red Respawn', img: 'Global/Spawns/6.png', showInGamemode: 'Brawl_Ball', size: 1},
+            41: { name: 'Blue Respawn', img: 'Global/Spawns/5.png', showInGamemode: ['Brawl_Ball', 'Hockey', 'Volley_Brawl'], size: 1},
+            42: { name: 'Red Respawn', img: 'Global/Spawns/6.png', showInGamemode: ['Brawl_Ball', 'Hockey', 'Volley_Brawl'], size: 1},
             43: { name: 'Base Ike Blue', img: 'Global/Arena/Base_Ike_Blue.png', showInGamemode: 'Brawl_Arena', size: 1 },
             44: { name: 'Small Ike Blue', img: 'Global/Arena/Small_Ike_Blue.png', showInGamemode: 'Brawl_Arena', size: 1 },
             45: { name: 'BFence', img: '${env}/Fence_5v5/BFence.png', showInEnvironment: ['Tropical_Island', 'Super_City_2', 'Bazaar', 'Medieval_Manor', 'Ice_Island',], size: 1 },
             46: { name: 'Base Ike Red', img: 'Global/Arena/Base_Ike_Red.png', showInGamemode: 'Brawl_Arena', size: 1 },
             47: { name: 'Small Ike Red', img: 'Global/Arena/Small_Ike_Red.png', showInGamemode: 'Brawl_Arena', size: 1 },
+            48: { name: 'Bumper', size: 1, showInGamemode: ['Brawl_Ball', 'Hockey', 'Paint_Brawl'], getImg: (gamemode) => {
+                return { img: gamemode === 'Hockey' ? 'Global/HockeyBumper.png' : 'Global/Bumper.png' };
+            }},
         };
 
         // Initialize water tile filenames
@@ -1545,7 +1567,7 @@ export class MapMaker {
             this.selectedTiles = [];
         }
 
-        if (this.gamemode === 'Brawl_Ball' && this.mapSize === this.mapSizes.regular) {
+        if ((this.gamemode === 'Brawl_Ball' || this.gamemode === 'Hockey') && this.mapSize === this.mapSizes.regular) {
             const { x, y } = coords;
             const atTop    = y < 4;
             const atBottom = y >= this.mapHeight - 4;
@@ -1929,12 +1951,12 @@ export class MapMaker {
         // Define the order of tiles
         const tileOrder = [
             'Wall', 'Wall2', 'Unbreakable', 'Crate', 'Barrel', 'Fence', 'BFence', 'Rope Fence',
-            'Bush', 'Cactus', 'Water', 'Skull', 'Blue Spawn', 'Blue Respawn', 'Red Spawn', 'Red Respawn', 'Trio Spawn', 'Objective', 'Box', 'Boss Zone', 'Monster Zone', 'Track',
+            'Bush', 'Cactus', 'Water', 'Skull', 'Blue Spawn', 'Blue Respawn', 'Red Spawn', 'Red Respawn', 'Trio Spawn', 'Objective', 'Box', 'Bumper', 'Bolt', 'TokenBlue', 'TokenRed', 'Boss Zone', 'Monster Zone', 'Track',
             'Smoke', 'Heal Pad', 'Slow Tile', 'Speed Tile', 'Spikes',
             'Jump R', 'Jump L', 'Jump T', 'Jump B',
             'Jump BR', 'Jump TL', 'Jump BL', 'Jump TR',
             'Teleporter Blue', 'Teleporter Green', 'Teleporter Red', 'Teleporter Yellow',
-            'Bolt', 'Base Ike Blue', 'Base Ike Red', 'Small Ike Blue', 'Small Ike Red'
+            'Base Ike Blue', 'Base Ike Red', 'Small Ike Blue', 'Small Ike Red'
         ];
 
         // Create buttons in the specified order
@@ -1946,7 +1968,7 @@ export class MapMaker {
             const [id, def] = tileEntry;
 
             if (id === '0' || id === '-1') return; // Skip empty and occupied tiles
-            if (def.showInGamemode && def.showInGamemode !== this.gamemode) return;
+            if (def.showInGamemode && !def.showInGamemode.includes(this.gamemode)) return;
             if (def.showInEnvironment && !def.showInEnvironment.includes(this.environment)) return;
 
             const btn = document.createElement('button');
@@ -2231,7 +2253,29 @@ export class MapMaker {
                 return;
             }
         } else {
-            img = this.tileImages[tileId];
+            // Handle position-dependent tiles like objectives
+            const def = this.tileDefinitions[tileId];
+            if (def && def.getImg) {
+                const imgData = def.getImg(this.gamemode, y, this.mapHeight);
+                if (imgData && imgData.img) {
+                    const imgPath = `Resources/${imgData.img.replace('${env}', this.environment)}`;
+                    // Use a unique cache key that includes position for position-dependent tiles
+                    const cacheKey = `${tileId}_${imgPath}`;
+                    img = this.tileImages[cacheKey];
+                    
+                    if (!img) {
+                        img = new Image();
+                        img.onload = () => this.draw();
+                        img.src = imgPath;
+                        img.onerror = () => {
+                            console.error(`Failed to load objective image: ${imgPath}`);
+                        };
+                        this.tileImages[cacheKey] = img;
+                    }
+                }
+            } else {
+                img = this.tileImages[tileId];
+            }
         }
 
         if (!img || !img.complete) return;
@@ -2239,7 +2283,17 @@ export class MapMaker {
         // Get tile dimensions data
         let dimensions;
         if (def.name === 'Objective') {
-            dimensions = this.environmentObjectiveData[this.environment]?.[this.gamemode] || this.objectiveData[this.gamemode];
+            const baseData = this.environmentObjectiveData[this.environment]?.[this.gamemode] || this.objectiveData[this.gamemode];
+            
+            // Handle position-dependent objectives (upper vs lower)
+            if (baseData && typeof baseData === 'object' && !Array.isArray(baseData)) {
+                // Position-dependent format: { upper: [...], lower: [...] }
+                const isUpper = y < this.mapHeight / 2;
+                dimensions = baseData[isUpper ? 'upper' : 'lower'] || baseData.upper || baseData;
+            } else {
+                // Legacy format: direct array
+                dimensions = baseData;
+            }
         } else {
             // For fence and rope fence variations, use the specific variation's dimensions
             const isFence = tileId === 7;
@@ -2301,7 +2355,7 @@ export class MapMaker {
                 // Check if this tile should have no background in Brawl Ball mode
                 let skipBackground = false;
                 // in draw(), before drawing the checker background:
-                if (this.gamemode === 'Brawl_Ball' && this.mapSize === this.mapSizes.regular) {
+                if ((this.gamemode === 'Brawl_Ball' || this.gamemode === 'Hockey') && this.mapSize === this.mapSizes.regular) {
                     // rows <4 or > mapHeight-5, cols <7 or > mapWidth-8
                     const atTop    = y < 4;
                     const atBottom = y >= this.mapHeight - 4;
@@ -2347,6 +2401,24 @@ export class MapMaker {
             if (this.basketMarkingsImage.complete) {
                 this.ctx.drawImage( 
                     this.basketMarkingsImage, 
+                    this.canvasPadding, 
+                    this.canvasPadding, 
+                    this.mapWidth * this.tileSize, 
+                    this.mapHeight * this.tileSize 
+                ); 
+            }
+        }
+
+        if (this.gamemode === 'Siege' && this.mapSize === this.mapSizes.siege) { 
+            // Cache basket images if not already loaded
+            if (!this.siegeMarkingsImage) {
+                this.siegeMarkingsImage = new Image();
+                this.siegeMarkingsImage.src = 'Resources/Global/SiegeMarkings.png';
+            }
+
+            if (this.siegeMarkingsImage.complete) {
+                this.ctx.drawImage( 
+                    this.siegeMarkingsImage, 
                     this.canvasPadding, 
                     this.canvasPadding, 
                     this.mapWidth * this.tileSize, 
@@ -2794,7 +2866,7 @@ export class MapMaker {
         const atBottom = y >= this.mapHeight - 4;
         const atLeft   = x < 7;
         const atRight  = x >= this.mapWidth - 7;
-        if (this.gamemode === 'Brawl_Ball' 
+        if ((this.gamemode === 'Brawl_Ball' || this.gamemode === 'Hockey') 
             && this.mapSize === this.mapSizes.regular
             && (atTop || atBottom) && (atLeft || atRight)) {
                 this.isDrawing = false;
@@ -2820,7 +2892,7 @@ export class MapMaker {
         }
 
         // Only show Bolt in Siege mode
-        if (def.showInGamemode && def.showInGamemode !== this.gamemode) return;
+        if (def.showInGamemode && !def.showInGamemode.includes(this.gamemode)) return;
 
         // Save state before making changes if requested
         if (saveState) {
@@ -2927,6 +2999,8 @@ export class MapMaker {
             switch (tileId){
                 case 12: return 13;
                 case 13: return 12;
+                case 34: return 35;
+                case 35: return 34;
                 case 41: return 42;
                 case 42: return 41;
                 case 43: return 46;
@@ -3065,7 +3139,7 @@ export class MapMaker {
 
                 // Skip Brawl Ball corners in regular size
                 if (
-                    this.gamemode === 'Brawl_Ball' &&
+                    (this.gamemode === 'Brawl_Ball' || this.gamemode === 'Hockey') &&
                     this.mapSize === this.mapSizes.regular
                 ) {
                     const atTop = y < 4;
@@ -3110,6 +3184,25 @@ export class MapMaker {
             }
         }
 
+        if (this.gamemode === 'Siege' && this.mapSize === this.mapSizes.siege) { 
+            // Cache siege markings image if not already loaded
+            if (!this.siegeMarkingsImage) {
+                this.siegeMarkingsImage = new Image();
+                this.siegeMarkingsImage.src = 'Resources/Global/SiegeMarkings.png';
+            }
+
+            // Draw siege markings if loaded
+            if (this.siegeMarkingsImage.complete) {
+                ctx.drawImage( 
+                    this.siegeMarkingsImage, 
+                    this.canvasPadding, 
+                    this.canvasPadding, 
+                    this.mapWidth * this.tileSize, 
+                    this.mapHeight * this.tileSize 
+                ); 
+            }
+        }
+
         // Group tiles by z-index
         const tilesByZIndex = new Map();
         for (let y = 0; y < this.mapHeight; y++) {
@@ -3122,8 +3215,18 @@ export class MapMaker {
 
                 let dimensions;
                 if (def.name === 'Objective') {
-                    dimensions = this.environmentObjectiveData[this.environment]?.[this.gamemode] || 
-                                this.objectiveData[this.gamemode];
+                    const baseData = this.environmentObjectiveData[this.environment]?.[this.gamemode] || 
+                                    this.objectiveData[this.gamemode];
+                    
+                    // Handle position-dependent objectives (upper vs lower)
+                    if (baseData && typeof baseData === 'object' && !Array.isArray(baseData)) {
+                        // Position-dependent format: { upper: [...], lower: [...] }
+                        const isUpper = y < this.mapHeight / 2;
+                        dimensions = baseData[isUpper ? 'upper' : 'lower'] || baseData.upper || baseData;
+                    } else {
+                        // Legacy format: direct array
+                        dimensions = baseData;
+                    }
                 } else {
                     dimensions = this.environmentTileData[this.environment]?.[def.name] || 
                                 this.tileData[def.name];
@@ -3317,6 +3420,8 @@ export class MapMaker {
         this.gamemode = gamemode;
         this.goalImages = [];
 
+        this.toggleMirroring();
+
 
         // Remove objectives
         if (this.mapData.every(row => row.every(tile => tile === 0))) {
@@ -3328,7 +3433,7 @@ export class MapMaker {
         }
 
         Object.entries(this.tileDefinitions).forEach(([key, value]) => {
-            if (value.showInGamemode && value.showInGamemode !== this.gamemode) {
+            if (value.showInGamemode && !value.showInGamemode.includes(this.gamemode)) {
                 for (let y = 0; y < this.mapHeight; y++) {
                     for (let x = 0; x < this.mapWidth; x++) {
                         if (this.mapData[y][x] === parseInt(key)) this.mapData[y][x] = 0;
@@ -3341,8 +3446,8 @@ export class MapMaker {
         const middleX = Math.floor(this.mapWidth / 2);
         const middleY = Math.floor(this.mapHeight / 2);
 
-        const isBrawl = gamemode === 'Brawl_Ball';
-        const wasBrawl = previousGamemode === 'Brawl_Ball';
+        const isBrawl = gamemode === 'Brawl_Ball' || gamemode === 'Hockey';
+        const wasBrawl = previousGamemode === 'Brawl_Ball' || previousGamemode === 'Hockey';
 
         // REGULAR MAP - Brawl Ball
         if (this.mapSize === this.mapSizes.regular) {
@@ -3420,6 +3525,7 @@ export class MapMaker {
         this.initializeTileSelector();
         this.loadTileImages();
         this.draw();
+        this.toggleMirroring();
     }
 
     applyDefaultLayoutIfEmpty() {
@@ -3447,7 +3553,7 @@ export class MapMaker {
                 if (this.mapData[bottomY][midX + 2] === 12) {
                     this.mapData[bottomY][midX + 2] = 0;
                 }
-            } else if (this.gamemode === 'Brawl_Ball') {
+            } else if ((this.gamemode === 'Brawl_Ball' || this.gamemode === 'Hockey')) {
                 this.mapData[8][midX] = 13;      // Red
                 this.mapData[bottomY - 8][midX] = 12;   // Blue
                 this.mapData[8][midX - 2] = 13;  // Red
@@ -3476,7 +3582,7 @@ export class MapMaker {
             const centerX = midX;
             const objectiveModes = [
                 'Gem_Grab', 'Brawl_Ball', 'Bounty', 'Hot_Zone',
-                'Hold_The_Trophy', 'Basket_Brawl', 'Volley_Brawl'
+                'Hold_The_Trophy', 'Basket_Brawl', 'Volley_Brawl', 'Dodgebrawl', 'Hockey'
             ];
             if (objectiveModes.includes(this.gamemode)) {
                 this.placeTile(centerX, centerY, 14, false); // Place objective tile
@@ -3505,7 +3611,7 @@ export class MapMaker {
 
 
         // Showdown-specific Brawl Ball setup
-        if (this.mapSize === this.mapSizes.showdown && this.gamemode === 'Brawl_Ball') {
+        if (this.mapSize === this.mapSizes.showdown && (this.gamemode === 'Brawl_Ball' || this.gamemode === 'Hockey')) {
             const centerX = Math.floor(mapWidth / 2);
             const centerY = Math.floor(mapHeight / 2);
             const topLeft = centerX - 1;
