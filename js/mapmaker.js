@@ -2336,11 +2336,11 @@ export class MapMaker {
             // Cache basket images if not already loaded
             if (!this.basketMarkingsImage) {
                 this.basketMarkingsImage = new Image();
-                this.basketMarkingsImage.src = '/Resources/Global/BasketMarkings.png';
+                this.basketMarkingsImage.src = 'Resources/Global/BasketMarkings.png';
             }
             if (!this.basketsImage) {
                 this.basketsImage = new Image();
-                this.basketsImage.src = '/Resources/Global/Baskets.png';
+                this.basketsImage.src = 'Resources/Global/Baskets.png';
             }
 
             // Draw basket markings if loaded
@@ -3091,11 +3091,11 @@ export class MapMaker {
             // Cache basket images if not already loaded
             if (!this.basketMarkingsImage) {
                 this.basketMarkingsImage = new Image();
-                this.basketMarkingsImage.src = '/Resources/Global/BasketMarkings.png';
+                this.basketMarkingsImage.src = 'Resources/Global/BasketMarkings.png';
             }
             if (!this.basketsImage) {
                 this.basketsImage = new Image();
-                this.basketsImage.src = '/Resources/Global/Baskets.png';
+                this.basketsImage.src = 'Resources/Global/Baskets.png';
             }
 
             // Draw basket markings if loaded
