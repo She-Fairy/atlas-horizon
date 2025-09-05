@@ -2332,6 +2332,30 @@ export class MapMaker {
             }
         }
 
+        if (this.gamemode === 'Basket_Brawl' && this.mapSize === this.mapSizes.basket) { 
+            // Cache basket images if not already loaded
+            if (!this.basketMarkingsImage) {
+                this.basketMarkingsImage = new Image();
+                this.basketMarkingsImage.src = '/Resources/Global/BasketMarkings.png';
+            }
+            if (!this.basketsImage) {
+                this.basketsImage = new Image();
+                this.basketsImage.src = '/Resources/Global/Baskets.png';
+            }
+
+            // Draw basket markings if loaded
+            if (this.basketMarkingsImage.complete) {
+                this.ctx.drawImage( 
+                    this.basketMarkingsImage, 
+                    this.canvasPadding, 
+                    this.canvasPadding, 
+                    this.mapWidth * this.tileSize, 
+                    this.mapHeight * this.tileSize 
+                ); 
+            }
+        }
+
+
         // Group tiles by z-index
         const tilesByZIndex = new Map();
         for (let y = 0; y < this.mapHeight; y++) {
@@ -2489,6 +2513,18 @@ export class MapMaker {
             }
         }
 
+        if (this.gamemode === 'Basket_Brawl' && this.mapSize === this.mapSizes.basket) { 
+            if (this.basketsImage.complete) {
+                this.ctx.drawImage( 
+                    this.basketsImage, 
+                    this.canvasPadding, 
+                    this.canvasPadding, 
+                    this.mapWidth * this.tileSize,
+                    this.mapHeight * this.tileSize 
+                ); 
+            }
+        }
+
         if (this.goalImages?.length) {
             for (const goal of this.goalImages) {
                 const img = this.goalImageCache[`${goal.name}_${this.environment}`] ||
@@ -2504,6 +2540,8 @@ export class MapMaker {
                 );
             }
         }
+
+            
 
         if (this.selectionMode === 'select' && !this.mouseDown) {
             this.selectionStart = this.selectedTiles[0];
@@ -3049,6 +3087,29 @@ export class MapMaker {
             }
         }
 
+        if (this.gamemode === 'Basket_Brawl' && this.mapSize === this.mapSizes.basket) { 
+            // Cache basket images if not already loaded
+            if (!this.basketMarkingsImage) {
+                this.basketMarkingsImage = new Image();
+                this.basketMarkingsImage.src = '/Resources/Global/BasketMarkings.png';
+            }
+            if (!this.basketsImage) {
+                this.basketsImage = new Image();
+                this.basketsImage.src = '/Resources/Global/Baskets.png';
+            }
+
+            // Draw basket markings if loaded
+            if (this.basketMarkingsImage.complete) {
+                ctx.drawImage( 
+                    this.basketMarkingsImage, 
+                    this.canvasPadding, 
+                    this.canvasPadding, 
+                    this.mapWidth * this.tileSize, 
+                    this.mapHeight * this.tileSize 
+                ); 
+            }
+        }
+
         // Group tiles by z-index
         const tilesByZIndex = new Map();
         for (let y = 0; y < this.mapHeight; y++) {
@@ -3187,6 +3248,18 @@ export class MapMaker {
                         });
                     });
             });
+
+        if (this.gamemode === 'Basket_Brawl' && this.mapSize === this.mapSizes.basket) { 
+            if (this.basketsImage.complete) {
+                ctx.drawImage( 
+                    this.basketsImage, 
+                    this.canvasPadding, 
+                    this.canvasPadding, 
+                    this.mapWidth * this.tileSize,
+                    this.mapHeight * this.tileSize 
+                ); 
+            }
+        }
 
         // Draw goal images if any
         if (this.goalImages?.length) {
@@ -3455,7 +3528,7 @@ export class MapMaker {
         const newSize = this.mapSizes[size];
             if (!newSize) return;
 
-            if (!changing || confirm('Changing map size will clear the current map. Continue?')) {
+            if (!changing || this.undoStack.length === 0 && document.getElementById('mapLink').innerText === 'https://she-fairy.github.io/atlas-horizon/map.html' || confirm('Changing map size will clear the current map. Continue?')) {
                 this.mapSize   = newSize;
                 this.mapWidth  = newSize.width;
                 this.mapHeight = newSize.height;
