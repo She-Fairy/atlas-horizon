@@ -70,7 +70,6 @@ const BORDER_FENCE_LOGIC_BY_ENVIRONMENT = {
     'Spongebob': FENCE_LOGIC_TYPES.BINARY_CODE,
     'Hockey': FENCE_LOGIC_TYPES.BINARY_CODE,
     'Tropical_Island': FENCE_LOGIC_TYPES.BINARY_CODE,
-    'Subway_Surfers': FENCE_LOGIC_TYPES.BINARY_CODE,
 };
 
 class FenceLogicHandler {
@@ -468,7 +467,7 @@ export class MapMaker {
             },
             Subway_Surfers: {
                 'Gem_Grab': [2.3, 2.3, -50, -60, 1, 10],
-            },
+          },
         };
 
         this.environmentTileData = {
