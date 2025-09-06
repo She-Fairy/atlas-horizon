@@ -467,7 +467,7 @@ export class MapMaker {
             },
             Subway_Surfers: {
                 'Gem_Grab': [2.3, 2.3, -50, -60, 1, 10],
-          },
+            },
         };
 
         this.environmentTileData = {
@@ -814,7 +814,7 @@ export class MapMaker {
                 'Post_TR': [1.5, 2.4, 4, -109, 1, 5],
                 'Post_R': [1.5, 1.8, 0, -50, 1, 5],
                 'Post_T': [1, 2.4, 0, -108, 1, 5],
-      },
+            },
             The_Hub: {
                 'Wall': [1, 1.8, 0, -51, 1, 5],
                 'Wall2': [1, 1.88, 0, -58.5, 1, 5],
@@ -988,7 +988,7 @@ export class MapMaker {
                 '1001': [1/1.39, 1.44/1.39, 15, -30, 1, 5],
                 '1010': [1*0.875, 2.47*0.85, 15.25, -87.5, 1, 5],
                 '1100': [1*0.875, 2.47*0.85, 0, -87.5, 1, 5],
-            }
+            },
         };
         
         // Initialize tile definitions
