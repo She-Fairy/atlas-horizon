@@ -409,8 +409,8 @@ export class MapMaker {
             Retropolis: {
                 'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
             },
-            Oddities_Shop: {
-                'Gem_Grab': [2.7, 2.376, -85, -70, 1, 10]
+            Starr_Force: {
+                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
             },
             Ghost_Station: {
                 'Gem_Grab': [2.7, 2.376, -85, -70, 1, 10],
@@ -423,6 +423,10 @@ export class MapMaker {
             },
             The_Hub: {
                 'Gem_Grab': [2.4, 2.4, -64, -70, 1, 10],
+            },
+            Fighting_Game: {
+                'Gem_Grab': [2*1.1, 2.09*1.1, -55, -60, 1, 10],
+                'Heist': [2*0.9, 3.56*0.9, -37.5, -95, 1, 10]
             },
             Stunt_Show: {
                 'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
@@ -449,12 +453,11 @@ export class MapMaker {
             Swamp_of_Love: {
                 'Gem_Grab': [2*1.1, 2.09*1.1, -55, -60, 1, 10]
             },
+            Oddities_Shop: {
+                'Gem_Grab': [2.7, 2.376, -85, -70, 1, 10]
+            },
             Skating_Bowl: {
                 'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
-            },
-            Fighting_Game: {
-                'Gem_Grab': [2*1.1, 2.09*1.1, -55, -60, 1, 10],
-                'Heist': [2*0.9, 3.56*0.9, -37.5, -95, 1, 10]
             }
         };
 
