@@ -59,6 +59,7 @@ const FENCE_LOGIC_BY_ENVIRONMENT = {
     'Escape_Room': FENCE_LOGIC_TYPES.BINARY_CODE,
     'Tropical_Island': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
     'Brawl_Arena': FENCE_LOGIC_TYPES.SIX_PIECE
+    'Subway_Surfers': FENCE_LOGIC_TYPES.BINARY_CODE,
 };
 
 const BORDER_FENCE_LOGIC_BY_ENVIRONMENT = {
@@ -66,7 +67,10 @@ const BORDER_FENCE_LOGIC_BY_ENVIRONMENT = {
     'Ice_Island': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
     'Medieval_Manor': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
     'Super_City_2': FENCE_LOGIC_TYPES.BINARY_CODE,
+    'Spongebob': FENCE_LOGIC_TYPES.BINARY_CODE,
+    'Hockey': FENCE_LOGIC_TYPES.BINARY_CODE,
     'Tropical_Island': FENCE_LOGIC_TYPES.BINARY_CODE,
+    'Subway_Surfers': FENCE_LOGIC_TYPES.BINARY_CODE,
 };
 
 class FenceLogicHandler {
@@ -461,6 +465,9 @@ export class MapMaker {
             },
             Skating_Bowl: {
                 'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
+            },
+            Subway_Surfers: {
+                'Gem_Grab': [2.3, 2.3, -50, -60, 1, 10],
             },
         };
 
@@ -885,6 +892,22 @@ export class MapMaker {
                 'Post_R': [2/1.465, 2, 0, -75, 1, 5],
                 'Post_T': [1, 2.18, 0, -92.5, 1, 5],
                 'Horizontal': [1, 1.26, 0, -10, 1, 5],                
+            },
+            Subway_Surfers: {
+                'Barrel': [1, 1.8, 0, -46, 1, 5],
+                'Cactus': [0.93, 1.5, 4, -43, 1, 5],
+                'Skull': [1.1, 1.75, -3, -43, 1, 5],
+                '0001': [0.76, 1.2, 10, -30, 1, 5],
+                '0010': [1, 1.70, 0, -55, 1, 5],
+                '0011': [0.82, 1.70, 17, -55, 1, 5],
+                '0100': [1, 1.70, 0, -55, 1, 5],
+                '0101': [0.82, 1.70, -1, -55, 1, 5],
+                '0110': [1, 1.75, 0, -50, 1, 5],
+                '1000': [0.76, 1.50, 10, -30, 1, 5],
+                '1001': [0.65, 1.1, 16, -30, 1, 5],
+                '1010': [0.84, 1.70, 17, -55, 1, 5],
+                '1100': [0.82, 1.70, -1, -55, 1, 5],
+                'Fence': [1, 1.70, 0, -55, 1, 5],
             },
             Oasis: {
                 'Wall2': [1, 1.8, 0, -50, 1, 5],
