@@ -394,6 +394,9 @@ export class MapMaker {
             Retropolis: {
                 'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
             },
+            Pirate_Ship: {
+                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
+            },
             Arcade: {
                 'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
             },
