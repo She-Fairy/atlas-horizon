@@ -388,9 +388,6 @@ export class MapMaker {
 
         // Initialize environment data
         this.environmentObjectiveData = {
-            Bazaar: {
-                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
-            },
             City: {
                 'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
             },
@@ -398,6 +395,9 @@ export class MapMaker {
                 'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
             },
             Arcade: {
+                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
+            },
+            Bazaar: {
                 'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
             },
             Bandstand: {
