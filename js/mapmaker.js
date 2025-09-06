@@ -394,10 +394,7 @@ export class MapMaker {
             City: {
                 'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
             },
-            Snowtel: {
-                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
-            },
-            Castle_Courtyard: {
+            Retropolis: {
                 'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
             },
             Arcade: {
@@ -406,23 +403,17 @@ export class MapMaker {
             Bandstand: {
                 'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
             },
-            Retropolis: {
+            Snowtel: {
                 'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
             },
             Starr_Force: {
                 'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
             },
-            Ghost_Station: {
-                'Gem_Grab': [2.7, 2.376, -85, -70, 1, 10],
-            },
-            Medieval_Manor: {
-                'Gem_Grab': [2.7, 2.376, -85, -70, 1, 10],
-            },
-            Super_City_2: {
+            Castle_Courtyard: {
                 'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
             },
-            The_Hub: {
-                'Gem_Grab': [2.4, 2.4, -64, -70, 1, 10],
+            Brawlywood: {
+                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
             },
             Fighting_Game: {
                 'Gem_Grab': [2*1.1, 2.09*1.1, -55, -60, 1, 10],
@@ -435,14 +426,14 @@ export class MapMaker {
                 'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
                 'Heist': [2 * 1.2, 3.56 * 0.9, -75, -190, 1, 10],
             },
+            Ghost_Station: {
+                'Gem_Grab': [2.7, 2.376, -85, -70, 1, 10],
+            },
             The_Hub: {
                 'Gem_Grab': [2.4, 2.4, -64, -70, 1, 10],
             },
             Rumble_Jungle: {
                 'Gem_Grab': [2.7, 2.376, -85, -70, 1, 10],
-            },
-            Brawlywood: {
-                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
             },
             Enchanted_Woods: {
                 'Gem_Grab': [2.3, 2.3, -64, -60, 1, 10],
@@ -452,6 +443,12 @@ export class MapMaker {
             },
             Swamp_of_Love: {
                 'Gem_Grab': [2*1.1, 2.09*1.1, -55, -60, 1, 10]
+            },
+            Medieval_Manor: {
+                'Gem_Grab': [2.7, 2.376, -85, -70, 1, 10],
+            },
+            Super_City_2: {
+                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
             },
             Oddities_Shop: {
                 'Gem_Grab': [2.7, 2.376, -85, -70, 1, 10]
