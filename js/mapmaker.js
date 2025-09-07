@@ -1086,7 +1086,7 @@ export class MapMaker {
             42: { name: 'Red Respawn', img: 'Global/Spawns/6.png', showInGamemode: ['Brawl_Ball', 'Hockey', 'Volley_Brawl'], size: 1},
             43: { name: 'Base Ike Blue', img: 'Global/Arena/Base_Ike_Blue.png', showInGamemode: 'Brawl_Arena', size: 1 },
             44: { name: 'Small Ike Blue', img: 'Global/Arena/Small_Ike_Blue.png', showInGamemode: 'Brawl_Arena', size: 1 },
-            45: { name: 'BFence', img: '${env}/Fence_5v5/BFence.png', showInEnvironment: ['Tropical_Island', 'Super_City_2', 'Bazaar', 'Medieval_Manor', 'Ice_Island',], size: 1 },
+            45: { name: 'BFence', img: '${env}/Fence_5v5/BFence.png', showInEnvironment: ['Tropical_Island', 'Super_City_2', 'Bazaar', 'Medieval_Manor', 'Ice_Island', 'Subway_Surfers', 'Katana_Kingdom',], size: 1 },
             46: { name: 'Base Ike Red', img: 'Global/Arena/Base_Ike_Red.png', showInGamemode: 'Brawl_Arena', size: 1 },
             47: { name: 'Small Ike Red', img: 'Global/Arena/Small_Ike_Red.png', showInGamemode: 'Brawl_Arena', size: 1 },
             48: { name: 'Bumper', size: 1, showInGamemode: ['Brawl_Ball', 'Hockey', 'Paint_Brawl'], getImg: (gamemode) => {
