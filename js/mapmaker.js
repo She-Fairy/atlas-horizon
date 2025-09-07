@@ -66,8 +66,6 @@ const BORDER_FENCE_LOGIC_BY_ENVIRONMENT = {
     'Ice_Island': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
     'Medieval_Manor': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
     'Super_City_2': FENCE_LOGIC_TYPES.BINARY_CODE,
-    'Spongebob': FENCE_LOGIC_TYPES.BINARY_CODE,
-    'Hockey': FENCE_LOGIC_TYPES.BINARY_CODE,
     'Tropical_Island': FENCE_LOGIC_TYPES.BINARY_CODE,
 };
 
@@ -968,7 +966,7 @@ export class MapMaker {
                 '1001': [1/1.39, 1.44/1.39, 15, -30, 1, 5],
                 '1010': [1*0.875, 2.47*0.85, 15.25, -87.5, 1, 5],
                 '1100': [1*0.875, 2.47*0.85, 0, -87.5, 1, 5],
-            },
+            }
         };
         
         // Initialize tile definitions
