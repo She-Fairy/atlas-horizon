@@ -57,6 +57,7 @@ const FENCE_LOGIC_BY_ENVIRONMENT = {
     'Skating_Bowl': FENCE_LOGIC_TYPES.BINARY_CODE,
     'Hockey': FENCE_LOGIC_TYPES.SIX_PIECE,
     'Escape_Room': FENCE_LOGIC_TYPES.BINARY_CODE,
+    'Katana_Kingdom': FENCE_LOGIC_TYPES.BINARY_CODE,
     'Tropical_Island': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
     'Brawl_Arena': FENCE_LOGIC_TYPES.SIX_PIECE,
     'Subway_Surfers': FENCE_LOGIC_TYPES.BINARY_CODE,
@@ -67,6 +68,7 @@ const BORDER_FENCE_LOGIC_BY_ENVIRONMENT = {
     'Ice_Island': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
     'Medieval_Manor': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
     'Super_City_2': FENCE_LOGIC_TYPES.BINARY_CODE,
+    'Katana_Kingdom': FENCE_LOGIC_TYPES.BINARY_CODE,
     'Tropical_Island': FENCE_LOGIC_TYPES.BINARY_CODE,
 };
 
@@ -463,6 +465,9 @@ export class MapMaker {
             Skating_Bowl: {
                 'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
             },
+            Katana_Kingdom: {
+                'Gem_Grab': [2.2, 2.34, -30, -60, 1, 10],
+            },
         };
 
         this.environmentTileData = {
@@ -625,6 +630,24 @@ export class MapMaker {
                 'Post_R': [1.5, 1.8, 0, -50, 1, 5],
                 'Post_T': [1, 2.1, 0, -75.6, 1, 5],
                 'Post_TR': [1.5, 2.1, 0, -75.6, 1, 5],
+            },
+            Katana_Kingdom: {
+                'Cactus': [1, 1.8, 0, -51, 1, 5],
+                'Skull': [1, 1.4, 0, -15, 1, 5],
+                '0001': [1, 1.7, 0, -40, 1, 5],
+                '0010': [1.1, 1.4, -5, -30, 1, 5],
+                '0011': [1.1, 1.4, -5, -30, 1, 5],
+                '0100': [1.1, 1.4, -5, -30, 1, 5],
+                '0101': [1.1, 1.4, -5, -30, 1, 5],
+                '1000': [1, 1.7, 0, -40, 1, 5],
+                '1001': [1, 1.7, 0, -40, 1, 5],
+                '1010': [1.1, 1.4, -5, -30, 1, 5],
+                '1100': [1.1, 1.4, -5, -30, 1, 5],
+                'Fence': [1.1, 1.4, -5, -30, 1, 5],
+                'Post': [1, 1.8, 0, -50, 1, 5],
+                'Post_TR': [1.5, 2.47, 0, -118.75, 1, 5],
+                'Post_R': [1.5, 1.8, 0, -50, 1, 5],
+                'Post_T': [1, 2.47, 0, -118.75, 1, 5],
             },
             Deep_Sea: {
                 'Cactus': [1, 1.79, 0, -51, 1, 5],
