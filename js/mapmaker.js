@@ -467,6 +467,7 @@ export class MapMaker {
             },
             Katana_Kingdom: {
                 'Gem_Grab': [2.2, 2.34, -30, -60, 1, 10],
+                'Heist': [1.8 * 1.2, 3.2 * 0.9, -57, -185, 1, 10],
             },
         };
 
