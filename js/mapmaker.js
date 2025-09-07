@@ -59,7 +59,6 @@ const FENCE_LOGIC_BY_ENVIRONMENT = {
     'Escape_Room': FENCE_LOGIC_TYPES.BINARY_CODE,
     'Tropical_Island': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
     'Brawl_Arena': FENCE_LOGIC_TYPES.SIX_PIECE
-    'Subway_Surfers': FENCE_LOGIC_TYPES.BINARY_CODE,
 };
 
 const BORDER_FENCE_LOGIC_BY_ENVIRONMENT = {
@@ -969,7 +968,7 @@ export class MapMaker {
                 '1001': [1/1.39, 1.44/1.39, 15, -30, 1, 5],
                 '1010': [1*0.875, 2.47*0.85, 15.25, -87.5, 1, 5],
                 '1100': [1*0.875, 2.47*0.85, 0, -87.5, 1, 5],
-            }
+            },
         };
         
         // Initialize tile definitions
