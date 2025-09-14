@@ -284,6 +284,7 @@ export class MapMaker {
             'Wall': [1, 1.75, 0, -50, 1, 5],
             'Bush': [1, 1.8, 0, -51, 1, 5],
             'Wall2': [1, 1.75, 0, -50, 1, 5],
+            'Bush2': [1, 1.8, 0, -51, 1, 5],
             'Crate': [1, 1.8, 0, -51, 1, 5],
             'Barrel': [1, 1.69, 0, -42.5, 1, 5],
             'Cactus': [1*1.1, 1.67*1.1, -5, -51, 1, 5],
@@ -1177,6 +1178,7 @@ export class MapMaker {
             1: { name: 'Wall', img: '${env}/Tiles/Wall.png', size: 1 },
             2: { name: 'Bush', img: '${env}/Tiles/Bush.png', size: 1 },
             3: { name: 'Wall2', img: '${env}/Tiles/Wall2.png', size: 1 },
+            33: { name: 'Bush2', img: '${env}/Tiles/Bush2.png', size: 1 },
             4: { name: 'Crate', img: '${env}/Tiles/Crate.png', size: 1 },
             5: { name: 'Barrel', img: '${env}/Tiles/Barrel.png', size: 1 },
             6: { name: 'Cactus', img: '${env}/Tiles/Cactus.png', size: 1 },
@@ -2278,7 +2280,7 @@ export class MapMaker {
         // Define the order of tiles
         const tileOrder = [
             'Wall', 'Wall2', 'Unbreakable', 'Crate', 'Barrel', 'Fence', 'BFence', 'Rope Fence',
-            'Bush', 'Cactus', 'Water', 'Skull', 'Blue Spawn', 'Blue Respawn', 'Red Spawn', 'Red Respawn', 'Trio Spawn', 'Objective', 'Box', 'Bumper', 'Bolt', 'TokenBlue', 'TokenRed', 'Boss Zone', 'Monster Zone', 'Track',
+            'Bush', 'Bush2', 'Cactus', 'Water', 'Skull', 'Blue Spawn', 'Blue Respawn', 'Red Spawn', 'Red Respawn', 'Trio Spawn', 'Objective', 'Box', 'Bumper', 'Bolt', 'TokenBlue', 'TokenRed', 'Boss Zone', 'Monster Zone', 'Track',
             'Smoke', 'Heal Pad', 'Slow Tile', 'Speed Tile', 'Spikes',
             'Jump R', 'Jump L', 'Jump T', 'Jump B',
             'Jump BR', 'Jump TL', 'Jump BL', 'Jump TR',
