@@ -1178,7 +1178,7 @@ export class MapMaker {
             1: { name: 'Wall', img: '${env}/Tiles/Wall.png', size: 1 },
             2: { name: 'Bush', img: '${env}/Tiles/Bush.png', size: 1 },
             3: { name: 'Wall2', img: '${env}/Tiles/Wall2.png', size: 1 },
-            33: { name: 'Bush2', img: '${env}/Tiles/Bush2.png', size: 1 },
+            33: { name: 'Bush2', img: '${env}/Tiles/Bush2.png', showInEnvironment: ['Desert', 'Wasteland',], size: 1 },
             4: { name: 'Crate', img: '${env}/Tiles/Crate.png', size: 1 },
             5: { name: 'Barrel', img: '${env}/Tiles/Barrel.png', size: 1 },
             6: { name: 'Cactus', img: '${env}/Tiles/Cactus.png', size: 1 },
