@@ -385,7 +385,7 @@ export class MapMaker {
                 lower: [2 * 1.2, 2.83 * 1.2, -95, -135, 1, 10]   // Red Ike (lower part) - slightly larger
             },
             'Hold_The_Trophy': [2.5, 2.5, -75, -75, 1, 10],
-            'Hockey': [1.3, 1.495, -15, -20, 1, 10],
+            'Hockey': [1.5, 1.695, -25, -26, 1, 10],
             'Dodgebrawl': [1.3, 1.495, -15, -20, 1, 10],
         };
 
