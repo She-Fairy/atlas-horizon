@@ -375,6 +375,7 @@ export class MapMaker {
             'GodzillaCity4': [1, 2.10, 0, -95, 1, 5],
             'GodzillaExplosive': [1, 1.8, 0, -51, 1, 5],
             'GodzillaSpawn': [1.7, 1.7, -27.5, -27.5, 0.85, 7],
+            'Escape': [3.5, 3.7, -172, -170, 1, 10], // Trophy Escape Portal
         };
 
         // Initialize objective data
@@ -2321,7 +2322,7 @@ export class MapMaker {
             'Wall', 'Wall2', 'Crate', 'Barrel', 'Cactus', 'Bush', 'Fence', 'Skull', 'Rope Fence', 'BFence', 'Water', 'Unbreakable',
             'Blue Spawn', 'Blue Respawn', 'Red Spawn', 'Red Respawn', 'Trio Spawn', 'Objective', 'Box', 'Bumper', 'Bolt', 'TokenBlue', 'TokenRed', 'Boss Zone', 'Monster Zone', 'Track', 'Bot_Zone', 'PaintBrawl2',
             'Base Ike Blue', 'Base Ike Red', 'Small Ike Blue', 'Small Ike Red',
-            'GodzillaCity1', 'GodzillaCity2', 'GodzillaCity3', 'GodzillaCity4', 'GodzillaExplosive', 'GodzillaSpawn',
+            'GodzillaCity1', 'GodzillaCity2', 'GodzillaCity3', 'GodzillaCity4', 'GodzillaExplosive', 'GodzillaSpawn', 'Escape',
             'TNT', 'UnbreakableBrick', 'Speed Tile','Slow Tile', 'Spikes', 'Heal Pad', 'Smoke', 'Ice', 'Snow',
             'Jump R', 'Jump L', 'Jump T', 'Jump B',
             'Jump BR', 'Jump TL', 'Jump BL', 'Jump TR',
