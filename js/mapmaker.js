@@ -361,7 +361,7 @@ export class MapMaker {
             'TokenBlue': [1.7, 1.7, -35, -35, 1, 7],
             'TokenRed': [1.7, 1.7, -35, -35, 1, 7],
             'Box': [1, 1.75, 0, -50, 1, 5],
-            'Bot_Spawn': [1.7, 1.7, -27.5, -27.5, 0.85, 7],
+            'Bot_Zone': [1.7, 1.7, -27.5, -27.5, 0.85, 7],
             'Boss Zone': [7, 7, -300, -300, 1, 10],
             'Monster Zone': [7, 7, -300, -300, 1, 10],
             'Track': [1, 1, 0, 0, 1, 2],
@@ -1292,6 +1292,7 @@ export class MapMaker {
             54: { name: 'GodzillaCity4', img: 'Global/Godzilla Tiles/GodzillaCity4.png', showInGamemode: 'Godzilla_City_Smash', size: 1},
             55: { name: 'GodzillaExplosive', img: 'Global/Godzilla Tiles/GodzillaExplosive.png', showInGamemode: 'Godzilla_City_Smash', size: 1},
             56: { name: 'GodzillaSpawn', img: 'Global/Godzilla Tiles/GodzillaSpawn.png', showInGamemode: 'Godzilla_City_Smash', size: 1},
+            57: { name: 'Bot_Zone', img: 'Global/Objectives/Bot_Zone.png', showInGamemode: ['Trophy_Escape', 'Samurai_Smash'], size: 1},
         };
 
         // Initialize water tile filenames
