@@ -369,6 +369,12 @@ export class MapMaker {
             'Small Ike Blue': [3, 3.82, -100, -145, 1, 10],
             'Base Ike Red': [5, 6.12, -200, -270, 1, 10],
             'Small Ike Red': [3, 3.4825, -100, -110, 1, 10],
+            'GodzillaCity1': [1, 1.60, 0, -45, 1, 5],
+            'GodzillaCity2': [1, 1.75, 0, -53, 1, 5],
+            'GodzillaCity3': [1, 1.90, 0, -75, 1, 5],
+            'GodzillaCity4': [1, 2.10, 0, -95, 1, 5],
+            'GodzillaExplosive': [1, 1.8, 0, -51, 1, 5],
+            'GodzillaSpawn': [1.7, 1.7, -27.5, -27.5, 0.85, 7],
         };
 
         // Initialize objective data
@@ -1279,6 +1285,13 @@ export class MapMaker {
                 return { img: gamemode === 'Hockey' ? 'Global/HockeyBumper.png' : 'Global/Bumper.png' };
             }},
             49: { name: 'TNT', img: 'Global/TNT.png', size: 1 },
+            50: { name: 'UnbreakableBrick', img: 'Global/UnbreakableBrick.png', showInEnvironment: ['Grassy_Field','Stadium',], size: 1 },
+            51: { name: 'GodzillaCity1', img: 'Global/Godzilla Tiles/GodzillaCity1.png', showInGamemode: 'Godzilla_City_Smash', size: 1},
+            52: { name: 'GodzillaCity2', img: 'Global/Godzilla Tiles/GodzillaCity2.png', showInGamemode: 'Godzilla_City_Smash', size: 1},
+            53: { name: 'GodzillaCity3', img: 'Global/Godzilla Tiles/GodzillaCity3.png', showInGamemode: 'Godzilla_City_Smash', size: 1},
+            54: { name: 'GodzillaCity4', img: 'Global/Godzilla Tiles/GodzillaCity4.png', showInGamemode: 'Godzilla_City_Smash', size: 1},
+            55: { name: 'GodzillaExplosive', img: 'Global/Godzilla Tiles/GodzillaExplosive.png', showInGamemode: 'Godzilla_City_Smash', size: 1},
+            56: { name: 'GodzillaSpawn', img: 'Global/Godzilla Tiles/GodzillaSpawn.png', showInGamemode: 'Godzilla_City_Smash', size: 1},
         };
 
         // Initialize water tile filenames
@@ -2305,6 +2318,7 @@ export class MapMaker {
             'Wall', 'Wall2', 'Crate', 'Barrel', 'Cactus', 'Bush', 'Fence', 'Skull', 'Rope Fence', 'BFence', 'Water', 'Unbreakable',
             'Blue Spawn', 'Blue Respawn', 'Red Spawn', 'Red Respawn', 'Trio Spawn', 'Objective', 'Box', 'Bumper', 'Bolt', 'TokenBlue', 'TokenRed', 'Boss Zone', 'Monster Zone', 'Track', 'Bot_Zone', 'PaintBrawl2',
             'Base Ike Blue', 'Base Ike Red', 'Small Ike Blue', 'Small Ike Red',
+            'GodzillaCity1', 'GodzillaCity2', 'GodzillaCity3', 'GodzillaCity4', 'GodzillaExplosive', 'GodzillaSpawn',
             'TNT', 'UnbreakableBrick', 'Speed Tile','Slow Tile', 'Spikes', 'Heal Pad', 'Smoke', 'Ice', 'Snow',
             'Jump R', 'Jump L', 'Jump T', 'Jump B',
             'Jump BR', 'Jump TL', 'Jump BL', 'Jump TR',
