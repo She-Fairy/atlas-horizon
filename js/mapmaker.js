@@ -3953,12 +3953,12 @@ export class MapMaker {
 
         if (this.mapSize === this.mapSizes.basket) {
             // Place spawns for basket maps
-            this.mapData[6][this.mapWidth - 1] = 13;      // Red
-            this.mapData[6][0] = 12;                      // Blue
-            this.mapData[8][this.mapWidth - 1] = 13;      // Red
-            this.mapData[8][0] = 12;                      // Blue
-            this.mapData[10][this.mapWidth - 1] = 13;     // Red
-            this.mapData[10][0] = 12;                     // Blue
+            this.mapData[6][this.mapWidth - 2] = 13;      // Red
+            this.mapData[6][1] = 12;                      // Blue
+            this.mapData[8][this.mapWidth - 2] = 13;      // Red
+            this.mapData[8][1] = 12;                      // Blue
+            this.mapData[10][this.mapWidth - 2] = 13;     // Red
+            this.mapData[10][1] = 12;                     // Blue
 
             // Center objective
             if (this.gamemode === 'Basket_Brawl') {
