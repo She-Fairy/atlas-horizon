@@ -2295,13 +2295,13 @@ export class MapMaker {
 
         // Define the order of tiles
         const tileOrder = [
-            'Wall', 'Wall2', 'Unbreakable', 'Crate', 'Barrel', 'Fence', 'BFence', 'Rope Fence',
-            'Bush', 'Cactus', 'Water', 'Skull', 'Blue Spawn', 'Blue Respawn', 'Red Spawn', 'Red Respawn', 'Trio Spawn', 'Objective', 'Box', 'Bumper', 'Bolt', 'TokenBlue', 'TokenRed', 'Boss Zone', 'Monster Zone', 'Track',
-            'Smoke', 'Heal Pad', 'Slow Tile', 'Speed Tile', 'Spikes',
+            'Wall', 'Wall2', 'Crate', 'Barrel', 'Cactus', 'Bush', 'Fence', 'Skull', 'Rope Fence', 'BFence', 'Water', 'Unbreakable',
+            'Blue Spawn', 'Blue Respawn', 'Red Spawn', 'Red Respawn', 'Trio Spawn', 'Objective', 'Box', 'Bumper', 'Bolt', 'TokenBlue', 'TokenRed', 'Boss Zone', 'Monster Zone', 'Track',
+            'Base Ike Blue', 'Base Ike Red', 'Small Ike Blue', 'Small Ike Red',
+            'TNT', 'UnbreakableBrick', 'Smoke', 'Heal Pad', 'Slow Tile', 'Speed Tile', 'Spikes', 'Ice', 'Snow',
             'Jump R', 'Jump L', 'Jump T', 'Jump B',
             'Jump BR', 'Jump TL', 'Jump BL', 'Jump TR',
-            'Teleporter Blue', 'Teleporter Green', 'Teleporter Red', 'Teleporter Yellow',
-            'Base Ike Blue', 'Base Ike Red', 'Small Ike Blue', 'Small Ike Red'
+            'Teleporter Blue', 'Teleporter Green', 'Teleporter Red', 'Teleporter Yellow'
         ];
 
         // Create buttons in the specified order
