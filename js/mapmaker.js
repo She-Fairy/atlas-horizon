@@ -1214,10 +1214,11 @@ export class MapMaker {
             9: { name: 'Rope Fence', img: '${env}/Rope/Post.png', size: 1 },
             10: { name: 'Skull', img: '${env}/Tiles/Skull.png', size: 1 },
             11: { name: 'Unbreakable', img: 'Global/Unbreakable.png', size: 1 },
-            12: { name: 'Blue Spawn', size: 1, getImg: (gamemode) => {
-                return { img: gamemode === 'Showdown' ? 'Global/Spawns/3.png' : 'Global/Spawns/1.png' };
+             12: { name: 'Blue Spawn', size: 1, getImg: (gamemode) => {
+                return { img: gamemode === 'Showdown' || gamemode === 'Trophy_Escape' ? 'Global/Spawns/3.png' : 'Global/Spawns/1.png' }; // Won't use the default spawns for the listed modes
             }},
-            13: { name: 'Red Spawn', size: 1, getImg: (gamemode) => {
+            13: { name: 'Red Spawn', size: 1, getImg: (gamemode) => { // Will Block Red spawns to appear on Trophy_Escape or any blacklisted mode
+                if (gamemode === 'Trophy_Escape') return null;
                 return { img: gamemode === 'Showdown' ? 'Global/Spawns/4.png' : 'Global/Spawns/2.png' };
             }},
             14: { name: 'Objective', size: 1, getImg: (gamemode, y, mapHeight) => {
