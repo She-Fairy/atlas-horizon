@@ -331,6 +331,7 @@ export class MapMaker {
             'B1100': [1, 2, 0, -75, 1, 5],
             'BFence': [1, 1.80, 0, -55, 1, 5],
             'Skull': [1, 1.08, 0, 0, 1, 5],
+            'TNT': [1, 1.75, 0, -50, 1, 5],
             'Unbreakable': [1, 1.75, 0, -50, 1, 5],
             'Blue Spawn': [1.7, 1.7, -35, -35, 0.85, 7],
             'Red Spawn': [1.7, 1.7, -35, -35, 0.85, 7],
@@ -1272,6 +1273,7 @@ export class MapMaker {
             48: { name: 'Bumper', size: 1, showInGamemode: ['Brawl_Ball', 'Hockey', 'Paint_Brawl'], getImg: (gamemode) => {
                 return { img: gamemode === 'Hockey' ? 'Global/HockeyBumper.png' : 'Global/Bumper.png' };
             }},
+            49: { name: 'TNT', img: 'Global/TNT.png', size: 1 },
         };
 
         // Initialize water tile filenames
