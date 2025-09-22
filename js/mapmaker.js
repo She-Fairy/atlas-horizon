@@ -361,6 +361,7 @@ export class MapMaker {
             'TokenBlue': [1.7, 1.7, -35, -35, 1, 7],
             'TokenRed': [1.7, 1.7, -35, -35, 1, 7],
             'Box': [1, 1.75, 0, -50, 1, 5],
+            'Bot_Spawn': [1.7, 1.7, -27.5, -27.5, 0.85, 7],
             'Boss Zone': [7, 7, -300, -300, 1, 10],
             'Monster Zone': [7, 7, -300, -300, 1, 10],
             'Track': [1, 1, 0, 0, 1, 2],
@@ -386,6 +387,7 @@ export class MapMaker {
                 lower: [2 * 1.2, 2.83 * 1.2, -95, -135, 1, 10]   // Red Ike (lower part) - slightly larger
             },
             'Hold_The_Trophy': [2.5, 2.5, -75, -75, 1, 10],
+            'Bot_Drop': [1.9, 1.9, -46.5, -46.5, 0.85, 7],
             'Hockey': [1.5, 1.695, -25, -26, 1, 10],
             'Dodgebrawl': [1.3, 1.495, -15, -20, 1, 10],
         };
@@ -1224,6 +1226,7 @@ export class MapMaker {
                     },
                     'Basket_Brawl': { img: 'Global/Objectives/Basket_Brawl.png' },
                     'Volley_Brawl': { img: 'Global/Objectives/Volley_Brawl.png' },
+                    'Bot_Drop': { img: 'Global/Objectives/Bot_Zone.png' },
                     'Hockey': { img: 'Global/Objectives/Hockey.png' },
                     'Siege': { 
                         img: `Global/Objectives/${y > mapHeight/2 ? 'IkeBlue' : 'IkeRed'}.png`,
@@ -2298,7 +2301,7 @@ export class MapMaker {
         // Define the order of tiles
         const tileOrder = [
             'Wall', 'Wall2', 'Crate', 'Barrel', 'Cactus', 'Bush', 'Fence', 'Skull', 'Rope Fence', 'BFence', 'Water', 'Unbreakable',
-            'Blue Spawn', 'Blue Respawn', 'Red Spawn', 'Red Respawn', 'Trio Spawn', 'Objective', 'Box', 'Bumper', 'Bolt', 'TokenBlue', 'TokenRed', 'Boss Zone', 'Monster Zone', 'Track',
+            'Blue Spawn', 'Blue Respawn', 'Red Spawn', 'Red Respawn', 'Trio Spawn', 'Objective', 'Box', 'Bumper', 'Bolt', 'TokenBlue', 'TokenRed', 'Boss Zone', 'Monster Zone', 'Track', 'Bot_Zone',
             'Base Ike Blue', 'Base Ike Red', 'Small Ike Blue', 'Small Ike Red',
             'TNT', 'UnbreakableBrick', 'Speed Tile','Slow Tile', 'Spikes', 'Heal Pad', 'Smoke', 'Ice', 'Snow',
             'Jump R', 'Jump L', 'Jump T', 'Jump B',
@@ -3929,11 +3932,11 @@ export class MapMaker {
             const centerX = midX;
             const objectiveModes = [
                 'Gem_Grab', 'Brawl_Ball', 'Bounty', 'Hot_Zone',
-                'Hold_The_Trophy', 'Basket_Brawl', 'Volley_Brawl', 'Dodgebrawl', 'Hockey'
+                'Hold_The_Trophy', 'Basket_Brawl', 'Volley_Brawl', 'Dodgebrawl', 'Hockey', 'Bot_Drop'
             ];
             if (objectiveModes.includes(this.gamemode)) {
                 this.placeTile(centerX, centerY, 14, false); // Place objective tile
-            } else if (this.gamemode === 'Heist' || this.gamemode === 'Snowtel_Thieves') {
+            } else if (this.gamemode === 'Heist' || this.gamemode === 'Snowtel_Thieves' || this.gamemode === 'Token_Run') {
                 this.placeTile(centerX, 4, 14, false);
                 this.placeTile(centerX, mapHeight - 5, 14, false);
             }
