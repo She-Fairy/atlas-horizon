@@ -1273,7 +1273,7 @@ export class MapMaker {
             34: { name: 'TokenBlue', img: 'Global/Objectives/TokenBlue.png', size: 1, showInGamemode: 'Token_Run' },
             35: { name: 'TokenRed', img: 'Global/Objectives/TokenRed.png', size: 1, showInGamemode: 'Token_Run' },
             36: { name: 'Trio Spawn', size: 1, showInGamemode: 'Showdown', img: 'Global/Spawns/7.png' },
-            37: { name: 'Box', img: 'Global/Objectives/Box.png', showInGamemode: ['Showdown', 'Trophy_Escape', 'Drumroll',], size: 1},
+            37: { name: 'Box', img: 'Global/Objectives/Box.png', showInGamemode: ['Showdown', 'Trophy_Escape'], size: 1},
             38: { name: 'Boss Zone', img: 'Global/Arena/Boss_Zone.png', showInGamemode: 'Brawl_Arena', size: 1},
             39: { name: 'Monster Zone', img: 'Global/Arena/Monster_Zone.png', showInGamemode: 'Brawl_Arena', size: 1},
             40: { name: 'Track', img: 'Global/Arena/Track/Blue/Fence.png', showInGamemode: 'Brawl_Arena', size: 1},
