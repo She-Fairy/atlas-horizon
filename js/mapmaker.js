@@ -1296,6 +1296,7 @@ export class MapMaker {
             55: { name: 'GodzillaExplosive', img: 'Global/Godzilla Tiles/GodzillaExplosive.png', showInGamemode: 'Godzilla_City_Smash', size: 1},
             56: { name: 'GodzillaSpawn', img: 'Global/Godzilla Tiles/GodzillaSpawn.png', showInGamemode: 'Godzilla_City_Smash', size: 1},
             57: { name: 'Bot_Zone', img: 'Global/Objectives/Bot_Zone.png', showInGamemode: ['Trophy_Escape', 'Samurai_Smash'], size: 1},
+            58: { name: 'Escape', img: 'Global/Objectives/Escape.png', showInGamemode: 'Trophy_Escape', size: 1},
         };
 
         // Initialize water tile filenames
