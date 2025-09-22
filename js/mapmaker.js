@@ -1268,8 +1268,8 @@ export class MapMaker {
             38: { name: 'Boss Zone', img: 'Global/Arena/Boss_Zone.png', showInGamemode: 'Brawl_Arena', size: 1},
             39: { name: 'Monster Zone', img: 'Global/Arena/Monster_Zone.png', showInGamemode: 'Brawl_Arena', size: 1},
             40: { name: 'Track', img: 'Global/Arena/Track/Blue/Fence.png', showInGamemode: 'Brawl_Arena', size: 1},
-            41: { name: 'Blue Respawn', img: 'Global/Spawns/5.png', showInGamemode: ['Brawl_Ball', 'Hockey', 'Volley_Brawl'], size: 1},
-            42: { name: 'Red Respawn', img: 'Global/Spawns/6.png', showInGamemode: ['Brawl_Ball', 'Hockey', 'Volley_Brawl'], size: 1},
+            41: { name: 'Blue Respawn', img: 'Global/Spawns/5.png', showInGamemode: ['Brawl_Ball', 'Hockey', 'Volley_Brawl', 'Paint_Brawl'], size: 1},
+            42: { name: 'Red Respawn', img: 'Global/Spawns/6.png', showInGamemode: ['Brawl_Ball', 'Hockey', 'Volley_Brawl', 'Paint_Brawl'], size: 1},
             43: { name: 'Base Ike Blue', img: 'Global/Arena/Base_Ike_Blue.png', showInGamemode: 'Brawl_Arena', size: 1 },
             44: { name: 'Small Ike Blue', img: 'Global/Arena/Small_Ike_Blue.png', showInGamemode: 'Brawl_Arena', size: 1 },
             45: { name: 'BFence', img: '${env}/Fence_5v5/BFence.png', showInEnvironment: ['Tropical_Island', 'Super_City_2', 'Bazaar', 'Medieval_Manor', 'Ice_Island', 'Katana_Kingdom',], size: 1 },
@@ -3905,7 +3905,7 @@ export class MapMaker {
                 if (this.mapData[bottomY][midX + 2] === 12) {
                     this.mapData[bottomY][midX + 2] = 0;
                 }
-            } else if ((this.gamemode === 'Brawl_Ball' || this.gamemode === 'Hockey')) {
+            } else if ((this.gamemode === 'Brawl_Ball' || this.gamemode === 'Hockey' || this.gamemode ==='Paint_Brawl')) {
                 this.mapData[8][midX] = 13;      // Red
                 this.mapData[bottomY - 8][midX] = 12;   // Blue
                 this.mapData[8][midX - 2] = 13;  // Red
