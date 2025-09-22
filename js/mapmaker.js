@@ -3936,11 +3936,18 @@ export class MapMaker {
             ];
             if (objectiveModes.includes(this.gamemode)) {
                 this.placeTile(centerX, centerY, 14, false); // Place objective tile
-            } else if (this.gamemode === 'Heist' || this.gamemode === 'Snowtel_Thieves' || this.gamemode === 'Token_Run') {
+            } else if (this.gamemode === 'Heist' || this.gamemode === 'Snowtel_Thieves') {
                 this.placeTile(centerX, 4, 14, false);
                 this.placeTile(centerX, mapHeight - 5, 14, false);
             }
+            if (objectiveModes.includes(this.gamemode)) {
+                this.placeTile(centerX, centerY, 14, false); // Place objective tile
+            } else if (this.gamemode === 'Token_Run') {
+                this.placeTile(centerX, 5, 14, false);
+                this.placeTile(centerX, mapHeight - 6, 14, false);
+            }
         }
+
 
         if (this.mapSize === this.mapSizes.basket) {
             // Place spawns for basket maps
