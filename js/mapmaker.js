@@ -2300,7 +2300,7 @@ export class MapMaker {
             'Wall', 'Wall2', 'Crate', 'Barrel', 'Cactus', 'Bush', 'Fence', 'Skull', 'Rope Fence', 'BFence', 'Water', 'Unbreakable',
             'Blue Spawn', 'Blue Respawn', 'Red Spawn', 'Red Respawn', 'Trio Spawn', 'Objective', 'Box', 'Bumper', 'Bolt', 'TokenBlue', 'TokenRed', 'Boss Zone', 'Monster Zone', 'Track',
             'Base Ike Blue', 'Base Ike Red', 'Small Ike Blue', 'Small Ike Red',
-            'TNT', 'UnbreakableBrick', 'Speed Tile','Slow Tile', 'Spikes', 'Healpad', 'Gas', 'Ice', 'Snow',
+            'TNT', 'UnbreakableBrick', 'Speed Tile','Slow Tile', 'Spikes', 'Healpad', 'Smoke', 'Ice', 'Snow',
             'Jump R', 'Jump L', 'Jump T', 'Jump B',
             'Jump BR', 'Jump TL', 'Jump BL', 'Jump TR',
             'Teleporter Blue', 'Teleporter Green', 'Teleporter Red', 'Teleporter Yellow'
