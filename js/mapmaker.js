@@ -68,6 +68,7 @@ const BORDER_FENCE_LOGIC_BY_ENVIRONMENT = {
     'Ice_Island': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
     'Medieval_Manor': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
     'Super_City_2': FENCE_LOGIC_TYPES.BINARY_CODE,
+    'Hockey': FENCE_LOGIC_TYPES.BINARY_CODE,
     'Katana_Kingdom': FENCE_LOGIC_TYPES.BINARY_CODE,
     'Tropical_Island': FENCE_LOGIC_TYPES.BINARY_CODE,
 };
@@ -489,6 +490,9 @@ export class MapMaker {
             },
             Spongebob: {
                 'Gem_Grab': [2.4, 2.4, -44, -90, 1, 10],
+            },
+            Hockey: {
+                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
             },
             Oddities_Shop: {
                 'Gem_Grab': [2.7, 2.376, -85, -70, 1, 10]
@@ -987,6 +991,33 @@ export class MapMaker {
                 'Post_R': [1.4, 1.8, 5, -66, 1, 5],
                 'Post_T': [0.9, 2.65, 5, -150.50, 1, 5],
             },
+            Hockey: {
+                'Wall2': [1, 1.8, 0, -49, 1, 5],
+                'Crate': [1, 1.8, 0, -50, 1, 5],
+                'Barrel': [1, 1.8, 0, -51, 1, 5],
+                'Cactus': [1, 1.75, 0, -55, 1, 5],
+                'Skull': [1, 1.65, 0, -47, 1, 5],
+                '0001': [0.6, 1.7, 22, -51, 1, 5],
+                '0010': [1, 1.8, 0, -51, 1, 5],
+                '0100': [1, 1.8, 0, -51, 1, 5],
+                '1000': [0.6, 1.7, 22, -51, 1, 5],
+                '1001': [0.6, 1.7, 22, -51, 1, 5],
+                '0011': [0.9, 1.8, 10, -42, 1, 5],
+                '0101': [0.9, 1.8, 0, -42, 1, 5],
+                '1010': [0.9, 1.85, 10, -62, 1, 5],
+                '1100': [0.9, 1.85, 0, -62, 1, 5],
+                'Fence': [1, 1.8, 0, -51, 1, 5],
+                'B0001': [1, 1.3, 0, -55, 1, 5],
+                'B0010': [1, 1.8, 0, -55, 1, 5],
+                'B0011': [1, 1.5, 0, -55, 1, 5],
+                'B0100': [1, 1.8, 0, -55, 1, 5],
+                'B0101': [1, 1.5, 0, -55, 1, 5],
+                'B1000': [1, 1.8, 0, -55, 1, 5],
+                'B1001': [1, 1.05, 0, -55, 1, 5],
+                'B1010': [1, 1.8, 0, -55, 1, 5],
+                'B1100': [1, 1.8, 0, -55, 1, 5],
+                'BFence': [1, 1.8, 0, -55, 1, 5],
+            },
             Brawlywood: {
                 'Wall': [1, 1.8, 0, -51, 1, 5],
                 'Wall2': [1, 1.8, 0, -51, 1, 5],
@@ -1282,7 +1313,7 @@ export class MapMaker {
             42: { name: 'Red Respawn', img: 'Global/Spawns/6.png', showInGamemode: ['Brawl_Ball', 'Hockey', 'Volley_Brawl', 'Paint_Brawl'], size: 1},
             43: { name: 'Base Ike Blue', img: 'Global/Arena/Base_Ike_Blue.png', showInGamemode: 'Brawl_Arena', size: 1 },
             44: { name: 'Small Ike Blue', img: 'Global/Arena/Small_Ike_Blue.png', showInGamemode: 'Brawl_Arena', size: 1 },
-            45: { name: 'BFence', img: '${env}/Fence_5v5/BFence.png', showInEnvironment: ['Tropical_Island', 'Super_City_2', 'Bazaar', 'Medieval_Manor', 'Ice_Island', 'Katana_Kingdom',], size: 1 },
+            45: { name: 'BFence', img: '${env}/Fence_5v5/BFence.png', showInEnvironment: ['Tropical_Island', 'Super_City_2', 'Bazaar', 'Medieval_Manor', 'Ice_Island', 'Katana_Kingdom', 'Hockey',], size: 1 },
             46: { name: 'Base Ike Red', img: 'Global/Arena/Base_Ike_Red.png', showInGamemode: 'Brawl_Arena', size: 1 },
             47: { name: 'Small Ike Red', img: 'Global/Arena/Small_Ike_Red.png', showInGamemode: 'Brawl_Arena', size: 1 },
             48: { name: 'Bumper', size: 1, showInGamemode: ['Brawl_Ball', 'Hockey', 'Paint_Brawl'], getImg: (gamemode) => {
