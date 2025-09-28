@@ -449,7 +449,7 @@ export class MapMaker {
                 'Heist': [2*0.9, 3.56*0.9, -37.5, -95, 1, 10],
             },
             Biodome: {
-                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
+                'Gem_Grab': [2.4, 2.5, -65, -78, 1, 10],
             },
             Stunt_Show: {
                 'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
@@ -474,7 +474,7 @@ export class MapMaker {
                 'Gem_Grab': [2.3, 2.3, -64, -60, 1, 10],
             },
             Circus: {
-                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
+                'Gem_Grab': [2, 2.4, -48, -50, 1, 10],
             },
             Starr_Toon: {
                 'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
