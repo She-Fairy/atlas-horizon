@@ -459,6 +459,7 @@ export class MapMaker {
             Deep_Sea: {
                 'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
                 'Heist': [2 * 1.2, 3.56 * 0.9, -75, -190, 1, 10],
+				'Paint_Brawl': [1.7, 2.5, -30, -75, 1, 10],
             },
             Ghost_Station: {
                 'Gem_Grab': [2.7, 2.376, -85, -70, 1, 10],
