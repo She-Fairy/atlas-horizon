@@ -82,6 +82,21 @@ nav {
         gap: 1rem;
         padding: 0.5rem 1rem;
     }
+
+    .logo {
+        font-size: 0.75rem;
+        color: var(--primary-color);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-left: 1.5rem;
+    }
+
+    .logo-img {
+        height: 1.5rem;
+        width: auto;
+        object-fit: contain;
+    }
 }
 
 .nav-links a:hover,
