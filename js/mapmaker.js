@@ -1,4 +1,3 @@
-// Constants for fence logic types
 const FENCE_LOGIC_TYPES = {
     SIMPLE_BLOCK: 1,    // Logic 1: Block, horizontal, vertical
     BINARY_CODE: 2,     // Logic 2: Binary code system (0001, 0010, etc.)
@@ -6,7 +5,6 @@ const FENCE_LOGIC_TYPES = {
     FOUR_PIECE: 4       // Logic 4: Single, T, TR, R
 };
 
-// Map environments to their fence logic types
 const FENCE_LOGIC_BY_ENVIRONMENT = {
     // To be filled with actual environment mappings
     // Example: 'Desert': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
@@ -207,6 +205,8 @@ export class MapMaker {
             throw new Error('Canvas not found');
         }
 
+        this.canvas.onload = () => this.centerCanvas();
+
         this.headless = headless;
         this.ctx = this.canvas.getContext('2d');
         this.tileSize = 32;
@@ -233,8 +233,8 @@ export class MapMaker {
         this.undoStack = [];
         this.redoStack = [];
         
-        this.zoomLevel = 1;
-        this.minZoom = 0.25;  // Allow zooming out more
+        this.zoomLevel = 0.775;
+        this.minZoom = 0.4;  // Allow zooming out more
         this.maxZoom = 3;     // Allow zooming in more
         this.zoomStep = 0.1;  // Make zoom steps smaller for more gradual zooming
 
@@ -258,7 +258,7 @@ export class MapMaker {
         this.mirrorVertical = false;
         this.mirrorHorizontal = false;
         this.mirrorDiagonal = false;
-        this.blue2Red = false;
+        this.correctMirroring = false;
 
         // Game settings
         this.gamemode = 'Gem_Grab';
@@ -448,7 +448,7 @@ export class MapMaker {
             },
             Fighting_Game: {
                 'Gem_Grab': [2*1.1, 2.09*1.1, -55, -60, 1, 10],
-                'Heist': [2*0.9, 3.56*0.9, -37.5, -95, 1, 10],
+                'Heist': [2*0.9, 3.56*0.9, -37.5, -175, 1, 10],
             },
             Biodome: {
                 'Gem_Grab': [2.4, 2.5, -65, -78, 1, 10],
@@ -1275,7 +1275,7 @@ export class MapMaker {
                 if (gamemode === 'Trophy_Escape' || gamemode === 'Hunters' || gamemode === 'Drumroll') return null;
                 return { img: gamemode === 'Showdown' ? 'Global/Spawns/4.png' : 'Global/Spawns/2.png' };
             }},
-            14: { name: 'Objective', size: 1, getImg: (gamemode, y, mapHeight) => {
+            14: { name: 'Objective', size: 1, getImg: (gamemode, y, mapHeight, environment) => {
                 const objectives = {
                     'Gem_Grab': { img: '${env}/Gamemode_Specifics/Gem_Grab.png' },
                     'Heist': { img: '${env}/Gamemode_Specifics/Heist.png' },
@@ -1291,7 +1291,9 @@ export class MapMaker {
                     'Volley_Brawl': { img: 'Global/Objectives/Volley_Brawl.png' },
                     'Bot_Drop': { img: 'Global/Objectives/Bot_Zone.png' },
                     'Hockey': { img: 'Global/Objectives/Hockey.png' },
-                    'Paint_Brawl': { img: 'Global/Objectives/PaintBrawl2.png' },
+                    'Paint_Brawl': { 
+                        img: environment === 'Deep_Sea' ? 'Deep_Sea/Gamemode_Specifics/Paint_Brawl.png' : 'Global/Objectives/Paint_Brawl.png' 
+                    },
                     'Siege': { 
                         img: `Global/Objectives/${y > mapHeight/2 ? 'IkeBlue' : 'IkeRed'}.png`,
                         displayImg: 'Global/Objectives/IkeRed.png'
@@ -1338,10 +1340,10 @@ export class MapMaker {
             46: { name: 'Base Ike Red', img: 'Global/Arena/Base_Ike_Red.png', showInGamemode: 'Brawl_Arena', size: 1 },
             47: { name: 'Small Ike Red', img: 'Global/Arena/Small_Ike_Red.png', showInGamemode: 'Brawl_Arena', size: 1 },
             48: { name: 'Bumper', size: 1, showInGamemode: ['Brawl_Ball', 'Hockey', 'Paint_Brawl'], getImg: (gamemode) => {
-                return { img: gamemode === 'Hockey' ? 'Global/HockeyBumper.png' : 'Global/Bumper.png' };
+                return { img: gamemode === 'Hockey' ? 'Global/Bumpers/HockeyBumper.png' : this.environment === 'Deep_Sea' ? 'Global/Bumpers/DeepSeaBumper.png' : 'Global/Bumpers/Bumper.png' };
             }},
             49: { name: 'TNT', img: 'Global/TNT.png', size: 1 },
-            50: { name: 'UnbreakableBrick', img: 'Global/UnbreakableBrick.png', showInEnvironment: ['Grassy_Field','Stadium',], size: 1 },
+            // 50: { name: 'UnbreakableBrick', img: 'Global/UnbreakableBrick.png', showInEnvironment: ['Grassy_Field','Stadium',], size: 1 },
             51: { name: 'GodzillaCity1', img: 'Global/Godzilla Tiles/GodzillaCity1.png', showInGamemode: 'Godzilla_City_Smash', size: 1},
             52: { name: 'GodzillaCity2', img: 'Global/Godzilla Tiles/GodzillaCity2.png', showInGamemode: 'Godzilla_City_Smash', size: 1},
             53: { name: 'GodzillaCity3', img: 'Global/Godzilla Tiles/GodzillaCity3.png', showInGamemode: 'Godzilla_City_Smash', size: 1},
@@ -1432,9 +1434,6 @@ export class MapMaker {
         this.selectDragLastPos = null;
     }
 
-    
-
-    // Add a method to preload all water tile images
     preloadWaterTiles() {
         if (!this.tileImages) this.tileImages = {};
         if (!this.tileImagePaths) this.tileImagePaths = {};
@@ -1463,12 +1462,11 @@ export class MapMaker {
         });
     }
 
-
     async preloadGoalImage(name, environment) {
         if (!this.goalImageCache) this.goalImageCache = {};
         if (!this.tileImagePaths) this.tileImagePaths = {};
 
-        const key = `${name}_${environment}`;
+        const key = `${name}${environment}`;
         const fallbackKey = `${name}`;
         const primaryPath = `Resources/Global/Goals/${name}${environment}.png`;
         const fallbackPath = `Resources/Global/Goals/${name}.png`;
@@ -1501,20 +1499,6 @@ export class MapMaker {
             };
             img.src = primaryPath;
         });
-    }
-
-
-
-
-    // Update the setEnvironment method to preload water tiles when environment changes
-    setEnvironment(environment) {
-        this.environment = environment;
-        this.loadEnvironmentBackgrounds();
-        this.loadTileImages();
-        this.preloadWaterTiles(); // Ensure water tiles are preloaded
-        this.initializeTileSelector();
-        // Force a redraw after a short delay to ensure images are loaded
-        setTimeout(() => this.draw(), 100);
     }
 
     async initialize() {
@@ -1581,7 +1565,7 @@ export class MapMaker {
                 let imgPath = null;
     
                 if (def.getImg) {
-                    const imgData = def.getImg(this.gamemode, 0, this.mapHeight);
+                    const imgData = def.getImg(this.gamemode, 0, this.mapHeight, this.environment);
                     if (!imgData) {
                         onLoad();
                         return;
@@ -1617,7 +1601,6 @@ export class MapMaker {
         });
     }
     
-
     initializeUI() {
         // Initialize gamemode selector
         if (this.headless) return;
@@ -1643,7 +1626,7 @@ export class MapMaker {
         
         const scaleX = containerWidth / this.canvas.width;
         const scaleY = containerHeight / this.canvas.height;
-        this.zoomLevel = Math.min(scaleX, scaleY, 1);
+        this.zoomLevel = Math.min(scaleX, scaleY, 0.775); // Cap max zoom to 77.5%
         
         this.updateCanvasZoom();
     }
@@ -1668,25 +1651,51 @@ export class MapMaker {
         }
     }
 
+    centerCanvas() {
+        const container = this.canvas.parentElement.parentElement; // .map-editor
+        const containerRect = container.getBoundingClientRect();
+
+        const newWidth = this.canvas.offsetWidth;
+        const newHeight = this.canvas.offsetHeight;
+
+        container.scrollLeft = (newWidth - containerRect.width) / 2;
+        container.scrollTop = (newHeight - containerRect.height) / 2;
+    }
+
     updateCanvasZoom() {
-        const container = this.canvas.parentElement;
-        const mapWidth = this.canvas.width * this.zoomLevel;
-        const mapHeight = this.canvas.height * this.zoomLevel;
-        
-        // Set the canvas size to match zoomed dimensions
-        this.canvas.style.width = `${mapWidth}px`;
-        this.canvas.style.height = `${mapHeight}px`;
-        
-        // Apply zoom transform from top-left corner
-        this.canvas.style.transform = `scale(${this.zoomLevel})`;
-        
-        // Make container scrollable if content is larger than container
-        if (mapWidth > container.clientWidth - 40 || mapHeight > container.clientHeight - 40) {
-            container.classList.add('scrollable');
-        } else {
-            container.classList.remove('scrollable');
+        const container = this.canvas.parentElement.parentElement;
+        const containerRect = container.getBoundingClientRect();
+
+        const centerX = container.scrollLeft + containerRect.width / 2;
+        const centerY = container.scrollTop + containerRect.height / 2;
+
+        const relX = (centerX - this.canvas.offsetLeft) / (this.canvas.offsetWidth || 1);
+        const relY = (centerY - this.canvas.offsetTop) / (this.canvas.offsetHeight || 1);
+
+        const newWidth = this.canvas.width * this.zoomLevel;
+        const newHeight = this.canvas.height * this.zoomLevel;
+
+        // resize canvas
+        this.canvas.style.width = `${newWidth}px`;
+        this.canvas.style.height = `${newHeight}px`;
+
+        // adjust scroll so zoom is from center
+        container.scrollLeft = this.canvas.offsetLeft + newWidth * relX - containerRect.width / 2;
+        container.scrollTop = this.canvas.offsetTop + newHeight * relY - containerRect.height / 2;
+    }
+
+
+
+    zoom(delta) {
+        const oldZoom = this.zoomLevel;
+        this.zoomLevel = Math.max(this.minZoom, Math.min(this.maxZoom, this.zoomLevel + delta * 1.75));
+
+        if (oldZoom !== this.zoomLevel) {
+            this.updateCanvasZoom();
         }
     }
+
+
 
     initializeEventListeners() {
         // Tool buttons
@@ -1704,17 +1713,20 @@ export class MapMaker {
         const mirrorVertical = document.getElementById('mirrorVertical');
         const mirrorHorizontal = document.getElementById('mirrorHorizontal');
         const mirrorDiagonal = document.getElementById('mirrorDiagonal');
-        const blue2Red = document.getElementById('blue2RedBtn');
+        const correctMirroring = document.getElementById('correctMirroringBtn');
 
         // Map settings
         const mapSizeSelect = document.getElementById('mapSize');
         const gamemodeSelect = document.getElementById('gamemode');
         const environmentSelect = document.getElementById('environment');
 
+        const selectBtn = document.getElementById('selectBtn');
+
         // Selection mode radio buttons
         document.querySelectorAll('input[name="selectionMode"]').forEach(radio => {
             radio.addEventListener('change', (e) => {
                 this.selectionMode = e.target.value;
+                document.getElementById('selectedAreaToolsDiv').style.display = selectBtn.checked ? 'block' : 'none';
             });
         });
 
@@ -1735,7 +1747,7 @@ export class MapMaker {
         mirrorVertical.addEventListener('change', (e) => this.mirrorVertical = e.target.checked);
         mirrorHorizontal.addEventListener('change', (e) => this.mirrorHorizontal = e.target.checked);
         mirrorDiagonal.addEventListener('change', (e) => this.mirrorDiagonal = e.target.checked);
-        blue2Red.addEventListener('change', () =>  this.toggleBlue2Red());
+        correctMirroring.addEventListener('change', () =>  this.toggleCorrectMirroring());
 
         // Map setting listeners
         mapSizeSelect.addEventListener('change', (e) => this.setSize(e.target.value));
@@ -1750,6 +1762,9 @@ export class MapMaker {
         
         // Replace button
         document.getElementById('replaceBtn').addEventListener('click', () => this.toggleReplaceMode());
+        
+        // Rotate button
+        document.getElementById('rotateBtn').addEventListener('click', () => this.rotateSelectedTiles());
 
         // Add keyboard shortcuts
         document.addEventListener('keydown', (e) => {
@@ -1764,7 +1779,7 @@ export class MapMaker {
                         document.getElementById('mirrorDiagonal').checked = this.mirrorDiagonal;
                         return;
                     }
-                    this.setSelectionMode('single');
+                    document.getElementById('selectBtn').click();
                     break;
 
                 case 'Digit2':
@@ -1775,7 +1790,7 @@ export class MapMaker {
                         document.getElementById('mirrorVertical').checked = this.mirrorVertical;
                         return;
                     }
-                    this.setSelectionMode('line');
+                    document.getElementById('lineBtn').click();
                     break;
 
                 case 'Digit3':
@@ -1786,23 +1801,19 @@ export class MapMaker {
                         document.getElementById('mirrorHorizontal').checked = this.mirrorHorizontal;
                         return;
                     }
-                    this.setSelectionMode('rectangle');
+                    document.getElementById('rectangleBtn').click();
                     break;
                     
                 case 'Digit4':
                 case 'Numpad4':
-                    this.setSelectionMode('fill');
+                    document.getElementById('fillBtn').click();
                     break;
 
                 case 'Digit5':
                 case 'Numpad5':
-                    this.setSelectionMode('select');
+                    document.getElementById('selectBtn').click();
                     break;
-
-                case 'KeyR':
-                    this.toggleReplaceMode();
-                    break;
-
+                    
                 case 'KeyE':
                     this.toggleEraseMode();
                     break;
@@ -1812,7 +1823,7 @@ export class MapMaker {
                     break;
 
                 case 'KeyN':
-                    this.toggleBlue2Red();
+                    this.toggleCorrectMirroring();
                     break;
 
                 case 'KeyQ':
@@ -1821,6 +1832,15 @@ export class MapMaker {
 
                 case 'KeyW':
                     this.toggleGuides();
+                    break;
+
+                case 'KeyR':
+                    if (e.ctrlKey || e.metaKey) {
+                        e.preventDefault();
+                        this.rotateSelectedTiles();
+                    } else {
+                        this.toggleReplaceMode();
+                    }
                     break;
 
                 case 'KeyZ':
@@ -2194,86 +2214,8 @@ export class MapMaker {
         } else if (this.isDragging) {
             const coords = this.getTileCoordinates(event);
             if (coords.x >= 0 && coords.x < this.mapWidth && coords.y >= 0 && coords.y < this.mapHeight) {
-                // Get the tile definition
-                const def = this.tileDefinitions[this.draggedTileId];
-                if (!def) return;
-                
-                // Check if we can place this tile (for 2x2 tiles)
-                if (def.size === 2) {
-                    if (coords.x >= this.mapWidth - 1 || coords.y >= this.mapHeight - 1) return;
-                    // Check if any of the 4 tiles are occupied
-                    for (let dy = 0; dy < 2; dy++) {
-                        for (let dx = 0; dx < 2; dx++) {
-                            if (this.mapData[coords.y + dy][coords.x + dx] !== 0) return;
-                        }
-                    }
-                }
-                
-                // Place the tile
-                this.mapData[coords.y][coords.x] = this.draggedTileId;
-                
-                // For 2x2 tiles, mark the other tiles as occupied
-                if (def.size === 2) {
-                    this.mapData[coords.y][coords.x + 1] = -1;
-                    this.mapData[coords.y + 1][coords.x] = -1;
-                    this.mapData[coords.y + 1][coords.x + 1] = -1;
-                }
-                
-                // Apply mirroring
-                if (this.mirrorVertical || this.mirrorHorizontal || this.mirrorDiagonal) {
-                    // Calculate mirror positions
-                    const mirrorY = this.mapHeight - 1 - coords.y;
-                    const mirrorX = this.mapWidth - 1 - coords.x;
-                    
-                    // For 2x2 tiles, adjust the mirror position
-                    const size = def.size || 1;
-                    
-                    // Get mirrored tile ID (for jump pads)
-                    const mirrorV = this.getMirroredTileId(this.draggedTileId, 'vertical');
-                    const mirrorH = this.getMirroredTileId(this.draggedTileId, 'horizontal');
-                    const mirrorD = this.getMirroredTileId(this.draggedTileId, 'diagonal');
-                    
-                    
-                    // Helper function to place a tile and its occupied spaces
-                    const placeMirroredTile = (ty, tx, mid) => {
-                        if (ty < 0 || ty >= this.mapHeight || tx < 0 || tx >= this.mapWidth) return;
-                        if (size === 2) {
-                            if (tx >= this.mapWidth - 1 || ty >= this.mapHeight - 1) return;
-                            // Check if any tiles are occupied
-                            for (let dy = 0; dy < 2; dy++) {
-                                for (let dx = 0; dx < 2; dx++) {
-                                    if (this.mapData[ty + dy][tx + dx] !== 0) return;
-                                }
-                            }
-                            // Place the tile and mark occupied spaces
-                            this.mapData[ty][tx] = mid;
-                            this.mapData[ty][tx + 1] = -1;
-                            this.mapData[ty + 1][tx] = -1;
-                            this.mapData[ty + 1][tx + 1] = -1;
-                        } else {
-                            this.mapData[ty][tx] = mid;
-                        }
-                    };
-                    
-                    // Apply vertical mirroring - for 2x2 tiles, adjust by 1 tile back in rows
-                    if (this.mirrorVertical) {
-                        const adjustedY = size === 2 ? mirrorY - 1 : mirrorY;
-                        placeMirroredTile(adjustedY, coords.x, mirrorV);
-                    }
-                    
-                    // Apply horizontal mirroring - for 2x2 tiles, adjust by 1 tile back in columns
-                    if (this.mirrorHorizontal) {
-                        const adjustedX = size === 2 ? mirrorX - 1 : mirrorX;
-                        placeMirroredTile(coords.y, adjustedX, mirrorH);
-                    }
-                    
-                    // Apply diagonal mirroring - for 2x2 tiles, adjust by 1 tile back in both rows and columns
-                    if (this.mirrorDiagonal) {
-                        const adjustedY = size === 2 ? mirrorY - 1 : mirrorY;
-                        const adjustedX = size === 2 ? mirrorX - 1 : mirrorX;
-                        placeMirroredTile(adjustedY, adjustedX, mirrorD);
-                    }
-                }
+				// Delegate to existing placement logic (handles validation, 2x2, mirroring, state)
+				this.placeTile(coords.x, coords.y, this.draggedTileId);
                 this.draw();
                 this.checkForErrors();
             }
@@ -2351,20 +2293,10 @@ export class MapMaker {
         this.handleMouseUp(simulatedEvent);
     }
 
-
     handleTouchCancel(e) {
         this.handleMouseLeave();
     }
 
-
-    zoom(delta) {
-        const oldZoom = this.zoomLevel;
-        this.zoomLevel = Math.max(this.minZoom, Math.min(this.maxZoom, this.zoomLevel + delta));
-        
-        if (oldZoom !== this.zoomLevel) {
-            this.updateCanvasZoom();
-        }
-    }
 
     initializeTileSelector() {
         if (this.headless) return;
@@ -2374,10 +2306,10 @@ export class MapMaker {
         // Define the order of tiles
         const tileOrder = [
             'Wall', 'Wall2', 'Crate', 'Barrel', 'Cactus', 'Bush', 'Fence', 'Skull', 'Rope Fence', 'BFence', 'Water', 'Unbreakable',
-            'Blue Spawn', 'Blue Respawn', 'Red Spawn', 'Red Respawn', 'Trio Spawn', 'Objective', 'Box', 'Bumper', 'Bolt', 'TokenBlue', 'TokenRed', 'Boss Zone', 'Monster Zone', 'Track', 'Bot_Zone', 'PaintBrawl2',
+            'Blue Spawn', 'Blue Respawn', 'Red Spawn', 'Red Respawn', 'Trio Spawn', 'Objective', 'Box', 'Bumper', 'Bolt', 'TokenBlue', 'TokenRed', 'Boss Zone', 'Monster Zone', 'Track', 'Bot_Zone',
             'Base Ike Blue', 'Base Ike Red', 'Small Ike Blue', 'Small Ike Red',
             'GodzillaCity1', 'GodzillaCity2', 'GodzillaCity3', 'GodzillaCity4', 'GodzillaExplosive', 'GodzillaSpawn', 'Escape',
-            'TNT', 'UnbreakableBrick', 'Speed Tile','Slow Tile', 'Spikes', 'Heal Pad', 'Smoke', 'Ice', 'Snow',
+            'TNT', /*'UnbreakableBrick',*/ 'Speed Tile','Slow Tile', 'Spikes', 'Heal Pad', 'Smoke', 'Ice', 'Snow',
             'Jump R', 'Jump L', 'Jump T', 'Jump B',
             'Jump BR', 'Jump TL', 'Jump BL', 'Jump TR',
             'Teleporter Blue', 'Teleporter Green', 'Teleporter Red', 'Teleporter Yellow'
@@ -2405,7 +2337,7 @@ export class MapMaker {
                 if (def.img) {
                     img.src = `Resources/${def.img.replace('${env}', this.environment)}`;
                 } else if (def.getImg) {
-                    const imgData = def.getImg(this.gamemode, 0, this.mapHeight);
+                    const imgData = def.getImg(this.gamemode, 0, this.mapHeight, this.environment);
                     if (imgData) {
                         const imgPath = imgData.displayImg || imgData.img;
                         img.src = `Resources/${imgPath.replace('${env}', this.environment)}`;
@@ -2468,7 +2400,6 @@ export class MapMaker {
         this.canvas.height = this.mapSize.height * this.tileSize;
     }
 
-
     drawTile(ctx, tileId, x, y, red = false) {
         const def = this.tileDefinitions[tileId];
         if (!def) return;
@@ -2523,7 +2454,7 @@ export class MapMaker {
 
             // Convert code array to string for image name
             const imageName = code.join('') + '.png';
-            const cacheKey = `water_${imageName}`;
+            const cacheKey = `${this.environment}/water_${imageName}`;
             
             // Get the image from the cache
             img = this.tileImages[cacheKey];
@@ -2680,7 +2611,7 @@ export class MapMaker {
             // Handle position-dependent tiles like objectives
             const def = this.tileDefinitions[tileId];
             if (def && def.getImg) {
-                const imgData = def.getImg(this.gamemode, y, this.mapHeight);
+                const imgData = def.getImg(this.gamemode, y, this.mapHeight, this.environment);
                 if (imgData && imgData.img) {
                     const imgPath = `Resources/${imgData.img.replace('${env}', this.environment)}`;
                     // Use a unique cache key that includes position for position-dependent tiles
@@ -2767,6 +2698,69 @@ export class MapMaker {
 
         // Reset opacity
         ctx.globalAlpha = 1;
+    }
+
+    // Draws the Jump Landing indicator for jump tiles
+    showJumpLanding(ctx, tileId, x, y) {
+        // Map tileId to jump type
+        const jumpTypes = {
+            20: 'R', 21: 'L', 22: 'T', 23: 'B',
+            24: 'BR', 25: 'TL', 26: 'BL', 27: 'TR'
+        };
+        const type = jumpTypes[tileId];
+        if (!type) return;
+
+        // Get mapMaker context for map size and tile size
+        const mapMaker = window.mapMaker;
+        const mapWidth = mapMaker?.mapWidth || 40;
+        const mapHeight = mapMaker?.mapHeight || 40;
+        const tileSize = mapMaker?.tileSize || 64;
+        const padding = mapMaker?.canvasPadding || 0;
+
+        // Calculate landing position offset
+        let dx = 0, dy = 0, dist = 12;
+        if (type === 'R') dx = dist;
+        if (type === 'L') dx = -dist;
+        if (type === 'T') dy = -dist;
+        if (type === 'B') dy = dist;
+        if (type === 'BR') { dx = 8; dy = 8; }
+        if (type === 'TL') { dx = -8; dy = -8; }
+        if (type === 'BL') { dx = -8; dy = 8; }
+        if (type === 'TR') { dx = 8; dy = -8; }
+
+        // Calculate landing tile position
+        let lx = x + dx;
+        let ly = y + dy;
+
+        // Clamp to 2 tiles before the edge if out of bounds
+        if (lx < 0) lx = 1;
+        if (lx > mapWidth - 2) lx = mapWidth - 2;
+        if (ly < 0) ly = 1;
+        if (ly > mapHeight - 2) ly = mapHeight - 2;
+
+        // Draw the landing image at (lx, ly), size 2x2 tiles
+        const imgPath = 'Resources/Global/JumpLanding.png';
+        let img = mapMaker?.tileImages?.[imgPath];
+        if (!img) {
+            img = new window.Image();
+            img.src = imgPath;
+            if (mapMaker && mapMaker.tileImages) mapMaker.tileImages[imgPath] = img;
+            img.onload = () => mapMaker?.draw && mapMaker.draw();
+            img.onerror = () => { console.error('Failed to load JumpLanding image:', imgPath); };
+        }
+        if (!img.complete || img.naturalWidth === 0) return;
+
+        ctx.save();
+        ctx.globalAlpha = 0.7;
+        ctx.drawImage(
+            img,
+            lx * tileSize + padding,
+            ly * tileSize + padding,
+            tileSize * 2,
+            tileSize * 2
+        );
+        ctx.globalAlpha = 1.0;
+        ctx.restore();
     }
 
     draw() {
@@ -2988,7 +2982,56 @@ export class MapMaker {
                             const red = tile?.red ?? false;
 
                             this.drawTile(this.ctx, tileId, x, y, red);
+                        });
+                    });
+            });
 
+
+            Array.from(tilesByZIndex.keys())
+            .sort((a, b) => a - b)
+            .forEach(zIndex => {
+                const tiles = tilesByZIndex.get(zIndex);
+
+                // Group tiles by row (y value)
+                const rows = new Map();
+
+                tiles.forEach(tile => {
+                    const { y } = tile;
+                    if (!rows.has(y)) {
+                        rows.set(y, []);
+                    }
+                    rows.get(y).push(tile);
+                });
+
+                // Draw tiles row by row
+                Array.from(rows.keys())
+                    .sort((a, b) => a - b)
+                    .forEach(y => {
+                        const rowTiles = rows.get(y);
+
+                        // Separate regular and lastInRow tiles
+                        const normalTiles = [];
+                        const lastInRowTiles = [];
+
+                        rowTiles.forEach(tile => {
+                            if (tile.lastInRow) {
+                                lastInRowTiles.push(tile);
+                            } else {
+                                normalTiles.push(tile);
+                            }
+                        });
+
+                        // Sort both groups by x
+                        normalTiles.sort((a, b) => a.x - b.x);
+                        lastInRowTiles.sort((a, b) => a.x - b.x); // Optional, just in case of multiple
+
+                        [...normalTiles, ...lastInRowTiles].forEach(({ x, y, tileId }) => {
+                            const tile = getTileAt(2, x, y);
+                            const red = tile?.red ?? false;
+
+                            if (this.showGuides && tileId >= 20 && tileId <= 27) {
+                                this.showJumpLanding(this.ctx, tileId, x, y);
+                            }
                         });
                     });
             });
@@ -3023,7 +3066,7 @@ export class MapMaker {
 
         if (this.goalImages?.length) {
             for (const goal of this.goalImages) {
-                const img = this.goalImageCache[`${goal.name}_${this.environment}`] ||
+                const img = this.goalImageCache[`${goal.name}${this.environment}`] ||
                             this.goalImageCache[`${goal.name}`];
                 if (!img) continue;
 
@@ -3297,14 +3340,15 @@ export class MapMaker {
                 return;
         }
 
+        
+        this.eraseTile(x, y, false);
 
         // Check if we can place this tile (for 2x2 tiles)
         if (def.size === 2) {
             if (x >= this.mapWidth - 1 || y >= this.mapHeight - 1) return;
-            // Check if any of the 4 tiles are occupied
             for (let dy = 0; dy < 2; dy++) {
                 for (let dx = 0; dx < 2; dx++) {
-                    this.mapData[y + dy][x + dx] = 0;
+                    this.eraseTile(x + dx, y + dy, false);
                 }
             }
         }
@@ -3329,8 +3373,8 @@ export class MapMaker {
         // For 2x2 tiles, mark the other tiles as occupied
         if (def.size === 2) {
             this.mapData[y][x + 1] = -1;
-            this.mapData[y + 1][x] = -1;
-            this.mapData[y + 1][x + 1] = -1;
+            this.mapData[y + 1][x] = -2;
+            this.mapData[y + 1][x + 1] = -3;
         }
 
         // Handle mirroring
@@ -3396,7 +3440,7 @@ export class MapMaker {
 
     getMirroredTileId(tileId, direction) {
         const def = this.tileDefinitions[tileId];
-        if (!def && !this.blue2Red) return tileId;
+        if (!def && !this.correctMirroring) return tileId;
 
         // Handle jump pad mirroring
         if (def.name.startsWith('Jump')) {
@@ -3419,7 +3463,7 @@ export class MapMaker {
             return mirroredDef ? parseInt(mirroredDef[0]) : tileId;
         }
 
-        if (this.blue2Red) {
+        if (this.correctMirroring) {
             switch (tileId){
                 case 12: return 13;
                 case 13: return 12;
@@ -3445,11 +3489,24 @@ export class MapMaker {
         const tileId = this.mapData[y][x];
         const def = this.tileDefinitions[tileId];
         if (def && def.size === 2) {
-            // For 2x2 tiles, we need to clear all 4 tiles
-
             this.mapData[y][x + 1] = 0;
             this.mapData[y + 1][x] = 0;
             this.mapData[y + 1][x + 1] = 0;
+        }
+        if (tileId === -1) {
+            this.mapData[y][x - 1] = 0;
+            this.mapData[y + 1][x] = 0;
+            this.mapData[y + 1][x - 1] = 0;
+        }
+        if (tileId === -2) {
+            this.mapData[y][x + 1] = 0;
+            this.mapData[y - 1][x] = 0;
+            this.mapData[y - 1][x + 1] = 0;
+        }
+        if (tileId === -3) {
+            this.mapData[y][x - 1] = 0;
+            this.mapData[y - 1][x] = 0;
+            this.mapData[y - 1][x - 1] = 0;
         }
         this.mapData[y][x] = 0;
 
@@ -3491,7 +3548,6 @@ export class MapMaker {
             this.checkForErrors();
         }
     }
-
 
     clearMap(confirmed = false) {
         if (confirmed || confirm('Are you sure you want to clear the map?')) {
@@ -3792,7 +3848,7 @@ export class MapMaker {
         if (this.goalImages?.length) {
             for (const goal of this.goalImages) {
                 const img =
-                    this.goalImageCache[`${goal.name}_${this.environment}`] ||
+                    this.goalImageCache[`${goal.name}${this.environment}`] ||
                     this.goalImageCache[goal.name];
                 if (!img || !img.complete) continue;
 
@@ -3809,9 +3865,6 @@ export class MapMaker {
         return canvas.toDataURL('image/png');
     }
 
-
-
-
     async exportMap(code = this.mapData, gamemode, env) {
         const mapName = document.getElementById('mapName').value || 'Untitled Map';
         const dataUrl = await this.createMapPNG(code, gamemode, env);
@@ -3821,7 +3874,6 @@ export class MapMaker {
         link.href = dataUrl;
         link.click();
     }
-
 
     loadGoalImage(name, environment) {
         return new Promise((resolve) => {
@@ -3888,9 +3940,21 @@ export class MapMaker {
                 let blue = { name: 'goalBlue', x: middleX - 3, y: this.mapHeight - 5, w: 7, h: 3.5, offsetX: 0, offsetY: -10 };
 
                 if (this.environment === 'Stadium'){
-                    red = { name: 'goalRed', x: middleX - 3, y: 0, w: 7, h: 4.5, offsetX: 0, offsetY: -20 };
-                    blue = { name: 'goalBlue', x: middleX - 3, y: this.mapHeight - 4, w: 7, h: 4.5, offsetX: 0, offsetY: -10 };
+                    red.h = 4.5;
+                    red.offsetY = -40;
+                    blue.h = 4.5;
+                    blue.offsetY = 20;
+                } else if (this.environment === 'Stunt_Show'){
+                    red.w = 6;
+                    red.h = 2;
+                    blue.w = 6;
+                    blue.h = 2;
+                    red.offsetY = 15;
+                    red.offsetX = 15;
+                    blue.offsetY = 80;
+                    blue.offsetX = 15;
                 }
+
                 this.goalImages.push(
                     red, blue
                 );
@@ -4182,12 +4246,15 @@ export class MapMaker {
                 e.target.value = Object.entries(this.mapSizes)
                     .find(([k, v]) => v.width === this.mapWidth && v.height === this.mapHeight)[0];
             }
-        }
+    }
 
     setEnvironment(environment) {
         this.environment = environment;
         this.loadEnvironmentBackgrounds();
         this.loadTileImages();
+        this.preloadWaterTiles();
+        this.preloadGoalImage();
+        this.setGamemode(this.gamemode);
         this.initializeTileSelector();
         this.draw();
     }
@@ -4230,7 +4297,6 @@ export class MapMaker {
         this.toggleReplaceMode();
     }
 
-    // Add new methods for the shortcuts
     setSelectionMode(mode) {
         if (this.mouseDown) return;
         this.selectionMode = mode;
@@ -4292,11 +4358,11 @@ export class MapMaker {
         this.draw();
     }
 
-    toggleBlue2Red() {
-        this.blue2Red = !this.blue2Red;
-        const blue2RedBtn = document.getElementById('blue2RedBtn');
-        blue2RedBtn.checked = this.blue2Red;
-        blue2RedBtn.parentElement.classList.toggle('active', this.blue2Red);
+    toggleCorrectMirroring() {
+        this.correctMirroring = !this.correctMirroring;
+        const correctMirroringBtn = document.getElementById('correctMirroringBtn');
+        correctMirroringBtn.checked = this.correctMirroring;
+        correctMirroringBtn.parentElement.classList.toggle('active', this.correctMirroring);
     }
 
     toggleEraseMode(state = !this.isErasing) {
@@ -4314,13 +4380,86 @@ export class MapMaker {
         this.draw();
     }
 
-    // Add method to check if a tile is a block
+    rotateSelectedTiles() {
+        if (this.selectedTiles.length === 0 || this.isSelectDragging) return;
+
+        // Save state before making changes
+        this.saveState();
+
+        // Find the bounding rectangle of selected tiles
+        let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+        
+        for (const tile of this.selectedTiles) {
+            minX = Math.min(minX, tile.x);
+            minY = Math.min(minY, tile.y);
+            maxX = Math.max(maxX, tile.x);
+            maxY = Math.max(maxY, tile.y);
+        }
+
+        const width = maxX - minX + 1;
+        const height = maxY - minY + 1;
+        
+        // Create a 2D array to store the original tile data
+        const originalTiles = Array(height).fill().map(() => Array(width).fill(null));
+        
+        // Store original tile data
+        for (const tile of this.selectedTiles) {
+            const relativeX = tile.x - minX;
+            const relativeY = tile.y - minY;
+            originalTiles[relativeY][relativeX] = {
+                id: tile.id,
+                x: tile.x,
+                y: tile.y
+            };
+        }
+
+        // Clear the original tiles from the map
+        for (const tile of this.selectedTiles) {
+            this.mapData[tile.y][tile.x] = 0;
+        }
+
+        // Clear selected tiles array
+        this.selectedTiles = [];
+
+        // Rotate the tiles 90 degrees clockwise around the top-left corner (minX, minY)
+        // For a 90-degree clockwise rotation: (x, y) -> (y, width - 1 - x)
+        for (let y = 0; y < height; y++) {
+            for (let x = 0; x < width; x++) {
+                const originalTile = originalTiles[y][x];
+                if (originalTile) {
+                    // Calculate new position after 90-degree clockwise rotation
+                    const newRelativeX = y;
+                    const newRelativeY = width - 1 - x;
+                    
+                    const newX = minX + newRelativeX;
+                    const newY = minY + newRelativeY;
+                    
+                    // Check if the new position is within map bounds
+                    if (newX >= 0 && newX < this.mapWidth && newY >= 0 && newY < this.mapHeight) {
+                        // Place the tile at the new position
+                        this.mapData[newY][newX] = originalTile.id;
+                        
+                        // Add to selected tiles array
+                        this.selectedTiles.push({
+                            x: newX,
+                            y: newY,
+                            id: originalTile.id
+                        });
+                    }
+                }
+            }
+        }
+
+        // Redraw the map
+        this.draw();
+        this.checkForErrors();
+    }
+
     isBlock(tileId) {
         const blockIds = [1, 3, 4, 5, 6, 7, 8, 9, 11]; // IDs for Wall, Wall2, Crate, Barrel, Cactus, Water, Fence, Rope Fence, Unbreakable
         return blockIds.includes(tileId);
     }
     
-    // Add method to check if two blocks are connected in a continuous line
     areBlocksConnected(x1, y1, x2, y2) {
         // Check if they're adjacent (including diagonally)
         const dx = Math.abs(x1 - x2);
@@ -4328,7 +4467,6 @@ export class MapMaker {
         return dx <= 1 && dy <= 1;
     }
     
-    // Add method to check for errors
     checkForErrors() {
         if (!this.showErrors) return;
     
@@ -4408,9 +4546,6 @@ export class MapMaker {
         return this.isBlock(this.mapData[y][x]);
     }
     
-    
-
-    // Add toggleShowErrors method
     toggleShowErrors() {
         this.showErrors = !this.showErrors;
         

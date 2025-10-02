@@ -31,14 +31,114 @@
     </nav>
 
     <div class="mapmaker-container">
-        <div class="toolbar">
-            <div class="tool-section">
-                <h3>Map Settings</h3>
-                <div class="select-container">
+        <button id="panelToggle" class="hamburger" aria-label="Open tools"></button>
+
+        <aside class="side-panel" aria-hidden="true">
+            <div class="side-panel-header">
+                <h3>Tools</h3>
+            </div>
+            <h4 style="margin-bottom: 0.5rem;">Mirroring</h4>
+            <div class="side-panel-content">
+                <div class="mirroring-container">
+                <div class="checkbox-container">
+                    <label>
+                        <input type="checkbox" id="mirrorDiagonal">
+                        Diagonal
+                    </label>
+                    <label>
+                        <input type="checkbox" id="mirrorVertical">
+                        Vertical
+                    </label>
+                    <label>
+                        <input type="checkbox" id="mirrorHorizontal">
+                        Horizontal
+                    </label>
+                </div>
+                    <label for="correctMirroringBtn" title="Correct Mirroring (N)">
+                        <input type="checkbox" id="correctMirroringBtn">
+                        Correct Mirroring
+                    </label>
+                </div>
+                <div>
+                    <h4 style="margin-bottom: 0.5rem;">Selection Options</h4>
+                    <div class="radio-container">
+                        <label class="icon-btn" title="Single (1)">
+                            <input type="radio" name="selectionMode" id="singleBtn" value="single" checked>
+                            <img src="./Resources/Additional/Icons/Single.png" alt="Single">
+                        </label>
+                        <label class="icon-btn" title="Line (2)">
+                            <input type="radio" name="selectionMode" id="lineBtn" value="line">
+                            <img src="./Resources/Additional/Icons/Line.png" alt="Line">
+                        </label>
+                        <label class="icon-btn" title="Rectangle (3)">
+                            <input type="radio" name="selectionMode" id="rectangleBtn" value="rectangle">
+                            <img src="./Resources/Additional/Icons/Rectangle.png" alt="Rectangle">
+                        </label>
+                        <label class="icon-btn" title="Fill (4)">
+                            <input type="radio" name="selectionMode" id="fillBtn" value="fill">
+                            <img src="./Resources/Additional/Icons/Bucket.png" alt="Fill">
+                        </label>
+                        <label class="icon-btn" title="Select (5)">
+                            <input type="radio" name="selectionMode" id="selectBtn" value="select">
+                            <img src="./Resources/Additional/Icons/Select.png" alt="Select">
+                        </label>
+                    </div>
+                </div>
+                <div>
+                    <h4 style="margin-bottom: 0.5rem;">Quick Fix</h4>
+                    <div class="tool-buttons">
+                        <label class="icon-btn" title="Erase (E)">
+                            <input type="checkbox" id="eraseBtn">
+                            <img src="./Resources/Additional/Icons/Erase.png" alt="Erase">
+                        </label>
+                        <button id="undoBtn" class="icon-btn" title="Undo (Ctrl+Z)">
+                            <img src="./Resources/Additional/Icons/Undo.png" alt="Undo">
+                        </button>
+                        <button id="redoBtn" class="icon-btn" title="Redo (Ctrl+Y)">
+                            <img src="./Resources/Additional/Icons/Redo.png" alt="Redo">
+                        </button>
+                        <span class="icon-btn" style="visibility: hidden;"></span>
+                        <span class="icon-btn" style="visibility: hidden;"></span>
+                    </div>
+                </div>
+                <div>
+                    <h4 style="margin-bottom: 0.5rem;">Map Tools</h4>
+                    <div class="tool-buttons">
+                        <label class="icon-btn" title="Replace (R)">
+                            <input type="checkbox" id="replaceBtn">
+                            <img src="./Resources/Additional/Icons/Replace.png" alt="Replace">
+                        </label>
+                        <label class="icon-btn" title="Errors (Q)">
+                            <input type="checkbox" id="errorsBtn">
+                            <img src="./Resources/Additional/Icons/Issues.png" alt="Errors">
+                        </label>
+                        <label class="icon-btn" title="Guides (W)">
+                            <input type="checkbox" id="guidesBtn">
+                            <img src="./Resources/Additional/Icons/Grid.png" alt="Guides">
+                        </label>
+                        <span class="icon-btn" style="visibility: hidden;"></span>
+                        <span class="icon-btn" style="visibility: hidden;"></span>
+                    </div>
+                </div>
+                <div id="selectedAreaToolsDiv" style="display: none;">
+                    <h4 style="margin-bottom: 0.5rem;">Selected Area Tools</h4>
+                    <div class="select-tool-buttons">
+                        <button id="rotateBtn" class="icon-btn" title="Rotate (Ctrl+R)">
+                            <img src="./Resources/Additional/Icons/Rotate.png" alt="Rotate">
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="content">
+            <section class="controls-bar">
+                <div>
+                    <p>Map Name</p>
                     <input type="text" value="Untitled Map" id="mapName" placeholder="Map Name">
                 </div>
-                <div class="select-container">
-                    <label for="mapSize">Map Size:</label>
+                <div class="select-inline">
+                    <label for="mapSize">Map Size</label>
                     <select id="mapSize">
                         <option value="regular">Regular</option>
                         <option value="showdown">Showdown</option>
@@ -48,8 +148,8 @@
                         <option value="basket">Basket Brawl</option>
                     </select>
                 </div>
-                <div class="select-container">
-                    <label for="gamemode">Gamemode:</label>
+                <div class="select-inline">
+                    <label for="gamemode">Gamemode</label>
                     <select id="gamemode">
                         <option style="color:#7ab6ed" value="Gem_Grab">Gem Grab</option>
                         <option style="color:#7ab6ed" value="Showdown">Showdown</option>
@@ -77,24 +177,11 @@
                         <option value="Samurai_Smash">Samurai Smash</option>
                         <option style="color:#7ab6ed" value="Brawl_Arena">Brawl Arena</option>
                         <option style="color:#7ab6ed" value="Dodgebrawl">Dodgebrawl</option>
-                        <!-- <option value="Lone_Star">Lone Star</option>
-                        <option value="Takedown">Takedown</option>
-                        <option value="Payload">Payload</option>
-                        <option value="Spirit_Wars">Spirit Wars</option>
-                        <option value="Special Delivery">Special Delivery</option> 
-                        <option value="Treasure_Hunt">Treasure Hunt</option> -->
                         <option style="color:#e6c057" value="Godzilla_City_Smash">Godzilla City Smash</option>
-                        <!-- <option style="color:#e6c057" value="Subway_Run">Subway Run</option>
-                        <option style="color:#e65757" value="Big_Game">Big Game</option>
-                        <option style="color:#e65757" value="Robo_Rumble">Robo Rumble</option>
-                        <option style="color:#e65757" value="Boss_Fight">Boss Fight</option>
-                        <option style="color:#e65757" value="Super_City_Rampage">Super City Rampage</option>
-                        <option style="color:#e65757" value="Last_Stand">Last Stand</option> 
-                        <option style="color:#e65757" value="Oni_Hunt">Oni Hunt</option> -->
                     </select>
                 </div>
-                <div class="select-container">
-                    <label for="environment">Environment:</label>
+                <div class="select-inline">
+                    <label for="environment">Environment</label>
                     <select id="environment">
                         <option style="color:#7ab6ed" value="Desert">Desert</option>
                         <option style="color:#7ab6ed" value="Wasteland">Wasteland</option>
@@ -120,7 +207,7 @@
                         <option value="Castle_Courtyard">Castle Courtyard</option>
                         <option value="Brawlywood">Brawlywood</option> 
                         <option value="Fighting_Game">Fighting Game</option>
-                        <<option value="Biodome">Biodome</option>
+                        <option value="Biodome">Biodome</option>
                         <option style="color:#7ab6ed" value="Stunt_Show">Stunt Show</option>
                         <option value="Deep_Sea">Deep Sea</option>
                         <option value="Robot_Factory">Robot Factory</option>
@@ -148,108 +235,56 @@
                         <option style="color:#7ab6ed" value="Subway_Surfers">Subway Surfers</option>
                     </select>
                 </div>
-            </div>
-            <div class="tool-section">
-                <h3>Tiles</h3>
-                <div id="tileSelector"></div>
+            </section>
+
+            <section class="tiles-section">
+                <div class="tiles-content">
+                    <div class="tiles-grid">
+                        <h3>Tiles</h3>
+                        <div id="tileSelector"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="map-wrapper">
+                <div class="map-editor-overlay">
+                    <div class="zoom-controls">
+                        <button id="zoomInBtn" class="zoom-btn" title="Zoom In (Ctrl++)">
+                            <img src="./Resources/Additional/Icons/GlassPlus.png" alt="Zoom In">
+                        </button>
+                        <button id="zoomOutBtn" class="zoom-btn" title="Zoom Out (Ctrl+-)">
+                            <img src="./Resources/Additional/Icons/GlassMinus.png" alt="Zoom Out">
+                        </button>
+                    </div>
+                </div>
+                <div class="map-editor">
+                    <div class="map-container">
+                        <canvas draggable="false" id="mapCanvas"></canvas>
+                    </div>
+                </div> 
+            </section>
+
+
+            <section class="below-map">
                 <div class="save-export-buttons">
-                    <button id="saveBtn" class="text-btn" title="Save Map (Ctrl+S)">
-                        Save Map
-                    </button>
-                    <button id="exportBtn" class="text-btn" title="Export as PNG (Ctrl+E)">
-                        Download Map
-                    </button>
-                    <button id="clearBtn" class="text-btn" title="Clear Map (Ctrl+Del)">
-                        Clear Map
-                    </button>
+                    <button id="saveBtn" class="text-btn" title="Save Map (Ctrl+S)">Save Map</button>
+                    <button id="exportBtn" class="text-btn" title="Export as PNG (Ctrl+E)">Download Map</button>
+                    <button id="clearBtn" class="text-btn" title="Clear Map (Ctrl+Del)">Clear Map</button>
                 </div>
-            </div>
-            <div style="font-family: Arial, Helvetica, sans-serif; font-weight: 900;">
-                Link: <br/> <a id="mapLink" style="display:inline-block; word-wrap:break-word; overflow-wrap:break-word; white-space:normal; max-width:100%; font-family: Arial, Helvetica, sans-serif; font-weight: 400; color: var(--primary-color);">https://she-fairy.github.io/atlas-horizon/map.html</a> 
-            </div>
-        </div>
-        
-        <div class="map-area">
-            <div class="map-toolbar">
-                <div class="checkbox-container">
-                    <label>
-                        <input type="checkbox" id="mirrorDiagonal">
-                        Diagonal
-                    </label>
-                    <label>
-                        <input type="checkbox" id="mirrorVertical">
-                        Vertical
-                    </label>
-                    <label>
-                        <input type="checkbox" id="mirrorHorizontal">
-                        Horizontal
-                    </label>
+                <div class="map-link">
+                    <div class="link-container">
+                        <span>Link:</span>
+                        <a id="mapLink" style="display:inline-block; word-wrap:break-word; overflow-wrap:break-word; white-space:normal; max-width:100%; font-family: Arial, Helvetica, sans-serif; font-weight: 400; color: var(--primary-color);">https://she-fairy.github.io/atlas-horizon/map.html</a>
+                        <button id="copyLinkBtn" class="copy-btn" title="Copy link to clipboard">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
-                <div class="tool-buttons">
-                    <label for="blue2RedBtn" title="Blue2Red (N)">
-                        <input type="checkbox" id="blue2RedBtn">
-                        <img src="./Resources/Additional/Icons/BlueToRed.png" alt="Blue2Red">
-                    </label>
-                </div>
-                <div class="radio-container">
-                    <label class="icon-btn" title="Single (1)">
-                        <input type="radio" name="selectionMode" value="single" checked>
-                        <img src="./Resources/Additional/Icons/Single.png" alt="Single">
-                    </label>
-                    <label class="icon-btn" title="Line (2)">
-                        <input type="radio" name="selectionMode" value="line">
-                        <img src="./Resources/Additional/Icons/Line.png" alt="Line">
-                    </label>
-                    <label class="icon-btn" title="Rectangle (3)">
-                        <input type="radio" name="selectionMode" value="rectangle">
-                        <img src="./Resources/Additional/Icons/Rectangle.png" alt="Rectangle">
-                    </label>
-                    <label class="icon-btn" title="Fill (4)">
-                        <input type="radio" name="selectionMode" value="fill">
-                        <img src="./Resources/Additional/Icons/Bucket.png" alt="Fill">
-                    </label>
-                    <label class="icon-btn" title="Select (5)">
-                        <input type="radio" name="selectionMode" value="select">
-                        <img src="./Resources/Additional/Icons/Select.png" alt="Select">
-                    </label>
-                </div>
-                <div class="tool-buttons">
-                    <label class="icon-btn" title="Erase (E)">
-                        <input type="checkbox" id="eraseBtn">
-                        <img src="./Resources/Additional/Icons/Erase.png" alt="Erase">
-                    </label>
-                    <button id="undoBtn" class="icon-btn" title="Undo (Ctrl+Z)">
-                        <img src="./Resources/Additional/Icons/Undo.png" alt="Undo">
-                    </button>
-                    <button id="redoBtn" class="icon-btn" title="Redo (Ctrl+Y)">
-                        <img src="./Resources/Additional/Icons/Redo.png" alt="Redo">
-                    </button>
-                    <label class="icon-btn" title="Replace (R)">
-                        <input type="checkbox" id="replaceBtn">
-                        <img src="./Resources/Additional/Icons/Replace.png" alt="Replace">
-                    </label>
-                    <label class="icon-btn" title="Errors (Q)">
-                        <input type="checkbox" id="errorsBtn">
-                        <img src="./Resources/Additional/Icons/Issues.png" alt="Errors">
-                    </label>
-                    <label class="icon-btn" title="Guides (W)">
-                        <input type="checkbox" id="guidesBtn">
-                        <img src="./Resources/Additional/Icons/Grid.png" alt="Guides">
-                    </label>
-                    <button id="zoomInBtn" class="icon-btn" title="Zoom In (Ctrl++)">
-                        <img src="./Resources/Additional/Icons/GlassPlus.png" alt="Zoom In">
-                    </button>
-                    <button id="zoomOutBtn" class="icon-btn" title="Zoom Out (Ctrl+-)">
-                        <img src="./Resources/Additional/Icons/GlassMinus.png" alt="Zoom Out">
-                    </button>
-                </div>
-            </div>
-            <div class="map-editor">
-                <div class="map-container">
-                    <canvas draggable="false" id="mapCanvas"></canvas>
-                </div>
-            </div>
-        </div>
+            </section>
+        </main>
     </div>
     <div class="tooltip-floating disclaimer-tooltip">
         ?
@@ -290,6 +325,71 @@
                 window.location.href = './index.html';
             }
         })
+
+        // Side panel toggle for tools
+        const panelToggle = document.getElementById('panelToggle');
+        const sidePanel = document.querySelector('.side-panel');
+
+        function togglePanel(){
+            if (sidePanel) {
+                const isHidden = sidePanel.getAttribute('aria-hidden') === 'true';
+                sidePanel.setAttribute('aria-hidden', !isHidden);
+                panelToggle.setAttribute('aria-label', isHidden ? 'Close tools' : 'Open tools');
+            }
+        }
+
+        if (panelToggle) panelToggle.addEventListener('click', togglePanel);
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && sidePanel && sidePanel.getAttribute('aria-hidden') === 'false') {
+                togglePanel();
+            }
+        });
+
+        // Copy link functionality
+        const copyLinkBtn = document.getElementById('copyLinkBtn');
+        const mapLink = document.getElementById('mapLink');
+        
+        if (copyLinkBtn && mapLink) {
+            copyLinkBtn.addEventListener('click', async () => {
+                try {
+                    const linkText = mapLink.textContent || mapLink.href;
+                    await navigator.clipboard.writeText(linkText);
+                    
+                    // Visual feedback
+                    const originalTitle = copyLinkBtn.title;
+                    copyLinkBtn.title = 'Copied!';
+                    copyLinkBtn.style.background = 'var(--primary-color)';
+                    copyLinkBtn.style.color = 'white';
+                    
+                    setTimeout(() => {
+                        copyLinkBtn.title = originalTitle;
+                        copyLinkBtn.style.background = '';
+                        copyLinkBtn.style.color = '';
+                    }, 2000);
+                } catch (err) {
+                    console.error('Failed to copy link:', err);
+                    // Fallback for older browsers
+                    const textArea = document.createElement('textarea');
+                    textArea.value = mapLink.textContent || mapLink.href;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    
+                    // Visual feedback for fallback
+                    const originalTitle = copyLinkBtn.title;
+                    copyLinkBtn.title = 'Copied!';
+                    copyLinkBtn.style.background = 'var(--primary-color)';
+                    copyLinkBtn.style.color = 'white';
+                    
+                    setTimeout(() => {
+                        copyLinkBtn.title = originalTitle;
+                        copyLinkBtn.style.background = '';
+                        copyLinkBtn.style.color = '';
+                    }, 2000);
+                }
+            });
+        }
     </script>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>

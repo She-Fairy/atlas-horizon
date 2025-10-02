@@ -1,42 +1,193 @@
+.map-editor-overlay {
+    position: absolute;
+    top: 25rem;
+    left: 3rem;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 20;
+}
+
+.map-editor-overlay .zoom-controls {
+    pointer-events: auto;
+}
 .mapmaker-container {
-    display: flex;
-    gap: 2rem;
-    padding: 2rem;
-    height: calc(100vh - 4rem);
-}
-
-.toolbar {
-    width: 250px;
-    background-color: var(--surface-color);
+    position: relative;
     padding: 1rem;
-    border-radius: 0.5rem;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    min-height: calc(100vh - 4rem);
+    overflow-y: visible;
 }
 
-.map-area {
-    flex-grow: 1;
+.hamburger {
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    width: 48px;
+    height: 48px;
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    background: var(--surface-color);
+    cursor: pointer;
+    z-index: 1001;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transition: all 0.3s ease;
+}
+
+.hamburger:hover {
+    background: var(--surface-color-hover);
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+}
+
+.hamburger::before {
+    content: "";
+    display: block;
+    width: 24px;
+    height: 3px;
+    background: var(--text-color);
+    box-shadow: 0 7px 0 var(--text-color), 0 -7px 0 var(--text-color);
+    margin: 0 auto;
+    transition: all 0.3s ease;
+}
+
+.side-panel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 21.25%;
+    min-width: 15rem;
+    max-width: 17rem;
+    height: 100vh;
+    background: var(--surface-color);
+    border-right: 2px solid var(--border-color);
+    box-shadow: 4px 0 20px rgba(0,0,0,0.15);
+    padding: 1rem;
+    overflow-y: auto;
+    z-index: 1000;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+}
+
+.side-panel[aria-hidden="false"] {
+    transform: translateX(0);
+}
+
+.side-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 3.75rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.side-panel-header h3 {
+    margin: 0;
+    color: var(--primary-color);
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.side-panel-content {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 1.5rem;
 }
 
-.map-toolbar {
+.content {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.controls-bar {
+    display: grid;
+    grid-template-columns: 1fr repeat(3, minmax(180px, 280px));
+    gap: 1rem;
+    align-items: start;
+    background: var(--surface-color);
+    padding: 1.25rem;
+    margin: 0 1rem;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.controls-bar > div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.controls-bar > div:first-child {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.controls-bar > div:first-child > *:first-child:not(input) {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-color-secondary);
+    margin: 0;
+}
+
+.controls-bar input[type="text"] {
+    height: 44px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    padding: 0 0.75rem;
+    border: 1px solid var(--border-color);
     background-color: var(--surface-color);
-    padding: 0.75rem;
-    border-radius: 0.5rem;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    display: flex;
-    justify-content:baseline;
-    align-items: center;
-    gap: 1rem;
+    color: var(--text-color);
+    transition: border-color 0.2s, background-color 0.2s;
 }
 
-.tool-buttons, .action-buttons {
-    display: flex;
-    gap: 0.75rem;
+.controls-bar input[type="text"]:hover {
+    border-color: var(--primary-color);
 }
 
-label[for='blue2RedBtn'] {
+.select-inline {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.select-inline label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-color-secondary);
+    margin: 0;
+}
+
+.select-inline select {
+    height: 44px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    padding: 0 0.75rem;
+    border: 1px solid var(--border-color);
+    background-color: var(--surface-color);
+    color: var(--text-color);
+    transition: border-color 0.2s, background-color 0.2s;
+}
+
+.select-inline select:hover {
+    border-color: var(--primary-color);
+}
+
+.tool-buttons, .action-buttons, .select-tool-buttons {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin: 0 0;
+}
+
+
+
+label[for='correctMirroringBtn'] {
     width: 36px;
     height: 36px;
     padding: 0px;
@@ -51,24 +202,28 @@ label[for='blue2RedBtn'] {
     justify-content: center;
 }
 
-label[for='blue2RedBtn'] img {
+label[for='correctMirroringBtn'] img {
     width: 23px;
     height: 23px;
     object-fit: contain;
     filter: brightness(0.9)
 }
 
-label[for='blue2RedBtn']:hover {
+label[for='correctMirroringBtn']:hover {
     background-color: var(--surface-color-hover);
     border-color: var(--primary-color);
 }
 
-label[for='blue2RedBtn'].active {
+label[for='correctMirroringBtn'].active {
     background-color: var(--surface-color-hover);
     border-color: var(--primary-color);
 }
 
-.icon-btn {
+.zoom-btn {
+    z-index: 100;
+}
+
+.icon-btn, .zoom-btn {
     width: 36px;
     height: 36px;
     padding: 7px;
@@ -83,7 +238,7 @@ label[for='blue2RedBtn'].active {
     justify-content: center;
 }
 
-.icon-btn img {
+.icon-btn img, .zoom-btn img {
     width: 20px;
     height: 20px;
     object-fit: contain;
@@ -91,58 +246,110 @@ label[for='blue2RedBtn'].active {
     transition: filter 0.2s;
 }
 
-.icon-btn:hover {
+.icon-btn:hover, .zoom-btn:hover {
     background-color: var(--surface-color-hover);
     border-color: var(--primary-color);
 }
 
-.icon-btn:hover img {
+.icon-btn:hover img, .zoom-btn:hover img {
     filter: brightness(0) invert(1) brightness(200%);
 }
 
-.icon-btn.active {
+.icon-btn.active, .zoom-btn.active {
     background-color: var(--primary-color);
     border-color: var(--primary-color);
 }
 
-.icon-btn.active img {
+.icon-btn.active img, .zoom-btn.active img {
     filter: brightness(0) invert(1) brightness(200%);
 }
 
-.map-editor {
-    flex: 1;
-    position: relative;
-    overflow: auto;
+.tiles-section {
     background: var(--surface-color);
     border: 1px solid var(--border-color);
-    border-radius: 4px;
-    min-height: 0;
-    height: calc(100vh - 250px);
-    padding: 20px;
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin: 0 1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-.map-editor.scrollable {
-    overflow: auto;
+.tiles-content {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 1.5rem;
+    align-items: start;
+}
+
+.tiles-grid {
+    width: 100%;
+}
+
+.tiles-grid h3 {
+    margin: 0 0 1rem 0;
+    color: var(--primary-color);
+    font-size: 1.125rem;
+    font-weight: 600;
+}
+
+.tiles-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: center;
+    padding: 1rem;
+    background: rgba(var(--primary-color-rgb), 0.05);
+    border-radius: 8px;
+    border: 1px solid rgba(var(--primary-color-rgb), 0.1);
+}
+
+.map-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 60vh;
+}
+
+.zoom-controls {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    z-index: 10;
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    align-items: center;
+    padding: 0.25rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+
+.map-editor {
+    position: relative;
+    overflow: auto; /* allow scrollbars */
+    width: 100%;
+    max-width: 1400px;
+    max-height: 95vh;
+    margin: 0 1rem;
+    background: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
 }
 
 .map-container {
     position: relative;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: flex-start;
-    align-items: flex-start;
+    width: fit-content;
+    height: fit-content;
+    margin: auto; /* let initial centering happen */
 }
 
 #mapCanvas {
-    position: absolute;
-    top: 0;
-    left: 0;
-    transform-origin: top left;
+    display: block;
     image-rendering: pixelated;
-    margin: 0px;
-    padding:0;
 }
+
+
 
 /* Ensure scrollbars are always visible */
 .map-editor::-webkit-scrollbar {
@@ -207,35 +414,42 @@ label[for='blue2RedBtn'].active {
 
 #tileSelector {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
-    gap: 4px;
-    padding: 8px;
-    max-height: 300px;
+    grid-template-columns: repeat(auto-fill, minmax(52px, 1fr));
+    gap: 8px;
+    padding: 12px;
+    max-height: 280px;
     overflow-y: auto;
+    background: rgba(255,255,255,0.02);
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.1);
 }
 
 .tile-btn {
-    width: 40px;
-    height: 40px;
-    padding: 2px;
+    width: 48px;
+    height: 48px;
+    padding: 4px;
     border: 2px solid transparent;
-    border-radius: 4px;
+    border-radius: 8px;
     background: var(--surface-color);
     cursor: pointer;
     transition: all 0.2s;
     display: flex;
     align-items: center;
     justify-content: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .tile-btn:hover {
-    background: var(--surface-hover-color);
-    border-color: var(--primary-color-light);
+    background: var(--surface-color-hover);
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
 
 .tile-btn.selected {
     border-color: var(--primary-color);
     background: rgba(var(--primary-color-rgb), 0.2);
+    box-shadow: 0 0 0 2px rgba(var(--primary-color-rgb), 0.3);
 }
 
 .tile-btn img {
@@ -260,16 +474,10 @@ label[for='blue2RedBtn'].active {
 
 .checkbox-container {
     display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 4px 8px;
+    align-items: flex-start;
+    justify-content: space-between;
     border-radius: 4px;
-    background: rgba(255, 255, 255, 0.1);
     transition: all 0.2s ease;
-}
-
-.checkbox-container:hover {
-    background: rgba(255, 255, 255, 0.15);
 }
 
 /* Add styles for checkboxes with red border */
@@ -296,13 +504,159 @@ input[type="checkbox"][style*="border-color: rgb(255, 68, 68)"] {
     color: white;
 }
 
+.below-map {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    background: var(--surface-color);
+    padding: 1.25rem;
+    margin: 0 1rem;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
 .save-export-buttons {
     display: flex;
     flex-direction: row;
-    gap: 0.5rem;
+    gap: 1rem;
     align-items: center;
     justify-content: center;
-    margin-top: 1rem;
+}
+
+.save-export-buttons .text-btn {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    border-radius: 8px;
+    min-width: 120px;
+}
+
+.map-link {
+    text-align: center;
+    padding: 0.75rem;
+    background: rgba(var(--primary-color-rgb), 0.05);
+    border-radius: 8px;
+    border: 1px solid rgba(var(--primary-color-rgb), 0.1);
+}
+
+.map-link span {
+    font-weight: 600;
+    color: var(--text-color-secondary);
+    margin-right: 0.5rem;
+}
+
+.link-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    justify-content: center;
+    margin-top: 0.5rem;
+}
+
+.copy-btn {
+    width: 32px;
+    height: 32px;
+    padding: 6px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background: var(--surface-color);
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.copy-btn:hover {
+    background: var(--surface-color-hover);
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.copy-btn:active {
+    transform: scale(0.95);
+}
+
+.copy-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+@media (max-width: 900px) {
+    .mapmaker-container {
+        padding: 0.75rem;
+    }
+
+    .hamburger {
+        top: 0.75rem;
+        left: 0.75rem;
+        width: 44px;
+        height: 44px;
+    }
+
+    .side-panel {
+        width: 100vw;
+        min-width: unset;
+        max-width: unset;
+    }
+
+    .content {
+        gap: 1rem;
+    }
+
+    .controls-bar {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+        padding: 1rem;
+        margin: 0 0.5rem;
+    }
+
+    .tiles-section {
+        margin: 0 0.5rem;
+    }
+
+    .tiles-content {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .tiles-controls {
+        flex-direction: row;
+        justify-content: center;
+        padding: 0.75rem;
+    }
+
+    .map-editor {
+        padding: 1rem;
+        min-height: 50vh;
+        margin: 0 0.5rem;
+    }
+
+    .below-map {
+        margin: 0 0.5rem;
+    }
+
+    .save-export-buttons {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .save-export-buttons .text-btn {
+        width: 100%;
+        min-width: unset;
+    }
+
+    .link-container {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .copy-btn {
+        align-self: center;
+    }
 }
 
 .text-btn{
@@ -369,8 +723,9 @@ input[type="text"] {
 
 .radio-container {
     display: flex;
-    gap: 10px;
-    margin: 10px 0;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin: 0 0;
 }
 
 .radio-container label {
@@ -545,6 +900,16 @@ label:has(input[type="radio"]:checked) {
     align-items: flex-start;
 }
 
+label[for='correctMirroringBtn'] {
+    width: 100%;
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background-color: var(--surface-color);
+}
 
 ::-webkit-scrollbar {
     width: 12px;

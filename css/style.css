@@ -1,3 +1,11 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
 :root {
     --primary-color: #3583e2;
     --primary-color-rgb: 96, 165, 250;
@@ -39,6 +47,7 @@ nav {
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    margin-left: 3rem;
 }
 
 .logo-img {
