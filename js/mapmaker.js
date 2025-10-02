@@ -4703,16 +4703,16 @@ window.addEventListener('load', () => {
                 window.mapMaker.updateCanvasSize();
                 window.mapMaker.fitMapToScreen();
 
--               window.mapMaker.setEnvironment(data.environment);
-+               await window.mapMaker.setEnvironment(data.environment);
+                window.mapMaker.setEnvironment(data.environment);
+                await window.mapMaker.setEnvironment(data.environment);
 
                 document.getElementById('mapName').value = data.name;
                 document.getElementById('mapSize').value = data.size;
                 document.getElementById('gamemode').value = data.gamemode;
                 document.getElementById('environment').value = data.environment;
--               document.getElementById('mapLink').innerText = `https://she-fairy.github.io/atlas-horizon/map.html?id=${mapId}&user=${user}`;
--               await window.mapMaker.setGamemode(data.gamemode, false);
-+               document.getElementById('mapLink').innerText = `https://she-fairy.github.io/atlas-horizon/map.html?id=${mapId}&user=${user}`;
+                document.getElementById('mapLink').innerText = `https://she-fairy.github.io/atlas-horizon/map.html?id=${mapId}&user=${user}`;
+                await window.mapMaker.setGamemode(data.gamemode, false);
+                document.getElementById('mapLink').innerText = `https://she-fairy.github.io/atlas-horizon/map.html?id=${mapId}&user=${user}`;
                 window.mapMaker.draw();
             })
             .catch(error => {
