@@ -76,7 +76,7 @@ nav {
     color: var(--text-color-secondary);
 }
 
-@media only screen and (max-width: 900px) {
+@media (max-width: 900px) {
     .nav-links {
         font-size: 0.5rem;
         gap: 1rem;

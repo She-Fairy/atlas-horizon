@@ -562,11 +562,6 @@ input[type="checkbox"][style*="border-color: rgb(255, 68, 68)"] {
     height: 16px;
 }
 
-@media only screen and (max-width: 900px){
-    mob {
-        display: none;
-    }
-}
 
 @media (max-width: 900px) {
     .mapmaker-container {
@@ -574,16 +569,10 @@ input[type="checkbox"][style*="border-color: rgb(255, 68, 68)"] {
     }
 
     .hamburger {
-        top: 0.75rem;
-        left: 0.75rem;
-        width: 44px;
-        height: 44px;
-    }
-
-    .side-panel {
-        width: 100vw;
-        min-width: unset;
-        max-width: unset;
+        top: 0.5rem;
+        left: 0.5rem;
+        width: 22px;
+        height: 22px;
     }
 
     .content {
@@ -639,6 +628,10 @@ input[type="checkbox"][style*="border-color: rgb(255, 68, 68)"] {
 
     .copy-btn {
         align-self: center;
+    }
+
+    mob {
+        display: none;
     }
 }
 
