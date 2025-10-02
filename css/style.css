@@ -84,19 +84,14 @@ nav {
     }
 
     .logo {
-        font-size: 0rem;
-        color: var(--primary-color);
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        margin-left: 1.5rem;
+        background: red !important;
     }
 
     .logo-img {
-        height: 1rem;
-        width: auto;
-        object-fit: contain;
+        border: 2px solid blue !important;
+        height: 1rem !important;
     }
+
 }
 
 .nav-links a:hover,

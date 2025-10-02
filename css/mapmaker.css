@@ -569,10 +569,10 @@ input[type="checkbox"][style*="border-color: rgb(255, 68, 68)"] {
     }
 
     .hamburger {
-        top: 0.5rem;
-        left: 0.5rem;
-        width: 22px;
-        height: 22px;
+        top: 0.75rem;
+        left: 0.75rem;
+        width: 33px;
+        height: 33px;
     }
 
     .content {
@@ -628,6 +628,21 @@ input[type="checkbox"][style*="border-color: rgb(255, 68, 68)"] {
 
     .copy-btn {
         align-self: center;
+    }
+
+    .select-btn {
+        width: 36px;
+        height: 36px;
+        padding: 7px;
+        border: 1px solid var(--border-color);
+        border-radius: 0.25rem;
+        background-color: var(--surface-color);
+        color: var(--text-color);
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     mob {
