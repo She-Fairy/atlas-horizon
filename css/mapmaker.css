@@ -1,3 +1,13 @@
+/* Fixed zoom controls relative to map-editor */
+#zoomControls {
+    position: fixed;
+    z-index: 100;
+    top: 0; /* Will be set by JS */
+    left: 0; /* Will be set by JS */
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+}
 .map-editor-overlay {
     position: absolute;
     top: 25rem;
@@ -55,8 +65,8 @@
     position: fixed;
     top: 0;
     left: 0;
-    width: 21.25%;
-    min-width: 15rem;
+    width: 22%;
+    min-width: 16rem;
     max-width: 17rem;
     height: 100vh;
     background: var(--surface-color);
@@ -220,7 +230,7 @@ label[for='correctMirroringBtn'].active {
 }
 
 .zoom-btn {
-    z-index: 100;
+    z-index: 50;
 }
 
 .icon-btn, .zoom-btn {
@@ -309,26 +319,11 @@ label[for='correctMirroringBtn'].active {
     min-height: 60vh;
 }
 
-.zoom-controls {
-    position: absolute;
-    top: 1rem;
-    left: 1rem;
-    z-index: 10;
-    display: flex;
-    flex-direction: row;
-    gap: 0.5rem;
-    align-items: center;
-    padding: 0.25rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-}
-
 
 .map-editor {
     position: relative;
     overflow: auto; /* allow scrollbars */
     width: 100%;
-    max-width: 1400px;
     max-height: 95vh;
     min-height: 60vh;
     margin: 0 1rem;
