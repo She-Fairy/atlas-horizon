@@ -84,7 +84,7 @@ nav {
     }
 
     .logo {
-        font-size: 0.75rem;
+        font-size: 0rem;
         color: var(--primary-color);
         display: flex;
         align-items: center;
@@ -93,7 +93,7 @@ nav {
     }
 
     .logo-img {
-        height: 1.5rem;
+        height: 1rem;
         width: auto;
         object-fit: contain;
     }
