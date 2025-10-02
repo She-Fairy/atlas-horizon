@@ -1703,6 +1703,8 @@ export class MapMaker {
         const eraseBtn = document.getElementById('eraseBtn');
         const zoomInBtn = document.getElementById('zoomInBtn');
         const zoomOutBtn = document.getElementById('zoomOutBtn');
+        const zoomInBtnSide = document.getElementById('zoomInBtnSide');
+        const zoomOutBtnSide = document.getElementById('zoomOutBtnSide');
         const clearBtn = document.getElementById('clearBtn');
         const saveBtn = document.getElementById('saveBtn');
         const exportBtn = document.getElementById('exportBtn');
@@ -1737,7 +1739,9 @@ export class MapMaker {
         });
 
         zoomInBtn.addEventListener('click', () => this.zoom(this.zoomStep));
+        zoomInBtnSide.addEventListener('click', () => this.zoom(this.zoomStep));
         zoomOutBtn.addEventListener('click', () => this.zoom(-this.zoomStep));
+        zoomOutBtnSide.addEventListener('click', () => this.zoom(-this.zoomStep));
         clearBtn.addEventListener('click', () => this.clearMap());
         saveBtn.addEventListener('click', () => this.saveMap());
         exportBtn.addEventListener('click', async () => await this.exportMap());
