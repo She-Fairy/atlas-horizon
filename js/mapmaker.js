@@ -1714,6 +1714,7 @@ export class MapMaker {
         const mirrorHorizontal = document.getElementById('mirrorHorizontal');
         const mirrorDiagonal = document.getElementById('mirrorDiagonal');
         const correctMirroring = document.getElementById('correctMirroringBtn');
+        const hideZoom = document.getElementById('hideZoomBtn');
 
         // Map settings
         const mapSizeSelect = document.getElementById('mapSize');
@@ -1748,6 +1749,7 @@ export class MapMaker {
         mirrorHorizontal.addEventListener('change', (e) => this.mirrorHorizontal = e.target.checked);
         mirrorDiagonal.addEventListener('change', (e) => this.mirrorDiagonal = e.target.checked);
         correctMirroring.addEventListener('change', () =>  this.toggleCorrectMirroring());
+        hideZoom.addEventListener('change', () => this.toggleHideZoom());
 
         // Map setting listeners
         mapSizeSelect.addEventListener('change', (e) => this.setSize(e.target.value));
@@ -1852,6 +1854,7 @@ export class MapMaker {
                             this.undo();
                         }
                     }
+                    hideZoom.click();
                     break;
 
                 case 'KeyY':
@@ -4453,6 +4456,14 @@ export class MapMaker {
         // Redraw the map
         this.draw();
         this.checkForErrors();
+    }
+
+    toggleHideZoom() {
+        let hideZoomBtn = document.getElementById('hideZoomBtn');
+        let hide = hideZoomBtn.checked;
+        document.getElementById('zoomControls').style.visibility = hide ? 'hidden' : 'visible';
+        document.getElementById('zoomInBtnSide').style.visibility = hide ? 'visible' : 'hidden';
+        document.getElementById('zoomOutBtnSide').style.visibility = hide ? 'visible' : 'hidden';
     }
 
     isBlock(tileId) {

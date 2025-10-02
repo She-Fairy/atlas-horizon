@@ -195,40 +195,6 @@
     margin: 0 0;
 }
 
-
-
-label[for='correctMirroringBtn'] {
-    width: 36px;
-    height: 36px;
-    padding: 0px;
-    border: 1px solid var(--border-color);
-    border-radius: 0.25rem;
-    background-color: var(--surface-color);
-    color: var(--text-color);
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-label[for='correctMirroringBtn'] img {
-    width: 23px;
-    height: 23px;
-    object-fit: contain;
-    filter: brightness(0.9)
-}
-
-label[for='correctMirroringBtn']:hover {
-    background-color: var(--surface-color-hover);
-    border-color: var(--primary-color);
-}
-
-label[for='correctMirroringBtn'].active {
-    background-color: var(--surface-color-hover);
-    border-color: var(--primary-color);
-}
-
 .zoom-btn {
     z-index: 50;
 }
@@ -896,7 +862,7 @@ label:has(input[type="radio"]:checked) {
     align-items: flex-start;
 }
 
-label[for='correctMirroringBtn'] {
+label[for='correctMirroringBtn'], label[for='hideZoomBtn'] {
     width: 100%;
     margin-top: 0.5rem;
     padding: 0.5rem;
