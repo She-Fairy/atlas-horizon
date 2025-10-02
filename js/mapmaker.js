@@ -4694,6 +4694,7 @@ window.addEventListener('load', () => {
 
                 const sizeKey = data.size;  // e.g. "regular"
                 const newSize  = window.mapMaker.mapSizes[sizeKey];
+                window.mapMaker.gamemode = data.gamemode;
                 window.mapMaker.setSize(sizeKey, false);
                 window.mapMaker.mapWidth  = newSize.width;
                 window.mapMaker.mapHeight = newSize.height;
