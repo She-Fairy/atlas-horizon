@@ -6,13 +6,13 @@
     <title>Atlas Horizon - My Maps</title>
     <link rel="icon" href="./Resources/Additional/Icons/AtlasLogo.ico" type="image/x-icon">
     <link rel="stylesheet" href="./css/style.css">
-    <link rel="stylesheet" href="./css/my-maps.css">
+    <link rel="stylesheet" href="./css/my-maps.css"> 
     <base href="https://she-fairy.github.io/atlas-horizon/">
 </head>
 <body>
     <script>
-        if (sessionStorage.getItem('user') === null) {
-            window.location.href = 'https://discord.com/oauth2/authorize?client_id=1293658198393487420&response_type=code&redirect_uri=https%3A%2F%2Fshe-fairy.github.io%2Fatlas-horizon%2Fauth%2Fdiscord%2Fcallback.html&scope=identify';
+        if (localStorage.getItem('user') === null) {
+            window.location.href = "https://discord.com/oauth2/authorize?client_id=1293658198393487420&response_type=code&redirect_uri=https%3A%2F%2Fshe-fairy.github.io%2Fatlas-horizon%2Fauth%2Fdiscord%2Fcallback.html&scope=identify";
         }
     </script>
     <nav>
@@ -28,6 +28,7 @@
             <input class="avatar" type="image" id="avatar" alt="Avatar" style="display: block;">
         </div>
     </nav>
+    
 
     <main class="my-maps-container">
         <div class="filters-section">
@@ -63,7 +64,7 @@
                     <option value="City">City</option>
                     <option value="Retropolis">Retropolis</option>
                     <option value="Mortuary">Mortuary</option>
-                    <option value="Pirate_Ship">Pirate Ship</option> -->
+                    <option value="Pirate_Ship">Pirate Ship</option>
                     <option value="Arcade">Arcade</option>
                     <option value="Stadium">Stadium</option>
                     <option value="Bazaar">Bazaar</option>
@@ -92,13 +93,13 @@
                     <option value="Swamp_of_Love">Swamp of Love</option>
                     <option value="Rooftop">Rooftop</option>
                     <option value="Coin_Factory">Coin Factory</option>
-                    <option value="Snowtel_2">Snowtel 2</option>
-                    <option value="Medieval Manor">Medieval Manor</option>
-                    <option value="Super_City_2">Super City 2</option>
-                    <option value="Spongebob">Spongebob</option>
+                    <option value="Snowtel_2">Ice Island</option>
+                    <option value="Medieval Manor">MadEvil Manor</option>
+                    <option value="Super_City_2">Kaiju Park</option>
+                    <option value="Spongebob">Bikini Bottom</option>
                     <option value="Oddities Shop">Oddities Shop</option>
                     <option value="Skating_Bowl">Skating Bowl</option>
-                    <option value="Hockey">Hockey</option>
+                    <option value="Hockey">Ice Rink</option>
                     <option value="Escape_Room">Escape Room</option>
                 </select>
 
@@ -135,10 +136,10 @@
 
         <script>
             const avatar = document.getElementById('avatar');
-            avatar.src = sessionStorage.getItem('avatar');
+            avatar.src = localStorage.getItem('avatar');
             avatar.addEventListener('click', () => {
                 if (confirm('Do you want to log out of this account?')){
-                    sessionStorage.clear();
+                    localStorage.clear();
                     window.location.href = './index.html';
                 }
             })

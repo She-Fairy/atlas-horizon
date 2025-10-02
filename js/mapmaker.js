@@ -14,6 +14,8 @@ const FENCE_LOGIC_BY_ENVIRONMENT = {
     'Mine': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
     'Oasis': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
     'Grassy_Field': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
+    'Wasteland': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
+    'Holiday': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
     'City': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
     'Retropolis': FENCE_LOGIC_TYPES.BINARY_CODE,
     'Mortuary': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
@@ -28,9 +30,9 @@ const FENCE_LOGIC_BY_ENVIRONMENT = {
     'Scrapyard': FENCE_LOGIC_TYPES.BINARY_CODE,
     'Starr_Force': FENCE_LOGIC_TYPES.BINARY_CODE,
     'Wild_West': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
-    'Water_Park': FENCE_LOGIC_TYPES.SIX_PIECE,
+    'Water_Park': FENCE_LOGIC_TYPES.BINARY_CODE,
     'Castle_Courtyard': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
-    'Brawlywood': FENCE_LOGIC_TYPES.FOUR_PIECE,
+    'Brawlywood': FENCE_LOGIC_TYPES.BINARY_CODE,
     'Fighting_Game': FENCE_LOGIC_TYPES.BINARY_CODE,
     'Biodome': FENCE_LOGIC_TYPES.BINARY_CODE,
     'Stunt_Show': FENCE_LOGIC_TYPES.BINARY_CODE,
@@ -39,21 +41,38 @@ const FENCE_LOGIC_BY_ENVIRONMENT = {
     'Ghost_Station': FENCE_LOGIC_TYPES.BINARY_CODE,
     'Candyland': FENCE_LOGIC_TYPES.BINARY_CODE,
     'The_Hub': FENCE_LOGIC_TYPES.BINARY_CODE,
+    'Rooftop': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
     'Rumble_Jungle': FENCE_LOGIC_TYPES.BINARY_CODE,
     'Enchanted_Woods': FENCE_LOGIC_TYPES.BINARY_CODE,
+    'Ranger_Ranch': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
     'Circus': FENCE_LOGIC_TYPES.BINARY_CODE,
     'Starr_Toon': FENCE_LOGIC_TYPES.BINARY_CODE,
     'Swamp_of_Love': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
-    'Rooftop': FENCE_LOGIC_TYPES.BINARY_CODE,
     'Coin_Factory': FENCE_LOGIC_TYPES.BINARY_CODE,
-    'Snowtel_2': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
-    'Medieval_Manor': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
+    'Ice_Island': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
+    'Medieval_Manor': FENCE_LOGIC_TYPES.BINARY_CODE,
     'Super_City_2': FENCE_LOGIC_TYPES.BINARY_CODE,
     'Spongebob': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
-    'Oddities Shop': FENCE_LOGIC_TYPES.BINARY_CODE,
+    'Oddities_Shop': FENCE_LOGIC_TYPES.BINARY_CODE,
     'Skating_Bowl': FENCE_LOGIC_TYPES.BINARY_CODE,
-    'Hockey': FENCE_LOGIC_TYPES.SIX_PIECE,
-    'Escape_Room': FENCE_LOGIC_TYPES.BINARY_CODE
+    'Hockey': FENCE_LOGIC_TYPES.BINARY_CODE,
+    'Escape_Room': FENCE_LOGIC_TYPES.BINARY_CODE,
+    'Katana_Kingdom': FENCE_LOGIC_TYPES.BINARY_CODE,
+    'Tropical_Island': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
+    'Brawl_Arena': FENCE_LOGIC_TYPES.SIX_PIECE,
+    'Subway_Surfers': FENCE_LOGIC_TYPES.BINARY_CODE,
+};
+
+const BORDER_FENCE_LOGIC_BY_ENVIRONMENT = {
+    'Bazaar': FENCE_LOGIC_TYPES.BINARY_CODE,
+    'Ice_Island': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
+    'Medieval_Manor': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
+    'Super_City_2': FENCE_LOGIC_TYPES.BINARY_CODE,
+    'Spongebob': FENCE_LOGIC_TYPES.BINARY_CODE,
+    'Hockey': FENCE_LOGIC_TYPES.BINARY_CODE,
+    'Katana_Kingdom': FENCE_LOGIC_TYPES.BINARY_CODE,
+    'Tropical_Island': FENCE_LOGIC_TYPES.BINARY_CODE,
+    'Subway_Surfers': FENCE_LOGIC_TYPES.BINARY_CODE,
 };
 
 class FenceLogicHandler {
@@ -66,12 +85,10 @@ class FenceLogicHandler {
         };
     }
 
-    getFenceImageName(x, y, mapData, environment, isFence = true) {
-        console.log(`Getting fence image for ${isFence ? 'fence' : 'rope'} at (${x},${y}) in ${environment}`);
+    getFenceImageName(x, y, mapData, environment, isFence = true, isBorder = false) {
         
         // Determine which logic to use based on environment
-        const logicType = isFence ? FENCE_LOGIC_BY_ENVIRONMENT[environment] : FENCE_LOGIC_TYPES.FOUR_PIECE;
-        console.log(`Using logic type: ${logicType}`);
+        const logicType = isBorder ? BORDER_FENCE_LOGIC_BY_ENVIRONMENT[environment] : isFence ? FENCE_LOGIC_BY_ENVIRONMENT[environment] : FENCE_LOGIC_TYPES.FOUR_PIECE;
         
         // Get the implementation for this logic type
         const logicHandler = this.logicImplementations[logicType];
@@ -81,16 +98,14 @@ class FenceLogicHandler {
         }
 
         // Get connections (true if connected, false if not)
-        const connections = this.getConnections(x, y, mapData, isFence);
-        console.log(`Connections:`, connections);
+        const connections = this.getConnections(x, y, mapData, isFence, isBorder, environment);
         
         // Call the appropriate logic handler
-        const result = logicHandler.call(this, connections);
-        console.log(`Resulting image name: ${result}`);
+        const result = isBorder ? 'B' + logicHandler.call(this, connections) : logicHandler.call(this, connections);
         return result;
     }
 
-    getConnections(x, y, mapData, isFence) {
+    getConnections(x, y, mapData, isFence, isBorder, environment) {
         const height = mapData.length;
         const width = mapData[0].length;
         
@@ -98,6 +113,8 @@ class FenceLogicHandler {
         const isSameType = (x, y) => {
             if (x < 0 || x >= width || y < 0 || y >= height) return false;
             const tileId = mapData[y][x];
+            if (environment === 'Brawl_Arena') return tileId === 40 || tileId === 43 || tileId === 44;
+            if (isBorder) return tileId === 45;
             return isFence ? (tileId === 7) : (tileId === 9); // Assuming 7 is fence and 9 is rope
         };
 
@@ -159,8 +176,8 @@ class FenceLogicHandler {
         if (bottom && left && !top && !right) return 'BL';
         
         // Handle vertical cases
-        if ((top && bottom) || // Connected vertically
-            (top && bottom && (left || right))) { // Three connections with two vertical
+        if ((top || bottom) && (!right && !left) || // Connected vertically and not horizontally
+            (top && bottom && (left || right))) { // Three connections with two vertical 
             return 'Ver';
         }
         
@@ -201,6 +218,7 @@ export class MapMaker {
         this.mapSizes = {
             regular: { width: 21, height: 33 },
             showdown: { width: 60, height: 60 },
+            arena: { width: 59, height: 59 },
             siege: { width: 27, height: 39 },
             volley: { width: 21, height: 25 },
             basket: { width: 21, height: 17 }
@@ -226,6 +244,7 @@ export class MapMaker {
         this.mapData = Array(this.mapHeight).fill().map(() => Array(this.mapWidth).fill(0));
         
         this.selectedTile = { id: 1, name: 'Wall', color: '#666666' };
+        this.selectedTiles = [];
         this.isErasing = false;
         this.isDragging = false;
         this.isDrawing = false;
@@ -239,6 +258,7 @@ export class MapMaker {
         this.mirrorVertical = false;
         this.mirrorHorizontal = false;
         this.mirrorDiagonal = false;
+        this.blue2Red = false;
 
         // Game settings
         this.gamemode = 'Gem_Grab';
@@ -255,6 +275,9 @@ export class MapMaker {
         this.errorTiles = new Set();
         this.mouseDown = false;
 
+        this.showErrors = false;
+        this.showGuides = false; 
+
         // Environment and background
         this.bgDark = new Image();
         this.bgLight = new Image();
@@ -266,13 +289,13 @@ export class MapMaker {
             'Wall2': [1, 1.75, 0, -50, 1, 5],
             'Crate': [1, 1.8, 0, -51, 1, 5],
             'Barrel': [1, 1.69, 0, -42.5, 1, 5],
-            'Cactus': [1.1, 1.75, -5, -50, 1, 5],
+            'Cactus': [1*1.1, 1.67*1.1, -5, -51, 1, 5],
             'Water': [1, 1, 0, 0, 1, 5],
             // Base fence types
             'Fence': [1, 1.61, 0, -40, 1, 5],
             'Rope Fence': [1, 1.75, 0, -50, 1, 5],
             // Simple Block Logic variations
-            'Horizontal': [1, 1.26, 0, -7.6, 1, 5],
+            'Horizontal': [1.05, 1.323, -2.5, -12.5, 1, 5],
             'Vertical': [1, 1.84, 0, -50, 1, 5],
             // Binary Code Logic variations
             '0001': [1/1.39, 1.39/1.39, 15, -28, 1, 5],
@@ -296,20 +319,35 @@ export class MapMaker {
             'R': [1, 1.75, 0, -50, 1, 5],
             // Rope Fence variations
             'Post': [1, 1.8, 0, -50, 1, 5],
-            'Post_TR': [1.5, 2.75, 0, -145, 1, 5],
+            'Post_TR': [1.5, 2.47, 0, -116.75, 1, 5],
             'Post_R': [1.5, 1.8, 0, -50, 1, 5],
-            'Post_T': [1, 2.75, 0, -145, 1, 5],
+            'Post_T': [1, 2.47, 0, -116.75, 1, 5],
+            // Border Fence Variations Binary Code
+            'B0001': [1, 1.6, 0, -55, 1, 5],
+            'B0010': [1, 1.8, 0, -55, 1, 5],
+            'B0011': [1, 1.5, 0, -55, 1, 5],
+            'B0100': [1, 1.8, 0, -55, 1, 5],
+            'B0101': [1, 1.5, 0, -55, 1, 5],
+            'B1000': [1, 1.8, 0, -55, 1, 5],
+            'B1001': [1, 1.05, 0, -55, 1, 5],
+            'B1010': [1, 2, 0, -75, 1, 5],
+            'B1100': [1, 2, 0, -75, 1, 5],
+            'BFence': [1, 1.80, 0, -55, 1, 5],
             'Skull': [1, 1.08, 0, 0, 1, 5],
+            'TNT': [1, 1.75, 0, -50, 1, 5],
             'Unbreakable': [1, 1.75, 0, -50, 1, 5],
-            'Blue Spawn': [1.7, 1.7, -27.5, -27.5, 0.85, 5],
-            'Red Spawn': [1.7, 1.7, -27.5, -27.5, 0.85, 5],
-            'Trio Spawn': [1.7, 1.7, -27.5, -27.5, 0.85, 5],
+            'Blue Spawn': [1.7, 1.7, -35, -35, 0.85, 7],
+            'Red Spawn': [1.7, 1.7, -35, -35, 0.85, 7],
+            'Blue Respawn': [1.7, 1.7, -35, -35, 0.85, 7],
+            'Red Respawn': [1.7, 1.7, -35, -35, 0.85, 7],
+            'Trio Spawn': [1.7, 1.7, -27.5, -27.5, 0.85, 7],
             'Objective': [2, 2.21, -50, -115, 1, 10],
             'Smoke': [1*1.4, 1.1*1.4, -15, -35, 1, 5],
             'Heal Pad': [1, 1.12, 0, 0, 1, 5],
             'Slow Tile': [1, 1.11, 0, 0, 1, 5],
             'Speed Tile': [1, 1.11, 0, 0, 1, 5],
             'Spikes': [1, 1.5, 0, -15, 1, 5],
+            'Bumper': [1, 1.8, 0, -50, 1, 5],
             'Jump R': [1, 1.12, 0, 0, 1, 5],
             'Jump L': [1, 1.12, 0, 0, 1, 5],
             'Jump T': [1, 1.12, 0, 0, 1, 5],
@@ -322,47 +360,155 @@ export class MapMaker {
             'Teleporter Green': [1, 1, 0, 0, 1, 5],
             'Teleporter Red': [1, 1, 0, 0, 1, 5],
             'Teleporter Yellow': [1, 1, 0, 0, 1, 5],
-            'Bolt': [1, 1.18, 0, 0, 1, 5]
+            'Bolt': [1, 1.18, 0, 0, 1, 5],
+            'TokenBlue': [1.7, 1.7, -35, -35, 1, 7],
+            'TokenRed': [1.7, 1.7, -35, -35, 1, 7],
+            'Box': [1, 1.75, 0, -50, 1, 5],
+            'Bot_Zone': [1.9, 1.9, -46.5, -46.5, 0.85, 7],
+            'Boss Zone': [7, 7, -300, -300, 1, 10],
+            'Monster Zone': [7, 7, -300, -300, 1, 10],
+            'Track': [1, 1, 0, 0, 1, 2],
+            'Base Ike Blue': [5, 6.12, -200, -270, 1, 10],
+            'Small Ike Blue': [3, 3.82, -100, -145, 1, 10],
+            'Base Ike Red': [5, 6.12, -200, -270, 1, 10],
+            'Small Ike Red': [3, 3.4825, -100, -110, 1, 10],
+            'GodzillaCity1': [1, 1.60, 0, -45, 1, 5],
+            'GodzillaCity2': [1, 1.75, 0, -53, 1, 5],
+            'GodzillaCity3': [1, 1.90, 0, -75, 1, 5],
+            'GodzillaCity4': [1, 2.10, 0, -95, 1, 5],
+            'GodzillaExplosive': [1, 1.8, 0, -51, 1, 5],
+            'GodzillaSpawn': [1.7, 1.7, -27.5, -27.5, 0.85, 7],
+            'Escape': [3.5, 3.7, -172, -170, 1, 10], // Trophy Escape Portal
         };
 
         // Initialize objective data
         this.objectiveData = {
             'Gem_Grab': [2, 2, -50, -50, 1, 10],
-            'Showdown': [1, 1.75, 0, -50, 1, 5],
             'Heist': [2, 2.21, -50, -115, 1, 10],
             'Bounty': [1.15, 2.0585, -10, -50, 1, 10],
-            'Brawl_Ball': [1.3, 1.495, -20, -20, 1, 10],
+            'Brawl_Ball': [1.3, 1.495, -15, -20, 1, 10],
             'Hot_Zone': [7, 7, -300, -300, 1, 10],
             'Snowtel_Thieves': [4, 4, -150, -150, 1, 10],
+            'Token_Run': [4, 4, -150, -150, 1, 10],
             'Basket_Brawl': [1.3, 1.495, -20, -20, 1, 10],
             'Volley_Brawl': [1.3, 1.495, -20, -20, 1, 10],
-            'Siege': [2.5, 3.1, -60, -175, 1, 10],
-            'Hold_The_Trophy': [2.5, 2.5, -75, -75, 1, 10]
+            'Siege': {
+                upper: [2 * 1.2, 2.64 * 1.2, -50, -135, 1, 10],  // Blue Ike (upper part) - slightly smaller
+                lower: [2 * 1.2, 2.83 * 1.2, -95, -135, 1, 10]   // Red Ike (lower part) - slightly larger
+            },
+            'Hold_The_Trophy': [2.5, 2.5, -75, -75, 1, 10],
+            'Bot_Zone': [1.9, 1.9, -46.5, -46.5, 0.85, 7],
+            'Bot_Drop': [1.9, 1.9, -46.5, -46.5, 0.85, 7],
+            'Paint_Brawl': [1.4, 2.2, -20, -85, 1, 10],
+            'Hockey': [1.5, 1.695, -25, -26, 1, 10],
+            'Dodgebrawl': [1.3, 1.495, -15, -20, 1, 10],
         };
 
         // Initialize environment data
         this.environmentObjectiveData = {
-            Bazaar: {
-                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
-            },
             City: {
                 'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
             },
-            Snowtel: {
+            Retropolis: {
                 'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
             },
-            Castle_Courtyard: {
+            Pirate_Ship: {
                 'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
             },
             Arcade: {
                 'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
             },
+            Bazaar: {
+                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
+            },
+            Super_City: {
+                'Gem_Grab': [2.3, 2.4, -69, -60, 1, 10],
+                'Heist': [1.8 * 1.2, 3.2 * 0.9, -57, -180, 1, 10],
+            },
+            Gift_Shop: {
+                'Gem_Grab': [2.7, 2.376, -85, -70, 1, 10],
+            },
             Bandstand: {
                 'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
             },
-            Retropolis: {
+            Snowtel: {
                 'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
-            }
+            },
+            Starr_Force: {
+                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
+            },
+            Water_Park: {
+                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
+            },
+            Castle_Courtyard: {
+                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
+            },
+            Brawlywood: {
+                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
+            },
+            Fighting_Game: {
+                'Gem_Grab': [2*1.1, 2.09*1.1, -55, -60, 1, 10],
+                'Heist': [2*0.9, 3.56*0.9, -37.5, -95, 1, 10],
+            },
+            Biodome: {
+                'Gem_Grab': [2.4, 2.5, -65, -78, 1, 10],
+            },
+            Stunt_Show: {
+                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
+            },
+            Deep_Sea: {
+                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
+                'Heist': [2 * 1.2, 3.56 * 0.9, -75, -190, 1, 10],
+            },
+            Ghost_Station: {
+                'Gem_Grab': [2.7, 2.376, -85, -70, 1, 10],
+            },
+            Candyland: {
+                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
+            },
+            The_Hub: {
+                'Gem_Grab': [2.4, 2.4, -64, -70, 1, 10],
+            },
+            Rumble_Jungle: {
+                'Gem_Grab': [2.7, 2.376, -85, -70, 1, 10],
+            },
+            Enchanted_Woods: {
+                'Gem_Grab': [2.3, 2.3, -64, -60, 1, 10],
+            },
+            Circus: {
+                'Gem_Grab': [2, 2.4, -48, -50, 1, 10],
+            },
+            Starr_Toon: {
+                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
+            },
+            Swamp_of_Love: {
+                'Gem_Grab': [2*1.1, 2.09*1.1, -55, -60, 1, 10]
+            },
+            Medieval_Manor: {
+                'Gem_Grab': [2.7, 2.376, -85, -70, 1, 10],
+            },
+            Super_City_2: {
+                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
+            },
+            Spongebob: {
+                'Gem_Grab': [2.4, 2.4, -44, -90, 1, 10],
+            },
+            Hockey: {
+                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
+            },
+            Escape_Room: {
+                'Gem_Grab': [2.7, 2.376, -85, -70, 1, 10],
+            },
+            Oddities_Shop: {
+                'Gem_Grab': [2.7, 2.376, -85, -70, 1, 10]
+            },
+            Skating_Bowl: {
+                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
+            },
+            Katana_Kingdom: {
+                'Gem_Grab': [2.2, 2.34, -30, -60, 1, 10],
+                'Heist': [1.8 * 1.2, 3.2 * 0.9, -57, -185, 1, 10],
+            },
         };
 
         this.environmentTileData = {
@@ -370,6 +516,20 @@ export class MapMaker {
                 'Wall': [1, 1.8, 0, -51, 1, 5],
                 'Wall2': [1*1.1, 1.65*1.1, -5, -50, 1, 5],
                 'Cactus': [1, 1.68, 0, -50, 1, 5],
+            },
+            Pirate_Ship: {
+                'Cactus': [1, 1.69, 0, -42.5, 1, 5],
+                'Skull': [1, 1.4, 0, -10, 1, 5],
+                '0001': [0.7, 1, 14, -51, 1, 5],
+                '0010': [1, 1.85, 0, -53, 1, 5],
+                '0011': [0.9 , 1.58, 11, -53, 1, 5],
+                '0100': [1, 1.85, 0, -53, 1, 5],
+                '0101': [0.84 , 1.58, 0, -53, 1, 5],
+                '1000': [0.7, 2, 14, -65, 1, 5],
+                '1001': [0.725, 1, 13, -51, 1, 5],
+                '1010': [0.9 , 2, 11, -70, 1, 5],
+                '1100': [0.84 , 2, 0, -69, 1, 5],
+                'Fence': [1, 1.85, 0, -53, 1, 5],
             },
             Arcade: {
                 'Wall': [1, 1.8, 0, -55, 1, 5],
@@ -384,7 +544,38 @@ export class MapMaker {
                 'Wall': [1, 1.8, 0, -51, 1, 5],
                 'Wall2': [1, 1.8, 0, -51, 1, 5],
                 'Fence': [1, 1.85, 0, -55, 1, 5],
-                'Skull': [1, 1.59, -2.5, -42.5, 1, 5],
+                'Skull': [1*1.1, 1.59*1.1, -5, -42.5, 1, 5],
+            },
+            Super_City: {
+                'Barrel': [1, 1.81, 0, -51, 1, 5],
+                'Bush': [1.1, 1.81, -6, -53, 1, 5],
+                'Skull': [1, 1.3, 0, -3, 1, 5],
+                '0001': [1 / 1.39, 1.39 / 1.39, 15, -28, 1, 5],
+                '0010': [1, 1.85, 0, -55, 1, 5],
+                '0011': [1 / 1.22, 1.774, 17, -47, 1, 5],
+                '0100': [1, 1.85, 0, -55, 1, 5],
+                '0101': [1 / 1.15, 1.785, 0, -47, 1, 5],
+                '1000': [1 / 1.39, 1.7, 15, -30, 1, 5],
+                '1001': [1 / 1.39, 1.4, 15, -50, 1, 5],
+                '1010': [1 / 1.19, 2, 16, -70, 1, 5],
+                '1100': [1 / 1.15, 2, 0, -70, 1, 5],
+                'Fence': [1, 1.85, 0, -55, 1, 5],
+            },
+            Gift_Shop: {
+                'Wall': [1, 1.75, 0, -47, 1, 5],
+                'Wall2': [1, 1.65, 0, -35, 1, 5],
+                'Cactus': [1, 1.69, 0, -42.5, 1, 5],
+                'Skull': [1, 1.8, 0, -60, 1, 5],
+                '0001': [0.7, 1, 14, -51, 1, 5],
+                '0010': [1, 1.85, 0, -53, 1, 5],
+                '0011': [0.9 , 1.58, 11, -53, 1, 5],
+                '0100': [1, 1.85, 0, -53, 1, 5],
+                '0101': [0.84 , 1.58, 0, -53, 1, 5],
+                '1000': [0.7, 1.8, 14, -65, 1, 5],
+                '1001': [0.725, 1, 13, -51, 1, 5],
+                '1010': [0.9 , 2, 11, -70, 1, 5],
+                '1100': [0.84 , 2, 0, -69, 1, 5],
+                'Fence': [1, 1.85, 0, -53, 1, 5],
             },
             Castle_Courtyard: {
                 'Bush': [1, 1.75, 0, -50, 1, 5],
@@ -401,7 +592,665 @@ export class MapMaker {
                 'Fence': [1, 1.85, 0, -55, 1, 5],
                 'Crate': [1*1.1, 1.63*1.1, -5, -50, 1, 5],
                 'Cactus': [1, 1.62, 0, -45, 1, 5],
-                'Skull': [1, 1.59, -2.5, -42.5, 1, 5],
+                'Skull': [1*1.1, 1.59*1.1, -5, -42.5, 1, 5],
+                'B0001': [1 / 1.39, 1.39 / 1.39, 15, -28, 1, 5],
+                'B0010': [1, 1.85, 0, -55, 1, 5],
+                'B0011': [1 / 1.2, 1.85, 17, -55, 1, 5],
+                'B0100': [1, 1.85, 0, -55, 1, 5],
+                'B0101': [1 / 1.14, 1.85, 0, -55, 1, 5],
+                'B0110': [1, 1.75, 0, -50, 1, 5],
+                'B1000': [1 / 1.39, 1.83 / 1.39, 15, -30, 1, 5],
+                'B1001': [1 / 1.39, 1.44 / 1.39, 15, -30, 1, 5],
+                'B1010': [1 / 1.18, 2.1, 16, -80, 1, 5],
+                'B1100': [1 / 1.15, 2.1, 0, -80, 1, 5],
+                'BFence': [1, 1.9, 0, -56.01, 1, 5],
+            },
+            Scrapyard: {
+                'Cactus': [1, 1.79, 0, -51, 1, 5],
+                'Barrel': [1, 1.81, 0, -51, 1, 5],
+                'Skull': [1, 1.51, 0, -45, 1, 5],
+                '0001': [1.2, 1.8, -10, -55, 1, 5],
+                '0010': [1.1, 1.7, -10, -36, 1, 5],
+                '0011': [1, 1.1, 0, -22, 1, 7],
+                '0100': [1.1, 1.7, 0, -36, 1, 5],
+                '0101': [1, 1.1, 0, -22, 1, 7],
+                '1000': [1.2, 1.8, -10, -35, 1, 5],
+                '1001': [1, 1, 0, -25, 1, 5],
+                '1010': [1, 1.6, 0, -25, 1, 5],
+                '1100': [1, 1.6, 0, -25, 1, 5],
+                'Fence': [1, 1.6, 0, -25, 1, 5],
+                'Post': [0.9, 1.8, 2, -58, 1, 5],
+                'Post_TR': [1.4, 2.6, 9.5, -129.75, 1, 5],
+                'Post_R': [1.5, 1.8, 4, -58, 1, 5],
+                'Post_T': [0.9, 2.5, 5, -127.75, 1, 5],
+            },
+            Starr_Force: {
+                'Wall': [1, 1.8, 0, -51, 1, 5],
+                'Wall2': [1, 1.88, 0, -61, 1, 5],
+                'Crate': [1, 1.5, 0, -26, 1, 5],
+                'Cactus': [1, 1.7, 0, -42, 1, 5],
+                'Barrel': [1, 1.81, 0, -51, 1, 5],
+                'Skull': [1.1, 1.7, -5, -51, 1, 5],
+                '0001': [1, 1.6, 0, -55, 1, 5],
+                '0010': [1, 1.8, 0, -50, 1, 5],
+                '0011': [1, 1.8, 0, -50, 1, 5],
+                '0100': [1, 1.8, 0, -50, 1, 5],
+                '0101': [1, 1.8, 0, -50, 1, 5],
+                '1000': [1, 2.1, 0, -75, 1, 5],
+                '1001': [1, 1.83, 0, -73, 1, 5],
+                '1010': [1, 2.1, 0, -79, 1, 5],
+                '1100': [1, 2.1, 0, -79, 1, 5],
+                'Fence': [1, 1.8, 0, -50, 1, 5],
+                'Post': [0.9, 1.8, 2, -58, 1, 5],
+                'Post_TR': [1.4, 2.6, 9.5, -129.75, 1, 5],
+                'Post_R': [1.5, 1.8, 4, -58, 1, 5],
+                'Post_T': [0.9, 2.5, 5, -127.75, 1, 5],
+            },
+            Water_Park: {
+                'Wall': [1, 1.8, 0, -51, 1, 5],
+                'Wall2': [1, 1.8, 0, -51, 1, 5],
+                'Crate': [1, 1.8, 0, -51, 1, 5],
+                'Barrel': [1, 1.81, 0, -51, 1, 5],
+                'Cactus': [1, 1.8, 0, -51, 1, 5],
+                'Skull': [1, 1.7, 0, -41, 1, 5],
+                '0001': [0.8, 1.6, 10, -45, 1, 5],
+                '0010': [0.9, 1.6, 10, -45, 1, 5],
+                '0011': [0.9, 1.6, 10, -45, 1, 5],
+                '0100': [0.9, 1.6, 0, -45, 1, 5],
+                '0101': [0.9, 1.6, 0, -45, 1, 5],
+                '1000': [0.8, 1.8, 10, -80, 1, 5],
+                '1001': [0.8, 1.8, 10, -80, 1, 5],
+                '1010': [0.9, 2.04, 10, -89, 1, 5],
+                '1100': [0.9, 2.04, 0, -89, 1, 5],
+                'Fence': [1, 1.6, 0, -45, 1, 5],
+                'Post': [1, 1.7, 0, -40, 1, 5],
+                'Post_R': [1.5, 1.7, 0, -40, 1, 5],
+                'Post_T': [1, 2.47, 0, -116.75, 1, 5],
+                'Post_TR': [1.45, 2.5, 0, -115.75, 1, 5],
+            },
+            Oddities_Shop: {
+                'Wall': [1, 1.8, 0, -51, 1, 5],
+                'Wall2': [1, 1.88, 0, -58.5, 1, 5],
+                'Fence': [1, 1.80, 0, -55, 1, 5],
+                'Crate': [1, 1.63, 0, -55, 1, 5],
+                'Cactus': [1, 1.62, 0, -50, 1, 5],
+                '0001': [1, 1.6, 0, -55, 1, 5],
+                '0010': [1, 1.8, 0, -55, 1, 5],
+                '0011': [1, 1.5, 0, -55, 1, 5],
+                '0100': [1, 1.8, 0, -55, 1, 5],
+                '0101': [1, 1.5, 0, -55, 1, 5],
+                '1000': [1, 1.8, 0, -55, 1, 5],
+                '1001': [1, 1.05, 0, -55, 1, 5],
+                '1010': [1, 2, 0, -75, 1, 5],
+                '1100': [1, 2, 0, -75, 1, 5],
+                'Post': [1, 1.75, 0, -50, 1, 5],
+                'Post_TR': [1.5, 2.565, 0, -132.5, 1, 5],
+                'Post_R': [1.5, 1.7475, 0, -50, 1, 5],
+                'Post_T': [1, 2.61, 0, -130, 1, 5],
+            },
+            Biodome: {
+                'Barrel': [1, 1.81, 0, -51, 1, 5],
+                'Cactus': [1, 1.8, 0, -51, 1, 5],
+                'Skull': [1, 1.5, 0, -25, 1, 5],
+                '0001': [1, 1.6, 0, -55, 1, 5],
+                '0010': [1, 1.8, 0, -56, 1, 5],
+                '0100': [1, 1.8, 0, -56, 1, 5],
+                '0011': [1, 1.5, 0, -55, 1, 5],
+                '0101': [1, 1.5, 0, -55, 1, 5],
+                '1000': [0.9, 1.8, 6, -55, 1, 5],
+                '1001': [1, 1.3, 0, -55, 1, 5],
+                '1010': [1, 1.79, 2.4, -55, 1, 5],
+                '1100': [0.96, 1.8, 0, -55, 1, 5],
+                'Fence': [1, 1.8, 0, -56, 1, 5],
+                'Post': [0.77, 1.8, 13, -65, 1, 5],
+                'Post_R': [1.5, 1.8, 13, -65, 1, 5],
+                'Post_T': [0.77, 2.3, 13, -115.6, 1, 5],
+                'Post_TR': [1.5, 2.3, 13, -115.6, 1, 5],
+            },
+            Stunt_Show: {
+                'Wall': [1, 1.8, 0, -50, 1, 5],
+                'Wall2': [1, 1.8, 0, -50, 1, 5],
+                'Crate': [1, 1.6, 0, -35, 1, 5],
+                'Barrel': [1, 1.7, 0, -38, 1, 5],
+                'Cactus': [1, 1.8, 0, -50, 1, 5],
+                'Skull': [1, 1.5, 0, -30, 1, 5],
+                '0001': [1, 1.6, 0, -55, 1, 5],
+                '0010': [1, 1.8, 0, -55, 1, 5],
+                '0011': [1, 1.5, 0, -55, 1, 5],
+                '0100': [1, 1.8, 0, -55, 1, 5],
+                '0101': [1, 1.5, 0, -55, 1, 5],
+                '1000': [1, 1.8, 0, -55, 1, 5],
+                '1001': [1, 1.05, 0, -55, 1, 5],
+                '1010': [1, 2, 0, -75, 1, 5],
+                '1100': [1, 2, 0, -75, 1, 5],
+                'Fence': [1, 1.8, 0, -55, 1, 5],
+                'Post': [1, 1.8, 0, -50, 1, 5],
+                'Post_R': [1.5, 1.8, 0, -50, 1, 5],
+                'Post_T': [1, 2.1, 0, -75.6, 1, 5],
+                'Post_TR': [1.5, 2.1, 0, -75.6, 1, 5],
+            },
+            Katana_Kingdom: {
+                'Cactus': [1, 1.8, 0, -51, 1, 5],
+                'Skull': [1, 1.4, 0, -15, 1, 5],
+                '0001': [1, 1.7, 0, -40, 1, 5],
+                '0010': [1.1, 1.4, -5, -30, 1, 5],
+                '0011': [1.1, 1.4, -5, -30, 1, 5],
+                '0100': [1.1, 1.4, -5, -30, 1, 5],
+                '0101': [1.1, 1.4, -5, -30, 1, 5],
+                '1000': [1, 1.7, 0, -40, 1, 5],
+                '1001': [1, 1.7, 0, -40, 1, 5],
+                '1010': [1.1, 1.4, -5, -30, 1, 5],
+                '1100': [1.1, 1.4, -5, -30, 1, 5],
+                'Fence': [1.1, 1.4, -5, -30, 1, 5],
+                'Post': [1, 1.8, 0, -50, 1, 5],
+                'Post_TR': [1.5, 2.47, 0, -118.75, 1, 5],
+                'Post_R': [1.5, 1.8, 0, -50, 1, 5],
+                'Post_T': [1, 2.47, 0, -118.75, 1, 5],
+            },
+            Deep_Sea: {
+                'Cactus': [1, 1.95, 0, -66, 1, 5],
+                'Barrel': [1, 1.81, 0, -51, 1, 5],
+                '0001': [1.2, 1.8, -10, -55, 1, 5],
+                '0010': [1.1, 1.5, -10, -36, 1, 5],
+                '0011': [1, 1.1, 0, -26, 1, 7],
+                '0100': [1.1, 1.5, 0, -36, 1, 5],
+                '0101': [1, 1.1, 0, -26, 1, 7],
+                '1000': [1.2, 1.8, -10, -35, 1, 5],
+                '1001': [1, 1, 0, -25, 1, 5],
+                '1010': [1, 1.4, 0, -26, 1, 5],
+                '1100': [1, 1.4, 0, -26, 1, 5],
+                'Fence': [1, 1.4, 0, -26, 1, 5],
+                'Post': [0.9, 1.8, 2, -58, 1, 5],
+                'Post_TR': [1.6, 2.45, 3, -127.75, 1, 5],
+                'Post_R': [1.5, 1.8, 4, -58, 1, 5],
+                'Post_T': [0.9, 2.5, 5, -127.75, 1, 5],
+            },
+            Robot_Factory: {
+                'Wall': [1, 1.8, 0, -53, 1, 5],
+                'Wall2': [1, 1.8, 0, -53, 1, 5],
+                'Crate': [1, 1.8, 0, -53, 1, 5],
+                'Barrel': [1, 1.81, 0, -51, 1, 5],
+                'Cactus': [1, 1.81, 0, -51, 1, 5],
+                'Skull': [1, 1.4, 0, -23, 1, 5],
+                '0001': [1, 1.6, 0, -55, 1, 5],
+                '0010': [1, 1.8, 0, -55, 1, 5],
+                '0011': [1, 1.5, 0, -55, 1, 5],
+                '0100': [1, 1.8, 0, -55, 1, 5],
+                '0101': [1, 1.5, 0, -55, 1, 5],
+                '1000': [1, 1.8, 0, -55, 1, 5],
+                '1001': [1, 1, 0, -53, 1, 5],
+                '1010': [1, 2, 0, -75, 1, 5],
+                '1100': [1, 2, 0, -75, 1, 5],
+                'Fence': [1, 1.8, 0, -55, 1, 5],
+                'Post': [0.9, 1.8, 6, -58, 1, 5],
+                'Post_TR': [1.5, 2.6, 6, -135.75, 1, 5],
+                'Post_R': [1.55, 1.8, 4, -58, 1, 5],
+                'Post_T': [0.9, 2.5, 5, -127.75, 1, 5]
+            },
+            Ghost_Station: {
+                'Cactus': [1, 1.7, 0, -42, 1, 5],
+                'Bush': [1, 1.75, 0, -51, 1, 5],
+                'Skull': [1, 1.5, 0, -41, 1, 5],
+                '0001': [1, 1.6, 0, -55, 1, 5],
+                '0010': [1, 1.7, 0, -55, 1, 5],
+                '0011': [1, 1.7, 0, -55, 1, 5],
+                '0100': [1, 1.7, 0, -55, 1, 5],
+                '0101': [1, 1.7, 0, -55, 1, 5],
+                '1000': [1, 1.8, 0, -55, 1, 5],
+                '1001': [1, 1.05, 0, -55, 1, 5],
+                '1010': [1, 1.7, 0, -55, 1, 5],
+                '1100': [1, 1.7, 0, -55, 1, 5],
+                'Fence': [1, 1.7, 0, -55, 1, 5],
+                'Post': [0.9, 1.8, 5, -70, 1, 5],
+                'Post_TR': [1.5, 2.3, 8, -120, 1, 5],
+                'Post_R': [1.5, 1.8, 6, -70, 1, 5],
+                'Post_T': [0.9, 2.3, 5, -120, 1, 5],
+            },
+            Candyland: {
+                'Wall': [1, 1.8, 0, -51, 1, 5],
+                'Wall2': [1, 1.8, 0, -51, 1, 5],
+                'Crate': [1, 1.8, 0, -51, 1, 5],
+                'Barrel': [1, 1.8, 0, -51, 1, 5],
+                'Cactus': [1.1, 2.1, -4, -70, 1, 5.5],
+                'Bush': [1, 1.75, 0, -51, 1, 5],
+                'Skull': [1, 1.51, 0, -15, 1, 5],
+                '0001': [1, 1, 0, 0, 1, 5],
+                '0011': [1, 1, 0, 0, 1, 5],
+                '0101': [1, 1, 0, 0, 1, 5],
+                '1001': [1, 1, 0, 0, 1, 5],
+                '1000': [1, 1.3, 0, 0, 1, 5],
+                '1010': [1, 1.3, 0, 0, 1, 5],
+                '1100': [1, 1.3, 0, 0, 1, 5],
+                '0010': [1, 1.3, 0, 0, 1, 5],
+                '0100': [1, 1.3, 0, 0, 1, 5],
+                'Fence': [1, 1.3, 0, 0, 1, 5],
+                'Post': [1.1, 1.8, -5, -50, 1, 5],
+                'Post_TR': [1.5, 2.47, -5, -116.75, 1, 5],
+                'Post_R': [1.5, 1.8, -6, -50, 1, 5],
+                'Post_T': [1.1, 2.47, -5, -116.75, 1, 5],
+            },
+            Rooftop: {
+                'Wall': [1, 1.8, 0, -51, 1, 5],
+                'Wall2': [1, 1.8, 0, -51, 1, 5],
+                'Crate': [1, 1.8, 0, -51, 1, 5],
+                'Barrel': [1, 1.8, 0, -51, 1, 5],
+                'Cactus': [1, 1.8, 0, -51, 1, 5],
+                'Skull': [1, 1.8, 0, -58, 1, 5],
+                'Horizontal': [1, 1.54, 0, -40, 1, 5],
+            },
+            Rumble_Jungle: {
+                'Cactus': [1 * 1.1, 1.67 * 1.1, -5, -45, 1, 5.5],
+                'Bush': [1, 1.75, 0, -51, 1, 5],
+                'Skull': [1 * 1.1, 1.59 * 1.1, -5, -42.5, 1, 5],
+                '0001': [1.2, 1.3, -10, -48, 1, 5],
+                '0010': [1, 1.86, 0, -50, 1, 5],
+                '0011': [1, 1.055, 0, -24, 1, 5],
+                '0100': [1, 1.86, 0, -50, 1, 5],
+                '0101': [1, 1.055, 0, -24, 1, 5],
+                '1000': [1, 1.6, 0, -23, 1, 5],
+                '1001': [1.2, 1.1, -11, -33, 1, 5],
+                '1010': [1, 1.6, 0, -24, 1, 5],
+                '1100': [1, 1.6, 0, -24, 1, 5],
+                'Fence': [1, 1.8, 0, -44, 1, 5],
+                'Post': [1, 2, 0, -75, 1, 5],
+                'Post_TR': [2 / 1.465, 2.18, 0, -92.5, 1, 5],
+                'Post_R': [2 / 1.465, 2, 0, -75, 1, 5],
+                'Post_T': [1, 2.18, 0, -92.5, 1, 5],
+            },     
+            Ranger_Ranch: {
+                'Wall': [1, 1.8, 0, -51, 1, 5],
+                'Skull': [1, 1.81, 0, -51, 1, 5],
+                'Post': [1, 1.8, 0, -50, 1, 5],
+                'Post_TR': [1.5, 2.47, 0, -118, 1, 5],
+                'Post_R': [1.5, 1.8, 0, -50, 1, 5],
+                'Post_T': [1, 2.47, 0, -118, 1, 5],
+            },
+            Circus: {
+                'Cactus': [1, 2, 0, -57, 1, 5],
+                'Skull': [1, 1.8, 0, -60, 1, 5],
+                '0001': [1, 1.6, 0, -55, 1, 5],
+                '0010': [1, 1.8, 0, -55, 1, 5],
+                '0011': [1, 1.45, 0, -50, 1, 5],
+                '0100': [1, 1.8, 0, -55, 1, 5],
+                '0101': [1, 1.45, 0, -50, 1, 5],
+                '1000': [1, 1.8, 0, -41, 1, 5],
+                '1001': [1, 1.4, 0, -41, 1, 5],
+                '1010': [1, 1.8, 0, -55, 1, 5],
+                '1100': [1, 1.8, 0, -55, 1, 5],
+                'Fence': [1, 1.8, 0, -55, 1, 5],
+                'Post': [1, 1.75, 0, -50, 1, 5],
+                'Post_TR': [1.5, 2.61, 0, -116.5, 1, 5],
+                'Post_R': [1.5, 1.7475, 0, -50, 1, 5],
+                'Post_T': [1, 2.61, 0, -116, 1, 5],
+            },
+            Coin_Factory: {
+                'Wall': [1, 1.8, 0, -53, 1, 5],
+                'Wall2': [1, 1.8, 0, -53, 1, 5],
+                'Crate': [1, 1.8, 0, -53, 1, 5],
+                'Cactus': [1, 1.81, 0, -51, 1, 5],
+                'Skull': [1, 1.6, 0, -31, 1, 5],
+                '0001': [1, 1.6, 0, -55, 1, 5],
+                '0010': [1, 1.8, 0, -55, 1, 5],
+                '0011': [1, 1.5, 0, -55, 1, 5],
+                '0100': [1, 1.8, 0, -55, 1, 5],
+                '0101': [1, 1.5, 0, -55, 1, 5],
+                '1000': [1, 1.8, 0, -55, 1, 5],
+                '1001': [1, 1, 0, -53, 1, 5],
+                '1010': [1, 2, 0, -75, 1, 5],
+                '1100': [1, 2, 0, -75, 1, 5],
+                'Fence': [1, 1.8, 0, -55, 1, 5],
+                'Post': [1, 1.75, 0, -50, 1, 5],
+                'Post_R': [1.5, 1.7475, 0, -50, 1, 5],
+                'Post_T': [1, 1.95, 0, -68.5, 1, 5],
+                'Post_TR': [1.5, 1.95, 0, -68.5, 1, 5],
+            },
+            Starr_Toon: {
+                'Wall': [1, 1.8, 0, -48, 1, 5],
+                'Wall2': [1, 1.8, 0, -48, 1, 5],
+                'Crate': [1, 1.8, 0, -48, 1, 5],
+                'Barrel': [1, 1.8, 0, -48, 1, 5],
+                'Cactus': [1, 1.4, 0, -19, 1, 5],
+                'Bush': [1, 1.75, 0, -51, 1, 5],
+                'Skull': [1, 1.9, 0, -56, 1, 5],
+                '0001': [1, 1.85, 0, -55, 1, 5],
+                '0010': [1, 1.85, 0, -55, 1, 5],
+                '0011': [1, 1.85, 0, -55, 1, 5],
+                '0100': [1, 1.85, 0, -55, 1, 5],
+                '0101': [1, 1.85, 0, -55, 1, 5],
+                '0110': [1, 1.75, 0, -50, 1, 5],
+                '1000': [1, 1.85, 0, -55, 1, 5],
+                '1001': [1, 1.85, 0, -55, 1, 5],
+                '1010': [1, 1.85, 0, -55, 1, 5],
+                '1100': [1, 1.85, 0, -55, 1, 5],
+                'Fence': [1, 1.35, 0, -6, 1, 5],
+            },
+            Ice_Island: {
+                'Wall': [1, 1.8, 0, -51, 1, 5],
+                'Skull': [1 * 1.1, 1.22 * 1.1, -5, -30, 1, 5],
+                'Post': [1, 1.8, 0, -50, 1, 5],
+                'Post_TR': [1.5, 2.47, 0, -118, 1, 5],
+                'Post_R': [1.5, 1.8, 0, -50, 1, 5],
+                'Post_T': [1, 2.47, 0, -118, 1, 5],
+            },
+            Medieval_Manor: {
+                'Cactus': [1.1, 1.6, -5, -36, 1, 5],
+                '0001': [1.350, 1.6, -16, -42, 1, 5],
+                '0010': [1, 1.5, 0, -30, 1, 5],
+                '0011': [1, 1.5, 0, -30, 1, 5],
+                '0100': [1, 1.5, 0, -30, 1, 5],
+                '0101': [1, 1.5, 0, -30, 1, 5],
+                '1000': [1.350, 1.6, -16, -42, 1, 5],
+                '1001': [1.350, 1.6, -16, -42, 1, 5],
+                '1010': [1, 1.5, 0, -30, 1, 5],
+                '1100': [1, 1.5, 0, -30, 1, 5],
+                'Fence': [1, 1.5, 0, -30, 1, 5],
+                'BFence': [1, 1.6, 0, -28, 1, 5],
+                'Post': [1, 1.8, 0, -50, 1, 5],
+                'Post_TR': [1.5, 2.47, 0, -118.75, 1, 5],
+                'Post_R': [1.5, 1.8, 0, -50, 1, 5],
+                'Post_T': [1, 2.47, 0, -118.75, 1, 5],
+            },
+            Super_City_2: {
+                'Wall': [1, 1.8, 0, -51, 1, 5],
+                'Wall2': [1, 1.8, 0, -51, 1, 5],
+                'Crate': [1, 1.8, 0, -51, 1, 5],
+                'Barrel': [1, 1.82, 0, -51, 1, 5],
+                'Skull': [1, 1.81, 0, -51, 1, 5],
+                '0001': [1, 1.6, 0, -55, 1, 5],
+                '0010': [1, 1.8, 0, -55, 1, 5],
+                '0011': [1, 1.5, 0, -55, 1, 5],
+                '0100': [1, 1.8, 0, -55, 1, 5],
+                '0101': [1, 1.5, 0, -55, 1, 5],
+                '1000': [1, 1.8, 0, -55, 1, 5],
+                '1001': [1, 1.05, 0, -55, 1, 5],
+                '1010': [1, 2, 0, -75, 1, 5],
+                '1100': [1, 2, 0, -75, 1, 5],
+                'Fence': [1, 1.80, 0, -55, 1, 5],
+                'B0001': [1, 1.6, 0, -55, 1, 5],
+                'B0010': [1, 1.8, 0, -55, 1, 5],
+                'B0011': [1, 1.5, 0, -55, 1, 5],
+                'B0100': [1, 1.8, 0, -55, 1, 5],
+                'B0101': [1, 1.5, 0, -55, 1, 5],
+                'B1000': [1, 1.8, 0, -55, 1, 5],
+                'B1001': [1, 1.05, 0, -55, 1, 5],
+                'B1010': [1, 2, 0, -75, 1, 5],
+                'B1100': [1, 2, 0, -75, 1, 5],
+                'BFence': [1, 1.80, 0, -55, 1, 5],
+                'Post': [1, 1.8, 0, -50, 1, 5],
+                'Post_TR': [1.5, 2.4, 0, -112, 1, 5],
+                'Post_R': [1.5, 1.8, 0, -50, 1, 5],
+                'Post_T': [1, 2.4, 0, -112, 1, 5],
+            },
+            Spongebob: {
+                'Wall2': [1, 1.8, 0, -49, 1, 5],
+                'Crate': [1, 1.8, 0, -51, 1, 5],
+                'Barrel': [1, 1.7, 0, -49, 1, 5],
+                'Cactus': [1.2, 1.89, -10, -59, 1, 5.5],
+                'Bush': [1.05, 1.9, -2, -58, 1, 5],
+                'Skull': [1, 1.5, 0, -22, 1, 5],
+                'Fence': [1, 1.61, 0, -40, 1, 5],
+                'Horizontal': [1, 1.2, 0, -15, 1, 5],
+                'Vertical': [1, 1.84, 0, -50, 1, 5],
+                'Post': [0.9, 1.8, 5, -66, 1, 5],
+                'Post_TR': [1.4, 2.65, 5, -150.50, 1, 5],
+                'Post_R': [1.4, 1.8, 5, -66, 1, 5],
+                'Post_T': [0.9, 2.65, 5, -150.50, 1, 5],
+            },
+            Hockey: {
+                'Wall2': [1, 1.8, 0, -49, 1, 5],
+                'Crate': [1, 1.8, 0, -50, 1, 5],
+                'Barrel': [1, 1.8, 0, -51, 1, 5],
+                'Cactus': [1, 1.75, 0, -55, 1, 5],
+                'Skull': [1, 1.65, 0, -47, 1, 5],
+                '0001': [0.6, 1.7, 22, -51, 1, 5],
+                '0010': [1, 1.7, 0, -47, 1, 5],
+                '0100': [1, 1.7, 0, -47, 1, 5],
+                '1000': [0.6, 1.7, 22, -51, 1, 5],
+                '1001': [0.6, 1.7, 22, -51, 1, 5],
+                '0011': [0.9, 1.8, 10, -42, 1, 5],
+                '0101': [0.9, 1.8, 0, -42, 1, 5],
+                '1010': [0.9, 1.85, 10, -62, 1, 5],
+                '1100': [0.9, 1.85, 0, -62, 1, 5],
+                'Fence': [1, 1.7, 0, -47, 1, 5],
+                'B0001': [1, 1.3, 0, -55, 1, 5],
+                'B0010': [1, 1.8, 0, -55, 1, 5],
+                'B0011': [1, 1.5, 0, -55, 1, 5],
+                'B0100': [1, 1.8, 0, -55, 1, 5],
+                'B0101': [1, 1.5, 0, -55, 1, 5],
+                'B1000': [1, 1.8, 0, -55, 1, 5],
+                'B1001': [1, 1.05, 0, -55, 1, 5],
+                'B1010': [1, 1.8, 0, -55, 1, 5],
+                'B1100': [1, 1.8, 0, -55, 1, 5],
+                'BFence': [1, 1.8, 0, -55, 1, 5],
+            },
+            Escape_Room: {
+                'Crate': [1, 1.8, 0, -61, 1, 5],
+                'Barrel': [1, 1.7, 0, -51, 1, 5],
+                'Cactus': [1, 1.75, 0, -53, 1, 5],
+                'Skull': [1.1, 1.7, -5, -48.5, 1, 5],
+                '0001': [1, 1.6, 0, -55, 1, 5],
+                '0010': [1, 1.8, 0, -55, 1, 5],
+                '0011': [1, 1.5, 0, -55, 1, 5],
+                '0100': [1, 1.8, 0, -55, 1, 5],
+                '0101': [1, 1.5, 0, -55, 1, 5],
+                '1000': [1, 1.8, 0, -55, 1, 5],
+                '1001': [1, 1.05, 0, -55, 1, 5],
+                '1010': [1, 2, 0, -75, 1, 5],
+                '1100': [1, 2, 0, -75, 1, 5],
+                'Fence': [1, 1.80, 0, -55, 1, 5],
+            },
+            Brawlywood: {
+                'Wall': [1, 1.8, 0, -51, 1, 5],
+                'Wall2': [1, 1.8, 0, -51, 1, 5],
+                'Crate': [1, 1.8, 0, -51, 1, 5],
+                'Barrel': [1, 1.8, 0, -51, 1, 5],
+                'Cactus': [1, 2.1, 0, -70, 1, 5],
+                'Skull': [1, 1.51, 0, -45, 1, 5],
+                '0001': [0.6, 1.7, 22, -51, 1, 5],
+                '0010': [1, 1.8, 0, -51, 1, 5],
+                '0011': [1, 1.8, 0, -51, 1, 5],
+                '0100': [1, 1.8, 0, -51, 1, 5],
+                '0101': [1, 1.8, 0, -51, 1, 5],
+                '1000': [0.6, 1.7, 22, -51, 1, 5],
+                '1001': [0.6, 1.7, 22, -51, 1, 5],
+                '1010': [1, 1.9, 0, -62, 1, 5],
+                '1100': [1, 1.9, 0, -62, 1, 5],
+                'Fence': [1, 1.8, 0, -51, 1, 5],
+            },
+            Enchanted_Woods: {
+                'Wall': [1, 1.8, 0, -51, 1, 5],
+                'Wall2': [1, 2, 0, -69, 1, 5],
+                'Cactus': [1, 1.68, 0, -51, 1, 5],
+                'Skull': [1, 1.4, 0, -10, 1, 5],
+                '0001': [1, 1.6, 0, -55, 1, 5],
+                '0010': [1, 1.8, 0, -56, 1, 5],
+                '0011': [1, 1.5, 0, -50, 1, 5],
+                '0100': [1, 1.8, 0, -56, 1, 5],
+                '0101': [1, 1.5, 0, -50, 1, 5],
+                '1000': [0.9, 1.8, 6, -55, 1, 5],
+                '1001': [1, 1.3, 0, -55, 1, 5],
+                '1010': [1, 1.9, 0, -70, 1, 5],
+                '1100': [1, 1.9, 0, -70, 1, 5],
+                'Fence': [1, 1.8, 0, -56, 1, 5],
+                'Post': [1, 1.8, 0, -50, 1, 5],
+                'Post_TR': [1.5, 2.4, 4, -109, 1, 5],
+                'Post_R': [1.5, 1.8, 0, -50, 1, 5],
+                'Post_T': [1, 2.4, 0, -108, 1, 5],
+            },
+            The_Hub: {
+                'Wall': [1, 1.8, 0, -51, 1, 5],
+                'Wall2': [1, 1.88, 0, -58.5, 1, 5],
+                'Crate': [1, 1.8, 0, -51, 1, 5],
+                'Barrel': [1, 1.82, 0, -51, 1, 5],
+                'Cactus': [1, 1.82, 0, -51, 1, 5],
+                'Skull': [1, 1.3, 0, -15, 1, 5],
+                '0001': [1, 1.6, 0, -55, 1, 5],
+                '0010': [1, 1.8, 0, -55, 1, 5],
+                '0011': [1, 1.5, 0, -55, 1, 5],
+                '0100': [1, 1.8, 0, -55, 1, 5],
+                '0101': [1, 1.5, 0, -55, 1, 5],
+                '1000': [1, 1.8, 0, -55, 1, 5],
+                '1001': [1, 1.05, 0, -55, 1, 5],
+                '1010': [1, 2.3, 0, -105, 1, 5],
+                '1100': [1, 2.3, 0, -105, 1, 5],
+                'Fence': [1, 1.8, 0, -55, 1, 5],
+                'Post': [0.9, 1.8, 5, -70, 1, 5],
+                'Post_TR': [1.5, 2.3, 8, -120, 1, 5],
+                'Post_R': [1.5, 1.8, 6, -70, 1, 5],
+                'Post_T': [0.9, 2.3, 5, -120, 1, 5],
+            },
+            Enchanted_Woods: {
+                'Wall': [1, 1.8, 0, -51, 1, 5],
+                'Wall2': [1, 2, 0, -69, 1, 5],
+                'Cactus': [1, 1.68, 0, -51, 1, 5],
+                'Skull': [1, 1.4, 0, -10, 1, 5],
+                '0001': [1, 1.6, 0, -55, 1, 5],
+                '0010': [1, 1.8, 0, -56, 1, 5],
+                '0100': [1, 1.8, 0, -56, 1, 5],
+                '0011': [1, 1.5, 0, -50, 1, 5],
+                '0101': [1, 1.5, 0, -50, 1, 5],
+                '1000': [0.9, 1.8, 6, -55, 1, 5],
+                '1001': [1, 1.3, 0, -55, 1, 5],
+                '1010': [1, 1.9, 0, -70, 1, 5],
+                '1100': [1, 1.9, 0, -70, 1, 5],
+                'Fence': [1, 1.8, 0, -56, 1, 5],
+                'Post': [1, 1.8, 0, -50, 1, 5],
+                'Post_TR': [1.5, 2.4, 4, -109, 1, 5],
+                'Post_R': [1.5, 1.8, 0, -50, 1, 5],
+                'Post_T': [1, 2.4, 0, -108, 1, 5],
+            },
+            Swamp_of_Love: {
+                'Horizontal': [1.05, 1.323, -2.5, -25, 1, 5],
+                'Cactus': [1*1.2, 1.36*1.2, -10, -40, 1, 5]
+            },
+            Skating_Bowl: {
+                'Wall': [1, 1.8, 0, -51, 1, 5],
+                'Wall2': [1, 1.8, 0, -51, 1, 5],
+                'Crate': [1, 1.8, 0, -51, 1, 5],
+                'Barrel': [1.2, 1.8, -10, -51, 1, 5.5],
+                'Cactus': [1, 1.8, 0, -51, 1, 5],
+                'Skull': [1, 1.4, 0, -20, 1, 5],
+                '0001': [1, 1.6, 0, -55, 1, 5],
+                '0010': [1, 1.8, 0, -55, 1, 5],
+                '0011': [1, 1.5, 0, -55, 1, 5],
+                '0100': [1, 1.8, 0, -55, 1, 5],
+                '0101': [1, 1.5, 0, -55, 1, 5],
+                '1000': [1, 1.8, 0, -55, 1, 5],
+                '1001': [1, 1.05, 0, -55, 1, 5],
+                '1010': [1, 1.8, 0, -55, 1, 5],
+                '1100': [1, 1.8, 0, -55, 1, 5],
+                'Fence': [1, 1.8, 0, -55, 1, 5],
+                'Post': [1, 1.8, 0, -58, 1, 5],
+                'Post_TR': [1.4, 2.1, 0, -85, 1, 5],
+                'Post_R': [1.4, 1.7, -2, -52, 1, 5],
+                'Post_T': [1, 2.1, 0, -88, 1, 5],
+            },
+            Tropical_Island: {
+                'Cactus': [1.8, 2.45, -40, -100, 1, 5.5],
+                'Skull': [1*1.1, 1.59*1.1, -5, -42.5, 1, 5],
+                'Post': [1, 2, 0, -75, 1, 5],
+                'Post_TR': [2/1.465, 2.18, 0, -92.5, 1, 5],
+                'Post_R': [2/1.465, 2, 0, -75, 1, 5],
+                'Post_T': [1, 2.18, 0, -92.5, 1, 5],
+                'Horizontal': [1, 1.26, 0, -10, 1, 5],                
+            },
+            Subway_Surfers: {
+                'Barrel': [1, 1.8, 0, -46, 1, 5],
+                'Cactus': [0.93, 1.5, 4, -43, 1, 5],
+                'Bush': [1, 1.75, 0, -51, 1, 5],
+                'Skull': [1.1, 1.75, -3, -43, 1, 5],
+                '0001': [0.76, 1.2, 10, -30, 1, 5],
+                '0010': [1, 1.70, 0, -55, 1, 5],
+                '0011': [0.82, 1.70, 17, -55, 1, 5],
+                '0100': [1, 1.70, 0, -55, 1, 5],
+                '0101': [0.82, 1.70, -1, -55, 1, 5],
+                '0110': [1, 1.75, 0, -50, 1, 5],
+                '1000': [0.76, 1.50, 10, -30, 1, 5],
+                '1001': [0.65, 1.1, 16, -30, 1, 5],
+                '1010': [0.84, 1.70, 17, -55, 1, 5],
+                '1100': [0.82, 1.70, -1, -55, 1, 5],
+                'Fence': [1, 1.70, 0, -55, 1, 5],
+            },
+            Oasis: {
+                'Wall2': [1, 1.8, 0, -50, 1, 5],
+                'Skull': [1*1.1, 1.59*1.1, -5, -42.5, 1, 5],
+            },
+            City: {
+              'Horizontal': [1.05, 1.323, -2.5, -15, 1, 5],
+              'Cactus': [1, 2.2, 0, -82.5, 1, 5],
+              'Wall': [1, 1.76, 0, -50, 1, 5],
+            },
+            Retropolis: {
+                'Wall2': [1, 1.79, 0, -51, 1, 5],
+                'Barrel': [1, 1.81, 0, -51, 1, 5],
+                'Cactus': [1, 2.2, 0, -82.5, 1, 5],
+                'Skull': [1, 1.51, 0, -45, 1, 5],
+                'Fence': [1, 1.49, 0, -45, 1, 5],
+                '0001': [1/1.39, 1.39/1.39, 15, -28, 1, 5],
+                '0010': [1, 1.49, 0, -45, 1, 5],
+                '0011': [1, 1.5, 0, -45, 1, 5],
+                '0100': [1, 1.49, 0, -45, 1, 5],
+                '0101': [1, 1.5, 0, -45, 1, 5],
+                '0110': [1, 1.75, 0, -50, 1, 5],
+                '1000': [1/1.39, 1.83/1.39, 15, -30, 1, 5],
+                '1001': [1/1.39, 1.44/1.39, 15, -30, 1, 5],
+                '1010': [1, 1.65, 0, -60, 1, 5],
+                '1100': [1, 1.65, 0, -60, 1, 5],
+            },
+            Mortuary: {
+                'Wall': [1, 1.8, 0, -51, 1, 5],
+                'Wall2': [1, 1.8, 0, -51, 1, 5],
+                'Cactus': [1*1.1, 1.42*1.1, -5, -27.5, 1, 5],
+                'Skull': [1, 1.49, 0, -20, 1, 5],
+                'Horizontal': [1, 1.67, 0, -37.5, 1, 5],
+                'Fence': [1, 1.85, 0, -55, 1, 5]
+            },
+            Stadium: {
+                'Cactus': [1, 2.2, 0, -82.5, 1, 5],
+                'Fence': [1, 1.63, 0, -55, 1, 5],
+                'Horizontal': [1.1, 1.54, -5, -45, 1, 5],
+                'Vertical': [1, 1.71, 0, -48, 1, 5],
+                'Wall': [1, 1.8, 0, -51, 1, 5],
+                'Wall2': [1, 1.79, 0, -51, 1, 5],
+                'Barrel': [1, 1.81, 0, -51, 1, 5],
+            },
+            Snowtel: {
+                'Horizontal': [1.05, 1.323, -2.5, -15, 1, 5],
+                'Wall': [1, 1.8, 0, -51, 1, 5],
+                'Wall2': [1, 1.8, 0, -51, 1, 5],
+                'Skull': [1*1.1, 1.22*1.1, -5, -30, 1, 5]
+            },
+            Wild_West: {
+                'Wall': [1*1.1, 1.63*1.1, -5, -50, 1, 5],
+                'Wall2': [1*1.1, 1.63*1.1, -5, -50, 1, 5],
+                'Skull': [1*1.1, 1.22*1.1, -5, -5, 1, 5]
+            },
+            Holiday: {
+                'Wall': [1*1.05, 1.73*1.05, -2.5, -55, 1, 5],
+                'Wall2': [1*1.1, 1.64*1.1, -5, -50, 1, 5],
+                'Barrel': [1, 1.83, 0, -52, 1, 5],
+                'Skull': [1*1.1, 1.22*1.1, -5, -5, 1, 5]
+            },
+            Fighting_Game: {
+                'Cactus': [1.18, 1.85, -9, -60, 1, 5.5],
+                'Bush': [1, 1.75, 0, -50, 1, 5],
+                'Skull': [1, 1.7, 0, -49, 1, 5],
+                'Barrel': [1, 1.75, 0, -50, 1, 5],
+                'Post': [1*0.6, 2.83*0.6, 20, -50, 1, 5],
+                'Post_TR': [1*1.15, 1.87*1.15, 20, -95, 1, 5],
+                'Post_R': [1*1.15, 1.48*1.15, 20, -50, 1, 5],
+                'Post_T': [1*0.6, 3.58*0.6, 20, -95, 1, 5],
+                'Fence': [1, 1.7, 0, -47.5, 1, 5],
+                '0001': [1/1.39, 1.39/1.39, 15, -28, 1, 5],
+                '0010': [1, 1.7, 0, -47.5, 1, 5],
+                '0011': [1*0.875, 2*0.85, 15.25, -48, 1, 5],
+                '0100': [1, 1.7, 0, -47.5, 1, 5],
+                '0101': [1*0.875, 2*0.85, 0, -48, 1, 5],
+                '0110': [1, 1.75, 0, -50, 1, 5],
+                '1000': [1/1.39, 1.83/1.39, 15, -30, 1, 5],
+                '1001': [1/1.39, 1.44/1.39, 15, -30, 1, 5],
+                '1010': [1*0.875, 2.47*0.85, 15.25, -87.5, 1, 5],
+                '1100': [1*0.875, 2.47*0.85, 0, -87.5, 1, 5],
             }
         };
         
@@ -419,19 +1268,20 @@ export class MapMaker {
             9: { name: 'Rope Fence', img: '${env}/Rope/Post.png', size: 1 },
             10: { name: 'Skull', img: '${env}/Tiles/Skull.png', size: 1 },
             11: { name: 'Unbreakable', img: 'Global/Unbreakable.png', size: 1 },
-            12: { name: 'Blue Spawn', size: 1, getImg: (gamemode) => {
-                return { img: gamemode === 'Showdown' ? 'Global/Spawns/3.png' : 'Global/Spawns/1.png' };
+             12: { name: 'Blue Spawn', size: 1, getImg: (gamemode) => {
+                return { img: gamemode === 'Showdown' || gamemode === 'Trophy_Escape' || gamemode === 'Hunters' || gamemode === 'Drumroll' ? 'Global/Spawns/3.png' : 'Global/Spawns/1.png' }; // Won't use the default spawns for the listed modes
             }},
-            13: { name: 'Red Spawn', size: 1, getImg: (gamemode) => {
+            13: { name: 'Red Spawn', size: 1, getImg: (gamemode) => { // Will Block Red spawns to appear on Trophy_Escape or any blacklisted mode
+                if (gamemode === 'Trophy_Escape' || gamemode === 'Hunters' || gamemode === 'Drumroll') return null;
                 return { img: gamemode === 'Showdown' ? 'Global/Spawns/4.png' : 'Global/Spawns/2.png' };
             }},
             14: { name: 'Objective', size: 1, getImg: (gamemode, y, mapHeight) => {
                 const objectives = {
                     'Gem_Grab': { img: '${env}/Gamemode_Specifics/Gem_Grab.png' },
-                    'Showdown': { img: 'Global/Objectives/Box.png' },
                     'Heist': { img: '${env}/Gamemode_Specifics/Heist.png' },
                     'Bounty': { img: 'Global/Objectives/Bounty.png' },
                     'Brawl_Ball': { img: '${env}/Gamemode_Specifics/Brawl_Ball.png' },
+                    'Dodgebrawl': { img: 'Global/Objectives/Dodgebrawl.png' },
                     'Hot_Zone': { img: 'Global/Objectives/Hot_Zone.png', size: 7 },
                     'Snowtel_Thieves': { 
                         img: `Global/Objectives/${y > mapHeight/2 ? 'SnowtelThievesBlue' : 'SnowtelThievesRed'}.png`,
@@ -439,14 +1289,22 @@ export class MapMaker {
                     },
                     'Basket_Brawl': { img: 'Global/Objectives/Basket_Brawl.png' },
                     'Volley_Brawl': { img: 'Global/Objectives/Volley_Brawl.png' },
+                    'Bot_Drop': { img: 'Global/Objectives/Bot_Zone.png' },
+                    'Hockey': { img: 'Global/Objectives/Hockey.png' },
+                    'Paint_Brawl': { img: 'Global/Objectives/PaintBrawl2.png' },
                     'Siege': { 
                         img: `Global/Objectives/${y > mapHeight/2 ? 'IkeBlue' : 'IkeRed'}.png`,
                         displayImg: 'Global/Objectives/IkeRed.png'
                     },
+                    'Token_Run': { 
+                        img: `Global/Objectives/${y > mapHeight/2 ? 'TokenRunRed' : 'TokenRunBlue'}.png`,
+                        displayImg: 'Global/Objectives/TokenRunBlue.png'
+                    },
                     'Hold_The_Trophy': { img: 'Global/Objectives/Hold_The_Trophy.png' }
                 };
                 return objectives[gamemode];
-            }},
+               },
+            },
             15: { name: 'Smoke', img: 'Global/Special_Tiles/Smoke.png', size: 1 },
             16: { name: 'Heal Pad', img: 'Global/Special_Tiles/HealPad.png', size: 2 },
             17: { name: 'Slow Tile', img: 'Global/Special_Tiles/SlowTile.png', size: 1 },
@@ -465,7 +1323,33 @@ export class MapMaker {
             30: { name: 'Teleporter Red', img: 'Global/Teleporters/Red.png', size: 2 },
             31: { name: 'Teleporter Yellow', img: 'Global/Teleporters/Yellow.png', size: 2 },
             32: { name: 'Bolt', img: 'Global/Objectives/Bolt.png', size: 1, showInGamemode: 'Siege' },
-            36: { name: 'Trio Spawn', size: 1, showInGamemode: 'Showdown', img: 'Global/Spawns/1.png' }
+            34: { name: 'TokenBlue', img: 'Global/Objectives/TokenBlue.png', size: 1, showInGamemode: 'Token_Run' },
+            35: { name: 'TokenRed', img: 'Global/Objectives/TokenRed.png', size: 1, showInGamemode: 'Token_Run' },
+            36: { name: 'Trio Spawn', size: 1, showInGamemode: 'Showdown', img: 'Global/Spawns/7.png' },
+            37: { name: 'Box', img: 'Global/Objectives/Box.png', showInGamemode: ['Showdown', 'Trophy_Escape'], size: 1},
+            38: { name: 'Boss Zone', img: 'Global/Arena/Boss_Zone.png', showInGamemode: 'Brawl_Arena', size: 1},
+            39: { name: 'Monster Zone', img: 'Global/Arena/Monster_Zone.png', showInGamemode: 'Brawl_Arena', size: 1},
+            40: { name: 'Track', img: 'Global/Arena/Track/Blue/Fence.png', showInGamemode: 'Brawl_Arena', size: 1},
+            41: { name: 'Blue Respawn', img: 'Global/Spawns/5.png', showInGamemode: ['Brawl_Ball', 'Hockey', 'Volley_Brawl', 'Paint_Brawl'], size: 1},
+            42: { name: 'Red Respawn', img: 'Global/Spawns/6.png', showInGamemode: ['Brawl_Ball', 'Hockey', 'Volley_Brawl', 'Paint_Brawl'], size: 1},
+            43: { name: 'Base Ike Blue', img: 'Global/Arena/Base_Ike_Blue.png', showInGamemode: 'Brawl_Arena', size: 1 },
+            44: { name: 'Small Ike Blue', img: 'Global/Arena/Small_Ike_Blue.png', showInGamemode: 'Brawl_Arena', size: 1 },
+            45: { name: 'BFence', img: '${env}/Fence_5v5/BFence.png', showInEnvironment: ['Tropical_Island', 'Super_City_2', 'Bazaar', 'Medieval_Manor', 'Ice_Island', 'Katana_Kingdom', 'Hockey', 'Spongebob', 'Subway_Surfers',], size: 1 },
+            46: { name: 'Base Ike Red', img: 'Global/Arena/Base_Ike_Red.png', showInGamemode: 'Brawl_Arena', size: 1 },
+            47: { name: 'Small Ike Red', img: 'Global/Arena/Small_Ike_Red.png', showInGamemode: 'Brawl_Arena', size: 1 },
+            48: { name: 'Bumper', size: 1, showInGamemode: ['Brawl_Ball', 'Hockey', 'Paint_Brawl'], getImg: (gamemode) => {
+                return { img: gamemode === 'Hockey' ? 'Global/HockeyBumper.png' : 'Global/Bumper.png' };
+            }},
+            49: { name: 'TNT', img: 'Global/TNT.png', size: 1 },
+            50: { name: 'UnbreakableBrick', img: 'Global/UnbreakableBrick.png', showInEnvironment: ['Grassy_Field','Stadium',], size: 1 },
+            51: { name: 'GodzillaCity1', img: 'Global/Godzilla Tiles/GodzillaCity1.png', showInGamemode: 'Godzilla_City_Smash', size: 1},
+            52: { name: 'GodzillaCity2', img: 'Global/Godzilla Tiles/GodzillaCity2.png', showInGamemode: 'Godzilla_City_Smash', size: 1},
+            53: { name: 'GodzillaCity3', img: 'Global/Godzilla Tiles/GodzillaCity3.png', showInGamemode: 'Godzilla_City_Smash', size: 1},
+            54: { name: 'GodzillaCity4', img: 'Global/Godzilla Tiles/GodzillaCity4.png', showInGamemode: 'Godzilla_City_Smash', size: 1},
+            55: { name: 'GodzillaExplosive', img: 'Global/Godzilla Tiles/GodzillaExplosive.png', showInGamemode: 'Godzilla_City_Smash', size: 1},
+            56: { name: 'GodzillaSpawn', img: 'Global/Godzilla Tiles/GodzillaSpawn.png', showInGamemode: 'Godzilla_City_Smash', size: 1},
+            57: { name: 'Bot_Zone', img: 'Global/Objectives/Bot_Zone.png', showInGamemode: ['Trophy_Escape', 'Samurai_Smash'], size: 1},
+            58: { name: 'Escape', img: 'Global/Objectives/Escape.png', showInGamemode: 'Trophy_Escape', size: 1},
         };
 
         // Initialize water tile filenames
@@ -540,63 +1424,85 @@ export class MapMaker {
 
         this.baseObjectiveData           = { ...this.objectiveData };
         this.baseEnvironmentObjectiveData = { ...this.environmentObjectiveData };
+
+        this.isSelectDragging = false;
+        this.selectDragStart = null;
+        this.selectDragOffset = {x: 0, y: 0};
+        this.selectDragTiles = [];
+        this.selectDragLastPos = null;
     }
 
     
 
     // Add a method to preload all water tile images
     preloadWaterTiles() {
-        console.log("Preloading water tiles...");
+        if (!this.tileImages) this.tileImages = {};
+        if (!this.tileImagePaths) this.tileImagePaths = {};
+
         this.waterTileFilenames.forEach(filename => {
             const imagePath = `Resources/${this.environment}/Water/${filename}`;
-            const cacheKey = `water_${filename}`; // Use a specific cache key for water tiles
-            
-            // Create and load the image if it doesn't exist in cache
-            if (!this.tileImages[cacheKey]) {
-                const img = new Image();
-                img.src = imagePath;
-                
-                // Add error handling
-                img.onerror = () => {
-                    console.error(`Failed to load water image: ${imagePath}`);
-                    // Try to load a fallback image
-                    img.src = `Resources/${this.environment}/Water/00000000.png`;
-                };
-                
-                // Store the image in the tileImages object with the cache key
-                this.tileImages[cacheKey] = img;
+            const cacheKey = `${this.environment}_water_${filename}`;
+
+            // Skip if already loaded with the same path
+            if (this.tileImagePaths[cacheKey] === imagePath && this.tileImages[cacheKey]?.complete) {
+                return;
             }
+
+            const img = new Image();
+            img.src = imagePath;
+
+            img.onerror = () => {
+                console.error(`Failed to load water image: ${imagePath}`);
+                const fallbackPath = `Resources/${this.environment}/Water/00000000.png`;
+                img.src = fallbackPath;
+                this.tileImagePaths[cacheKey] = fallbackPath;
+            };
+
+            this.tileImages[cacheKey] = img;
+            this.tileImagePaths[cacheKey] = imagePath;
         });
     }
 
+
     async preloadGoalImage(name, environment) {
+        if (!this.goalImageCache) this.goalImageCache = {};
+        if (!this.tileImagePaths) this.tileImagePaths = {};
+
         const key = `${name}_${environment}`;
         const fallbackKey = `${name}`;
+        const primaryPath = `Resources/Global/Goals/${name}${environment}.png`;
+        const fallbackPath = `Resources/Global/Goals/${name}.png`;
 
-        if (this.goalImageCache[key]) return this.goalImageCache[key];
-        if (this.goalImageCache[fallbackKey]) return this.goalImageCache[fallbackKey];
+        // If already loaded with the correct path, return
+        if (this.goalImageCache[key] && this.tileImagePaths[key] === primaryPath) {
+            return this.goalImageCache[key];
+        }
+        if (this.goalImageCache[fallbackKey] && this.tileImagePaths[fallbackKey] === fallbackPath) {
+            return this.goalImageCache[fallbackKey];
+        }
 
         const img = new Image();
-        const primary = `Resources/Global/Goals/${name}${environment}.png`;
-        const fallback = `Resources/Global/Goals/${name}.png`;
 
         return new Promise((resolve) => {
             img.onload = () => {
                 this.goalImageCache[key] = img;
+                this.tileImagePaths[key] = primaryPath;
                 resolve(img);
             };
             img.onerror = () => {
                 const fallbackImg = new Image();
                 fallbackImg.onload = () => {
                     this.goalImageCache[fallbackKey] = fallbackImg;
+                    this.tileImagePaths[fallbackKey] = fallbackPath;
                     resolve(fallbackImg);
                 };
                 fallbackImg.onerror = () => resolve(null);
-                fallbackImg.src = fallback;
+                fallbackImg.src = fallbackPath;
             };
-            img.src = primary;
+            img.src = primaryPath;
         });
     }
+
 
 
 
@@ -650,157 +1556,19 @@ export class MapMaker {
     }
 
     async loadTileImages() {
-        this.tileImages = {};
-        const imageLoadPromises = [];
-
-        let regularDownAdjust = -50;
-        // Standard tile dimensions [width, height, horAdjust, verAdjust, opacity, zIndex]
-        this.tileData = {
-            'Wall': [1, 1.75, 0, regularDownAdjust, 1, 5],
-            'Bush': [1, 1.8, 0, regularDownAdjust, 1, 5],
-            'Wall2': [1, 1.75, 0, regularDownAdjust, 1, 5],
-            'Crate': [1, 1.8, 0, regularDownAdjust, 1, 5],
-            'Barrel': [1, 1.69, 0, regularDownAdjust, 1, 5],
-            'Cactus': [1.1, 1.75, -5, regularDownAdjust, 1, 5],
-            'Fence': [1, 1.75, 0, regularDownAdjust, 1, 5],
-            'Water': [1, 1, 0, 0, 1, 5],
-            'Rope Fence': [1, 1.75, 0, regularDownAdjust, 1, 5],
-            'Skull': [1, 1.08, 0, 0, 1, 5],
-            'Unbreakable': [1, 1.75, 0, regularDownAdjust, 1, 5],
-            'Blue Spawn': [1.7, 1.7, -27.5, -27.5, 0.85, 5],
-            'Red Spawn': [1.7, 1.7, -27.5, -27.5, 0.85, 5],
-            'Objective': [2, 2.21, -50, -115, 1, 10],
-            'Smoke': [1.5, 1.65, -10, -25, 1, 5],
-            'Heal Pad': [1, 1.12, 0, 0, 1, 5],
-            'Slow Tile': [1, 1.11, 0, 0, 1, 5],
-            'Speed Tile': [1, 1.11, 0, 0, 1, 5],
-            'Spikes': [1, 1.5, 0, -15, 1, 5],
-            'Jump R': [1, 1.12, 0, 0, 1, 5],
-            'Jump L': [1, 1.12, 0, 0, 1, 5],
-            'Jump T': [1, 1.12, 0, 0, 1, 5],
-            'Jump B': [1, 1.12, 0, 0, 1, 5],
-            'Jump BR': [1, 1.12, 0, 0, 1, 5],
-            'Jump TL': [1, 1.12, 0, 0, 1, 5],
-            'Jump BL': [1, 1.12, 0, 0, 1, 5],
-            'Jump TR': [1, 1.12, 0, 0, 1, 5],
-            'Teleporter Blue': [1, 1, 0, 0, 1, 5],
-            'Teleporter Green': [1, 1, 0, 0, 1, 5],
-            'Teleporter Red': [1, 1, 0, 0, 1, 5],
-            'Teleporter Yellow': [1, 1, 0, 0, 1, 5],
-            'Bolt': [1, 1.18, 0, 0, 1, 5]
-        };
-
-        // Standard objective dimensions [width, height, horAdjust, verAdjust, opacity, zIndex]
-        this.objectiveData = {
-            'Gem_Grab': [2, 2, -50, -50, 1, 10],
-            'Showdown': [1, 1.75, 0, regularDownAdjust, 1, 5],
-            'Heist': [2, 2.21, -50, -115, 1, 10],
-            'Bounty': [1.15, 2.0585, -10, -50, 1, 10],
-            'Brawl_Ball': [1.3, 1.495, -20, -20, 1, 10],
-            'Hot_Zone': [7, 7, -300, -300, 1, 10],
-            'Snowtel_Thieves': [4, 4, -150, -150, 1, 10],
-            'Basket_Brawl': [1.3, 1.495, -20, -20, 1, 10],
-            'Volley_Brawl': [1.3, 1.495, -20, -20, 1, 10],
-            'Siege': [2.5, 3.1, -60, -175, 1, 10],
-            'Hold_The_Trophy': [2.5, 2.5, -75, -75, 1, 10]
-        };
-
-        // Environment-specific overrides
-        this.environmentTileData = {
-            'Mine': {
-                'Wall': [1, 1.9, 0, regularDownAdjust, 1, 1],
-                'Bush': [1, 1.5, 0, regularDownAdjust, 1, 2]
-                // Add more overrides as needed
-            },
-            'Mortuary': {
-                'Wall': [1, 1.8, 0, regularDownAdjust, 1, 1],
-                'Skull': [1, 1.4, 0, -16, 0.9, 1]
-                // Add more overrides as needed
-            }
-            // Add more environments as needed
-        };
-
-        this.environmentObjectiveData = {
-            'Mine': {
-                'Gem_Grab': [1.3, 1.5, 0, -20, 1, 1],
-                'Heist': [1.4, 1.6, 0, -24, 1, 1]
-                // Add more overrides as needed
-            }
-            // Add more environments as needed
-        };
-
-        // Tile definitions with images and sizes
-        this.tileDefinitions = {
-            0: { name: 'Empty' },
-            1: { name: 'Wall', img: '${env}/Tiles/Wall.png', size: 1 },
-            2: { name: 'Bush', img: '${env}/Tiles/Bush.png', size: 1 },
-            3: { name: 'Wall2', img: '${env}/Tiles/Wall2.png', size: 1 },
-            4: { name: 'Crate', img: '${env}/Tiles/Crate.png', size: 1 },
-            5: { name: 'Barrel', img: '${env}/Tiles/Barrel.png', size: 1 },
-            6: { name: 'Cactus', img: '${env}/Tiles/Cactus.png', size: 1 },
-            7: { name: 'Fence', img: '${env}/Fence/Fence.png', size: 1 },
-            8: { name: 'Water', img: '${env}/Water/00000000.png', size: 1 },
-            9: { name: 'Rope Fence', img: '${env}/Rope/Post.png', size: 1 },
-            10: { name: 'Skull', img: '${env}/Tiles/Skull.png', size: 1 },
-            11: { name: 'Unbreakable', img: 'Global/Unbreakable.png', size: 1 },
-            12: { name: 'Blue Spawn', size: 1, getImg: (gamemode) => {
-                return { img: gamemode === 'Showdown' ? 'Global/Spawns/3.png' : 'Global/Spawns/1.png' };
-            }},
-            13: { name: 'Red Spawn', size: 1, getImg: (gamemode) => {
-                return { img: gamemode === 'Showdown' ? 'Global/Spawns/4.png' : 'Global/Spawns/2.png' };
-            }},
-            14: { name: 'Objective', size: 1, getImg: (gamemode, y, mapHeight) => {
-                const objectives = {
-                    'Gem_Grab': { img: '${env}/Gamemode_Specifics/Gem_Grab.png' },
-                    'Showdown': { img: 'Global/Objectives/Box.png' },
-                    'Heist': { img: '${env}/Gamemode_Specifics/Heist.png' },
-                    'Bounty': { img: 'Global/Objectives/Bounty.png' },
-                    'Brawl_Ball': { img: '${env}/Gamemode_Specifics/Brawl_Ball.png' },
-                    'Hot_Zone': { img: 'Global/Objectives/Hot_Zone.png' },
-                    'Snowtel_Thieves': { 
-                        img: `Global/Objectives/${y > mapHeight/2 ? 'SnowtelThievesBlue' : 'SnowtelThievesRed'}.png`,
-                        displayImg: 'Global/Objectives/SnowtelThievesBlue.png'
-                    },
-                    'Basket_Brawl': { img: 'Global/Objectives/Basket_Brawl.png' },
-                    'Volley_Brawl': { img: 'Global/Objectives/Volley_Brawl.png' },
-                    'Siege': { 
-                        img: `Global/Objectives/${y > mapHeight/2 ? 'IkeBlue' : 'IkeRed'}.png`,
-                        displayImg: 'Global/Objectives/IkeRed.png'
-                    },
-                    'Hold_The_Trophy': { img: 'Global/Objectives/Hold_The_Trophy.png' }
-                };
-                return objectives[gamemode];
-            }},
-            15: { name: 'Smoke', img: 'Global/Special_Tiles/Smoke.png', size: 1 },
-            16: { name: 'Heal Pad', img: 'Global/Special_Tiles/HealPad.png', size: 2 },
-            17: { name: 'Slow Tile', img: 'Global/Special_Tiles/SlowTile.png', size: 1 },
-            18: { name: 'Speed Tile', img: 'Global/Special_Tiles/SpeedTile.png', size: 1 },
-            19: { name: 'Spikes', img: 'Global/Special_Tiles/Spikes.png', size: 1 },
-            20: { name: 'Jump R', img: 'Global/Jumpads/R.png', size: 2 },
-            21: { name: 'Jump L', img: 'Global/Jumpads/L.png', size: 2 },
-            22: { name: 'Jump T', img: 'Global/Jumpads/T.png', size: 2 },
-            23: { name: 'Jump B', img: 'Global/Jumpads/B.png', size: 2 },
-            24: { name: 'Jump BR', img: 'Global/Jumpads/BR.png', size: 2 },
-            25: { name: 'Jump TL', img: 'Global/Jumpads/TL.png', size: 2 },
-            26: { name: 'Jump BL', img: 'Global/Jumpads/BL.png', size: 2 },
-            27: { name: 'Jump TR', img: 'Global/Jumpads/TR.png', size: 2 },
-            28: { name: 'Teleporter Blue', img: 'Global/Teleporters/Blue.png', size: 2 },
-            29: { name: 'Teleporter Green', img: 'Global/Teleporters/Green.png', size: 2 },
-            30: { name: 'Teleporter Red', img: 'Global/Teleporters/Red.png', size: 2 },
-            31: { name: 'Teleporter Yellow', img: 'Global/Teleporters/Yellow.png', size: 2 },
-            32: { name: 'Bolt', img: 'Global/Objectives/Bolt.png', size: 1, showInGamemode: 'Siege' },
-            33: { name: 'Empty2', img: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNgYAAAAAMAASsJTYQAAAAASUVORK5CYII=', size: 1 },
-            36: { name: 'Trio Spawn', size: 1, showInGamemode: 'Showdown', img: 'Global/Spawns/1.png' }
-        };
-
-        // Load all tile images
-        this.tileImages = {};
+        if (!this.tileImages) this.tileImages = {};
+        if (!this.tileImagePaths) this.tileImagePaths = {};
         
-        // Return a Promise that resolves when all images are loaded
         return new Promise((resolve) => {
             let loadedCount = 0;
-            const totalImages = Object.keys(this.tileDefinitions).length;
-            
+            const tileDefs = Object.entries(this.tileDefinitions);
+            const relevantTiles = tileDefs.filter(([id, def]) => 
+                (def.img || def.getImg) &&
+                (!def.showInEnvironment || def.showInEnvironment.includes(this.environment))
+            );
+    
+            const totalImages = relevantTiles.length;
+    
             const onLoad = () => {
                 loadedCount++;
                 if (loadedCount === totalImages) {
@@ -808,37 +1576,47 @@ export class MapMaker {
                     resolve();
                 }
             };
-            
-            // Load each tile image
-            Object.entries(this.tileDefinitions).forEach(([id, def]) => {
-                if (!def.img && !def.getImg) {
-                    onLoad(); // Skip tiles without images
+    
+            relevantTiles.forEach(([id, def]) => {
+                let imgPath = null;
+    
+                if (def.getImg) {
+                    const imgData = def.getImg(this.gamemode, 0, this.mapHeight);
+                    if (!imgData) {
+                        onLoad();
+                        return;
+                    }
+                    imgPath = `Resources/${imgData.img.replace('${env}', this.environment)}`;
+                } else if (def.img) {
+                    imgPath = `Resources/${def.img.replace('${env}', this.environment)}`;
+                }
+    
+                // Check if the same image was already loaded
+                if (this.tileImagePaths[id] === imgPath && this.tileImages[id]?.complete) {
+                    onLoad();
                     return;
                 }
-                
+    
                 const img = new Image();
-                if (def.img) {
-                    img.src = `Resources/${def.img.replace('${env}', this.environment)}`;
-                } else if (def.getImg) {
-                    const imgData = def.getImg(this.gamemode, 0, this.mapHeight);
-                    if (imgData) {
-                        img.src = `Resources/${imgData.img.replace('${env}', this.environment)}`;
-                    }
-                }
-                
                 img.onload = onLoad;
                 img.onerror = () => {
-                    if (this.environment !== 'Desert' && (def.img || '').includes('${env}')) {
-                        img.src = `Resources/${(def.img || '').replace('${env}', 'Desert')}`;
+                    // Try fallback to 'Desert' environment if current fails and uses '${env}'
+                    if (this.environment !== 'Desert' && imgPath.includes(this.environment)) {
+                        const fallbackPath = imgPath.replace(this.environment, 'Desert');
+                        img.src = fallbackPath;
+                        this.tileImagePaths[id] = fallbackPath;
                     } else {
-                        onLoad(); // Count as loaded even if it fails
+                        onLoad();
                     }
                 };
-                
+    
+                img.src = imgPath;
                 this.tileImages[id] = img;
+                this.tileImagePaths[id] = imgPath;
             });
         });
     }
+    
 
     initializeUI() {
         // Initialize gamemode selector
@@ -920,11 +1698,13 @@ export class MapMaker {
         const saveBtn = document.getElementById('saveBtn');
         const exportBtn = document.getElementById('exportBtn');
         const errorsBtn = document.getElementById('errorsBtn');
+        const guidesBtn = document.getElementById('guidesBtn');
 
         // Mirror checkboxes
         const mirrorVertical = document.getElementById('mirrorVertical');
         const mirrorHorizontal = document.getElementById('mirrorHorizontal');
         const mirrorDiagonal = document.getElementById('mirrorDiagonal');
+        const blue2Red = document.getElementById('blue2RedBtn');
 
         // Map settings
         const mapSizeSelect = document.getElementById('mapSize');
@@ -949,62 +1729,16 @@ export class MapMaker {
         saveBtn.addEventListener('click', () => this.saveMap());
         exportBtn.addEventListener('click', async () => await this.exportMap());
         errorsBtn.addEventListener('click', () => this.toggleShowErrors());
+        guidesBtn.addEventListener('click', () => this.toggleGuides());
 
         // Mirror listeners
         mirrorVertical.addEventListener('change', (e) => this.mirrorVertical = e.target.checked);
         mirrorHorizontal.addEventListener('change', (e) => this.mirrorHorizontal = e.target.checked);
         mirrorDiagonal.addEventListener('change', (e) => this.mirrorDiagonal = e.target.checked);
+        blue2Red.addEventListener('change', () =>  this.toggleBlue2Red());
 
         // Map setting listeners
-        mapSizeSelect.addEventListener('change', (e) => {
-            const newSize = this.mapSizes[e.target.value];
-            if (!newSize) return;
-
-            if (confirm('Changing map size will clear the current map. Continue?')) {
-                const prevSize = this.mapSize;
-                this.mapSize   = newSize;
-                this.mapWidth  = newSize.width;
-                this.mapHeight = newSize.height;
-                this.mapData   = Array(this.mapHeight).fill().map(() => Array(this.mapWidth).fill(0));
-
-                // ——— Showdown ↔ other: adjust Objective tile + data sizes ———
-                const isShowdown = size => size === this.mapSizes.showdown;
-                const wasShrunk    = isShowdown(prevSize);
-
-                if (wasShrunk) {
-                    this.tileDefinitions[14].size = 1;
-                    this.objectiveData[this.gamemode][0] = 2; // width
-                    this.objectiveData[this.gamemode][1] = 2; // height
-                    this.objectiveData[this.gamemode][2] = -50; 
-                    this.objectiveData[this.gamemode][3] = -50;
-                    this.objectiveData.Brawl_Ball[0] = 1.3;
-                    this.objectiveData.Brawl_Ball[1] = 1.495;
-                    this.objectiveData.Brawl_Ball[2] = -20;
-                    this.objectiveData.Brawl_Ball[3] = -20; 
-                } else {
-                    this.tileDefinitions[14].size = 2;
-                    // restore original width/height
-                    this.objectiveData.Gem_Grab[0] = 1;
-                    this.objectiveData.Gem_Grab[1] = 1;
-                    this.objectiveData.Gem_Grab[2] = 0;
-                    this.objectiveData.Gem_Grab[3] = 0;
-                    this.objectiveData.Brawl_Ball[0] = 0.65;
-                    this.objectiveData.Brawl_Ball[1] = 0.7475;
-                    this.objectiveData.Brawl_Ball[2] = 30;
-                    this.objectiveData.Brawl_Ball[3] = 30;
-                }
-
-                // ————————————————————————————————————————————————
-
-                this.updateCanvasSize();
-                this.fitMapToScreen();
-                this.setGamemode(this.gamemode);
-            } else {
-                // reset dropdown if cancelled
-                e.target.value = Object.entries(this.mapSizes)
-                    .find(([k, v]) => v.width === this.mapWidth && v.height === this.mapHeight)[0];
-            }
-        });
+        mapSizeSelect.addEventListener('change', (e) => this.setSize(e.target.value));
 
 
         gamemodeSelect.addEventListener('change', async (e) => await this.setGamemode(e.target.value));
@@ -1021,47 +1755,94 @@ export class MapMaker {
         document.addEventListener('keydown', (e) => {
             if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
             
-            switch(e.key.toLowerCase()) {
-                case '1':
+           switch (e.code) {
+                case 'Digit1':
+                case 'Numpad1':
+                    if (e.shiftKey || e.ctrlKey || e.metaKey) {
+                        e.preventDefault();
+                        this.mirrorDiagonal = !this.mirrorDiagonal;
+                        document.getElementById('mirrorDiagonal').checked = this.mirrorDiagonal;
+                        return;
+                    }
                     this.setSelectionMode('single');
                     break;
-                case '2':
+
+                case 'Digit2':
+                case 'Numpad2':
+                    if (e.shiftKey || e.ctrlKey || e.metaKey) {
+                        e.preventDefault();
+                        this.mirrorVertical = !this.mirrorVertical;
+                        document.getElementById('mirrorVertical').checked = this.mirrorVertical;
+                        return;
+                    }
                     this.setSelectionMode('line');
                     break;
-                case '3':
+
+                case 'Digit3':
+                case 'Numpad3':
+                    if (e.shiftKey || e.ctrlKey || e.metaKey) {
+                        e.preventDefault();
+                        this.mirrorHorizontal = !this.mirrorHorizontal;
+                        document.getElementById('mirrorHorizontal').checked = this.mirrorHorizontal;
+                        return;
+                    }
                     this.setSelectionMode('rectangle');
                     break;
-                case 'r':
+                    
+                case 'Digit4':
+                case 'Numpad4':
+                    this.setSelectionMode('fill');
+                    break;
+
+                case 'Digit5':
+                case 'Numpad5':
+                    this.setSelectionMode('select');
+                    break;
+
+                case 'KeyR':
                     this.toggleReplaceMode();
                     break;
-                case 'e':
+
+                case 'KeyE':
                     this.toggleEraseMode();
                     break;
-                case 'm':
+
+                case 'KeyM':
                     this.toggleMirroring();
                     break;
-                case 'q':
+
+                case 'KeyN':
+                    this.toggleBlue2Red();
+                    break;
+
+                case 'KeyQ':
                     this.toggleShowErrors();
                     break;
-                case 'z':
+
+                case 'KeyW':
+                    this.toggleGuides();
+                    break;
+
+                case 'KeyZ':
                     if (e.ctrlKey || e.metaKey) {
+                        e.preventDefault();
                         if (e.shiftKey) {
-                            e.preventDefault();
                             this.redo();
                         } else {
-                            e.preventDefault();
                             this.undo();
                         }
                     }
                     break;
-                case 'y':
+
+                case 'KeyY':
                     if (e.ctrlKey || e.metaKey) {
                         e.preventDefault();
                         this.redo();
                     }
                     break;
-                case 'backspace':
-                case 'delete':
+
+                case 'Backspace':
+                case 'Delete':
                     if (e.ctrlKey || e.metaKey) {
                         e.preventDefault();
                         this.clearMap(true);
@@ -1069,18 +1850,29 @@ export class MapMaker {
                     break;
             }
         });
+        
+
 
         // Canvas event listeners
+        // Mouse events
         this.canvas.addEventListener('mousedown', this.handleMouseDown.bind(this));
         this.canvas.addEventListener('mousemove', this.handleMouseMove.bind(this));
         this.canvas.addEventListener('mouseup', this.handleMouseUp.bind(this));
         this.canvas.addEventListener('mouseleave', this.handleMouseLeave.bind(this));
-        
-        // Add right-click event listener to select tile
         this.canvas.addEventListener('contextmenu', this.handleRightClick.bind(this));
-        
-        // Add document-level mouse up to ensure we catch the event even if released outside canvas
+        this.canvas.addEventListener('dragstart', e => {
+          e.preventDefault();
+        });
+
+
+        // Document-level mouseup fallback
         document.addEventListener('mouseup', this.handleMouseUp.bind(this));
+
+        // Touch events
+        this.canvas.addEventListener('touchstart', this.handleTouchStart.bind(this), { passive: false });
+        this.canvas.addEventListener('touchmove', this.handleTouchMove.bind(this), { passive: false });
+        this.canvas.addEventListener('touchend', this.handleTouchEnd.bind(this), {passive: false });
+        this.canvas.addEventListener('touchcancel', this.handleTouchCancel.bind(this));
     }
 
     saveState() {
@@ -1134,6 +1926,7 @@ export class MapMaker {
 
     handleRightClick(event) {
         event.preventDefault();
+        
         const coords = this.getTileCoordinates(event);
         if (coords.x < 0 || coords.x >= this.mapWidth || coords.y < 0 || coords.y >= this.mapHeight) return;
 
@@ -1153,8 +1946,51 @@ export class MapMaker {
         if (event.button !== 0) return;
         this.mouseDown = true;
         const coords = this.getTileCoordinates(event);
+        
         if (coords.x < 0 || coords.x >= this.mapWidth || coords.y < 0 || coords.y >= this.mapHeight) return;
-        if (this.gamemode === 'Brawl_Ball' && this.mapSize === this.mapSizes.regular) {
+
+        if (this.selectionMode === 'select' && this.selectedTiles.length > 0 && this.selectedTiles.some(t => t.x === coords.x && t.y === coords.y)) {
+            // Start select-drag
+            this.isSelectDragging = true;
+            this.selectDragStart = { ...coords };
+            this.selectDragLastPos = { ...coords };
+            this.selectDragTiles = this.selectedTiles.map(t => ({ ...t })); // deep copy
+
+            // Remove tiles from map (including mirrored tiles)
+            for (const t of this.selectDragTiles) {
+                this.mapData[t.y][t.x] = 0;
+                // Mirroring logic for erasing
+                const size = this.tileDefinitions[t.id]?.size || 1;
+                const mirrorY = this.mapHeight - 1 - t.y;
+                const mirrorX = this.mapWidth - 1 - t.x;
+                if (this.mirrorVertical) {
+                    const adjustedY = size === 2 ? mirrorY - 1 : mirrorY;
+                    if (adjustedY >= 0 && adjustedY < this.mapHeight)
+                        this.mapData[adjustedY][t.x] = 0;
+                }
+                if (this.mirrorHorizontal) {
+                    const adjustedX = size === 2 ? mirrorX - 1 : mirrorX;
+                    if (adjustedX >= 0 && adjustedX < this.mapWidth)
+                        this.mapData[t.y][adjustedX] = 0;
+                }
+                if (this.mirrorDiagonal) {
+                    const adjustedY = size === 2 ? mirrorY - 1 : mirrorY;
+                    const adjustedX = size === 2 ? mirrorX - 1 : mirrorX;
+                    if (adjustedX >= 0 && adjustedX < this.mapWidth && adjustedY >= 0 && adjustedY < this.mapHeight)
+                        this.mapData[adjustedY][adjustedX] = 0;
+                }
+            }
+            this.draw();
+            // Draw ghost tiles at original positions
+            this.drawSelectDragGhost(0, 0);
+            return;
+        }
+
+        if (this.selectionMode !== 'select' || !this.selectedTiles.some(t => t.x === coords.x && t.y === coords.y)) {
+            this.selectedTiles = [];
+        }
+
+        if ((this.gamemode === 'Brawl_Ball' || this.gamemode === 'Hockey') && this.mapSize === this.mapSizes.regular) {
             const { x, y } = coords;
             const atTop    = y < 4;
             const atBottom = y >= this.mapHeight - 4;
@@ -1175,7 +2011,7 @@ export class MapMaker {
         }
 
         // Check if we're starting to drag an existing tile
-        if (!this.isErasing && this.mapData[coords.y][coords.x] !== 0) {
+        if (!this.isErasing && this.mapData[coords.y][coords.x] !== 0 && this.selectionMode !== 'fill' && this.selectionMode !== 'select') {
             this.isDragging = true;
             this.draggedTileId = this.mapData[coords.y][coords.x];
             this.dragStartX = coords.x;
@@ -1248,7 +2084,8 @@ export class MapMaker {
             this.hoveredTiles.clear();
             this.hoveredTiles.add(`${coords.x},${coords.y}`);
         }
-        
+    
+
         this.draw();
         this.drawSelection();
     }
@@ -1257,75 +2094,24 @@ export class MapMaker {
         const coords = this.getTileCoordinates(event);
         if (coords.x < 0 || coords.x >= this.mapWidth || coords.y < 0 || coords.y >= this.mapHeight) return;
         
+        if (this.isSelectDragging) {
+            const offsetX = coords.x - this.selectDragStart.x;
+            const offsetY = coords.y - this.selectDragStart.y;
+            this.selectDragOffset = { x: offsetX, y: offsetY };
+            this.draw();
+            this.drawSelectDragGhost(offsetX, offsetY);
+            this.selectDragLastPos = { ...coords };
+            return;
+        }
+
         if (this.isDragging) {
             this.draw(); // Redraw the base map
-            
-            // Draw preview
+
             const draggedTile = this.tileDefinitions[this.draggedTileId];
-
             if (draggedTile) {
-                const drawTilePreview = (tileId, x, y) => {
-                    const def = this.tileDefinitions[tileId];
-                    if (!def) return;
-                
-                    let img = this.tileImages[tileId];
-                    if (!img || !img.complete) return;
-                
-                    // Get tile dimensions from environment-specific or base data
-                    let dimensions;
-                    if (def.name === 'Objective') {
-                        dimensions = this.environmentObjectiveData[this.environment]?.[this.gamemode] ||
-                                     this.objectiveData[this.gamemode];
-                    } else {
-                        dimensions = this.environmentTileData[this.environment]?.[def.name] ||
-                                     this.tileData[def.name];
-                    }
-                
-                    if (!dimensions) return;
-                
-                    const [scaleX, scaleY, offsetX = 0, offsetY = 0, opacity = 1] = dimensions;
-                    const size = def.size || 1;
-                    const tileSize = this.tileSize;
-                
-                    // Calculate drawing dimensions
-                    const width = tileSize * scaleX * size;
-                    const height = tileSize * scaleY * size;
-                
-                    // Calculate position with offsets and padding
-                    const drawX = x * tileSize + (tileSize * offsetX / 100) + this.canvasPadding;
-                    const drawY = y * tileSize + (tileSize * offsetY / 100) + this.canvasPadding;
-                
-                    // Set opacity and draw the tile
-                    this.ctx.globalAlpha = opacity;
-                    this.ctx.drawImage(img, drawX, drawY, width, height);
-                    this.ctx.globalAlpha = 1.0;
-                };
-                
+                this.drawTilePreview(this.draggedTileId, coords.x, coords.y, 0.7); // 0.7 alpha for preview
 
-                // Draw the main dragged tile
-                drawTilePreview(this.draggedTileId, coords.x, coords.y);
-                
-                // Show mirrored previews with correct directions
-                if (this.mirrorVertical) {
-                    const mirrorY = this.mapHeight - 1 - coords.y;
-                    const mirrorTileId = this.getMirroredTileId(this.draggedTileId, 'vertical');
-                    const adjustedY = draggedTile.size === 2 ? mirrorY - 1 : mirrorY;
-                    drawTilePreview(mirrorTileId, coords.x, adjustedY);
-                }
-                if (this.mirrorHorizontal) {
-                    const mirrorX = this.mapWidth - 1 - coords.x;
-                    const mirrorTileId = this.getMirroredTileId(this.draggedTileId, 'horizontal');
-                    const adjustedX = draggedTile.size === 2 ? mirrorX - 1 : mirrorX;
-                    drawTilePreview(mirrorTileId, adjustedX, coords.y);
-                }
-                if (this.mirrorDiagonal) {
-                    const mirrorX = this.mapWidth - 1 - coords.x;
-                    const mirrorY = this.mapHeight - 1 - coords.y;
-                    const mirrorTileId = this.getMirroredTileId(this.draggedTileId, 'diagonal');
-                    const adjustedX = draggedTile.size === 2 ? mirrorX - 1 : mirrorX;
-                    const adjustedY = draggedTile.size === 2 ? mirrorY - 1 : mirrorY;
-                    drawTilePreview(mirrorTileId, adjustedX, adjustedY);
-                }
+                // ...mirroring logic, use this.drawTilePreview for each mirrored tile
             }
             return;
         }
@@ -1345,6 +2131,53 @@ export class MapMaker {
 
     handleMouseUp(event) {
         this.mouseDown = false;
+        if (this.isSelectDragging) {
+            const offsetX = this.selectDragOffset.x;
+            const offsetY = this.selectDragOffset.y;
+            for (const t of this.selectDragTiles) {
+                const newX = t.x + offsetX;
+                const newY = t.y + offsetY;
+                if (
+                    newX >= 0 && newX < this.mapWidth &&
+                    newY >= 0 && newY < this.mapHeight
+                ) {
+                    this.mapData[newY][newX] = t.id;
+
+                    // Mirroring logic
+                    const size = this.tileDefinitions[t.id]?.size || 1;
+                    const mirrorY = this.mapHeight - 1 - newY;
+                    const mirrorX = this.mapWidth - 1 - newX;
+
+                    if (this.mirrorVertical) {
+                        const adjustedY = size === 2 ? mirrorY - 1 : mirrorY;
+                        const mirrorId = this.getMirroredTileId(t.id, 'vertical');
+                        if (adjustedY >= 0 && adjustedY < this.mapHeight)
+                            this.mapData[adjustedY][newX] = mirrorId;
+                    }
+                    if (this.mirrorHorizontal) {
+                        const adjustedX = size === 2 ? mirrorX - 1 : mirrorX;
+                        const mirrorId = this.getMirroredTileId(t.id, 'horizontal');
+                        if (adjustedX >= 0 && adjustedX < this.mapWidth)
+                            this.mapData[newY][adjustedX] = mirrorId;
+                    }
+                    if (this.mirrorDiagonal) {
+                        const adjustedY = size === 2 ? mirrorY - 1 : mirrorY;
+                        const adjustedX = size === 2 ? mirrorX - 1 : mirrorX;
+                        const mirrorId = this.getMirroredTileId(t.id, 'diagonal');
+                        if (adjustedX >= 0 && adjustedX < this.mapWidth && adjustedY >= 0 && adjustedY < this.mapHeight)
+                            this.mapData[adjustedY][adjustedX] = mirrorId;
+                    }
+                }
+            }
+            this.isSelectDragging = false;
+            this.selectDragStart = null;
+            this.selectDragOffset = {x: 0, y: 0};
+            this.selectDragTiles = [];
+            this.selectedTiles = [];
+            this.draw();
+            return;
+        }
+        
         if (!this.isDragging && this.isDrawing) {
             const coords = this.getTileCoordinates(event);
             if (coords.x >= 0 && coords.x < this.mapWidth && coords.y >= 0 && coords.y < this.mapHeight) {
@@ -1399,6 +2232,7 @@ export class MapMaker {
                     const mirrorV = this.getMirroredTileId(this.draggedTileId, 'vertical');
                     const mirrorH = this.getMirroredTileId(this.draggedTileId, 'horizontal');
                     const mirrorD = this.getMirroredTileId(this.draggedTileId, 'diagonal');
+                    
                     
                     // Helper function to place a tile and its occupied spaces
                     const placeMirroredTile = (ty, tx, mid) => {
@@ -1470,6 +2304,59 @@ export class MapMaker {
         }
     }
 
+    handleTouchStart(e) {
+        if (e.touches.length > 1) return; // Ignore multi-touch
+        e.preventDefault();
+
+        const touch = e.touches[0];
+        const simulatedEvent = {
+            button: 0,
+            clientX: touch.clientX,
+            clientY: touch.clientY,
+        };
+
+        this.handleMouseDown(simulatedEvent);
+    }
+
+    handleTouchMove(e) {
+        if (e.touches.length > 1) return;
+        e.preventDefault();
+
+        const touch = e.touches[0];
+        const simulatedEvent = {
+            clientX: touch.clientX,
+            clientY: touch.clientY,
+        };
+
+        this.handleMouseMove(simulatedEvent);
+    }
+
+    handleTouchEnd(e) {
+        e.preventDefault && e.preventDefault();
+
+        // touchend has changedTouches: the touches that just ended
+        const touch = e.changedTouches[0];
+        if (!touch) {
+            this.handleMouseUp(e); // fallback, no coordinates
+            return;
+        }
+
+        const simulatedEvent = {
+            clientX: touch.clientX,
+            clientY: touch.clientY,
+            // You can add button if your mouse handler expects it
+            button: 0,
+        };
+
+        this.handleMouseUp(simulatedEvent);
+    }
+
+
+    handleTouchCancel(e) {
+        this.handleMouseLeave();
+    }
+
+
     zoom(delta) {
         const oldZoom = this.zoomLevel;
         this.zoomLevel = Math.max(this.minZoom, Math.min(this.maxZoom, this.zoomLevel + delta));
@@ -1486,13 +2373,14 @@ export class MapMaker {
 
         // Define the order of tiles
         const tileOrder = [
-            'Wall', 'Wall2', 'Unbreakable', 'Crate', 'Barrel', 'Fence', 'Rope Fence',
-            'Bush', 'Cactus', 'Water', 'Skull', 'Blue Spawn', 'Red Spawn', 'Trio Spawn', 'Objective',
-            'Smoke', 'Heal Pad', 'Slow Tile', 'Speed Tile', 'Spikes',
+            'Wall', 'Wall2', 'Crate', 'Barrel', 'Cactus', 'Bush', 'Fence', 'Skull', 'Rope Fence', 'BFence', 'Water', 'Unbreakable',
+            'Blue Spawn', 'Blue Respawn', 'Red Spawn', 'Red Respawn', 'Trio Spawn', 'Objective', 'Box', 'Bumper', 'Bolt', 'TokenBlue', 'TokenRed', 'Boss Zone', 'Monster Zone', 'Track', 'Bot_Zone', 'PaintBrawl2',
+            'Base Ike Blue', 'Base Ike Red', 'Small Ike Blue', 'Small Ike Red',
+            'GodzillaCity1', 'GodzillaCity2', 'GodzillaCity3', 'GodzillaCity4', 'GodzillaExplosive', 'GodzillaSpawn', 'Escape',
+            'TNT', 'UnbreakableBrick', 'Speed Tile','Slow Tile', 'Spikes', 'Heal Pad', 'Smoke', 'Ice', 'Snow',
             'Jump R', 'Jump L', 'Jump T', 'Jump B',
             'Jump BR', 'Jump TL', 'Jump BL', 'Jump TR',
-            'Teleporter Blue', 'Teleporter Green', 'Teleporter Red', 'Teleporter Yellow',
-            'Bolt'
+            'Teleporter Blue', 'Teleporter Green', 'Teleporter Red', 'Teleporter Yellow'
         ];
 
         // Create buttons in the specified order
@@ -1504,7 +2392,8 @@ export class MapMaker {
             const [id, def] = tileEntry;
 
             if (id === '0' || id === '-1') return; // Skip empty and occupied tiles
-            if (def.showInGamemode && def.showInGamemode !== this.gamemode) return;
+            if (def.showInGamemode && !def.showInGamemode.includes(this.gamemode)) return;
+            if (def.showInEnvironment && !def.showInEnvironment.includes(this.environment)) return;
 
             const btn = document.createElement('button');
             btn.className = 'tile-btn';
@@ -1538,6 +2427,8 @@ export class MapMaker {
                 this.selectedTile = { id: parseInt(id), ...def };
                 container.querySelectorAll('.tile-btn').forEach(b => b.classList.remove('selected'));
                 btn.classList.add('selected');
+                this.toggleEraseMode(false);
+                
             });
 
             container.appendChild(btn);
@@ -1569,41 +2460,6 @@ export class MapMaker {
         });
     }
 
-    loadTileImages() {
-        this.tileImages = {};
-        const imageLoadPromises = [];
-
-        Object.entries(this.tileDefinitions).forEach(([id, def]) => {
-            if (!def.img && !def.getImg) return;
-
-            const img = new Image();
-            if (def.img) {
-                img.src = `Resources/${def.img.replace('${env}', this.environment)}`;
-            } else if (def.getImg) {
-                const imgData = def.getImg(this.gamemode, 0, this.mapHeight);
-                if (imgData) {
-                    img.src = `Resources/${imgData.img.replace('${env}', this.environment)}`;
-                }
-            }
-
-            img.onerror = () => {
-                if (this.environment !== 'Desert' && (def.img || '').includes('${env}')) {
-                    img.src = `Resources/${(def.img || '').replace('${env}', 'Desert')}`;
-                }
-            };
-
-            this.tileImages[id] = img;
-            imageLoadPromises.push(new Promise(resolve => {
-                img.onload = resolve;
-            }));
-        });
-
-        // Wait for all images to load then draw
-        Promise.all(imageLoadPromises).then(() => {
-            this.draw();
-        });
-    }
-
     setCanvas(newCanvas) {
         this.canvas = newCanvas;
         this.ctx    = newCanvas.getContext('2d');
@@ -1613,7 +2469,7 @@ export class MapMaker {
     }
 
 
-    drawTile(ctx, tileId, x, y) {
+    drawTile(ctx, tileId, x, y, red = false) {
         const def = this.tileDefinitions[tileId];
         if (!def) return;
 
@@ -1690,14 +2546,11 @@ export class MapMaker {
             }
             
             // If image isn't loaded yet, draw a placeholder
-            if (!img || !img.complete) {
-                ctx.fillStyle = 'rgba(0, 0, 255, 0.1)'; // Reduced opacity from 0.2 to 0.1
-                ctx.fillRect(
-                    x * this.tileSize + this.canvasPadding,
-                    y * this.tileSize + this.canvasPadding,
-                    this.tileSize,
-                    this.tileSize
-                );
+            if (!img.complete || img.naturalWidth === 0) {
+                // Wait for image to load before drawing
+                img.onload = () => {
+                    this.drawTile(this.ctx, tileId, x, y); // Or whatever your method is to redraw that tile
+                };
                 return;
             }
 
@@ -1753,19 +2606,100 @@ export class MapMaker {
                 this.tileImages[imagePath] = img;
             }
             
-            if (!img.complete) {
-                // Draw placeholder
-                ctx.fillStyle = 'rgba(150, 150, 150, 0.2)';
-                ctx.fillRect(
-                    x * this.tileSize + this.canvasPadding,
-                    y * this.tileSize + this.canvasPadding,
-                    this.tileSize,
-                    this.tileSize
-                );
+            if (!img.complete || img.naturalWidth === 0) {
+                // Wait for image to load before drawing
+                img.onload = () => {
+                    this.drawTile(this.ctx, tileId, x, y); // Or whatever your method is to redraw that tile
+                };
+                return;
+            }
+        } else if (tileId === 40) {
+            const imageName = this.fenceLogicHandler.getFenceImageName(x, y, this.mapData, 'Brawl_Arena');
+
+            const pathColor = red ? 'Red' : 'Blue';
+            const imagePath = `Resources/Global/Arena/Track/${pathColor}/${imageName}.png`;
+
+
+            
+            img = this.tileImages[imagePath];
+            
+            if (!img) {
+                img = new Image();
+                img.onload = () => this.draw();
+                img.src = imagePath;
+                img.onerror = () => {
+                    console.error(`Failed to load track image: ${imagePath}`);
+                    // Load fallback image
+                    img.src = `Resources/Global/Arena/Track/Blue/Fence.png`;
+                };
+                this.tileImages[imagePath] = img;
+            }
+            
+            if (!img.complete || img.naturalWidth === 0) {
+                // Wait for image to load before drawing
+                img.onload = () => {
+                    this.drawTile(this.ctx, tileId, x, y); // Or whatever your method is to redraw that tile
+                };
+                return;
+            }
+
+        } else if (tileId === 45) {
+            // Robust check: Only try to draw BFence if allowed in this environment
+            const def = this.tileDefinitions[tileId];
+            if (!def.showInEnvironment || !def.showInEnvironment.includes(this.environment)) {
+                // Do not attempt to load or draw BFence if not supported in this environment
+                return;
+            }
+
+            const imageName = this.fenceLogicHandler.getFenceImageName(x, y, this.mapData, this.environment, false, true);
+            
+            const imagePath = `Resources/${this.environment}/Fence_5v5/${imageName}.png`;
+            
+            img = this.tileImages[imagePath];
+            
+            if (!img) {
+                img = new Image();
+                img.onload = () => this.draw();
+                img.src = imagePath;
+                img.onerror = () => {
+                    console.error(`Failed to load border fence image: ${imagePath}`);
+                    // Load fallback image
+                    img.src = `Resources/${this.environment}/Fence_5v5/BFence.png`;
+                };
+                this.tileImages[imagePath] = img;
+            }
+            
+            if (!img.complete || img.naturalWidth === 0) {
+                // Wait for image to load before drawing
+                img.onload = () => {
+                    this.drawTile(this.ctx, tileId, x, y); // Or whatever your method is to redraw that tile
+                };
                 return;
             }
         } else {
-            img = this.tileImages[tileId];
+            // Handle position-dependent tiles like objectives
+            const def = this.tileDefinitions[tileId];
+            if (def && def.getImg) {
+                const imgData = def.getImg(this.gamemode, y, this.mapHeight);
+                if (imgData && imgData.img) {
+                    const imgPath = `Resources/${imgData.img.replace('${env}', this.environment)}`;
+                    // Use a unique cache key that includes position for position-dependent tiles
+                    const cacheKey = `${tileId}_${imgPath}`;
+                    img = this.tileImages[cacheKey];
+                    
+                    if (!img) {
+                        img = new Image();
+                        img.onload = () => this.draw();
+                        img.src = imgPath;
+                        img.onerror = () => {
+                            console.error(`Failed to load objective image: ${imgPath}`);
+                        };
+                        this.tileImages[cacheKey] = img;
+                    }
+                }
+            } else {
+                img = this.tileImages[tileId];
+            }
         }
 
         if (!img || !img.complete) return;
@@ -1773,30 +2707,40 @@ export class MapMaker {
         // Get tile dimensions data
         let dimensions;
         if (def.name === 'Objective') {
-            dimensions = this.environmentObjectiveData[this.environment]?.[this.gamemode] || 
-                        this.objectiveData[this.gamemode];
+            const baseData = this.environmentObjectiveData[this.environment]?.[this.gamemode] || this.objectiveData[this.gamemode];
+            
+            // Handle position-dependent objectives (upper vs lower)
+            if (baseData && typeof baseData === 'object' && !Array.isArray(baseData)) {
+                // Position-dependent format: { upper: [...], lower: [...] }
+                const isUpper = y < this.mapHeight / 2;
+                dimensions = baseData[isUpper ? 'upper' : 'lower'] || baseData.upper || baseData;
+            } else {
+                // Legacy format: direct array
+                dimensions = baseData;
+            }
         } else {
             // For fence and rope fence variations, use the specific variation's dimensions
             const isFence = tileId === 7;
             const isRope = tileId === 9;
-            if (isFence || isRope) {
-                const imageName = this.fenceLogicHandler.getFenceImageName(x, y, this.mapData, this.environment, isFence);
+            const isBorder = tileId === 45;
+            if (isFence || isRope || isBorder) {
+                const imageName = this.fenceLogicHandler.getFenceImageName(x, y, this.mapData, this.environment, isFence, isBorder);
                 const ropeMapping = {
                     'T': 'Post_T',
                     'R': 'Post_R',
                     'TR': 'Post_TR',
                     'Fence': 'Post'
                 };
-                const finalImageName = isFence ? imageName : (ropeMapping[imageName] || 'Post');
+                const finalImageName = isBorder ? imageName : isFence ? imageName : (ropeMapping[imageName] || 'Post');
                 
                 // First check environment-specific data
                 dimensions = this.environmentTileData[this.environment]?.[finalImageName] ||
                            // Then check base tile data
                            this.tileData[finalImageName] ||
                            // Fall back to base fence/rope fence in environment data
-                           this.environmentTileData[this.environment]?.[isFence ? 'Fence' : 'Rope Fence'] ||
+                           this.environmentTileData[this.environment]?.[isBorder ? 'BFence' : isFence ? 'Fence' : 'Rope Fence'] ||
                            // Finally fall back to base tile data
-                           this.tileData[isFence ? 'Fence' : 'Rope Fence'];
+                           this.tileData[isBorder ? 'BFence' : isFence ? 'Fence' : 'Rope Fence'];
             } else {
                 dimensions = this.environmentTileData[this.environment]?.[def.name] || 
                             this.tileData[def.name];
@@ -1835,7 +2779,7 @@ export class MapMaker {
                 // Check if this tile should have no background in Brawl Ball mode
                 let skipBackground = false;
                 // in draw(), before drawing the checker background:
-                if (this.gamemode === 'Brawl_Ball' && this.mapSize === this.mapSizes.regular) {
+                if ((this.gamemode === 'Brawl_Ball' || this.gamemode === 'Hockey') && this.mapSize === this.mapSizes.regular) {
                     // rows <4 or > mapHeight-5, cols <7 or > mapWidth-8
                     const atTop    = y < 4;
                     const atBottom = y >= this.mapHeight - 4;
@@ -1866,6 +2810,48 @@ export class MapMaker {
             }
         }
 
+        if (this.gamemode === 'Basket_Brawl' && this.mapSize === this.mapSizes.basket) { 
+            // Cache basket images if not already loaded
+            if (!this.basketMarkingsImage) {
+                this.basketMarkingsImage = new Image();
+                this.basketMarkingsImage.src = 'Resources/Global/BasketMarkings.png';
+            }
+            if (!this.basketsImage) {
+                this.basketsImage = new Image();
+                this.basketsImage.src = 'Resources/Global/Baskets.png';
+            }
+
+            // Draw basket markings if loaded
+            if (this.basketMarkingsImage.complete) {
+                this.ctx.drawImage( 
+                    this.basketMarkingsImage, 
+                    this.canvasPadding, 
+                    this.canvasPadding, 
+                    this.mapWidth * this.tileSize, 
+                    this.mapHeight * this.tileSize 
+                ); 
+            }
+        }
+
+        if (this.gamemode === 'Siege' && this.mapSize === this.mapSizes.siege) { 
+            // Cache basket images if not already loaded
+            if (!this.siegeMarkingsImage) {
+                this.siegeMarkingsImage = new Image();
+                this.siegeMarkingsImage.src = 'Resources/Global/SiegeMarkings.png';
+            }
+
+            if (this.siegeMarkingsImage.complete) {
+                this.ctx.drawImage( 
+                    this.siegeMarkingsImage, 
+                    this.canvasPadding, 
+                    this.canvasPadding, 
+                    this.mapWidth * this.tileSize, 
+                    this.mapHeight * this.tileSize 
+                ); 
+            }
+        }
+
+
         // Group tiles by z-index
         const tilesByZIndex = new Map();
         for (let y = 0; y < this.mapHeight; y++) {
@@ -1886,11 +2872,75 @@ export class MapMaker {
                 }
                 if (!dimensions) continue;
 
-                const zIndex = dimensions[5] || 0;
+                let originalZ = dimensions[5] || 0;
+                let lastInRow = !Number.isInteger(originalZ);
+                let zIndex = lastInRow ? originalZ - 0.5 : originalZ;
+
                 if (!tilesByZIndex.has(zIndex)) {
                     tilesByZIndex.set(zIndex, []);
                 }
-                tilesByZIndex.get(zIndex).push({ x, y, tileId });
+                tilesByZIndex.get(zIndex).push({ x, y, tileId, lastInRow, red: false });
+
+            }
+        }
+
+        function getTileAt(zIndex, x, y) {
+            const tiles = tilesByZIndex.get(zIndex);
+            if (!tiles) return null;
+
+            return tiles.find(tile => tile.x === x && tile.y === y) || null;
+        }
+
+        if (this.gamemode === 'Brawl_Arena'){
+            const getTrackConnections = (x, y) => {
+                const height = this.mapData.length;
+                const width = this.mapData[0].length;
+                
+                // Helper function to check if a tile is a fence/rope
+                const isSameType = (x, y) => {
+                    if (x < 0 || x >= width || y < 0 || y >= height) return false;
+                    const id = this.mapData[y][x];
+                    return id === 40;
+                };
+
+                return {
+                    top: isSameType(x, y - 1),
+                    right: isSameType(x + 1, y),
+                    bottom: isSameType(x, y + 1),
+                    left: isSameType(x - 1, y)
+                };
+            };
+
+            for (let y = 0; y < this.mapHeight; y++) {
+                for (let x = 0; x < this.mapWidth; x++) {
+                    if (this.mapData[y][x] === 47){
+                        const addRedToConnections = (x, y, firstRun = false) => {
+                            if (!firstRun) {
+                                const tile = getTileAt(2, x, y);
+                                if (!tile) {
+                                    return;
+                                }
+                                if (tile.red) {
+                                    return;
+                                }
+
+                                tile.red = true;
+                            }   
+
+                            firstRun = false;
+                            const { top, right, bottom, left } = getTrackConnections(x, y);
+                            if (top) addRedToConnections(x, y - 1);
+                            if (right) addRedToConnections(x + 1, y);
+                            if (bottom) addRedToConnections(x, y + 1);
+                            if (left) addRedToConnections(x - 1, y);
+                        };
+
+                        addRedToConnections(x + 1, y, true);
+                        addRedToConnections(x - 1, y, true);
+                        addRedToConnections(x, y + 1, true);
+                        addRedToConnections(x, y - 1, true);
+                    }
+                }
             }
         }
 
@@ -1898,10 +2948,51 @@ export class MapMaker {
         Array.from(tilesByZIndex.keys())
             .sort((a, b) => a - b)
             .forEach(zIndex => {
-                tilesByZIndex.get(zIndex).forEach(({ x, y, tileId }) => {
-                    this.drawTile(this.ctx, tileId, x, y);
+                const tiles = tilesByZIndex.get(zIndex);
+
+                // Group tiles by row (y value)
+                const rows = new Map();
+
+                tiles.forEach(tile => {
+                    const { y } = tile;
+                    if (!rows.has(y)) {
+                        rows.set(y, []);
+                    }
+                    rows.get(y).push(tile);
                 });
+
+                // Draw tiles row by row
+                Array.from(rows.keys())
+                    .sort((a, b) => a - b)
+                    .forEach(y => {
+                        const rowTiles = rows.get(y);
+
+                        // Separate regular and lastInRow tiles
+                        const normalTiles = [];
+                        const lastInRowTiles = [];
+
+                        rowTiles.forEach(tile => {
+                            if (tile.lastInRow) {
+                                lastInRowTiles.push(tile);
+                            } else {
+                                normalTiles.push(tile);
+                            }
+                        });
+
+                        // Sort both groups by x
+                        normalTiles.sort((a, b) => a.x - b.x);
+                        lastInRowTiles.sort((a, b) => a.x - b.x); // Optional, just in case of multiple
+
+                        [...normalTiles, ...lastInRowTiles].forEach(({ x, y, tileId }) => {
+                            const tile = getTileAt(2, x, y);
+                            const red = tile?.red ?? false;
+
+                            this.drawTile(this.ctx, tileId, x, y, red);
+
+                        });
+                    });
             });
+
             
 
         // Draw error tiles if showErrors is enabled
@@ -1915,6 +3006,18 @@ export class MapMaker {
                     this.tileSize, 
                     this.tileSize
                 );
+            }
+        }
+
+        if (this.gamemode === 'Basket_Brawl' && this.mapSize === this.mapSizes.basket) { 
+            if (this.basketsImage.complete) {
+                this.ctx.drawImage( 
+                    this.basketsImage, 
+                    this.canvasPadding, 
+                    this.canvasPadding, 
+                    this.mapWidth * this.tileSize,
+                    this.mapHeight * this.tileSize 
+                ); 
             }
         }
 
@@ -1932,6 +3035,40 @@ export class MapMaker {
                     (goal.h || 1) * this.tileSize
                 );
             }
+        }
+
+            
+
+        if (this.selectionMode === 'select' && !this.mouseDown) {
+            this.selectionStart = this.selectedTiles[0];
+            this.selectionEnd = this.selectedTiles[this.selectedTiles.length - 1];
+            this.drawSelection();
+        }
+
+
+        if (this.showGuides || this.isDragging || this.isSelectDragging) {
+            this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.85)'; // semi-transparent white
+            this.ctx.lineWidth = 1;
+
+            // Calculate central tile coordinates
+            const centerX = (this.mapWidth / 2);
+            const centerY = (this.mapHeight / 2);
+
+            // Convert to canvas pixel coordinates
+            const centerXCanvas = centerX * this.tileSize + this.canvasPadding;
+            const centerYCanvas = centerY * this.tileSize + this.canvasPadding;
+
+            // Vertical center line
+            this.ctx.beginPath();
+            this.ctx.moveTo(centerXCanvas + 0.5, 0);
+            this.ctx.lineTo(centerXCanvas + 0.5, this.canvas.height);
+            this.ctx.stroke();
+
+            // Horizontal center line
+            this.ctx.beginPath();
+            this.ctx.moveTo(0, centerYCanvas + 0.5);
+            this.ctx.lineTo(this.canvas.width, centerYCanvas + 0.5);
+            this.ctx.stroke();
         }
     }
 
@@ -1971,31 +3108,13 @@ export class MapMaker {
         
         // Set the selection style
         this.selectionCtx.fillStyle = this.isErasing ? 'rgba(255, 0, 0, 0.4)' : 'rgba(255, 255, 0, 0.4)';
-        
-        if (this.selectionMode === 'single') {
-            this.selectionCtx.fillRect(
-                this.selectionEnd.x * this.tileSize + this.canvasPadding,
-                this.selectionEnd.y * this.tileSize + this.canvasPadding,
-                this.tileSize,
-                this.tileSize
-            );
-        } else if (this.selectionMode === 'line') {
-            // Highlight all tiles that have been hovered over
-            for (const tilePos of this.hoveredTiles) {
-                const [x, y] = tilePos.split(',').map(Number);
-                this.selectionCtx.fillRect(
-                    x * this.tileSize + this.canvasPadding,
-                    y * this.tileSize + this.canvasPadding,
-                    this.tileSize,
-                    this.tileSize
-                );
-            }
-        } else if (this.selectionMode === 'rectangle') {
+
+        // If still drawing, show full rectangle/area as before
+        if (this.isDrawing && (this.selectionMode === 'rectangle' || this.selectionMode === 'select')) {
             const startX = Math.min(this.selectionStart.x, this.selectionEnd.x);
             const startY = Math.min(this.selectionStart.y, this.selectionEnd.y);
             const endX = Math.max(this.selectionStart.x, this.selectionEnd.x);
             const endY = Math.max(this.selectionStart.y, this.selectionEnd.y);
-            
             for (let y = startY; y <= endY; y++) {
                 for (let x = startX; x <= endX; x++) {
                     this.selectionCtx.fillRect(
@@ -2006,6 +3125,48 @@ export class MapMaker {
                     );
                 }
             }
+        } else if (this.selectionMode === 'select' && this.selectedTiles.length > 0) {
+            // After selection, only cover actual selected (non-empty) tiles
+            for (const t of this.selectedTiles) {
+                this.selectionCtx.fillRect(
+                    t.x * this.tileSize + this.canvasPadding,
+                    t.y * this.tileSize + this.canvasPadding,
+                    this.tileSize,
+                    this.tileSize
+                );
+            }
+        } else if (this.selectionMode === 'rectangle') {
+            const startX = Math.min(this.selectionStart.x, this.selectionEnd.x);
+            const startY = Math.min(this.selectionStart.y, this.selectionEnd.y);
+            const endX = Math.max(this.selectionStart.x, this.selectionEnd.x);
+            const endY = Math.max(this.selectionStart.y, this.selectionEnd.y);
+            for (let y = startY; y <= endY; y++) {
+                for (let x = startX; x <= endX; x++) {
+                    this.selectionCtx.fillRect(
+                        x * this.tileSize + this.canvasPadding,
+                        y * this.tileSize + this.canvasPadding,
+                        this.tileSize,
+                        this.tileSize
+                    );
+                }
+            }
+        } else if (this.selectionMode === 'line') {
+            for (const tilePos of this.hoveredTiles) {
+                const [x, y] = tilePos.split(',').map(Number);
+                this.selectionCtx.fillRect(
+                    x * this.tileSize + this.canvasPadding,
+                    y * this.tileSize + this.canvasPadding,
+                    this.tileSize,
+                    this.tileSize
+                );
+            }
+        } else if (this.selectionMode === 'single' || this.selectionMode === 'fill') {
+            this.selectionCtx.fillRect(
+                this.selectionEnd.x * this.tileSize + this.canvasPadding,
+                this.selectionEnd.y * this.tileSize + this.canvasPadding,
+                this.tileSize,
+                this.tileSize
+            );
         }
         
         // Draw the selection overlay on top of the main canvas
@@ -2049,7 +3210,71 @@ export class MapMaker {
                     }
                 }
             }
+        } else if (this.selectionMode === 'fill') {
+            const tileId = this.mapData[this.selectionEnd.y][this.selectionEnd.x];
+
+            const getConnectionsOfSameTile = (x, y, tileId) => {
+                const height = this.mapData.length;
+                const width = this.mapData[0].length;
+
+                const isSameType = (x, y) => {
+                    if (x < 0 || x >= width || y < 0 || y >= height) return false;
+                    const id = this.mapData[y][x];
+                    return id === tileId;
+                };
+
+                return {
+                    top: isSameType(x, y - 1),
+                    right: isSameType(x + 1, y),
+                    bottom: isSameType(x, y + 1),
+                    left: isSameType(x - 1, y)
+                };
+            };
+
+            const fill = (x, y) => {
+                if (x < 0 || x >= this.mapWidth || y < 0 || y >= this.mapHeight) {
+                    return;
+                }
+
+                const currentTile = this.mapData[y][x];
+                if (currentTile !== tileId) {
+                    return;
+                }
+
+                if (this.isErasing) {
+                    this.eraseTile(x, y, false);
+                } else {
+                    this.placeTile(x, y, null, false);
+                }
+
+                const { top, right, bottom, left } = getConnectionsOfSameTile(x, y, tileId);
+
+                if (top) fill(x, y - 1);
+                if (right) fill(x + 1, y);
+                if (bottom) fill(x, y + 1);
+                if (left) fill(x - 1, y);
+            };
+
+            fill(this.selectionEnd.x, this.selectionEnd.y);
+        } else if (this.selectionMode === 'select') {
+            const startX = Math.min(this.selectionStart.x, this.selectionEnd.x);
+            const startY = Math.min(this.selectionStart.y, this.selectionEnd.y);
+            const endX = Math.max(this.selectionStart.x, this.selectionEnd.x);
+            const endY = Math.max(this.selectionStart.y, this.selectionEnd.y);
+            
+            for (let y = startY; y <= endY; y++) {
+                for (let x = startX; x <= endX; x++) {
+                    if (this.mapData[y][x] !== 0 && this.mapData[y][x] !== -1 && this.mapData[y][x] !== 33) {
+                        this.selectedTiles.push({
+                            x: x, 
+                            y: y,
+                            id: this.mapData[y][x]
+                        });
+                    }
+                }
+            }
         }
+            
         
         // Draw after all tiles are placed
         this.draw();
@@ -2065,7 +3290,7 @@ export class MapMaker {
         const atBottom = y >= this.mapHeight - 4;
         const atLeft   = x < 7;
         const atRight  = x >= this.mapWidth - 7;
-        if (this.gamemode === 'Brawl_Ball' 
+        if ((this.gamemode === 'Brawl_Ball' || this.gamemode === 'Hockey') 
             && this.mapSize === this.mapSizes.regular
             && (atTop || atBottom) && (atLeft || atRight)) {
                 this.isDrawing = false;
@@ -2079,7 +3304,7 @@ export class MapMaker {
             // Check if any of the 4 tiles are occupied
             for (let dy = 0; dy < 2; dy++) {
                 for (let dx = 0; dx < 2; dx++) {
-                    if (this.mapData[y + dy][x + dx] !== 0) return;
+                    this.mapData[y + dy][x + dx] = 0;
                 }
             }
         }
@@ -2091,7 +3316,7 @@ export class MapMaker {
         }
 
         // Only show Bolt in Siege mode
-        if (def.showInGamemode && def.showInGamemode !== this.gamemode) return;
+        if (def.showInGamemode && !def.showInGamemode.includes(this.gamemode)) return;
 
         // Save state before making changes if requested
         if (saveState) {
@@ -2171,7 +3396,7 @@ export class MapMaker {
 
     getMirroredTileId(tileId, direction) {
         const def = this.tileDefinitions[tileId];
-        if (!def) return tileId;
+        if (!def && !this.blue2Red) return tileId;
 
         // Handle jump pad mirroring
         if (def.name.startsWith('Jump')) {
@@ -2194,6 +3419,21 @@ export class MapMaker {
             return mirroredDef ? parseInt(mirroredDef[0]) : tileId;
         }
 
+        if (this.blue2Red) {
+            switch (tileId){
+                case 12: return 13;
+                case 13: return 12;
+                case 34: return 35;
+                case 35: return 34;
+                case 41: return 42;
+                case 42: return 41;
+                case 43: return 46;
+                case 46: return 43;
+                case 44: return 47;
+                case 47: return 44;
+            }
+        }
+
         return tileId;
     }
 
@@ -2201,32 +3441,57 @@ export class MapMaker {
         if (saveState) {
             this.saveState();
         }
-        
+
+        const tileId = this.mapData[y][x];
+        const def = this.tileDefinitions[tileId];
+        if (def && def.size === 2) {
+            // For 2x2 tiles, we need to clear all 4 tiles
+
+            this.mapData[y][x + 1] = 0;
+            this.mapData[y + 1][x] = 0;
+            this.mapData[y + 1][x + 1] = 0;
+        }
         this.mapData[y][x] = 0;
-        
+
         // Handle mirroring for regular tiles
-        if (this.mirrorVertical || this.mirrorHorizontal || this.mirrorDiagonal) {
+         if (this.mirrorVertical || this.mirrorHorizontal || this.mirrorDiagonal) {
             const mirrorY = this.mapHeight - 1 - y;
             const mirrorX = this.mapWidth - 1 - x;
             
             if (this.mirrorVertical) {
+                if (def && def.size === 2) {
+                    this.mapData[mirrorY - 1][x] = 0;
+                    this.mapData[mirrorY - 1][x + 1] = 0;
+                    this.mapData[mirrorY][x + 1] = 0;
+                }
                 this.mapData[mirrorY][x] = 0;
             }
             
             if (this.mirrorHorizontal) {
+                if (def && def.size === 2) {
+                    this.mapData[y + 1][mirrorX] = 0;
+                    this.mapData[y][mirrorX - 1] = 0;
+                    this.mapData[y + 1][mirrorX - 1] = 0;
+                }
                 this.mapData[y][mirrorX] = 0;
             }
             
             if (this.mirrorDiagonal) {
+                if (def && def.size === 2) {
+                    this.mapData[mirrorY - 1][mirrorX - 1] = 0;
+                    this.mapData[mirrorY - 1][mirrorX] = 0;
+                    this.mapData[mirrorY][mirrorX - 1] = 0;
+                }
                 this.mapData[mirrorY][mirrorX] = 0;
             }
         }
-        
+
         if (saveState) {
             this.draw();
             this.checkForErrors();
         }
     }
+
 
     clearMap(confirmed = false) {
         if (confirmed || confirm('Are you sure you want to clear the map?')) {
@@ -2238,10 +3503,16 @@ export class MapMaker {
         }
     }
 
-    generateMapId() {
-        const timestampPart = Date.now().toString(36).slice(-4); // optional trimming
-        const randomPart = Math.random().toString(36).substring(2, 8);
-        return timestampPart + randomPart;
+    async generateMapId() {
+        const maps = await Firebase.readDataOnce(`users/${localStorage.getItem('user')}/maps`);
+
+        if (!maps) return 1;
+
+        const mapIds = Object.keys(maps);
+        const numericIds = mapIds.map(id => Number(id)).filter(n => !isNaN(n));
+        const maxId = numericIds.length ? Math.max(...numericIds) : 0;
+
+        return maxId + 1;
     }
     
     async saveMap() {
@@ -2251,22 +3522,22 @@ export class MapMaker {
     
             // Check if map is being saved for the first time
             if (mapLinkElement.innerText === 'https://she-fairy.github.io/atlas-horizon/map.html') {
-                mapId = this.generateMapId();
-                mapLinkElement.innerText = `https://she-fairy.github.io/atlas-horizon/map.html?mapId=${mapId}&user=\n${sessionStorage.getItem('user')}`;
+                mapId = await this.generateMapId();
+                mapLinkElement.innerText = `https://she-fairy.github.io/atlas-horizon/map.html?id=${mapId}&user=${localStorage.getItem('user')}`;
             } else {
                 const currentUrl = new URL(mapLinkElement.innerText);
-                mapId = currentUrl.searchParams.get('mapId');
+                mapId = currentUrl.searchParams.get('id');
             }
     
             const mapData = {
-                name: document.getElementById('mapName').value,
+                name: document.getElementById('mapName').value !== '' ? document.getElementById('mapName').value : 'Untitled Map',
                 size: document.getElementById('mapSize').value,
                 gamemode: document.getElementById('gamemode').value,
                 environment: document.getElementById('environment').value,
                 mapData: this.mapData
             };
     
-            await window.Firebase.writeData(`users/${sessionStorage.getItem('user')}/maps/${mapId}`, mapData);
+            await window.Firebase.writeData(`users/${localStorage.getItem('user')}/maps/${mapId}`, mapData);
     
             alert('Map saved successfully!');
         } catch (error) {
@@ -2287,60 +3558,257 @@ export class MapMaker {
         // Draw background
         for (let y = 0; y < this.mapHeight; y++) {
             for (let x = 0; x < this.mapWidth; x++) {
-            const isDark = (x + y) % 2 === 0;
-            const bgImg = isDark ? this.bgDark : this.bgLight;
+                const isDark = (x + y) % 2 === 0;
+                const bgImg = isDark ? this.bgDark : this.bgLight;
 
-            // Skip Brawl Ball corners in regular size
-            if (
-                this.gamemode === 'Brawl_Ball' &&
-                this.mapSize === this.mapSizes.regular
-            ) {
-                const atTop = y < 4;
-                const atBottom = y >= this.mapHeight - 4;
-                const atLeft = x < 7;
-                const atRight = x >= this.mapWidth - 7;
-                if ((atTop || atBottom) && (atLeft || atRight)) continue;
-            }
+                // Skip Brawl Ball corners in regular size
+                if (
+                    (this.gamemode === 'Brawl_Ball' || this.gamemode === 'Hockey') &&
+                    this.mapSize === this.mapSizes.regular
+                ) {
+                    const atTop = y < 4;
+                    const atBottom = y >= this.mapHeight - 4;
+                    const atLeft = x < 7;
+                    const atRight = x >= this.mapWidth - 7;
+                    if ((atTop || atBottom) && (atLeft || atRight)) continue;
+                }
 
-            if (bgImg?.complete) {
-                ctx.drawImage(
-                bgImg,
-                x * tileSize + padding,
-                y * tileSize + padding,
-                tileSize,
-                tileSize
-                );
-            }
+                if (bgImg?.complete) {
+                    ctx.drawImage(
+                        bgImg,
+                        x * tileSize + padding,
+                        y * tileSize + padding,
+                        tileSize,
+                        tileSize
+                    );
+                }
             }
         }
 
-        // Draw map tiles
+        if (this.gamemode === 'Basket_Brawl' && this.mapSize === this.mapSizes.basket) { 
+            // Cache basket images if not already loaded
+            if (!this.basketMarkingsImage) {
+                this.basketMarkingsImage = new Image();
+                this.basketMarkingsImage.src = 'Resources/Global/BasketMarkings.png';
+            }
+            if (!this.basketsImage) {
+                this.basketsImage = new Image();
+                this.basketsImage.src = 'Resources/Global/Baskets.png';
+            }
+
+            // Draw basket markings if loaded
+            if (this.basketMarkingsImage.complete) {
+                ctx.drawImage( 
+                    this.basketMarkingsImage, 
+                    this.canvasPadding, 
+                    this.canvasPadding, 
+                    this.mapWidth * this.tileSize, 
+                    this.mapHeight * this.tileSize 
+                ); 
+            }
+        }
+
+        if (this.gamemode === 'Siege' && this.mapSize === this.mapSizes.siege) { 
+            // Cache siege markings image if not already loaded
+            if (!this.siegeMarkingsImage) {
+                this.siegeMarkingsImage = new Image();
+                this.siegeMarkingsImage.src = 'Resources/Global/SiegeMarkings.png';
+            }
+
+            // Draw siege markings if loaded
+            if (this.siegeMarkingsImage.complete) {
+                ctx.drawImage( 
+                    this.siegeMarkingsImage, 
+                    this.canvasPadding, 
+                    this.canvasPadding, 
+                    this.mapWidth * this.tileSize, 
+                    this.mapHeight * this.tileSize 
+                ); 
+            }
+        }
+
+        // Group tiles by z-index
+        const tilesByZIndex = new Map();
         for (let y = 0; y < this.mapHeight; y++) {
             for (let x = 0; x < this.mapWidth; x++) {
-            this.drawTile(ctx, this.mapData[y][x], x, y);
+                const tileId = this.mapData[y][x];
+                if (tileId === 0 || tileId === -1) continue;
+
+                const def = this.tileDefinitions[tileId];
+                if (!def) continue;
+
+                let dimensions;
+                if (def.name === 'Objective') {
+                    const baseData = this.environmentObjectiveData[this.environment]?.[this.gamemode] || 
+                                    this.objectiveData[this.gamemode];
+                    
+                    // Handle position-dependent objectives (upper vs lower)
+                    if (baseData && typeof baseData === 'object' && !Array.isArray(baseData)) {
+                        // Position-dependent format: { upper: [...], lower: [...] }
+                        const isUpper = y < this.mapHeight / 2;
+                        dimensions = baseData[isUpper ? 'upper' : 'lower'] || baseData.upper || baseData;
+                    } else {
+                        // Legacy format: direct array
+                        dimensions = baseData;
+                    }
+                } else {
+                    dimensions = this.environmentTileData[this.environment]?.[def.name] || 
+                                this.tileData[def.name];
+                }
+                if (!dimensions) continue;
+
+                let originalZ = dimensions[5] || 0;
+                let lastInRow = !Number.isInteger(originalZ);
+                let zIndex = lastInRow ? originalZ - 0.5 : originalZ;
+
+                if (!tilesByZIndex.has(zIndex)) {
+                    tilesByZIndex.set(zIndex, []);
+                }
+                tilesByZIndex.get(zIndex).push({ x, y, tileId, lastInRow, red: false });
+
+            }
+        }
+
+        function getTileAt(zIndex, x, y) {
+            const tiles = tilesByZIndex.get(zIndex);
+            if (!tiles) return null;
+
+            return tiles.find(tile => tile.x === x && tile.y === y) || null;
+        }
+
+        if (this.gamemode === 'Brawl_Arena'){
+            const getTrackConnections = (x, y) => {
+                const height = this.mapData.length;
+                const width = this.mapData[0].length;
+                
+                // Helper function to check if a tile is a fence/rope
+                const isSameType = (x, y) => {
+                    if (x < 0 || x >= width || y < 0 || y >= height) return false;
+                    const id = this.mapData[y][x];
+                    return id === 40;
+                };
+
+                return {
+                    top: isSameType(x, y - 1),
+                    right: isSameType(x + 1, y),
+                    bottom: isSameType(x, y + 1),
+                    left: isSameType(x - 1, y)
+                };
+            };
+
+            for (let y = 0; y < this.mapHeight; y++) {
+                for (let x = 0; x < this.mapWidth; x++) {
+                    if (this.mapData[y][x] === 47){
+                        let firstRun = true;
+                        const addRedToConnections = (x, y) => {
+                            if (!firstRun) {
+                                const tile = getTileAt(2, x, y);
+                                if (!tile) {
+                                    return;
+                                }
+                                if (tile.red) {
+                                    return;
+                                }
+
+                                tile.red = true;
+                            }   
+
+                            firstRun = false;
+                            const { top, right, bottom, left } = getTrackConnections(x, y);
+                            if (top) addRedToConnections(x, y - 1);
+                            if (right) addRedToConnections(x + 1, y);
+                            if (bottom) addRedToConnections(x, y + 1);
+                            if (left) addRedToConnections(x - 1, y);
+                        };
+
+                        addRedToConnections(x, y);
+                    }
+                }
+            }
+        }
+
+        // Draw tiles in z-index order
+        Array.from(tilesByZIndex.keys())
+            .sort((a, b) => a - b)
+            .forEach(zIndex => {
+                const tiles = tilesByZIndex.get(zIndex);
+
+                // Group tiles by row (y value)
+                const rows = new Map();
+
+                tiles.forEach(tile => {
+                    const { y } = tile;
+                    if (!rows.has(y)) {
+                        rows.set(y, []);
+                    }
+                    rows.get(y).push(tile);
+                });
+
+                // Draw tiles row by row
+                Array.from(rows.keys())
+                    .sort((a, b) => a - b)
+                    .forEach(y => {
+                        const rowTiles = rows.get(y);
+
+                        // Separate regular and lastInRow tiles
+                        const normalTiles = [];
+                        const lastInRowTiles = [];
+
+                        rowTiles.forEach(tile => {
+                            if (tile.lastInRow) {
+                                lastInRowTiles.push(tile);
+                            } else {
+                                normalTiles.push(tile);
+                            }
+                        });
+
+                        // Sort both groups by x
+                        normalTiles.sort((a, b) => a.x - b.x);
+                        lastInRowTiles.sort((a, b) => a.x - b.x); // Optional, just in case of multiple
+
+                        [...normalTiles, ...lastInRowTiles].forEach(({ x, y, tileId }) => {
+                            const tile = getTileAt(2, x, y);
+                            const red = tile?.red ?? false;
+
+                            this.drawTile(ctx, tileId, x, y, red);
+
+                        });
+                    });
+            });
+
+        if (this.gamemode === 'Basket_Brawl' && this.mapSize === this.mapSizes.basket) { 
+            if (this.basketsImage.complete) {
+                ctx.drawImage( 
+                    this.basketsImage, 
+                    this.canvasPadding, 
+                    this.canvasPadding, 
+                    this.mapWidth * this.tileSize,
+                    this.mapHeight * this.tileSize 
+                ); 
             }
         }
 
         // Draw goal images if any
         if (this.goalImages?.length) {
             for (const goal of this.goalImages) {
-            const img =
-                this.goalImageCache[`${goal.name}_${this.environment}`] ||
-                this.goalImageCache[goal.name];
-            if (!img || !img.complete) continue;
+                const img =
+                    this.goalImageCache[`${goal.name}_${this.environment}`] ||
+                    this.goalImageCache[goal.name];
+                if (!img || !img.complete) continue;
 
-            ctx.drawImage(
-                img,
-                goal.x * tileSize + padding + (goal.offsetX || 0),
-                goal.y * tileSize + padding + (goal.offsetY || 0),
-                (goal.w || 1) * tileSize,
-                (goal.h || 1) * tileSize
-            );
+                ctx.drawImage(
+                    img,
+                    goal.x * tileSize + padding + (goal.offsetX || 0),
+                    goal.y * tileSize + padding + (goal.offsetY || 0),
+                    (goal.w || 1) * tileSize,
+                    (goal.h || 1) * tileSize
+                );
             }
         }
 
         return canvas.toDataURL('image/png');
-        }
+    }
+
 
 
 
@@ -2371,24 +3839,39 @@ export class MapMaker {
         });
     }
 
-    async setGamemode(gamemode) {
+    async setGamemode(gamemode, apply = true) {
         const previousGamemode = this.gamemode;
         this.gamemode = gamemode;
         this.goalImages = [];
 
+        this.toggleMirroring();
+
 
         // Remove objectives
-        for (let y = 0; y < this.mapHeight; y++) {
-            for (let x = 0; x < this.mapWidth; x++) {
-                if (this.mapData[y][x] === 14) this.mapData[y][x] = 0;
+        if (this.mapData.every(row => row.every(tile => tile === 0))) {
+            for (let y = 0; y < this.mapHeight; y++) {
+                for (let x = 0; x < this.mapWidth; x++) {
+                    if (this.mapData[y][x] === 14) this.mapData[y][x] = 0;
+                }
             }
         }
+
+        Object.entries(this.tileDefinitions).forEach(([key, value]) => {
+            if (value.showInGamemode && !value.showInGamemode.includes(this.gamemode)) {
+                for (let y = 0; y < this.mapHeight; y++) {
+                    for (let x = 0; x < this.mapWidth; x++) {
+                        if (this.mapData[y][x] === parseInt(key)) this.mapData[y][x] = 0;
+                    }
+                }
+            }
+        });
+
 
         const middleX = Math.floor(this.mapWidth / 2);
         const middleY = Math.floor(this.mapHeight / 2);
 
-        const isBrawl = gamemode === 'Brawl_Ball';
-        const wasBrawl = previousGamemode === 'Brawl_Ball';
+        const isBrawl = gamemode === 'Brawl_Ball' || gamemode === 'Hockey';
+        const wasBrawl = previousGamemode === 'Brawl_Ball' || previousGamemode === 'Hockey';
 
         // REGULAR MAP - Brawl Ball
         if (this.mapSize === this.mapSizes.regular) {
@@ -2401,13 +3884,38 @@ export class MapMaker {
                         }
                     }
                 }
+                let red = { name: 'goalRed', x: middleX - 3, y: 0, w: 7, h: 3.5, offsetX: 0, offsetY: -20 };
+                let blue = { name: 'goalBlue', x: middleX - 3, y: this.mapHeight - 5, w: 7, h: 3.5, offsetX: 0, offsetY: -10 };
+
+                if (this.environment === 'Stadium'){
+                    red = { name: 'goalRed', x: middleX - 3, y: 0, w: 7, h: 4.5, offsetX: 0, offsetY: -20 };
+                    blue = { name: 'goalBlue', x: middleX - 3, y: this.mapHeight - 4, w: 7, h: 4.5, offsetX: 0, offsetY: -10 };
+                }
                 this.goalImages.push(
-                    { name: 'goalRed', x: middleX - 3, y: 0, w: 7, h: 3.5, offsetX: 0, offsetY: -20 },
-                    { name: 'goalBlue', x: middleX - 3, y: this.mapHeight - 5, w: 7, h: 3.5, offsetX: 0, offsetY: -10 }
+                    red, blue
                 );
                 await Promise.all(
                     this.goalImages.map(goal => this.preloadGoalImage(goal.name, this.environment))
                 );
+
+                if (apply) {
+                    // Clear previous spawn tiles
+                    this.placeTile(middleX, 0, 42, false);                      // Red
+                    this.placeTile(middleX, this.mapHeight - 1, 41, false);     // Blue
+                    this.placeTile(middleX - 2, 0, 42, false);                  // Red
+                    this.placeTile(middleX - 2, this.mapHeight - 1, 41, false); // Blue
+                    this.placeTile(middleX + 2, 0, 42, false);                  // Red
+                    this.placeTile(middleX + 2, this.mapHeight - 1, 41, false); // Blue
+
+                    // Place spawn tiles
+                    this.placeTile(middleX, 8, 13, false);      // Red
+                    this.placeTile(middleX, this.mapHeight - 9, 12, false);   // Blue
+                    this.placeTile(middleX - 2, 8, 13, false);                              // Red
+                    this.placeTile(middleX - 2, this.mapHeight - 9, 12, false); // Blue
+                    this.placeTile(middleX + 2, 8, 13, false);                              // Red
+                    this.placeTile(middleX + 2, this.mapHeight - 9, 12, false); // Blue
+                }
+
             } else if (wasBrawl) {
                 for (const [startX, startY] of corners) {
                     for (let y = 0; y < 4; y++) {
@@ -2424,8 +3932,8 @@ export class MapMaker {
         // SHOWDOWN MAP - Brawl Ball
         if (this.mapSize === this.mapSizes.showdown && isBrawl) {
             this.goalImages.push(
-            { name: 'goal5v5Blue', x: 12, y: middleY - 8, w: 3, h: 17, offsetX: -10, offsetY: -8 },
-            { name: 'goal5v5Red',  x: this.mapWidth - 15, y: middleY - 8, w: 3, h: 17, offsetX:  10, offsetY: -8 }
+            { name: 'goal5v5Blue', x: 12, y: middleY - 8, w: 3, h: 16, offsetX: -10, offsetY: -8 },
+            { name: 'goal5v5Red',  x: this.mapWidth - 15, y: middleY - 8, w: 3, h: 16, offsetX:  10, offsetY: -8 }
             );
 
             // ← add this:
@@ -2434,12 +3942,14 @@ export class MapMaker {
             );
         }
 
-        this.applyDefaultLayoutIfEmpty();
+        if (apply && (this.mapData.every(row => row.every(tile => tile === 0 || tile === 14 || tile === 13 || tile === 12 || tile === 33)))) 
+            this.applyDefaultLayoutIfEmpty();
 
 
         this.initializeTileSelector();
         this.loadTileImages();
         this.draw();
+        this.toggleMirroring();
     }
 
     applyDefaultLayoutIfEmpty() {
@@ -2447,6 +3957,8 @@ export class MapMaker {
         const midX = Math.floor(mapWidth / 2);
         const topY = 0;
         const bottomY = mapHeight - 1;
+
+        this.mapData = Array.from({ length: mapHeight }, () => Array(mapWidth).fill(0));
 
         // Place spawns for regular maps
         if (this.mapSize === this.mapSizes.regular) {
@@ -2465,7 +3977,7 @@ export class MapMaker {
                 if (this.mapData[bottomY][midX + 2] === 12) {
                     this.mapData[bottomY][midX + 2] = 0;
                 }
-            } else if (this.gamemode === 'Brawl_Ball') {
+            } else if ((this.gamemode === 'Brawl_Ball' || this.gamemode === 'Hockey' || this.gamemode ==='Paint_Brawl')) {
                 this.mapData[8][midX] = 13;      // Red
                 this.mapData[bottomY - 8][midX] = 12;   // Blue
                 this.mapData[8][midX - 2] = 13;  // Red
@@ -2494,19 +4006,43 @@ export class MapMaker {
             const centerX = midX;
             const objectiveModes = [
                 'Gem_Grab', 'Brawl_Ball', 'Bounty', 'Hot_Zone',
-                'Hold_The_Trophy', 'Basket_Brawl', 'Volley_Brawl'
+                'Hold_The_Trophy', 'Basket_Brawl', 'Volley_Brawl', 'Dodgebrawl', 'Hockey', 'Bot_Drop', 'Paint_Brawl',
             ];
             if (objectiveModes.includes(this.gamemode)) {
-                this.mapData[centerY][centerX] = 14;
+                this.placeTile(centerX, centerY, 14, false); // Place objective tile
+            } else if (this.gamemode === 'Heist' || this.gamemode === 'Snowtel_Thieves') {
+                this.placeTile(centerX, 4, 14, false);
+                this.placeTile(centerX, mapHeight - 5, 14, false);
             }
-            if (this.gamemode === 'Heist' || this.gamemode === 'Snowtel_Thieves') {
-                this.mapData[4][centerX] = 14;
-                this.mapData[mapHeight - 5][centerX] = 14;
+            if (objectiveModes.includes(this.gamemode)) {
+                this.placeTile(centerX, centerY, 14, false); // Place objective tile
+            } else if (this.gamemode === 'Token_Run') {
+                this.placeTile(centerX, 5, 14, false);
+                this.placeTile(centerX, mapHeight - 6, 14, false);
             }
         }
 
+
+        if (this.mapSize === this.mapSizes.basket) {
+            // Place spawns for basket maps
+            this.mapData[6][this.mapWidth - 2] = 13;      // Red
+            this.mapData[6][1] = 12;                      // Blue
+            this.mapData[8][this.mapWidth - 2] = 13;      // Red
+            this.mapData[8][1] = 12;                      // Blue
+            this.mapData[10][this.mapWidth - 2] = 13;     // Red
+            this.mapData[10][1] = 12;                     // Blue
+
+            // Center objective
+            if (this.gamemode === 'Basket_Brawl') {
+            const centerY = Math.floor(mapHeight / 2);
+            const centerX = Math.floor(mapWidth / 2);
+            this.placeTile(centerX, centerY, 14, false); // Place objective tile
+            }
+        }
+
+
         // Showdown-specific Brawl Ball setup
-        if (this.mapSize === this.mapSizes.showdown && this.gamemode === 'Brawl_Ball') {
+        if (this.mapSize === this.mapSizes.showdown && (this.gamemode === 'Brawl_Ball' || this.gamemode === 'Hockey')) {
             const centerX = Math.floor(mapWidth / 2);
             const centerY = Math.floor(mapHeight / 2);
             const topLeft = centerX - 1;
@@ -2520,8 +4056,8 @@ export class MapMaker {
             }
             // Extend Unbreakables
             for (let x = 10; x <= 14; x++) {
-                this.mapData[centerY + 8][x] = 11;
-                this.mapData[centerY + 8][mapWidth - x - 1] = 11;
+                this.mapData[centerY + 7][x] = 11;
+                this.mapData[centerY + 7][mapWidth - x - 1] = 11;
                 this.mapData[centerY - 8][x] = 11;
                 this.mapData[centerY - 8][mapWidth - x - 1] = 11;
             }
@@ -2532,7 +4068,7 @@ export class MapMaker {
                 for (let x = mapWidth - 10; x < mapWidth; x++) this.mapData[y][x] = 8;
             }
 
-        } else if (this.mapSize === this.mapSizes.showdown && this.gamemode === 'Gem_Grab') {
+        } else if (this.mapSize === this.mapSizes.showdown && (this.gamemode === 'Gem_Grab' || this.gamemode === 'Bounty' || this.gamemode === 'Hot_Zone')) {
             // Gem Grab-specific setup
             const centerX = Math.floor(mapWidth / 2);
             const centerY = Math.floor(mapHeight / 2);
@@ -2543,6 +4079,110 @@ export class MapMaker {
         this.draw();
     }
     
+    setSize(size, changing = true) {
+        const newSize = this.mapSizes[size];
+            if (!newSize) return;
+
+            if (!changing || this.undoStack.length === 0 && document.getElementById('mapLink').innerText === 'https://she-fairy.github.io/atlas-horizon/map.html' || confirm('Changing map size will clear the current map. Continue?')) {
+                this.mapSize   = newSize;
+                this.mapWidth  = newSize.width;
+                this.mapHeight = newSize.height;
+                this.mapData   = Array(this.mapHeight).fill().map(() => Array(this.mapWidth).fill(0));
+
+                // ——— Showdown ↔ other: adjust Objective tile + data sizes ———
+                const isShowdown = size => size === this.mapSizes.showdown;
+                const isShowdownNow = isShowdown(newSize);
+
+                if (!isShowdownNow) {
+                    this.tileDefinitions[14].size = 1;
+                    this.objectiveData.Gem_Grab[0] = 2; // width
+                    this.objectiveData.Gem_Grab[1] = 2; // height
+                    this.objectiveData.Gem_Grab[2] = -50; 
+                    this.objectiveData.Gem_Grab[3] = -50;
+                    this.objectiveData.Brawl_Ball[0] = 1.3;
+                    this.objectiveData.Brawl_Ball[1] = 1.495;
+                    this.objectiveData.Brawl_Ball[2] = -15;
+                    this.objectiveData.Brawl_Ball[3] = -20; 
+                    this.objectiveData.Basket_Brawl[0] = 1.3;
+                    this.objectiveData.Basket_Brawl[1] = 1.495;
+                    this.objectiveData.Basket_Brawl[2] = -15;
+                    this.objectiveData.Basket_Brawl[3] = -20; 
+                    this.objectiveData.Volley_Brawl[0] = 1.3;
+                    this.objectiveData.Volley_Brawl[1] = 1.495;
+                    this.objectiveData.Volley_Brawl[2] = -15;
+                    this.objectiveData.Volley_Brawl[3] = -20; 
+                    this.objectiveData.Hot_Zone[0] = 7;
+                    this.objectiveData.Hot_Zone[1] = 7;
+                    this.objectiveData.Hot_Zone[2] = -300;
+                    this.objectiveData.Hot_Zone[3] = -300; 
+                    this.objectiveData.Bounty[0] = 1.15;
+                    this.objectiveData.Bounty[1] = 2.0585;
+                    this.objectiveData.Bounty[2] = -10;
+                    this.objectiveData.Bounty[3] = -50;
+                    this.objectiveData.Heist[0] = 2;
+                    this.objectiveData.Heist[1] = 2.21;
+                    this.objectiveData.Heist[2] = -50;
+                    this.objectiveData.Heist[3] = -115; 
+                    this.objectiveData.Snowtel_Thieves[0] = 4;
+                    this.objectiveData.Snowtel_Thieves[1] = 4;
+                    this.objectiveData.Snowtel_Thieves[2] = -150;
+                    this.objectiveData.Snowtel_Thieves[3] = -150; 
+                    this.objectiveData.Hockey[0] = 1.5;
+                    this.objectiveData.Hockey[1] = 1.695;
+                    this.objectiveData.Hockey[2] = -10;
+                    this.objectiveData.Hockey[3] = -15; 
+                } else {
+                    this.tileDefinitions[14].size = 2;
+                    // restore original width/height
+                    this.objectiveData.Gem_Grab[0] = 1;
+                    this.objectiveData.Gem_Grab[1] = 1;
+                    this.objectiveData.Gem_Grab[2] = 0;
+                    this.objectiveData.Gem_Grab[3] = 0;
+                    this.objectiveData.Brawl_Ball[0] = 0.65;
+                    this.objectiveData.Brawl_Ball[1] = 0.7475;
+                    this.objectiveData.Brawl_Ball[2] = 30;
+                    this.objectiveData.Brawl_Ball[3] = 30;
+                    this.objectiveData.Basket_Brawl[0] = 0.65;
+                    this.objectiveData.Basket_Brawl[1] = 0.7475;
+                    this.objectiveData.Basket_Brawl[2] = 30;
+                    this.objectiveData.Basket_Brawl[3] = 30;
+                    this.objectiveData.Volley_Brawl[0] = 0.65;
+                    this.objectiveData.Volley_Brawl[1] = 0.7475;
+                    this.objectiveData.Volley_Brawl[2] = 30;
+                    this.objectiveData.Volley_Brawl[3] = 30;
+                    this.objectiveData.Hot_Zone[0] = 3.5;
+                    this.objectiveData.Hot_Zone[1] = 3.5;
+                    this.objectiveData.Hot_Zone[2] = -250;
+                    this.objectiveData.Hot_Zone[3] = -250;
+                    this.objectiveData.Bounty[0] = 0.575;
+                    this.objectiveData.Bounty[1] = 1.02925;
+                    this.objectiveData.Bounty[2] = 41.5;
+                    this.objectiveData.Bounty[3] = 35;
+                    this.objectiveData.Heist[0] = 1;
+                    this.objectiveData.Heist[1] = 1.105;
+                    this.objectiveData.Heist[2] = 0;
+                    this.objectiveData.Heist[3] = -20; 
+                    this.objectiveData.Snowtel_Thieves[0] = 2;
+                    this.objectiveData.Snowtel_Thieves[1] = 2;
+                    this.objectiveData.Snowtel_Thieves[2] = -100;
+                    this.objectiveData.Snowtel_Thieves[3] = -100; 
+                    this.objectiveData.Hockey[0] = 0.85;
+                    this.objectiveData.Hockey[1] = 0.9475;
+                    this.objectiveData.Hockey[2] = 15;
+                    this.objectiveData.Hockey[3] = 19;
+                }
+
+                // ————————————————————————————————————————————————
+
+                this.updateCanvasSize();
+                this.fitMapToScreen();
+                this.setGamemode(this.gamemode);
+            } else {
+                // reset dropdown if cancelled
+                e.target.value = Object.entries(this.mapSizes)
+                    .find(([k, v]) => v.width === this.mapWidth && v.height === this.mapHeight)[0];
+            }
+        }
 
     setEnvironment(environment) {
         this.environment = environment;
@@ -2652,16 +4292,31 @@ export class MapMaker {
         this.draw();
     }
 
-    toggleEraseMode() {
-        this.isErasing = !this.isErasing;
+    toggleBlue2Red() {
+        this.blue2Red = !this.blue2Red;
+        const blue2RedBtn = document.getElementById('blue2RedBtn');
+        blue2RedBtn.checked = this.blue2Red;
+        blue2RedBtn.parentElement.classList.toggle('active', this.blue2Red);
+    }
+
+    toggleEraseMode(state = !this.isErasing) {
+        this.isErasing = state;
         const eraseBtn = document.getElementById('eraseBtn');
         eraseBtn.checked = this.isErasing;
         eraseBtn.parentElement.classList.toggle('active', this.isErasing);
     }
 
+    toggleGuides(state = !this.showGuides) {
+        this.showGuides = state;
+        const guidesBtn = document.getElementById('guidesBtn');
+        guidesBtn.checked = this.showGuides;
+        guidesBtn.parentElement.classList.toggle('active', this.showGuides);
+        this.draw();
+    }
+
     // Add method to check if a tile is a block
     isBlock(tileId) {
-        const blockIds = [1, 3, 4, 5, 6, 8, 9, 11]; // IDs for Wall, Wall2, Crate, Barrel, Cactus, Water, Fence, Rope Fence, Unbreakable
+        const blockIds = [1, 3, 4, 5, 6, 7, 8, 9, 11]; // IDs for Wall, Wall2, Crate, Barrel, Cactus, Water, Fence, Rope Fence, Unbreakable
         return blockIds.includes(tileId);
     }
     
@@ -2797,6 +4452,82 @@ export class MapMaker {
             }
         });
     }
+
+    drawTilePreview(tileId, x, y, alpha = 0.75) {
+        const def = this.tileDefinitions[tileId];
+        if (!def) return;
+
+        let img = this.tileImages[tileId];
+        if (!img || !img.complete) return;
+
+        // Get tile dimensions from environment-specific or base data
+        let dimensions;
+        if (def.name === 'Objective') {
+            dimensions = this.environmentObjectiveData[this.environment]?.[this.gamemode] ||
+                         this.objectiveData[this.gamemode];
+        } else {
+            dimensions = this.environmentTileData[this.environment]?.[def.name] ||
+                         this.tileData[def.name];
+        }
+
+        if (!dimensions) return;
+
+        const [scaleX, scaleY, offsetX = 0, offsetY = 0, opacity = 1] = dimensions;
+        const size = def.size || 1;
+        const tileSize = this.tileSize;
+
+        // Calculate drawing dimensions
+        const width = tileSize * scaleX * size;
+        const height = tileSize * scaleY * size;
+
+        // Calculate position with offsets and padding
+        const drawX = x * tileSize + (tileSize * offsetX / 100) + this.canvasPadding;
+        const drawY = y * tileSize + (tileSize * offsetY / 100) + this.canvasPadding;
+
+        // Set opacity and draw the tile
+        this.ctx.save();
+        this.ctx.globalAlpha = alpha * opacity;
+        this.ctx.drawImage(img, drawX, drawY, width, height);
+        this.ctx.restore();
+    }
+
+    drawSelectDragGhost(offsetX, offsetY) {
+        for (const t of this.selectDragTiles) {
+            const newX = t.x + offsetX;
+            const newY = t.y + offsetY;
+            if (
+                newX >= 0 && newX < this.mapWidth &&
+                newY >= 0 && newY < this.mapHeight
+            ) {
+                this.drawTilePreview(t.id, newX, newY, 0.5);
+
+                // Mirroring logic
+                const size = this.tileDefinitions[t.id]?.size || 1;
+                const mirrorY = this.mapHeight - 1 - newY;
+                const mirrorX = this.mapWidth - 1 - newX;
+
+                if (this.mirrorVertical) {
+                    const adjustedY = size === 2 ? mirrorY - 1 : mirrorY;
+                    const mirrorId = this.getMirroredTileId(t.id, 'vertical');
+                    if (adjustedY >= 0 && adjustedY < this.mapHeight)
+                        this.drawTilePreview(mirrorId, newX, adjustedY, 0.5);
+                }
+                if (this.mirrorHorizontal) {
+                    const adjustedX = size === 2 ? mirrorX - 1 : mirrorX;
+                    const mirrorId = this.getMirroredTileId(t.id, 'horizontal');
+                    if (adjustedX >= 0 && adjustedX < this.mapWidth)
+                        this.drawTilePreview(mirrorId, adjustedX, newY, 0.5);
+                }
+                if (this.mirrorDiagonal) {
+                    const adjustedY = size === 2 ? mirrorY - 1 : mirrorY;
+                    const adjustedX = size === 2 ? mirrorX - 1 : mirrorX;
+                    const mirrorId = this.getMirroredTileId(t.id, 'diagonal');
+                    if (adjustedX >= 0 && adjustedX < this.mapWidth && adjustedY >= 0 && adjustedY < this.mapHeight)
+                        this.drawTilePreview(mirrorId, adjustedX, adjustedY, 0.5);
+                }
+            }
+        }
+    }
 }
 
 window.addEventListener('load', () => {
@@ -2805,14 +4536,14 @@ window.addEventListener('load', () => {
     const mapId = urlParams.get('id') || null;
     const user = urlParams.get('user') || null;
 
-    if (mapId && user === sessionStorage.getItem('user')) {
+    if (mapId && user === localStorage.getItem('user')) {
         window.Firebase.readDataOnce(`users/${user}/maps/${mapId}`)
             .then(async data => {
                 if (!data) return alert('Map not found.');
 
                 const sizeKey = data.size;  // e.g. "regular"
                 const newSize  = window.mapMaker.mapSizes[sizeKey];
-                window.mapMaker.mapSize   = newSize;
+                window.mapMaker.setSize(sizeKey, false);
                 window.mapMaker.mapWidth  = newSize.width;
                 window.mapMaker.mapHeight = newSize.height;
                 window.mapMaker.mapData   = data.mapData;
@@ -2820,28 +4551,28 @@ window.addEventListener('load', () => {
                 window.mapMaker.updateCanvasSize();
                 window.mapMaker.fitMapToScreen();
 
-                await window.mapMaker.setGamemode(data.gamemode);
                 window.mapMaker.setEnvironment(data.environment);
 
                 document.getElementById('mapName').value = data.name;
                 document.getElementById('mapSize').value = data.size;
                 document.getElementById('gamemode').value = data.gamemode;
                 document.getElementById('environment').value = data.environment;
-                document.getElementById('mapLink').innerText = `https://she-fairy.github.io/atlas-horizon/map.html?mapId=${mapId}&user=\n${user}`;
-                window.mapMaker.draw()
+                document.getElementById('mapLink').innerText = `https://she-fairy.github.io/atlas-horizon/map.html?id=${mapId}&user=${user}`;
+                window.mapMaker.draw();
+                await window.mapMaker.setGamemode(data.gamemode, false);
             })
             .catch(error => {
                 console.error('Error loading map:', error);
                 alert('Failed to load map. Please try again.');
             });
-    } else {
+    } else if (mapId && user){
         window.Firebase.readDataOnce(`users/${user}/maps/${mapId}`)
             .then(async data => {
                 if (data) {
                     data.name += `by- ${user}`;
                     let newId = window.mapMaker.generateMapId();
-                    await window.Firebase.writeData(`users/${sessionStorage.getItem('user')}/maps/${newId}`, data);
-                    window.location.href = `https://she-fairy.github.io/atlas-horizon/map.html?mapId=${newId}&user=${sessionStorage.getItem('username')}`;
+                    await window.Firebase.writeData(`users/${localStorage.getItem('user')}/maps/${newId}`, data);
+                    window.location.href = `https://she-fairy.github.io/atlas-horizon/map.html?id=${newId}&user=${localStorage.getItem('username')}`;
                 }
             })
     }

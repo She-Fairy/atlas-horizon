@@ -44,6 +44,9 @@
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
+#mapImage {
+    object-fit: contain;
+}
 
 .map-actions {
     display: flex;
@@ -53,23 +56,21 @@
 
 .action-button {
     display: inline-block;
-    padding: 0.75rem 1.5rem;
+    padding: 0.825rem 1.5rem;
     border-radius: 0.25rem;
     text-decoration: none;
     transition: all 0.2s;
     font-weight: 500;
     cursor: pointer;
+    background-color: var(--primary-color);
+    color: white;
+    font-size: 1rem;
 }
 
 .action-button:first-child {
     background-color: var(--primary-color);
     color: white;
-}
-
-.action-button.secondary {
-    background-color: transparent;
-    color: var(--primary-color);
-    border: 2px solid var(--primary-color);
+    align-self: center;
 }
 
 .action-button:hover {

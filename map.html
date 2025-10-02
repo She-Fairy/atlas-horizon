@@ -38,8 +38,9 @@
             <img id="mapImage" />
         </div>
         <div class="map-actions">
-            <a href="#" id="downloadMapBtn" class="action-button">Download Map</a>
-            <a href="#" id="openMapBtn" class="action-button secondary">Clone This Map</a>
+            <a href="#" id="downloadMapBtn" class="action-button">Download Image</a>
+            <button id="openMapBtn" class="action-button">Clone This Map</button>
+            <input type="image" id="deleteMapBtn" class="action-button" style="background-color: white; padding: 0.75rem; display:none" src="./Resources/Additional/Icons/Clear.png"/>
         </div>
     </main>
 
@@ -57,30 +58,16 @@
     <script src="./js/firebase-service.js"></script>
     <script type="module" src="./js/map.js"></script>
     <script>
-        // Check if user is logged in
-        document.addEventListener('DOMContentLoaded', () => {
-            const user = sessionStorage.getItem('user');
-            if (user) {
-                // User is logged in
-                document.getElementById('loginBtn').style.display = 'none';
-                document.getElementById('avatar').style.display = 'block';
-                document.getElementById('avatar').src = sessionStorage.getItem('avatar');
-            } else {
-                // User is not logged in
-                document.getElementById('loginBtn').style.display = 'block';
-                document.getElementById('avatar').style.display = 'none';
-            }
-        });
 
         // Handle login button click
         document.getElementById('loginBtn').addEventListener('click', () => {
-            window.location.href = 'https://discord.com/oauth2/authorize?client_id=1293658198393487420&response_type=code&redirect_uri=https%3A%2F%2Fshe-fairy.github.io%2Fatlas-horizon%2Fauth%2Fdiscord%2Fcallback.html&scope=identify';
+            window.location.href = "https://discord.com/oauth2/authorize?client_id=1293658198393487420&response_type=code&redirect_uri=https%3A%2F%2Fshe-fairy.github.io%2Fatlas-horizon%2Fauth%2Fdiscord%2Fcallback.html&scope=identify";
         });
         
         // Handle avatar click for logout
         document.getElementById('avatar').addEventListener('click', () => {
             if (confirm('Do you want to log out of this account?')){
-                sessionStorage.clear();
+                localStorage.clear();
                 window.location.href = './index.html';
             }
         });

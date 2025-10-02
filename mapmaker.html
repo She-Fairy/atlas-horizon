@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
     <title>Atlas Horizon- Map Maker</title>
     <link rel="stylesheet" href="./css/style.css">
     <link rel="stylesheet" href="./css/mapmaker.css">
@@ -11,9 +12,9 @@
 </head>
 <body>
     <script>
-        if (sessionStorage.getItem('user') === null) {
-            window.location.href = 'https://discord.com/oauth2/authorize?client_id=1293658198393487420&response_type=code&redirect_uri=https%3A%2F%2Fshe-fairy.github.io%2Fatlas-horizon%2Fauth%2Fdiscord%2Fcallback.html&scope=identify';
-        }
+        if (localStorage.getItem('user') === null) {
+            window.location.href = "https://discord.com/oauth2/authorize?client_id=1293658198393487420&response_type=code&redirect_uri=https%3A%2F%2Fshe-fairy.github.io%2Fatlas-horizon%2Fauth%2Fdiscord%2Fcallback.html&scope=identify";
+        } 
     </script>
     <nav>
         <div class="logo">
@@ -41,6 +42,7 @@
                     <select id="mapSize">
                         <option value="regular">Regular</option>
                         <option value="showdown">Showdown</option>
+                        <option style="color:blueviolet" value="arena">Brawl Arena</option>
                         <option value="siege">Siege</option>
                         <option value="volley">Volley Brawl</option>
                         <option value="basket">Basket Brawl</option>
@@ -49,69 +51,101 @@
                 <div class="select-container">
                     <label for="gamemode">Gamemode:</label>
                     <select id="gamemode">
-                        <option value="Gem_Grab">Gem Grab</option>
-                        <option value="Showdown">Showdown</option>
-                        <option value="Heist">Heist</option>
-                        <option value="Bounty">Bounty</option>
-                        <option value="Brawl_Ball">Brawl Ball</option>
-                        <option value="Hot_Zone">Hot Zone</option>
-                        <option value="Knockout">Knockout</option>
-                        <option value="Wipeout">Wipeout</option>
-                        <option value="Duels">Duels</option>
-                        <option value="Snowtel_Thieves">Snowtel Thieves</option>
-                        <option value="Basket_Brawl">Basket Brawl</option>
-                        <option value="Volley_Brawl">Volley Brawl</option>
+                        <option style="color:#7ab6ed" value="Gem_Grab">Gem Grab</option>
+                        <option style="color:#7ab6ed" value="Showdown">Showdown</option>
+                        <option style="color:#7ab6ed" value="Heist">Heist</option>
+                        <option style="color:#7ab6ed" value="Bounty">Bounty</option>
+                        <option style="color:#7ab6ed" value="Brawl_Ball">Brawl Ball</option>
                         <option value="Siege">Siege</option>
+                        <option value="Snowtel_Thieves">Trophy Thieves</option>
+                        <option style="color:#7ab6ed" value="Hot_Zone">Hot Zone</option>
+                        <option style="color:#7ab6ed" value="Knockout">Knockout</option>
+                        <option style="color:#7ab6ed" value="Basket_Brawl">Basket Brawl</option>
                         <option value="Hold_The_Trophy">Hold The Trophy</option>
+                        <option style="color:#7ab6ed" value="Volley_Brawl">Volley Brawl</option>
+                        <option style="color:#7ab6ed" value="Duels">Duels</option>
+                        <option style="color:#7ab6ed" value="Wipeout">Wipeout</option>
+                        <option value="Bot_Drop">Bot Drop</option>
+                        <option value="Hunters">Hunters</option>
+                        <option value="Trophy_Escape">Trophy Escape</option>
+                        <option value="Drumroll">Drumroll</option>
+                        <option value="Paint_Brawl">Paint Brawl</option> 
+                        <option value="Cleaning_Duty">Cleaning Duty</option> 
+                        <option value="Soul Collector">Soul Collector</option> 
+                        <option style="color:#7ab6ed" value="Hockey">Hockey Brawl</option>
+                        <option style="color:#7ab6ed" value="Token_Run">Token Run</option>
+                        <option value="Samurai_Smash">Samurai Smash</option>
+                        <option style="color:#7ab6ed" value="Brawl_Arena">Brawl Arena</option>
+                        <option style="color:#7ab6ed" value="Dodgebrawl">Dodgebrawl</option>
+                        <!-- <option value="Lone_Star">Lone Star</option>
+                        <option value="Takedown">Takedown</option>
+                        <option value="Payload">Payload</option>
+                        <option value="Spirit_Wars">Spirit Wars</option>
+                        <option value="Special Delivery">Special Delivery</option> 
+                        <option value="Treasure_Hunt">Treasure Hunt</option> -->
+                        <option style="color:#e6c057" value="Godzilla_City_Smash">Godzilla City Smash</option>
+                        <!-- <option style="color:#e6c057" value="Subway_Run">Subway Run</option>
+                        <option style="color:#e65757" value="Big_Game">Big Game</option>
+                        <option style="color:#e65757" value="Robo_Rumble">Robo Rumble</option>
+                        <option style="color:#e65757" value="Boss_Fight">Boss Fight</option>
+                        <option style="color:#e65757" value="Super_City_Rampage">Super City Rampage</option>
+                        <option style="color:#e65757" value="Last_Stand">Last Stand</option> 
+                        <option style="color:#e65757" value="Oni_Hunt">Oni Hunt</option> -->
                     </select>
                 </div>
                 <div class="select-container">
                     <label for="environment">Environment:</label>
                     <select id="environment">
-                        <option value="Desert">Desert</option>
-                        <option value="Mine">Mine</option>
+                        <option style="color:#7ab6ed" value="Desert">Desert</option>
+                        <option style="color:#7ab6ed" value="Wasteland">Wasteland</option>
+                        <option style="color:#7ab6ed" value="Mine">Mine</option>
                         <option value="Oasis">Oasis</option>
-                        <option value="Grassy_Field">Grassy Field</option>
+                        <option style="color:#7ab6ed" value="Grassy_Field">Grassy Field</option>
+                        <option value="Holiday">Holiday</option>
                         <option value="City">City</option>
                         <option value="Retropolis">Retropolis</option>
                         <option value="Mortuary">Mortuary</option>
-                        <!-- <option value="Pirate_Ship">Pirate Ship</option> -->
-                        <option value="Arcade">Arcade</option>
-                        <option value="Stadium">Stadium</option>
-                        <option value="Bazaar">Bazaar</option>
-                        <!-- <option value="Super_City">Super City</option>
-                        <option value="Gift_Shop">Gift Shop</option> -->
+                        <option value="Pirate_Ship">Pirate Ship</option>
+                        <option style="color:#7ab6ed" value="Arcade">Arcade</option>
+                        <option style="color:#7ab6ed" value="Stadium">Stadium</option>
+                        <option style="color:#7ab6ed" value="Bazaar">Bazaar</option>
+                        <option value="Super_City">Super City</option>
+                        <option value="Gift_Shop">Gift Shop</option>
                         <option value="Bandstand">Bandstand</option> 
                         <option value="Snowtel">Snowtel</option>
-                        <!-- <option value="Scrapyard">Scrapyard</option>
-                        <option value="Starr_Force">Starr Force</option> -->
+                        <option value="Scrapyard">Scrapyard</option>
+                        <option value="Starr_Force">Starr Force</option>
                         <option value="Wild_West">Wild West</option>
-                        <!-- <option value="Water_Park">Water Park</option> -->
+                        <option value="Water_Park">Water Park</option>
                         <option value="Castle_Courtyard">Castle Courtyard</option>
-                        <!-- <option value="Brawlywood">Brawlywood</option>
+                        <option value="Brawlywood">Brawlywood</option> 
                         <option value="Fighting_Game">Fighting Game</option>
-                        <option value="Biodome">Biodome</option>
-                        <option value="Stunt_Show">Stunt Show</option>
+                        <<option value="Biodome">Biodome</option>
+                        <option style="color:#7ab6ed" value="Stunt_Show">Stunt Show</option>
                         <option value="Deep_Sea">Deep Sea</option>
                         <option value="Robot_Factory">Robot Factory</option>
                         <option value="Ghost_Station">Ghost Station</option>
                         <option value="Candyland">Candyland</option>
-                        <option value="The_Hub">The Hub</option>
-                        <option value="Rumble_Jungle">Rumble Jungle</option>
-                        <option value="Enchanted_Woods">Enchanted Woods</option>
-                        <option value="Circus">Circus</option>
-                        <option value="Starr_Toon">Starr Toon</option> -->
+                        <option style="color:#7ab6ed" value="The_Hub">The Hub</option>
+                        <option style="color:#7ab6ed" value="Rooftop">Rooftop</option>
+                        <option value="Rumble_Jungle">Rumble Jungle</option> 
+                        <option style="color:#7ab6ed" value="Enchanted_Woods">Enchanted Woods</option>
+                        <option value="Ranger_Ranch">Ranger Ranch</option>
+                        <option value="Circus">Bizarre Circus</option> 
+                        <option style="color:#7ab6ed" value="Coin_Factory">Coin Factory (Megapig)</option>
+                        <option value="Starr_Toon">Starr Toon</option>
+                        <option value="Ice_Island">Ice Island</option>
                         <option value="Swamp_of_Love">Swamp of Love</option>
-                        <!-- <option value="Rooftop">Rooftop</option>
-                        <option value="Coin_Factory">Coin Factory</option>
-                        <option value="Snowtel_2">Snowtel 2</option>
-                        <option value="Medieval Manor">Medieval Manor</option>
-                        <option value="Super_City_2">Super City 2</option>
-                        <option value="Spongebob">Spongebob</option> -->
-                        <option value="Oddities Shop">Oddities Shop</option>
-                        <!-- <option value="Skating_Bowl">Skating Bowl</option>
-                        <option value="Hockey">Hockey</option>
-                        <option value="Escape_Room">Escape Room</option> -->
+                        <option value="Medieval_Manor">MadEvil Manor</option>
+                        <option value="Super_City_2">Kaiju Park</option> 
+                        <option value="Spongebob">Bikini Bottom</option>
+                        <option value="Oddities_Shop">Oddities Shop</option>
+                        <option value="Skating_Bowl">Skatepark</option>
+                        <option style="color:#7ab6ed" value="Hockey">Ice Rink</option>
+                        <option value="Escape_Room">Pyramid Quest</option>
+                        <option style="color:#7ab6ed" value="Katana_Kingdom">Katana Kingdom</option>
+                        <option style="color:#7ab6ed" value="Tropical_Island">Tropical Island</option>
+                        <option style="color:#7ab6ed" value="Subway_Surfers">Subway Surfers</option>
                     </select>
                 </div>
             </div>
@@ -125,10 +159,13 @@
                     <button id="exportBtn" class="text-btn" title="Export as PNG (Ctrl+E)">
                         Download Map
                     </button>
+                    <button id="clearBtn" class="text-btn" title="Clear Map (Ctrl+Del)">
+                        Clear Map
+                    </button>
                 </div>
             </div>
             <div style="font-family: Arial, Helvetica, sans-serif; font-weight: 900;">
-                Link: <br/> <a id="mapLink" style="font-family: Arial, Helvetica, sans-serif;font-weight: 400; color:var(--primary-color)">https://she-fairy.github.io/atlas-horizon/map.html</a> 
+                Link: <br/> <a id="mapLink" style="display:inline-block; word-wrap:break-word; overflow-wrap:break-word; white-space:normal; max-width:100%; font-family: Arial, Helvetica, sans-serif; font-weight: 400; color: var(--primary-color);">https://she-fairy.github.io/atlas-horizon/map.html</a> 
             </div>
         </div>
         
@@ -148,18 +185,32 @@
                         Horizontal
                     </label>
                 </div>
+                <div class="tool-buttons">
+                    <label for="blue2RedBtn" title="Blue2Red (N)">
+                        <input type="checkbox" id="blue2RedBtn">
+                        <img src="./Resources/Additional/Icons/BlueToRed.png" alt="Blue2Red">
+                    </label>
+                </div>
                 <div class="radio-container">
-                    <label class="icon-btn">
+                    <label class="icon-btn" title="Single (1)">
                         <input type="radio" name="selectionMode" value="single" checked>
                         <img src="./Resources/Additional/Icons/Single.png" alt="Single">
                     </label>
-                    <label class="icon-btn">
+                    <label class="icon-btn" title="Line (2)">
                         <input type="radio" name="selectionMode" value="line">
                         <img src="./Resources/Additional/Icons/Line.png" alt="Line">
                     </label>
-                    <label class="icon-btn">
+                    <label class="icon-btn" title="Rectangle (3)">
                         <input type="radio" name="selectionMode" value="rectangle">
                         <img src="./Resources/Additional/Icons/Rectangle.png" alt="Rectangle">
+                    </label>
+                    <label class="icon-btn" title="Fill (4)">
+                        <input type="radio" name="selectionMode" value="fill">
+                        <img src="./Resources/Additional/Icons/Bucket.png" alt="Fill">
+                    </label>
+                    <label class="icon-btn" title="Select (5)">
+                        <input type="radio" name="selectionMode" value="select">
+                        <img src="./Resources/Additional/Icons/Select.png" alt="Select">
                     </label>
                 </div>
                 <div class="tool-buttons">
@@ -181,6 +232,10 @@
                         <input type="checkbox" id="errorsBtn">
                         <img src="./Resources/Additional/Icons/Issues.png" alt="Errors">
                     </label>
+                    <label class="icon-btn" title="Guides (W)">
+                        <input type="checkbox" id="guidesBtn">
+                        <img src="./Resources/Additional/Icons/Grid.png" alt="Guides">
+                    </label>
                     <button id="zoomInBtn" class="icon-btn" title="Zoom In (Ctrl++)">
                         <img src="./Resources/Additional/Icons/GlassPlus.png" alt="Zoom In">
                     </button>
@@ -188,15 +243,10 @@
                         <img src="./Resources/Additional/Icons/GlassMinus.png" alt="Zoom Out">
                     </button>
                 </div>
-                <div class="action-buttons">
-                    <button id="clearBtn" class="icon-btn" title="Clear Map (Ctrl+Del)">
-                        <img src="./Resources/Additional/Icons/Clear.png" alt="Clear">
-                    </button>
-                </div>
             </div>
             <div class="map-editor">
                 <div class="map-container">
-                    <canvas id="mapCanvas"></canvas>
+                    <canvas draggable="false" id="mapCanvas"></canvas>
                 </div>
             </div>
         </div>
@@ -212,12 +262,17 @@
         <div class="tooltip-text shortcuts-text">
             <h4>Keyboard Shortcuts</h4>
             <ul>
+                <li><kbd>Ctrl/Shift</kbd> + <kbd>1</kbd> Diagonal</li>
+                <li><kbd>Ctrl/Shift</kbd> + <kbd>2</kbd> Vertical</li>
+                <li><kbd>Ctrl/Shift</kbd> + <kbd>3</kbd> Horizontal</li>
                 <li><kbd>1</kbd> Single Selection</li>
                 <li><kbd>2</kbd> Line Selection</li>
                 <li><kbd>3</kbd> Rectangle Selection</li>
+                <li><kbd>4</kbd> Fill Selection</li>
                 <li><kbd>R</kbd> Toggle Replace Mode</li>
                 <li><kbd>E</kbd> Toggle Erase Mode</li>
                 <li><kbd>M</kbd> Toggle Mirroring</li>
+                <li><kbd>N</kbd> Toggle Blue to Red Mirroring</li>
                 <li><kbd>Q</kbd> Toggle Error Check</li>
                 <li><kbd>Ctrl</kbd> + <kbd>Z</kbd> Undo</li>
                 <li><kbd>Ctrl</kbd> + <kbd>Y</kbd> Redo</li>
@@ -225,27 +280,13 @@
             </ul>
         </div>
     </div>
-    <div class="tooltip-floating environments-tooltip">
-        <img src="./Resources/Additional/Icons/Env.png" alt="Implemented Environments">
-        <div class="tooltip-text environments-text">
-            <h4>Implemented Environments</h4>
-            <ul class="environments-list">
-                <li>Desert</li>
-                <li>Bazaar</li>
-                <li>Bandstand</li>
-                <li>Castle Courtyard</li>
-                <li>Mine</li>
-                <li>Arcade</li>
-            </ul>
-        </div>
-    </div>
 
     <script>
         const avatar = document.getElementById('avatar');
-        avatar.src = sessionStorage.getItem('avatar');
+        avatar.src = localStorage.getItem('avatar');
         avatar.addEventListener('click', () => {
             if (confirm('Do you want to log out of this account?')){
-                sessionStorage.clear();
+                localStorage.clear();
                 window.location.href = './index.html';
             }
         })

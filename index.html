@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title>Atlas Horizon- Home</title>
     <link rel="icon" href="./Resources/Additional/Icons/AtlasLogo.ico" type="image/x-icon">
     <link rel="stylesheet" href="./css/style.css">
@@ -46,12 +46,12 @@
     <script>
         // Check if user is logged in
         document.addEventListener('DOMContentLoaded', () => {
-            const user = sessionStorage.getItem('user');
+            const user = localStorage.getItem('user');
             if (user) {
                 // User is logged in
                 document.getElementById('loginBtn').style.display = 'none';
                 document.getElementById('avatar').style.display = 'block';
-                document.getElementById('avatar').src = sessionStorage.getItem('avatar');
+                document.getElementById('avatar').src = localStorage.getItem('avatar');
             } else {
                 // User is not logged in
                 document.getElementById('loginBtn').style.display = 'block';
@@ -62,7 +62,7 @@
         // Handle avatar click for logout
         document.getElementById('avatar').addEventListener('click', () => {
             if (confirm('Do you want to log out of this account?')){
-                sessionStorage.clear();
+                localStorage.clear();
                 window.location.href = './index.html';
             }
         });
@@ -73,10 +73,9 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 
     <script src="./js/firebase-service.js"></script>
-    <script src="./js/main.js"></script>
     <script>
         document.getElementById('loginBtn').addEventListener('click', () => {
-            window.location.href = 'https://discord.com/oauth2/authorize?client_id=1293658198393487420&response_type=code&redirect_uri=https%3A%2F%2Fshe-fairy.github.io%2Fatlas-horizon%2Fauth%2Fdiscord%2Fcallback.html&scope=identify';
+            window.location.href = "https://discord.com/oauth2/authorize?client_id=1293658198393487420&response_type=code&redirect_uri=https%3A%2F%2Fshe-fairy.github.io%2Fatlas-horizon%2Fauth%2Fdiscord%2Fcallback.html&scope=identify";
         });
     </script>
 </body>

@@ -3,6 +3,7 @@ import { MapMaker } from './mapmaker.js';
 const MAP_SIZES = {
   regular: { width: 21, height: 33 },
   showdown: { width: 60, height: 60 },
+  arena: { width: 59, height: 59 },
   siege: { width: 27, height: 39 },
   volley: { width: 21, height: 25 },
   basket: { width: 21, height: 17 },
@@ -52,6 +53,22 @@ export async function generateMapImage(mapData, size = 'regular', gamemode = 'Ge
   if (!sharedResources.tiles[environment][gamemode]) {
     await renderer.loadTileImages();
     renderer.preloadWaterTiles();
+
+    // Filter out tiles that aren't allowed in this environment
+    const filteredTileImages = {};
+    for (const [tileId, img] of Object.entries(renderer.tileImages)) {
+      const def = renderer.tileDefinitions[tileId];
+      if (!def) continue;
+      
+      // Skip tiles that are restricted to specific environments
+      if (def.showInEnvironment && !def.showInEnvironment.includes(environment)) continue;
+      
+      // Skip tiles that are restricted to specific gamemodes
+      if (def.showInGamemode && def.showInGamemode !== gamemode) continue;
+      
+      filteredTileImages[tileId] = img;
+    }
+    renderer.tileImages = filteredTileImages;
 
     await Promise.all(
       Object.values(renderer.tileImages).map(waitForImage)

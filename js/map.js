@@ -1,20 +1,43 @@
 import { generateMapImage } from './map-renderer.js';
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     const urlParams = new URLSearchParams(window.location.search);
     const mapId = urlParams.get('id');
     const user = urlParams.get('user');
 
     if (!mapId) return showError('Map Not Found');
 
-    if (user === sessionStorage.getItem('user')) {
+    console.log('from URL:', user, typeof user);
+    console.log('from storage:', localStorage.getItem('user'), typeof localStorage.getItem('user'));
+    console.log('equal:', user === localStorage.getItem('user'));
+
+    if (user === localStorage.getItem('user')) {
         document.getElementById('openMapBtn').textContent = 'Open in Map Maker';
         document.getElementById('openMapBtn').onclick = () => {
-            window.location.href = `mapmaker.html?id=${mapId}&user=${user}`;
+            window.location.href = window.location.href.replace('map.html', 'mapmaker.html');
         };
+        document.getElementById('deleteMapBtn').style.display = 'inline-block';
     }
 
-    Firebase.readDataOnce(`users/${user}/maps/${mapId}`).then(async (mapData) => {
+    document.getElementById('deleteMapBtn').onclick = async () => {
+            if (confirm('Are you sure you want to delete this map?')){
+                await Firebase.deleteData(`users/${user}/maps/${mapId}`);
+                window.location.href = 'index.html';
+            }
+        };
+
+    if (localStorage.getItem('user') !== null) {
+        // User is logged in
+        document.getElementById('loginBtn').style.display = 'none';
+        document.getElementById('avatar').style.display = 'block';
+        document.getElementById('avatar').src = localStorage.getItem('avatar');
+    } else {
+        // User is not logged in
+        document.getElementById('loginBtn').style.display = 'block';
+        document.getElementById('avatar').style.display = 'none';
+    }
+
+    await Firebase.readDataOnce(`users/${user}/maps/${mapId}`).then(async (mapData) => {
         if (!mapData) return showError('Map Not Found');
 
         document.getElementById('mapTitle').textContent = mapData.name || 'Untitled Map';

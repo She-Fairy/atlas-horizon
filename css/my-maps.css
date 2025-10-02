@@ -76,6 +76,7 @@
 
 .card-map-image {
     width:100%;
+    object-fit: contain;
 }
 
 .card-map-name {
