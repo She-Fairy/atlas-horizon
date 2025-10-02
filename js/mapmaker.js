@@ -1760,7 +1760,7 @@ export class MapMaker {
 
 
         gamemodeSelect.addEventListener('change', async (e) => await this.setGamemode(e.target.value));
-        environmentSelect.addEventListener('change', (e) => this.setEnvironment(e.target.value));
+        environmentSelect.addEventListener('change', async (e) => await this.setEnvironment(e.target.value));
 
         // Undo/Redo buttons
         document.getElementById('undoBtn').addEventListener('click', () => this.undo());
@@ -4150,7 +4150,7 @@ export class MapMaker {
         this.draw();
     }
     
-    setSize(size, changing = true) {
+    async setSize(size, changing = true) {
         const newSize = this.mapSizes[size];
             if (!newSize) return;
 
@@ -4247,7 +4247,7 @@ export class MapMaker {
 
                 this.updateCanvasSize();
                 this.fitMapToScreen();
-                this.setGamemode(this.gamemode);
+                await this.setGamemode(this.gamemode);
             } else {
                 // reset dropdown if cancelled
                 e.target.value = Object.entries(this.mapSizes)
@@ -4255,13 +4255,13 @@ export class MapMaker {
             }
     }
 
-    setEnvironment(environment) {
+    async setEnvironment(environment) {
         this.environment = environment;
         this.loadEnvironmentBackgrounds();
         this.loadTileImages();
         this.preloadWaterTiles();
         this.preloadGoalImage();
-        this.setGamemode(this.gamemode);
+        await this.setGamemode(this.gamemode);
         this.initializeTileSelector();
         this.draw();
     }
@@ -4708,8 +4708,8 @@ window.addEventListener('load', () => {
                 document.getElementById('gamemode').value = data.gamemode;
                 document.getElementById('environment').value = data.environment;
                 document.getElementById('mapLink').innerText = `https://she-fairy.github.io/atlas-horizon/map.html?id=${mapId}&user=${user}`;
-                window.mapMaker.draw();
                 await window.mapMaker.setGamemode(data.gamemode, false);
+                window.mapMaker.draw();
             })
             .catch(error => {
                 console.error('Error loading map:', error);
@@ -4719,8 +4719,9 @@ window.addEventListener('load', () => {
         window.Firebase.readDataOnce(`users/${user}/maps/${mapId}`)
             .then(async data => {
                 if (data) {
-                    data.name += `by- ${user}`;
-                    let newId = window.mapMaker.generateMapId();
+                    data.name += ` (Copy)`;
+                    let currentUserData = await window.Firebase.readDataOnce(`users/${localStorage.getItem('user')}`);
+                    let newId = currentUserData.maps.map(map => map.id).reduce((a, b) => Math.max(a, b), 0) + 1;
                     await window.Firebase.writeData(`users/${localStorage.getItem('user')}/maps/${newId}`, data);
                     window.location.href = `https://she-fairy.github.io/atlas-horizon/map.html?id=${newId}&user=${localStorage.getItem('username')}`;
                 }
