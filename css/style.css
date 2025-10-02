@@ -76,6 +76,14 @@ nav {
     color: var(--text-color-secondary);
 }
 
+@media only screen and (max-width: 768px) {
+    .nav-links {
+        font-size: 0.5rem;
+        gap: 1rem;
+        padding: 0.5rem 1rem;
+    }
+}
+
 .nav-links a:hover,
 .nav-links a.active {
     color: var(--primary-color);
