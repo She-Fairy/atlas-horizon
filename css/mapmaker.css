@@ -1,3 +1,50 @@
+/* One-line horizontal toolbar styling */
+.horizontal-toolbar.one-line-toolbar {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    gap: 1.5rem;
+    padding: 0.5rem 1rem;
+    margin: 0 1rem;
+    background: var(--surface-color, #1e2a38);
+    border: 1px solid var(--border-color, #3a4a5a);
+    border-radius: 0.75rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.horizontal-toolbar.one-line-toolbar .toolbar-section {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.horizontal-toolbar.one-line-toolbar .toolbar-divider {
+    width: 2px;
+    height: 2.5rem;
+    background: var(--divider-color, #3a4a5a);
+    border-radius: 1px;
+    margin: 0 0.5rem;
+    align-self: stretch;
+}
+
+.horizontal-toolbar.one-line-toolbar label,
+.horizontal-toolbar.one-line-toolbar button {
+    margin: 0;
+}
+
+.horizontal-toolbar.one-line-toolbar .icon-btn img,
+.horizontal-toolbar.one-line-toolbar .zoom-btn img {
+    width: 1.5rem;
+    height: 1.5rem;
+    vertical-align: middle;
+}
+
+.horizontal-toolbar.one-line-toolbar input[type="checkbox"] {
+    margin-right: 0.25rem;
+    accent-color: var(--primary-color, #7ab6ed);
+}
+
 /* Fixed zoom controls relative to map-editor */
 #zoomControls {
     position: fixed;

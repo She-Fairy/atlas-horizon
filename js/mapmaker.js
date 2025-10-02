@@ -1703,8 +1703,8 @@ export class MapMaker {
         const eraseBtn = document.getElementById('eraseBtn');
         const zoomInBtn = document.getElementById('zoomInBtn');
         const zoomOutBtn = document.getElementById('zoomOutBtn');
-        const zoomInBtnSide = document.getElementById('zoomInBtnSide');
-        const zoomOutBtnSide = document.getElementById('zoomOutBtnSide');
+        const zoomInBtnBottom = document.getElementById('zoomInBtnBottom');
+        const zoomOutBtnBottom = document.getElementById('zoomOutBtnBottom');
         const clearBtn = document.getElementById('clearBtn');
         const saveBtn = document.getElementById('saveBtn');
         const exportBtn = document.getElementById('exportBtn');
@@ -1739,9 +1739,9 @@ export class MapMaker {
         });
 
         zoomInBtn.addEventListener('click', () => this.zoom(this.zoomStep));
-        zoomInBtnSide.addEventListener('click', () => this.zoom(this.zoomStep));
+        zoomInBtnBottom.addEventListener('click', () => this.zoom(this.zoomStep));
         zoomOutBtn.addEventListener('click', () => this.zoom(-this.zoomStep));
-        zoomOutBtnSide.addEventListener('click', () => this.zoom(-this.zoomStep));
+        zoomOutBtnBottom.addEventListener('click', () => this.zoom(-this.zoomStep));
         clearBtn.addEventListener('click', () => this.clearMap());
         saveBtn.addEventListener('click', () => this.saveMap());
         exportBtn.addEventListener('click', async () => await this.exportMap());
@@ -4466,8 +4466,8 @@ export class MapMaker {
         let hideZoomBtn = document.getElementById('hideZoomBtn');
         let hide = hideZoomBtn.checked;
         document.getElementById('zoomControls').style.visibility = hide ? 'hidden' : 'visible';
-        document.getElementById('zoomInBtnSide').style.visibility = hide ? 'visible' : 'hidden';
-        document.getElementById('zoomOutBtnSide').style.visibility = hide ? 'visible' : 'hidden';
+        document.getElementById('zoomInBtnBottom').style.visibility = hide ? 'visible' : 'hidden';
+        document.getElementById('zoomOutBtnBottom').style.visibility = hide ? 'visible' : 'hidden';
     }
 
     isBlock(tileId) {

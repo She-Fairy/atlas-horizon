@@ -31,91 +31,6 @@
     </nav>
 
     <div class="mapmaker-container">
-        <button id="panelToggle" class="hamburger" aria-label="Open tools"></button>
-
-        <aside class="side-panel" aria-hidden="true">
-            <div class="side-panel-header">
-                <h3>Tools</h3>
-            </div>
-            <h4 style="margin-bottom: 0.5rem;">Mirroring</h4>
-            <div class="side-panel-content">
-                <div class="mirroring-container">
-                <div class="checkbox-container">
-                    <label>
-                        <input type="checkbox" id="mirrorDiagonal">
-                        Diagonal
-                    </label>
-                    <label>
-                        <input type="checkbox" id="mirrorVertical">
-                        Vertical
-                    </label>
-                    <label>
-                        <input type="checkbox" id="mirrorHorizontal">
-                        Horizontal
-                    </label>
-                </div>
-                    <label for="correctMirroringBtn" title="Correct Mirroring (N)">
-                        <input type="checkbox" id="correctMirroringBtn">
-                        Correct Mirroring
-                    </label>
-                </div>
-                <div>
-                    <h4 style="margin-bottom: 0.5rem;">Quick Fix</h4>
-                    <div class="tool-buttons">
-                        <label class="icon-btn" title="Erase (E)">
-                            <input type="checkbox" id="eraseBtn">
-                            <img src="./Resources/Additional/Icons/Erase.png" alt="Erase">
-                        </label>
-                        <button id="undoBtn" class="icon-btn" title="Undo (Ctrl+Z)">
-                            <img src="./Resources/Additional/Icons/Undo.png" alt="Undo">
-                        </button>
-                        <button id="redoBtn" class="icon-btn" title="Redo (Ctrl+Y)">
-                            <img src="./Resources/Additional/Icons/Redo.png" alt="Redo">
-                        </button>
-                        <button id="zoomInBtnSide" class="zoom-btn" style="visibility: hidden;" title="Zoom In (Ctrl++)">
-                            <img src="./Resources/Additional/Icons/GlassPlus.png" alt="Zoom In">
-                        </button>
-                        <button id="zoomOutBtnSide" class="zoom-btn" style="visibility: hidden;" title="Zoom Out (Ctrl+-)">
-                            <img src="./Resources/Additional/Icons/GlassMinus.png" alt="Zoom Out">
-                        </button>
-                    </div>
-                </div>
-                <div>
-                    <h4 style="margin-bottom: 0.5rem;">Map Tools</h4>
-                    <div class="tool-buttons">
-                        <label class="icon-btn" title="Replace (R)">
-                            <input type="checkbox" id="replaceBtn">
-                            <img src="./Resources/Additional/Icons/Replace.png" alt="Replace">
-                        </label>
-                        <label class="icon-btn" title="Errors (Q)">
-                            <input type="checkbox" id="errorsBtn">
-                            <img src="./Resources/Additional/Icons/Issues.png" alt="Errors">
-                        </label>
-                        <label class="icon-btn" title="Guides (W)">
-                            <input type="checkbox" id="guidesBtn">
-                            <img src="./Resources/Additional/Icons/Grid.png" alt="Guides">
-                        </label>
-                        <span class="icon-btn" style="visibility: hidden;"></span>
-                        <span class="icon-btn" style="visibility: hidden;"></span>
-                    </div>
-                </div>
-                <div id="selectedAreaToolsDiv" style="display: none;">
-                    <h4 style="margin-bottom: 0.5rem;">Selected Area Tools</h4>
-                    <div class="select-tool-buttons">
-                        <button id="rotateBtn" class="icon-btn" title="Rotate (Ctrl+R)">
-                            <img src="./Resources/Additional/Icons/Rotate.png" alt="Rotate">
-                        </button>
-                    </div>
-                </div>
-                <div>
-                <label for="hideZoomBtn" title="Hide Zoom Controls (Z)">
-                    <input type="checkbox" id="hideZoomBtn">
-                    Hide Zoom Controls
-                </label>
-            </div>
-            </div>
-        </aside>
-
         <main class="content">
             <section class="controls-bar">
                 <div>
@@ -281,6 +196,36 @@
                 </div> 
             </section>
 
+            <section class="horizontal-toolbar one-line-toolbar">
+                <div class="toolbar-section mirroring-section">
+                    <label><input type="checkbox" id="mirrorDiagonal">Diagonal</label>
+                    <label><input type="checkbox" id="mirrorVertical">Vertical</label>
+                    <label><input type="checkbox" id="mirrorHorizontal">Horizontal</label>
+                    <label for="correctMirroringBtn" title="Correct Mirroring (N)"><input type="checkbox" id="correctMirroringBtn">Correct Mirroring</label>
+                </div>
+                <div class="toolbar-divider"></div>
+                <div class="toolbar-section quickfix-section">
+                    <label class="icon-btn" title="Erase (E)"><input type="checkbox" id="eraseBtn"><img src="./Resources/Additional/Icons/Erase.png" alt="Erase"></label>
+                    <button id="undoBtn" class="icon-btn" title="Undo (Ctrl+Z)"><img src="./Resources/Additional/Icons/Undo.png" alt="Undo"></button>
+                    <button id="redoBtn" class="icon-btn" title="Redo (Ctrl+Y)"><img src="./Resources/Additional/Icons/Redo.png" alt="Redo"></button>
+                </div>
+                <div class="toolbar-divider"></div>
+                <div class="toolbar-section maptools-section">
+                    <label class="icon-btn" title="Replace (R)"><input type="checkbox" id="replaceBtn"><img src="./Resources/Additional/Icons/Replace.png" alt="Replace"></label>
+                    <label class="icon-btn" title="Errors (Q)"><input type="checkbox" id="errorsBtn"><img src="./Resources/Additional/Icons/Issues.png" alt="Errors"></label>
+                    <label class="icon-btn" title="Guides (W)"><input type="checkbox" id="guidesBtn"><img src="./Resources/Additional/Icons/Grid.png" alt="Guides"></label>
+                </div>
+                <div class="toolbar-divider"></div>
+                <div class="toolbar-section zoom-section">
+                    <button id="zoomInBtnBottom" class="zoom-btn" title="Zoom In (Ctrl++)"><img src="./Resources/Additional/Icons/GlassPlus.png" alt="Zoom In"></button>
+                    <button id="zoomOutBtnBottom" class="zoom-btn" title="Zoom Out (Ctrl+-)"><img src="./Resources/Additional/Icons/GlassMinus.png" alt="Zoom Out"></button>
+                    <label for="hideZoomBtn" title="Hide Zoom Controls (Z)"><input type="checkbox" id="hideZoomBtn">Hide Zoome Controls</label>
+                </div>
+                <div class="toolbar-divider"></div>
+                <div class="toolbar-section selected-area-section" id="selectedAreaToolsDiv" style="display: none;">
+                    <button id="rotateBtn" class="icon-btn" title="Rotate (Ctrl+R)"><img src="./Resources/Additional/Icons/Rotate.png" alt="Rotate"></button>
+                </div>
+            </section>
 
             <section class="below-map">
                 <div class="save-export-buttons">
