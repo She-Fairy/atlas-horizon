@@ -4004,8 +4004,8 @@ export class MapMaker {
         // SHOWDOWN MAP - Brawl Ball
         if (this.mapSize === this.mapSizes.showdown && isBrawl) {
             this.goalImages.push(
-            { name: 'goal5v5Blue', x: 12, y: middleY - 8, w: 3, h: 16, offsetX: -10, offsetY: -8 },
-            { name: 'goal5v5Red',  x: this.mapWidth - 15, y: middleY - 8, w: 3, h: 16, offsetX:  10, offsetY: -8 }
+            { name: 'goal5v5Blue', x: 11, y: middleY - 8, w: 3, h: 16, offsetX: -10, offsetY: -8 },
+            { name: 'goal5v5Red',  x: this.mapWidth - 14, y: middleY - 8, w: 3, h: 16, offsetX:  10, offsetY: -8 }
             );
 
             // ← add this:
@@ -4123,8 +4123,8 @@ export class MapMaker {
 
             // Unbreakables on col 10 and mirrored
             for (let y = centerY - 8; y <= centerY + 7; y++) {
-                this.mapData[y][10] = 11;
-                this.mapData[y][mapWidth - 11] = 11;
+                this.mapData[y][9] = 11;
+                this.mapData[y][mapWidth - 10] = 11;
             }
             // Extend Unbreakables
             for (let x = 9; x <= 13; x++) {
@@ -4136,8 +4136,8 @@ export class MapMaker {
 
             // Fill water from edges to col 1–9 and col width-10–width
             for (let y = 0; y < mapHeight; y++) {
-                for (let x = 0; x <= 9; x++) this.mapData[y][x] = 8;
-                for (let x = mapWidth - 10; x < mapWidth; x++) this.mapData[y][x] = 8;
+                for (let x = 0; x <= 8; x++) this.mapData[y][x] = 8;
+                for (let x = mapWidth - 9; x < mapWidth; x++) this.mapData[y][x] = 8;
             }
 
         } else if (this.mapSize === this.mapSizes.showdown && (this.gamemode === 'Gem_Grab' || this.gamemode === 'Bounty' || this.gamemode === 'Hot_Zone')) {
