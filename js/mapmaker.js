@@ -4127,7 +4127,7 @@ export class MapMaker {
                 this.mapData[y][mapWidth - 11] = 11;
             }
             // Extend Unbreakables
-            for (let x = 10; x <= 14; x++) {
+            for (let x = 9; x <= 13; x++) {
                 this.mapData[centerY + 7][x] = 11;
                 this.mapData[centerY + 7][mapWidth - x - 1] = 11;
                 this.mapData[centerY - 8][x] = 11;
