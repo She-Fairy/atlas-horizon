@@ -4684,10 +4684,13 @@ export class MapMaker {
 }
 
 window.addEventListener('load', () => {
-    window.mapMaker = new MapMaker('mapCanvas', false, true);
     const urlParams = new URLSearchParams(window.location.search);
     const mapId = urlParams.get('id') || null;
     const user = urlParams.get('user') || null;
+
+    let existingMap = false;
+    if (mapId&& user === localStorage.getItem('user')) existingMap = true;
+    window.mapMaker = new MapMaker('mapCanvas', false, existingMap);
 
     if (mapId && user === localStorage.getItem('user')) {
         window.Firebase.readDataOnce(`users/${user}/maps/${mapId}`)
