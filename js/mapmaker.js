@@ -1792,7 +1792,7 @@ export class MapMaker {
                         document.getElementById('mirrorDiagonal').checked = this.mirrorDiagonal;
                         return;
                     }
-                    document.getElementById('selectBtn').click();
+                    document.getElementById('singleBtn').click();
                     break;
 
                 case 'Digit2':
@@ -1864,6 +1864,7 @@ export class MapMaker {
                         } else {
                             this.undo();
                         }
+                        return;
                     }
                     hideZoom.click();
                     break;
@@ -1989,30 +1990,10 @@ export class MapMaker {
             this.selectDragStart = { ...coords };
             this.selectDragLastPos = { ...coords };
             this.selectDragTiles = this.selectedTiles.map(t => ({ ...t })); // deep copy
-
-            // Remove tiles from map (including mirrored tiles)
+            // Save state and remove tiles from map using eraseTile (handles 2x2 and mirroring)
+            this.saveState();
             for (const t of this.selectDragTiles) {
-                this.mapData[t.y][t.x] = 0;
-                // Mirroring logic for erasing
-                const size = this.tileDefinitions[t.id]?.size || 1;
-                const mirrorY = this.mapHeight - 1 - t.y;
-                const mirrorX = this.mapWidth - 1 - t.x;
-                if (this.mirrorVertical) {
-                    const adjustedY = size === 2 ? mirrorY - 1 : mirrorY;
-                    if (adjustedY >= 0 && adjustedY < this.mapHeight)
-                        this.mapData[adjustedY][t.x] = 0;
-                }
-                if (this.mirrorHorizontal) {
-                    const adjustedX = size === 2 ? mirrorX - 1 : mirrorX;
-                    if (adjustedX >= 0 && adjustedX < this.mapWidth)
-                        this.mapData[t.y][adjustedX] = 0;
-                }
-                if (this.mirrorDiagonal) {
-                    const adjustedY = size === 2 ? mirrorY - 1 : mirrorY;
-                    const adjustedX = size === 2 ? mirrorX - 1 : mirrorX;
-                    if (adjustedX >= 0 && adjustedX < this.mapWidth && adjustedY >= 0 && adjustedY < this.mapHeight)
-                        this.mapData[adjustedY][adjustedX] = 0;
-                }
+                this.eraseTile(t.x, t.y, false);
             }
             this.draw();
             // Draw ghost tiles at original positions
@@ -2168,6 +2149,7 @@ export class MapMaker {
         if (this.isSelectDragging) {
             const offsetX = this.selectDragOffset.x;
             const offsetY = this.selectDragOffset.y;
+            // Place tiles using placeTile (handles 2x2 and mirroring). We already saved state at drag-start.
             for (const t of this.selectDragTiles) {
                 const newX = t.x + offsetX;
                 const newY = t.y + offsetY;
@@ -2175,32 +2157,8 @@ export class MapMaker {
                     newX >= 0 && newX < this.mapWidth &&
                     newY >= 0 && newY < this.mapHeight
                 ) {
-                    this.mapData[newY][newX] = t.id;
-
-                    // Mirroring logic
-                    const size = this.tileDefinitions[t.id]?.size || 1;
-                    const mirrorY = this.mapHeight - 1 - newY;
-                    const mirrorX = this.mapWidth - 1 - newX;
-
-                    if (this.mirrorVertical) {
-                        const adjustedY = size === 2 ? mirrorY - 1 : mirrorY;
-                        const mirrorId = this.getMirroredTileId(t.id, 'vertical');
-                        if (adjustedY >= 0 && adjustedY < this.mapHeight)
-                            this.mapData[adjustedY][newX] = mirrorId;
-                    }
-                    if (this.mirrorHorizontal) {
-                        const adjustedX = size === 2 ? mirrorX - 1 : mirrorX;
-                        const mirrorId = this.getMirroredTileId(t.id, 'horizontal');
-                        if (adjustedX >= 0 && adjustedX < this.mapWidth)
-                            this.mapData[newY][adjustedX] = mirrorId;
-                    }
-                    if (this.mirrorDiagonal) {
-                        const adjustedY = size === 2 ? mirrorY - 1 : mirrorY;
-                        const adjustedX = size === 2 ? mirrorX - 1 : mirrorX;
-                        const mirrorId = this.getMirroredTileId(t.id, 'diagonal');
-                        if (adjustedX >= 0 && adjustedX < this.mapWidth && adjustedY >= 0 && adjustedY < this.mapHeight)
-                            this.mapData[adjustedY][adjustedX] = mirrorId;
-                    }
+                    // placeTile will call eraseTile internally and handle mirroring
+                    this.placeTile(newX, newY, t.id, false);
                 }
             }
             this.isSelectDragging = false;
@@ -2747,9 +2705,9 @@ export class MapMaker {
         let ly = y + dy;
 
         // Clamp to 2 tiles before the edge if out of bounds
-        if (lx < 0) lx = 1;
+        if (lx < 0) lx = 0;
         if (lx > mapWidth - 2) lx = mapWidth - 2;
-        if (ly < 0) ly = 1;
+        if (ly < 0) ly = 0;
         if (ly > mapHeight - 2) ly = mapHeight - 2;
 
         // Draw the landing image at (lx, ly), size 2x2 tiles
@@ -4274,7 +4232,7 @@ export class MapMaker {
         this.loadTileImages();
         this.preloadWaterTiles();
         this.preloadGoalImage();
-        await this.setGamemode(this.gamemode);
+        await this.setGamemode(this.gamemode, false);
         this.initializeTileSelector();
         this.draw();
     }
