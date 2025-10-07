@@ -20,7 +20,7 @@ async function postMapsByUser(user = localStorage.getItem('user')) {
             console.warn(`Skipping mapId ${mapId}: no mapData`);
             continue;
         }
-        // try {
+        try {
             // your existing processing here
             const pngDataUrl = await generateMapImage(
             mapData.mapData,
@@ -34,15 +34,15 @@ async function postMapsByUser(user = localStorage.getItem('user')) {
             window.location.href = 'map.html?id=' + mapId + '&user=' + user;
             });
             container.appendChild(card);
-        // } catch (error) {
-        //     alert(`❌ Error for map ${mapId}: ${error.message}`);
-        //     const card = createCard(mapData.name, mapData.user, 'Resources/Additional/Icons/UserPfp.png');
-        //     card.classList.add('error-card');
-        //     card.addEventListener('click', () => {
-        //     window.location.href = 'map.html?id=' + mapId + '&user=' + user;
-        //     });
-        //     container.appendChild(card);
-        // }
+        } catch (error) {
+            alert(`❌ Error for map ${mapId}: ${error.message}`);
+            const card = createCard(mapData.name, mapData.user, 'Resources/Additional/Icons/UserPfp.png');
+            card.classList.add('error-card');
+            card.addEventListener('click', () => {
+            window.location.href = 'map.html?id=' + mapId + '&user=' + user;
+            });
+            container.appendChild(card);
+        }
     }
 }
 
