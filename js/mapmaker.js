@@ -4716,7 +4716,7 @@ window.addEventListener('load', () => {
                 await window.mapMaker.setGamemode(data.gamemode, false);
                 document.getElementById('mapLink').innerText = `https://she-fairy.github.io/atlas-horizon/map.html?id=${mapId}&user=${user}`;
                 window.mapMaker.draw();
-                window.Mapmaker.existingMap = false;
+                window.mapMaker.existingMap = false;
             })
             .catch(error => {
                 console.error('Error loading map:', error);
