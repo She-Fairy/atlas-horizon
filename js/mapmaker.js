@@ -3935,7 +3935,7 @@ export class MapMaker {
                     this.goalImages.map(goal => this.preloadGoalImage(goal.name, this.environment))
                 );
 
-                if (apply) {
+                if (!this.existingMap && apply) {
                     // Clear previous spawn tiles
                     this.placeTile(middleX, 0, 42, false);                      // Red
                     this.placeTile(middleX, this.mapHeight - 1, 41, false);     // Blue
