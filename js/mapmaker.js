@@ -4174,6 +4174,7 @@ export class MapMaker {
                 if (!isShowdownNow) {
                     this.minZoom = 0.4;
                     this.delta = 1.75;
+                    this.zoomLevel = 0.575;
                     this.tileDefinitions[14].size = 1;
                     this.objectiveData.Gem_Grab[0] = 2; // width
                     this.objectiveData.Gem_Grab[1] = 2; // height
@@ -4214,6 +4215,7 @@ export class MapMaker {
                 } else {
                     this.minZoom = 0.15;
                     this.delta = 0.5;
+                    this.zoomLevel = 0.3;
                     this.tileDefinitions[14].size = 2;
                     // restore original width/height
                     this.objectiveData.Gem_Grab[0] = 1;
@@ -4496,7 +4498,7 @@ export class MapMaker {
         // Keep existing values, but tighten them for mobile if detected.
         if (!this.isMobileDevice()) {
             // Ensure zoomLevel is within bounds for desktop too
-            this.zoomLevel = 0.75;
+            this.zoomLevel = 0.575;
             this.updateCanvasZoom();
             return;
         }

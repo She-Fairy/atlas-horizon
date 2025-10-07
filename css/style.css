@@ -16,6 +16,7 @@ html, body {
     --border-color: #334155;
     --text-color: #cfdae7;
     --text-color-secondary: #94A3B8;
+    font-size: 12px;
 }
 
 * {
