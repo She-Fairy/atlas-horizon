@@ -3979,7 +3979,7 @@ export class MapMaker {
             );
         }
 
-        if (apply && (this.mapData.every(row => row.every(tile => tile === 0 || tile === 14 || tile === 13 || tile === 12 || tile === 33)))) 
+        if (!this.existingMap && apply && (this.mapData.every(row => row.every(tile => tile === 0 || tile === 14 || tile === 13 || tile === 12 || tile === 33)))) 
             this.applyDefaultLayoutIfEmpty();
 
 
