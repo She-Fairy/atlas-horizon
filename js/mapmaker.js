@@ -4694,7 +4694,7 @@ window.addEventListener('load', () => {
             .then(async data => {
                 if (!data) return alert('Map not found.');
 
-                Window.mapMaker.existingMap = true;
+                window.mapMaker.existingMap = true;
                 const sizeKey = data.size;  // e.g. "regular"
                 const newSize  = window.mapMaker.mapSizes[sizeKey];
                 window.mapMaker.gamemode = data.gamemode;
