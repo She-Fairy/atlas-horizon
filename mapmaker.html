@@ -7,6 +7,30 @@
     <title>Atlas Horizon- Map Maker</title>
     <link rel="stylesheet" href="./css/style.css">
     <link rel="stylesheet" href="./css/mapmaker.css">
+    <style>
+        /* Make the map name input and the three select boxes share equal, responsive widths
+           within the controls bar. Each immediate child column will flex equally and
+           the form controls will fill their container. */
+        .controls-bar {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        /* Each direct child gets equal flex share so the input and selects match widths */
+        .controls-bar > div {
+            flex: 1 1 0;
+            min-width: 160px; /* reasonable minimum for small viewports */
+        }
+
+        /* Ensure the input and selects take the full width of their column */
+        .controls-bar input[type="text"],
+        .controls-bar select {
+            width: 100%;
+            box-sizing: border-box;
+        }
+    </style>
     <link rel="icon" href="./Resources/Additional/Icons/AtlasLogo.ico" type="image/x-icon">
     <base href="https://she-fairy.github.io/atlas-horizon/">
 </head>
@@ -136,96 +160,104 @@
                     </select>
                 </div>
             </section>
+            <div class="center-panel">
+                <div class="left-panel">
+                    <section class="tiles-section">
+                        <div class="tiles-grid">
+                            <h4 id="tilesTitle">Tiles</h4>
+                            <div id="tileSelector"></div>
+                        </div>
+                    </section>
+                </div>
+                <section class="map-wrapper">
+                    <!-- Zoom controls moved inside .map-editor for fixed positioning -->
+                    <div class="map-editor">
+                        <div class="map-container">
+                            <canvas draggable="false" id="mapCanvas"></canvas>
+                        </div>
+                        <div id="zoomControls" class="zoom-controls">
+                            <button id="zoomInBtn" class="zoom-btn" title="Zoom In (Ctrl++)">
+                                <img src="./Resources/Additional/Icons/GlassPlus.png" alt="Zoom In">
+                            </button>
+                            <button id="zoomOutBtn" class="zoom-btn" title="Zoom Out (Ctrl+-)">
+                                <img src="./Resources/Additional/Icons/GlassMinus.png" alt="Zoom Out">
+                            </button>
+                        </div>
+                    </div> 
+                </section>
+                <div class="right-panel">
+                    <section class="selections-section" style="margin-bottom: 1.5rem;">
+                        <div class="selections-container">
+                            <h3>Selection Options</h3>
+                            <mob><pc></pc></mob>
+                            <mob><pc></pc></mob>
+                                <label class="select-btn" title="Single (1)">
+                                    <input type="radio" name="selectionMode" id="singleBtn" value="single" checked>
+                                    <mob>Single</mob>
+                                    <img src="./Resources/Additional/Icons/Single.png" alt="Single">
+                                </label>
+                                <label class="select-btn" title="Line (2)">
+                                    <input type="radio" name="selectionMode" id="lineBtn" value="line">
+                                    <mob>Line</mob>
+                                    <img src="./Resources/Additional/Icons/Line.png" alt="Line">
+                                </label>
+                                <label class="select-btn" title="Rectangle (3)">
+                                    <input type="radio" name="selectionMode" id="rectangleBtn" value="rectangle">
+                                    <mob>Rectangle</mob>
+                                    <img src="./Resources/Additional/Icons/Rectangle.png" alt="Rectangle">
+                                </label>
+                                <label class="select-btn" title="Fill (4)">
+                                    <input type="radio" name="selectionMode" id="fillBtn" value="fill">
+                                    <mob>Fill</mob>
+                                    <img src="./Resources/Additional/Icons/Bucket.png" alt="Fill">
+                                </label>
+                                <label class="select-btn" title="Select (5)">
+                                    <input type="radio" name="selectionMode" id="selectBtn" value="select">
+                                    <mob>Select</mob>
+                                    <img src="./Resources/Additional/Icons/Select.png" alt="Select">
+                                </label>
+                            </div>
+                    </section>
 
-            <section class="tiles-section">
-                <div class="tiles-content">
-                    <div class="tiles-grid">
-                        <h3>Tiles</h3>
-                        <div id="tileSelector"></div>
-                    </div>
-                </div>
-            </section>
+                    <section class="toolbar toolbar-horizontal">
+                        <pc><h5>Mirroring</h5></pc>
+                        <div class="toolbar-section">
+                            <label class="mirror-btn"><input type="checkbox" id="mirrorDiagonal">Diagonal</label>
+                            <label class="mirror-btn"><input type="checkbox" id="mirrorVertical">Vertical</label>
+                            <label class="mirror-btn"><input type="checkbox" id="mirrorHorizontal">Horizontal</label>
+                        </div>
+                        <label class="long-btn"><input type="checkbox" id="correctMirroringBtn">Mirror Matching Elements</label>
 
-            <section class="selections-section">
-                <div class="radio-container">
-                    <mob><h3>Selection Options</h3></mob>
-                    <span></span>
-                    <span></span>
-                        <label class="select-btn" title="Single (1)">
-                            <input type="radio" name="selectionMode" id="singleBtn" value="single" checked>
-                            <mob>Single</mob>
-                            <img src="./Resources/Additional/Icons/Single.png" alt="Single">
-                        </label>
-                        <label class="select-btn" title="Line (2)">
-                            <input type="radio" name="selectionMode" id="lineBtn" value="line">
-                            <mob>Line</mob>
-                            <img src="./Resources/Additional/Icons/Line.png" alt="Line">
-                        </label>
-                        <label class="select-btn" title="Rectangle (3)">
-                            <input type="radio" name="selectionMode" id="rectangleBtn" value="rectangle">
-                            <mob>Rectangle</mob>
-                            <img src="./Resources/Additional/Icons/Rectangle.png" alt="Rectangle">
-                        </label>
-                        <label class="select-btn" title="Fill (4)">
-                            <input type="radio" name="selectionMode" id="fillBtn" value="fill">
-                            <mob>Fill</mob>
-                            <img src="./Resources/Additional/Icons/Bucket.png" alt="Fill">
-                        </label>
-                        <label class="select-btn" title="Select (5)">
-                            <input type="radio" name="selectionMode" id="selectBtn" value="select">
-                            <mob>Select</mob>
-                            <img src="./Resources/Additional/Icons/Select.png" alt="Select">
-                        </label>
-                    </div>
-            </section>
+                        <div class="toolbar-divider"></div>
 
-            <section class="map-wrapper">
-                <!-- Zoom controls moved inside .map-editor for fixed positioning -->
-                <div class="map-editor">
-                    <div class="map-container">
-                        <canvas draggable="false" id="mapCanvas"></canvas>
-                    </div>
-                    <div id="zoomControls" class="zoom-controls">
-                        <button id="zoomInBtn" class="zoom-btn" title="Zoom In (Ctrl++)">
-                            <img src="./Resources/Additional/Icons/GlassPlus.png" alt="Zoom In">
-                        </button>
-                        <button id="zoomOutBtn" class="zoom-btn" title="Zoom Out (Ctrl+-)">
-                            <img src="./Resources/Additional/Icons/GlassMinus.png" alt="Zoom Out">
-                        </button>
-                    </div>
-                </div> 
-            </section>
+                        <pc><h5>Tools</h5></pc>
+                        <div class="toolbar-section">
+                            <label class="icon-btn"><input type="checkbox" id="eraseBtn"><img src="./Resources/Additional/Icons/Erase.png" alt="Erase"></label>
+                            <button id="undoBtn" class="icon-btn"><img src="./Resources/Additional/Icons/Undo.png" alt="Undo"></button>
+                            <button id="redoBtn" class="icon-btn"><img src="./Resources/Additional/Icons/Redo.png" alt="Redo"></button>
+                            <label class="icon-btn"><input type="checkbox" id="replaceBtn"><img src="./Resources/Additional/Icons/Replace.png" alt="Replace"></label>
+                            <label class="icon-btn"><input type="checkbox" id="errorsBtn"><img src="./Resources/Additional/Icons/Issues.png" alt="Errors"></label>
+                            <label class="icon-btn"><input type="checkbox" id="guidesBtn"><img src="./Resources/Additional/Icons/Grid.png" alt="Guides"></label>
+                        </div>
 
-            <section class="horizontal-toolbar one-line-toolbar">
-                <div class="toolbar-section mirroring-section">
-                    <label><input type="checkbox" id="mirrorDiagonal">Diagonal</label>
-                    <label><input type="checkbox" id="mirrorVertical">Vertical</label>
-                    <label><input type="checkbox" id="mirrorHorizontal">Horizontal</label>
-                    <label for="correctMirroringBtn" title="Correct Mirroring (N)"><input type="checkbox" id="correctMirroringBtn">Correct Mirroring</label>
+                        <div class="toolbar-divider"></div>
+
+                        <pc><h5>Zoom</h5></pc>
+                        <div class="toolbar-section zoom-section">
+                            <button id="zoomInBtnBottom" class="zoom-btn"><img src="./Resources/Additional/Icons/GlassPlus.png" alt="Zoom In"></button>
+                            <button id="zoomOutBtnBottom" class="zoom-btn"><img src="./Resources/Additional/Icons/GlassMinus.png" alt="Zoom Out"></button>
+                            <label class="long-btn"><input type="checkbox" id="hideZoomBtn">Hide Zoom Controls</label>
+                        </div>
+
+                        <div id="lastDivider" style="display: none;" class="toolbar-divider"></div>
+
+                        <div class="toolbar-section" id="selectedAreaToolsDiv" style="display:none;">
+                            <pc><mob><h6 style="color:var(--primary-color)">Area Select Tools:</h6></mob></pc>
+                            <button id="rotateBtn" class="icon-btn"><img src="./Resources/Additional/Icons/Rotate.png" alt="Rotate"></button>
+                        </div>
+                    </section>
                 </div>
-                <div class="toolbar-divider"></div>
-                <div class="toolbar-section quickfix-section">
-                    <label class="icon-btn" title="Erase (E)"><input type="checkbox" id="eraseBtn"><img src="./Resources/Additional/Icons/Erase.png" alt="Erase"></label>
-                    <button id="undoBtn" class="icon-btn" title="Undo (Ctrl+Z)"><img src="./Resources/Additional/Icons/Undo.png" alt="Undo"></button>
-                    <button id="redoBtn" class="icon-btn" title="Redo (Ctrl+Y)"><img src="./Resources/Additional/Icons/Redo.png" alt="Redo"></button>
-                </div>
-                <div class="toolbar-divider"></div>
-                <div class="toolbar-section maptools-section">
-                    <label class="icon-btn" title="Replace (R)"><input type="checkbox" id="replaceBtn"><img src="./Resources/Additional/Icons/Replace.png" alt="Replace"></label>
-                    <label class="icon-btn" title="Errors (Q)"><input type="checkbox" id="errorsBtn"><img src="./Resources/Additional/Icons/Issues.png" alt="Errors"></label>
-                    <label class="icon-btn" title="Guides (W)"><input type="checkbox" id="guidesBtn"><img src="./Resources/Additional/Icons/Grid.png" alt="Guides"></label>
-                </div>
-                <div class="toolbar-divider"></div>
-                <div class="toolbar-section zoom-section">
-                    <button id="zoomInBtnBottom" class="zoom-btn" title="Zoom In (Ctrl++)"><img src="./Resources/Additional/Icons/GlassPlus.png" alt="Zoom In"></button>
-                    <button id="zoomOutBtnBottom" class="zoom-btn" title="Zoom Out (Ctrl+-)"><img src="./Resources/Additional/Icons/GlassMinus.png" alt="Zoom Out"></button>
-                    <label for="hideZoomBtn" title="Hide Zoom Controls (Z)"><input type="checkbox" id="hideZoomBtn">Hide Zoome Controls</label>
-                </div>
-                <div class="toolbar-divider"></div>
-                <div class="toolbar-section selected-area-section" id="selectedAreaToolsDiv" style="display: none;">
-                    <button id="rotateBtn" class="icon-btn" title="Rotate (Ctrl+R)"><img src="./Resources/Additional/Icons/Rotate.png" alt="Rotate"></button>
-                </div>
-            </section>
+            </div>
 
             <section class="below-map">
                 <div class="save-export-buttons">

@@ -1,48 +1,51 @@
-/* One-line horizontal toolbar styling */
-.horizontal-toolbar.one-line-toolbar {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-around;
-    gap: 1.5rem;
-    padding: 0.5rem 1rem;
-    margin: 0 1rem;
-    background: var(--surface-color, #1e2a38);
-    border: 1px solid var(--border-color, #3a4a5a);
-    border-radius: 0.75rem;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+/* Base toolbar */
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 0.5rem 1rem;
+  margin: 0 1rem;
+  background: var(--surface-color, #1e2a38);
+  border: 1px solid var(--border-color, #3a4a5a);
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  box-sizing: border-box;
 }
 
-.horizontal-toolbar.one-line-toolbar .toolbar-section {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
+/* Sections inside */
+.toolbar-section {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.75rem;
+  flex: 0 1 auto;
+  min-width: 0;
 }
 
-.horizontal-toolbar.one-line-toolbar .toolbar-divider {
-    width: 2px;
-    height: 2.5rem;
-    background: var(--divider-color, #3a4a5a);
-    border-radius: 1px;
-    margin: 0 0.5rem;
-    align-self: stretch;
+/* Divider */
+.toolbar-divider {
+  width: 2px;
+  height: 2.5rem;
+  background: var(--divider-color, #3a4a5a);
+  border-radius: 1px;
+  margin: 0 0.5rem;
+  align-self: stretch;
 }
 
-.horizontal-toolbar.one-line-toolbar label,
-.horizontal-toolbar.one-line-toolbar button {
-    margin: 0;
+/* Icon buttons */
+.icon-btn img,
+.zoom-btn img {
+  width: 1.5rem;
+  height: 1.5rem;
+  vertical-align: middle;
 }
 
-.horizontal-toolbar.one-line-toolbar .icon-btn img,
-.horizontal-toolbar.one-line-toolbar .zoom-btn img {
-    width: 1.5rem;
-    height: 1.5rem;
-    vertical-align: middle;
-}
 
-.horizontal-toolbar.one-line-toolbar input[type="checkbox"] {
-    margin-right: 0.25rem;
-    accent-color: var(--primary-color, #7ab6ed);
+pc {
+    display: none;
 }
 
 /* Fixed zoom controls relative to map-editor */
@@ -153,10 +156,11 @@
     gap: 1.5rem;
 }
 
-.content {
+.content, .center-panel {
     width: 100%;
     display: flex;
     flex-direction: column;
+    align-items: stretch;
     gap: 1.5rem;
 }
 
@@ -286,7 +290,7 @@
 
 
 .select-btn {
-    width: 10rem;
+    width: 13vw;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -299,6 +303,10 @@
     padding: 1.25rem;
     margin: 0 1rem;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    /* allow children to control scrolling; avoid automatic stretching that prevents overflow */
+    min-height: 0;
 }
 
 .selections-section {
@@ -310,21 +318,18 @@
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-
-.tiles-content {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 1.5rem;
-    align-items: start;
-}
-
 .tiles-grid {
     width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: stretch;
+    /* allow this column to shrink so inner selector can scroll */
+    flex: 1 1 auto;
+    min-height: 0;
 }
 
-.tiles-grid h3 {
-    margin: 0 0 1rem 0;
-    color: var(--primary-color);
+.tiles-grid h4 {
     font-size: 1.125rem;
     font-weight: 600;
 }
@@ -436,21 +441,20 @@
     color: var(--text-color);
 }
 
+
 #tileSelector {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(52px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(52px, max-content));
     gap: 8px;
-    padding: 12px;
-    max-height: 280px;
-    overflow-y: auto;
+    padding: 8px;
     background: rgba(255,255,255,0.02);
+
     border-radius: 8px;
-    border: 1px solid rgba(255,255,255,0.1);
 }
 
+
+
 .tile-btn {
-    width: 48px;
-    height: 48px;
     padding: 4px;
     border: 2px solid transparent;
     border-radius: 8px;
@@ -461,7 +465,13 @@
     align-items: center;
     justify-content: center;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+
+    width: 100%;
+    min-width: 52px;
+    aspect-ratio: 1 / 1;
+    box-sizing: border-box;
 }
+
 
 .tile-btn:hover {
     background: var(--surface-color-hover);
@@ -477,8 +487,8 @@
 }
 
 .tile-btn img {
-    max-width: 100%;
-    max-height: 100%;
+    width: 70%;
+    height: 70%;
     object-fit: contain;
 }
 
@@ -658,6 +668,11 @@ input[type="checkbox"][style*="border-color: rgb(255, 68, 68)"] {
         margin: 0 0.5rem;
     }
 
+    .tiles-grid{
+        overflow-x: auto;
+        max-height: 30vh;
+    }
+
     .save-export-buttons {
         flex-direction: column;
         gap: 0.75rem;
@@ -759,14 +774,14 @@ input[type="text"] {
     transition: border-color 0.2s, background-color 0.2s;
 }
 
-.radio-container {
+.selections-container {
     display: flex;
     align-items: center;
     justify-content: space-between;
     margin: 0 0;
 }
 
-.radio-container label {
+.selections-container label {
     display: flex;
     align-items: center;
     gap: 5px;
@@ -952,4 +967,166 @@ label[for='correctMirroringBtn'], label[for='hideZoomBtn'] {
 
 ::-webkit-scrollbar-thumb:hover {
     background-color: var(--primary-color);
+}
+
+
+/* Default stays stacked (your current setup) */
+
+/* On wide screens, switch to row layout */
+@media (min-width: 1500px) {
+  .center-panel {
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: center;
+    height: 70vh;
+    gap: 2rem;
+    min-height: 0;
+  }
+
+  .left-panel,
+  .right-panel {
+    display: flex;
+    flex-direction: column;
+    align-self: stretch;
+    gap: 1rem;
+    flex: 0 0 350px; /* fixed side columns */
+    min-height: 0;
+    height: 100%;
+  }
+
+  .right-panel {
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+
+
+  .map-wrapper {
+    flex: 1;
+    min-height: 0;
+    height: 100%;
+    }
+
+    .map-editor {
+        max-height: 70vh;
+        min-height: 70vh;
+        width: calc(100vw - 850px);
+        max-width: calc(100vw - 600px);
+    }
+
+  /* Toolbar switches to vertical column */
+  .toolbar.toolbar-horizontal, .selections-section {
+    flex-direction: column;
+    align-items: flex-start;
+    padding-top: 25px;
+    width: 95%;
+  }
+
+  .toolbar.toolbar-horizontal{
+    gap: 13px;
+    height: 70%;
+    justify-content: flex-start;
+  }
+
+  .toolbar-section {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-between;
+    flex: 0 0 auto;
+  }
+
+  .tiles-section {
+    flex-direction: column;
+    align-items: center;
+    width: 95%;
+    padding: 25px 15px;
+    height: 100%;
+    max-height: 100%;
+  }
+
+  .tiles-grid {
+    width: 100%;
+    max-height: max-content;
+    height:fit-content;
+    padding: 0;
+    overflow-y:auto;
+  }
+
+  #tilesTitle {
+    width: 100%;
+    text-align: center;
+    margin: 0 0 0 0;
+  }
+
+  #tileSelector {
+    /* Wide screens: allow normal grid wrapping into rows and let rows
+       stretch/stack vertically inside the tiles column. */
+    display: grid;
+    grid-auto-flow: row; /* normal row flow (wrap into multiple rows) */
+    grid-template-columns: repeat(auto-fill, minmax(52px, 1fr));
+    grid-auto-rows: auto;
+    gap: 8px;
+    padding: 8px;
+    background: rgba(255,255,255,0.02);
+
+    /* vertical behavior: allow the grid to take available height and stretch rows */
+    align-content: stretch;   /* let rows expand vertically to fill the container */
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    /* keep it flexible inside parent containers */
+    width: 100%;
+    height: 100%;
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+
+  .toolbar-divider {
+    width: 100%;
+    height: 2px;
+    margin: 0 0;
+  }
+
+  pc {
+    display: block;
+  }
+
+  .toolbar-section label.mirror-btn {
+    height: min-content;
+    height: fit-content;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+
+  .long-btn {
+    width: 100%;
+    margin-top: 0;
+    padding: 0.5rem;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background-color: var(--surface-color);
+  }
+
+  .selections-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    gap: 1rem;
+  }
+
+  .select-btn {
+    width: 100%;
+  }
+
+  .toolbar.toolbar-horizontal .toolbar-divider {
+    width: 100%;
+    height: 2px;
+    margin: 0.5rem 0;
+  }
 }

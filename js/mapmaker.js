@@ -237,8 +237,8 @@ export class MapMaker {
         this.minZoom = 0.4;  // Allow zooming out more
         this.maxZoom = 3;     // Allow zooming in more
         this.zoomStep = 0.1;  // Make zoom steps smaller for more gradual zooming
+        this.delta = 1.75;
 
-        this.updateCanvasSize();
 
         // Initialize map data
         this.mapData = Array(this.mapHeight).fill().map(() => Array(this.mapWidth).fill(0));
@@ -1418,6 +1418,8 @@ export class MapMaker {
         
         // Set initial zoom to fit the map
         this.fitMapToScreen();
+        this.applyDeviceZoomSettings();
+        this.updateCanvasSize();
 
         // Initialize the map maker
         this.initialize();
@@ -1627,7 +1629,10 @@ export class MapMaker {
         
         const scaleX = containerWidth / this.canvas.width;
         const scaleY = containerHeight / this.canvas.height;
-        this.zoomLevel = Math.min(scaleX, scaleY, 0.775); // Cap max zoom to 77.5%
+
+        // Use the configured maxZoom as an upper cap, but clamp between min/max
+        const target = Math.min(scaleX, scaleY, this.maxZoom);
+        this.zoomLevel = Math.max(this.minZoom, Math.min(this.maxZoom, target));
         
         this.updateCanvasZoom();
     }
@@ -1689,7 +1694,7 @@ export class MapMaker {
 
     zoom(delta) {
         const oldZoom = this.zoomLevel;
-        this.zoomLevel = Math.max(this.minZoom, Math.min(this.maxZoom, this.zoomLevel + delta * 1.75));
+        this.zoomLevel = Math.max(this.minZoom, Math.min(this.maxZoom, this.zoomLevel + delta * this.delta));
 
         if (oldZoom !== this.zoomLevel) {
             this.updateCanvasZoom();
@@ -1730,7 +1735,8 @@ export class MapMaker {
         document.querySelectorAll('input[name="selectionMode"]').forEach(radio => {
             radio.addEventListener('change', (e) => {
                 this.selectionMode = e.target.value;
-                document.getElementById('selectedAreaToolsDiv').style.display = selectBtn.checked ? 'block' : 'none';
+                document.getElementById('selectedAreaToolsDiv').style.display = selectBtn.checked ? 'flex' : 'none';
+                document.getElementById('lastDivider').style.display = selectBtn.checked ? 'block' : 'none';
             });
         });
 
@@ -4123,11 +4129,11 @@ export class MapMaker {
 
             // Unbreakables on col 10 and mirrored
             for (let y = centerY - 8; y <= centerY + 7; y++) {
-                this.mapData[y][10] = 11;
-                this.mapData[y][mapWidth - 11] = 11;
+                this.mapData[y][9] = 11;
+                this.mapData[y][mapWidth - 10] = 11;
             }
             // Extend Unbreakables
-            for (let x = 10; x <= 14; x++) {
+            for (let x = 9; x <= 13; x++) {
                 this.mapData[centerY + 7][x] = 11;
                 this.mapData[centerY + 7][mapWidth - x - 1] = 11;
                 this.mapData[centerY - 8][x] = 11;
@@ -4136,8 +4142,8 @@ export class MapMaker {
 
             // Fill water from edges to col 1–9 and col width-10–width
             for (let y = 0; y < mapHeight; y++) {
-                for (let x = 0; x <= 9; x++) this.mapData[y][x] = 8;
-                for (let x = mapWidth - 10; x < mapWidth; x++) this.mapData[y][x] = 8;
+                for (let x = 0; x <= 8; x++) this.mapData[y][x] = 8;
+                for (let x = mapWidth - 9; x < mapWidth; x++) this.mapData[y][x] = 8;
             }
 
         } else if (this.mapSize === this.mapSizes.showdown && (this.gamemode === 'Gem_Grab' || this.gamemode === 'Bounty' || this.gamemode === 'Hot_Zone')) {
@@ -4166,6 +4172,8 @@ export class MapMaker {
                 const isShowdownNow = isShowdown(newSize);
 
                 if (!isShowdownNow) {
+                    this.minZoom = 0.4;
+                    this.delta = 1.75;
                     this.tileDefinitions[14].size = 1;
                     this.objectiveData.Gem_Grab[0] = 2; // width
                     this.objectiveData.Gem_Grab[1] = 2; // height
@@ -4204,6 +4212,8 @@ export class MapMaker {
                     this.objectiveData.Hockey[2] = -10;
                     this.objectiveData.Hockey[3] = -15; 
                 } else {
+                    this.minZoom = 0.15;
+                    this.delta = 0.5;
                     this.tileDefinitions[14].size = 2;
                     // restore original width/height
                     this.objectiveData.Gem_Grab[0] = 1;
@@ -4467,8 +4477,38 @@ export class MapMaker {
         let hideZoomBtn = document.getElementById('hideZoomBtn');
         let hide = hideZoomBtn.checked;
         document.getElementById('zoomControls').style.visibility = hide ? 'hidden' : 'visible';
-        document.getElementById('zoomInBtnBottom').style.visibility = hide ? 'visible' : 'hidden';
-        document.getElementById('zoomOutBtnBottom').style.visibility = hide ? 'visible' : 'hidden';
+    }
+    
+    isMobileDevice() {
+        // Basic mobile detection: user-agent OR coarse pointer OR small width
+        try {
+            const ua = navigator?.userAgent || '';
+            const smallScreen = typeof window !== 'undefined' && window.innerWidth <= 900;
+            const coarsePointer = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+            const uaMobile = /Mobi|Android|iPhone|iPad|iPod|Windows Phone/i.test(ua);
+            return uaMobile || coarsePointer || smallScreen;
+        } catch (e) {
+            return false;
+        }
+    }
+
+    applyDeviceZoomSettings() {
+        // Keep existing values, but tighten them for mobile if detected.
+        if (!this.isMobileDevice()) {
+            // Ensure zoomLevel is within bounds for desktop too
+            this.zoomLevel = 0.75;
+            this.updateCanvasZoom();
+            return;
+        }
+
+        // Mobile-friendly constraints (only narrow / reduce values so other explicit settings stay valid)
+        this.minZoom   = Math.min(this.minZoom, 0.2);  // allow zooming out a bit more on mobile
+        this.maxZoom   = Math.min(this.maxZoom, 2);   // limit deep zoom-in on mobile
+        this.delta     = Math.min(this.delta, 1);     // smaller per-wheel/pinch delta for smoother changes
+
+        // Clamp current zoom to new bounds
+        this.zoomLevel = 0.4;
+        this.updateCanvasZoom();
     }
 
     isBlock(tileId) {
@@ -4727,7 +4767,7 @@ window.addEventListener('load', () => {
                     let currentUserData = await window.Firebase.readDataOnce(`users/${localStorage.getItem('user')}`);
                     let newId = currentUserData.maps.map(map => map.id).reduce((a, b) => Math.max(a, b), 0) + 1;
                     await window.Firebase.writeData(`users/${localStorage.getItem('user')}/maps/${newId}`, data);
-                    window.location.href = `https://she-fairy.github.io/atlas-horizon/map.html?id=${newId}&user=${localStorage.getItem('username')}`;
+                    window.location.href = `https://she-fairy.github.io/atlas-horizon/mapmaker.html?id=${newId}&user=${localStorage.getItem('username')}`;
                 }
             })
     }
