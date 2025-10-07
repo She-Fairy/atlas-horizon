@@ -194,7 +194,7 @@ class FenceLogicHandler {
 }
 
 export class MapMaker {
-    constructor(canvasId, headless = false) {
+    constructor(canvasId, headless = false, existingMap = false) {
         if (typeof canvasId === 'string') {
             this.canvas = document.getElementById(canvasId);
         } else {
@@ -208,7 +208,7 @@ export class MapMaker {
         this.canvas.onload = () => this.centerCanvas();
 
         this.headless = headless;
-        this.existingMap = false;
+        this.existingMap = existingMap;
         this.ctx = this.canvas.getContext('2d');
         this.tileSize = 32;
         this.canvasPadding = 16;  // Add padding for the canvas
@@ -1509,7 +1509,7 @@ export class MapMaker {
         try {
             await this.loadEnvironmentBackgrounds();
             await this.loadTileImages();
-            if (this.headless) return;
+            if (this.headless || this.existingMap) return;
             await this.setGamemode(this.gamemode);
         } catch (error) {
             console.error('Error initializing MapMaker:', error);
@@ -3935,7 +3935,7 @@ export class MapMaker {
                     this.goalImages.map(goal => this.preloadGoalImage(goal.name, this.environment))
                 );
 
-                if (!this.existingMap && apply) {
+                if (apply) {
                     // Clear previous spawn tiles
                     this.placeTile(middleX, 0, 42, false);                      // Red
                     this.placeTile(middleX, this.mapHeight - 1, 41, false);     // Blue
@@ -3979,7 +3979,7 @@ export class MapMaker {
             );
         }
 
-        if (!this.existingMap && apply && (this.mapData.every(row => row.every(tile => tile === 0 || tile === 14 || tile === 13 || tile === 12 || tile === 33)))) 
+        if (apply && (this.mapData.every(row => row.every(tile => tile === 0 || tile === 14 || tile === 13 || tile === 12 || tile === 33)))) 
             this.applyDefaultLayoutIfEmpty();
 
 
@@ -3991,7 +3991,6 @@ export class MapMaker {
 
     applyDefaultLayoutIfEmpty() {
         console.trace('applyDefaultLayoutIfEmpty triggered');
-        if (this.existingMap) return;
         const { mapWidth, mapHeight } = this;
         const midX = Math.floor(mapWidth / 2);
         const topY = 0;
@@ -4695,7 +4694,6 @@ window.addEventListener('load', () => {
             .then(async data => {
                 if (!data) return alert('Map not found.');
 
-                window.mapMaker.existingMap = true;
                 const sizeKey = data.size;  // e.g. "regular"
                 const newSize  = window.mapMaker.mapSizes[sizeKey];
                 window.mapMaker.gamemode = data.gamemode;
@@ -4717,7 +4715,6 @@ window.addEventListener('load', () => {
                 await window.mapMaker.setGamemode(data.gamemode, false);
                 document.getElementById('mapLink').innerText = `https://she-fairy.github.io/atlas-horizon/map.html?id=${mapId}&user=${user}`;
                 window.mapMaker.draw();
-                window.mapMaker.existingMap = false;
             })
             .catch(error => {
                 console.error('Error loading map:', error);
