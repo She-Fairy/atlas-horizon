@@ -194,7 +194,7 @@ class FenceLogicHandler {
 }
 
 export class MapMaker {
-    constructor(canvasId, headless = false, existingMap = false) {
+    constructor(canvasId, headless = false) {
         if (typeof canvasId === 'string') {
             this.canvas = document.getElementById(canvasId);
         } else {
@@ -208,7 +208,7 @@ export class MapMaker {
         this.canvas.onload = () => this.centerCanvas();
 
         this.headless = headless;
-        this.existingMap = existingMap;
+        this.existingMap = false;
         this.ctx = this.canvas.getContext('2d');
         this.tileSize = 32;
         this.canvasPadding = 16;  // Add padding for the canvas
@@ -1509,7 +1509,7 @@ export class MapMaker {
         try {
             await this.loadEnvironmentBackgrounds();
             await this.loadTileImages();
-            if (this.headless || this.existingMap) return;
+            if (this.headless) return;
             await this.setGamemode(this.gamemode);
         } catch (error) {
             console.error('Error initializing MapMaker:', error);
@@ -3990,6 +3990,7 @@ export class MapMaker {
     }
 
     applyDefaultLayoutIfEmpty() {
+        if (this.existingMap) return;
         const { mapWidth, mapHeight } = this;
         const midX = Math.floor(mapWidth / 2);
         const topY = 0;
@@ -4683,7 +4684,7 @@ export class MapMaker {
 }
 
 window.addEventListener('load', () => {
-    window.mapMaker = new MapMaker('mapCanvas', false, true);
+    window.mapMaker = new MapMaker('mapCanvas');
     const urlParams = new URLSearchParams(window.location.search);
     const mapId = urlParams.get('id') || null;
     const user = urlParams.get('user') || null;
@@ -4693,6 +4694,7 @@ window.addEventListener('load', () => {
             .then(async data => {
                 if (!data) return alert('Map not found.');
 
+                Window.mapMaker.existingMap = true;
                 const sizeKey = data.size;  // e.g. "regular"
                 const newSize  = window.mapMaker.mapSizes[sizeKey];
                 window.mapMaker.gamemode = data.gamemode;
@@ -4714,6 +4716,7 @@ window.addEventListener('load', () => {
                 await window.mapMaker.setGamemode(data.gamemode, false);
                 document.getElementById('mapLink').innerText = `https://she-fairy.github.io/atlas-horizon/map.html?id=${mapId}&user=${user}`;
                 window.mapMaker.draw();
+                window.Mapmaker.existingMap = false;
             })
             .catch(error => {
                 console.error('Error loading map:', error);
