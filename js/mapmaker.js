@@ -4684,7 +4684,7 @@ export class MapMaker {
 }
 
 window.addEventListener('load', () => {
-    window.mapMaker = new MapMaker('mapCanvas');
+    window.mapMaker = new MapMaker('mapCanvas', false, true);
     const urlParams = new URLSearchParams(window.location.search);
     const mapId = urlParams.get('id') || null;
     const user = urlParams.get('user') || null;
