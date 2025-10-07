@@ -3990,6 +3990,7 @@ export class MapMaker {
     }
 
     applyDefaultLayoutIfEmpty() {
+        console.trace('applyDefaultLayoutIfEmpty triggered');
         if (this.existingMap) return;
         const { mapWidth, mapHeight } = this;
         const midX = Math.floor(mapWidth / 2);
