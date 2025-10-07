@@ -194,7 +194,7 @@ class FenceLogicHandler {
 }
 
 export class MapMaker {
-    constructor(canvasId, headless = false) {
+    constructor(canvasId, headless = false, existingMap = false) {
         if (typeof canvasId === 'string') {
             this.canvas = document.getElementById(canvasId);
         } else {
@@ -1508,7 +1508,7 @@ export class MapMaker {
         try {
             await this.loadEnvironmentBackgrounds();
             await this.loadTileImages();
-            if (this.headless) return;
+            if (this.headless || existingMap) return;
             await this.setGamemode(this.gamemode);
         } catch (error) {
             console.error('Error initializing MapMaker:', error);
@@ -4703,7 +4703,6 @@ window.addEventListener('load', () => {
                 window.mapMaker.updateCanvasSize();
                 window.mapMaker.fitMapToScreen();
 
-                window.mapMaker.setEnvironment(data.environment);
                 await window.mapMaker.setEnvironment(data.environment);
 
                 document.getElementById('mapName').value = data.name;
