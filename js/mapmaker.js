@@ -208,6 +208,7 @@ export class MapMaker {
         this.canvas.onload = () => this.centerCanvas();
 
         this.headless = headless;
+        this.existingMap = existingMap;
         this.ctx = this.canvas.getContext('2d');
         this.tileSize = 32;
         this.canvasPadding = 16;  // Add padding for the canvas
@@ -1508,7 +1509,7 @@ export class MapMaker {
         try {
             await this.loadEnvironmentBackgrounds();
             await this.loadTileImages();
-            if (this.headless || existingMap) return;
+            if (this.headless || this.existingMap) return;
             await this.setGamemode(this.gamemode);
         } catch (error) {
             console.error('Error initializing MapMaker:', error);
@@ -4682,7 +4683,7 @@ export class MapMaker {
 }
 
 window.addEventListener('load', () => {
-    window.mapMaker = new MapMaker('mapCanvas');
+    window.mapMaker = new MapMaker('mapCanvas', false, true);
     const urlParams = new URLSearchParams(window.location.search);
     const mapId = urlParams.get('id') || null;
     const user = urlParams.get('user') || null;
