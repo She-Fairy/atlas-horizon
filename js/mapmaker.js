@@ -3969,8 +3969,8 @@ export class MapMaker {
         // SHOWDOWN MAP - Brawl Ball
         if (this.mapSize === this.mapSizes.showdown && isBrawl) {
             this.goalImages.push(
-            { name: 'goal5v5Blue', x: 11, y: middleY - 8, w: 3, h: 16, offsetX: -10, offsetY: -8 },
-            { name: 'goal5v5Red',  x: this.mapWidth - 14, y: middleY - 8, w: 3, h: 16, offsetX:  10, offsetY: -8 }
+            { name: 'goal5v5Blue', x: 11, y: middleY - 8.18, w: 3, h: 15.69, offsetX: -10, offsetY: -8 },
+            { name: 'goal5v5Red',  x: this.mapWidth - 14, y: middleY - 8.18, w: 3, h: 15.69, offsetX:  10, offsetY: -8 }
             );
 
             // ← add this:
