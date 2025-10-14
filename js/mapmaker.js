@@ -490,7 +490,7 @@ export class MapMaker {
                 'Gem_Grab': [2.7, 2.376, -85, -70, 1, 10],
             },
             Super_City_2: {
-                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
+                'Gem_Grab': [2.7, 2.000, -85, -38, 1, 10],
             },
             Spongebob: {
                 'Gem_Grab': [2.4, 2.4, -44, -90, 1, 10],
