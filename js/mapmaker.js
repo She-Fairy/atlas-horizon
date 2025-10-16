@@ -2558,37 +2558,7 @@ export class MapMaker {
                 return;
             }
 
-        } else if (tileId === 59) {
-            // Robust check: Only try to draw BFence if allowed in this environment
-            const def = this.tileDefinitions[tileId];
-            if (!def.showInEnvironment || !def.showInEnvironment.includes(this.environment)) {
-                // Do not attempt to load or draw BFence if not supported in this environment
-                return;
-            }
-            
-            const imagePath = `Resources/${this.environment}/Tiles/Bush2.png`;
-            
-            img = this.tileImages[imagePath];
-            
-            if (!img) {
-                img = new Image();
-                img.onload = () => this.draw();
-                img.src = imagePath;
-                img.onerror = () => {
-                    console.error(`Failed to load secondary bush image: ${imagePath}`);
-                    // Load fallback image
-                    img.src = `Resources/${this.environment}/Tiles/Bush.png`;
-                };
-                this.tileImages[imagePath] = img;
-            }
-            
-            if (!img.complete || img.naturalWidth === 0) {
-                // Wait for image to load before drawing
-                img.onload = () => {
-                    this.drawTile(this.ctx, tileId, x, y); // Or whatever your method is to redraw that tile
-                };
-                return;
-            }
+
 
         } else if (tileId === 45) {
             // Robust check: Only try to draw BFence if allowed in this environment
