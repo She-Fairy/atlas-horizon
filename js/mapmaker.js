@@ -1289,7 +1289,7 @@ export class MapMaker {
             10: { name: 'Skull', img: '${env}/Tiles/Skull.png', size: 1 },
             11: { name: 'Unbreakable', img: 'Global/Unbreakable.png', size: 1 },
              12: { name: 'Blue Spawn', size: 1, getImg: (gamemode) => {
-                return { img: gamemode === 'Showdown' || gamemode === 'Trophy_Escape' || gamemode === 'Hunters' || gamemode === 'Drumroll' ? 'Global/Spawns/3.png' : 'Global/Spawns/1.png' }; // Won't use the default spawns for the listed modes
+                return { img: gamemode === 'Showdown' || gamemode === 'Trophy_Escape' || gamemode === 'Hunters' || gamemode === 'Lone_Star' || gamemode === 'Takedown' || gamemode === 'Drumroll' ? 'Global/Spawns/3.png' : 'Global/Spawns/1.png' }; // Won't use the default spawns for the listed modes
             }},
             13: { name: 'Red Spawn', size: 1, getImg: (gamemode) => { // Will Block Red spawns to appear on Trophy_Escape or any blacklisted mode
                 if (gamemode === 'Trophy_Escape' || gamemode === 'Hunters' || gamemode === 'Halloween_Boss' || gamemode === 'Boss_Fight' || gamemode === 'Super_City_Rampage' || gamemode === 'Takedown' || gamemode === 'Robo_Rumble' || gamemode === 'Lone_Star' || gamemode === 'Oni_Hunt' || gamemode === 'Drumroll') return null;
