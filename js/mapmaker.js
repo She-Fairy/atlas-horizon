@@ -381,6 +381,14 @@ export class MapMaker {
             'GodzillaExplosive': [1, 1.8, 0, -51, 1, 5],
             'GodzillaSpawn': [1.7, 1.7, -27.5, -27.5, 0.85, 7],
             'Escape': [3.5, 3.7, -172, -170, 1, 10], // Trophy Escape Portal
+            'HalloweenBoss1': [6.5, 6.5, -275, -275, 1, 10],
+            'HalloweenBoss2': [6.5, 6.5, -275, -275, 1, 10],
+            'HalloweenBoss3': [6.5, 6.5, -275, -275, 1, 10],
+            'HalloweenBoss4': [6.5, 6.5, -275, -275, 1, 10],
+            'HalloweenBoss5': [6.5, 6.5, -275, -275, 1, 10],
+            'OniHunt': [6.5, 6.5, -275, -275, 1, 10],
+            'BossSpawn': [6.5, 6.5, -275, -275, 1, 10],
+            'KaijuBoss': [6.5, 6.5, -275, -275, 1, 10],
         };
 
         // Initialize objective data
@@ -1365,6 +1373,14 @@ export class MapMaker {
             57: { name: 'Bot_Zone', img: 'Global/Objectives/Bot_Zone.png', showInGamemode: ['Trophy_Escape', 'Samurai_Smash'], size: 1},
             58: { name: 'Escape', img: 'Global/Objectives/Escape.png', showInGamemode: 'Trophy_Escape', size: 1},
             59: { name: 'Bush2', img: '${env}/Tiles/Bush2.png', size: 1 },
+            60: { name: 'HalloweenBoss1', img: 'Global/Boss Spawns/HalloweenBoss1.png', showInGamemode: 'Halloween_Boss', size: 1},
+            61: { name: 'HalloweenBoss2', img: 'Global/Boss Spawns/HalloweenBoss2.png', showInGamemode: 'Halloween_Boss', size: 1},
+            62: { name: 'HalloweenBoss3', img: 'Global/Boss Spawns/HalloweenBoss3.png', showInGamemode: 'Halloween_Boss', size: 1},
+            63: { name: 'HalloweenBoss4', img: 'Global/Boss Spawns/HalloweenBoss4.png', showInGamemode: 'Halloween_Boss', size: 1},
+            64: { name: 'HalloweenBoss5', img: 'Global/Boss Spawns/HalloweenBoss5.png', showInGamemode: 'Halloween_Boss', size: 1},
+            65: { name: 'OniHunt', img: 'Global/Boss Spawns/OniHunt.png', showInGamemode: ['Halloween_Boss', 'Oni_Hunt',], size: 1},
+            66: { name: 'KaijuBoss', img: 'Global/Boss Spawns/KaijuBoss.png', showInGamemode: 'Super_City_Rampage', size: 1},
+            67: { name: 'BossSpawn', img: 'Global/Boss Spawns/BossSpawn.png', showInGamemode: ['Boss_Fight', 'Takedown',], size: 1},
         };
 
         // Initialize water tile filenames
@@ -2291,7 +2307,8 @@ export class MapMaker {
         const tileOrder = [
             'Wall', 'Wall2', 'Crate', 'Barrel', 'Cactus', 'Bush', 'Bush2', 'Fence', 'Skull', 'Rope Fence', 'BFence', 'Water', 'Unbreakable',
             'Blue Spawn', 'Blue Respawn', 'Red Spawn', 'Red Respawn', 'Trio Spawn', 'Objective', 'Box', 'Bumper', 'Bolt', 'TokenBlue', 'TokenRed', 'Boss Zone', 'Monster Zone', 'Track', 'Bot_Zone',
-            'Base Ike Blue', 'Base Ike Red', 'Small Ike Blue', 'Small Ike Red',
+            'HalloweenBoss1', 'HalloweenBoss2', 'HalloweenBoss3', 'HalloweenBoss4', 'HalloweenBoss5', 'OniHunt', 'BossSpawn', 'KaijuBoss',
+			'Base Ike Blue', 'Base Ike Red', 'Small Ike Blue', 'Small Ike Red',
             'GodzillaCity1', 'GodzillaCity2', 'GodzillaCity3', 'GodzillaCity4', 'GodzillaExplosive', 'GodzillaSpawn', 'Escape',
             'TNT', /*'UnbreakableBrick',*/ 'Speed Tile','Slow Tile', 'Spikes', 'Heal Pad', 'Smoke', 'Ice', 'Snow',
             'Jump R', 'Jump L', 'Jump T', 'Jump B',
