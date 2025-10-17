@@ -287,7 +287,6 @@ export class MapMaker {
         this.tileData = {
             'Wall': [1, 1.75, 0, -50, 1, 5],
             'Bush': [1, 1.8, 0, -51, 1, 5],
-            'Bush2': [1, 1.8, 0, -51, 1, 5],
             'Wall2': [1, 1.75, 0, -50, 1, 5],
             'Crate': [1, 1.8, 0, -51, 1, 5],
             'Barrel': [1, 1.69, 0, -42.5, 1, 5],
@@ -560,7 +559,6 @@ export class MapMaker {
             Super_City: {
                 'Barrel': [1, 1.81, 0, -51, 1, 5],
                 'Bush': [1.1, 1.81, -6, -53, 1, 5],
-                'Bush2': [1.1, 1.81, -6, -53, 1, 5],
                 'Skull': [1, 1.3, 0, -3, 1, 5],
                 '0001': [1 / 1.39, 1.39 / 1.39, 15, -28, 1, 5],
                 '0010': [1, 1.85, 0, -55, 1, 5],
@@ -591,7 +589,6 @@ export class MapMaker {
             },
             Castle_Courtyard: {
                 'Bush': [1, 1.75, 0, -50, 1, 5],
-                'Bush2': [1, 1.75, 0, -50, 1, 5],
                 'Cactus': [1, 1.64, 0, -45, 1, 5],
                 'Skull': [1, 1.28, 0, -25, 1, 5],
                 'Crate': [1, 1.75, 0, -55, 1, 5],
@@ -1004,7 +1001,6 @@ export class MapMaker {
                 'Barrel': [1, 1.7, 0, -49, 1, 5],
                 'Cactus': [1.2, 1.89, -10, -59, 1, 5.5],
                 'Bush': [1.05, 1.9, -2, -58, 1, 5],
-                'Bush2': [1.05, 1.9, -2, -58, 1, 5],
                 'Skull': [1, 1.5, 0, -22, 1, 5],
                 'Fence': [1, 1.61, 0, -40, 1, 5],
                 'Horizontal': [1, 1.2, 0, -15, 1, 5],
@@ -1176,7 +1172,6 @@ export class MapMaker {
                 'Barrel': [1, 1.8, 0, -46, 1, 5],
                 'Cactus': [0.93, 1.5, 4, -43, 1, 5],
                 'Bush': [1, 1.75, 0, -51, 1, 5],
-                'Bush2': [1, 1.75, 0, -51, 1, 5],
                 'Skull': [1.1, 1.75, -3, -43, 1, 5],
                 '0001': [0.76, 1.2, 10, -30, 1, 5],
                 '0010': [1, 1.70, 0, -55, 1, 5],
@@ -1253,7 +1248,6 @@ export class MapMaker {
             Fighting_Game: {
                 'Cactus': [1.18, 1.85, -9, -60, 1, 5.5],
                 'Bush': [1, 1.75, 0, -50, 1, 5],
-                'Bush2': [1, 1.75, 0, -50, 1, 5],
                 'Skull': [1, 1.7, 0, -49, 1, 5],
                 'Barrel': [1, 1.75, 0, -50, 1, 5],
                 'Post': [1*0.6, 2.83*0.6, 20, -50, 1, 5],
@@ -1372,15 +1366,14 @@ export class MapMaker {
             56: { name: 'GodzillaSpawn', img: 'Global/Godzilla Tiles/GodzillaSpawn.png', showInGamemode: 'Godzilla_City_Smash', size: 1},
             57: { name: 'Bot_Zone', img: 'Global/Objectives/Bot_Zone.png', showInGamemode: ['Trophy_Escape', 'Samurai_Smash'], size: 1},
             58: { name: 'Escape', img: 'Global/Objectives/Escape.png', showInGamemode: 'Trophy_Escape', size: 1},
-            59: { name: 'Bush2', img: '${env}/Tiles/Bush2.png', size: 1 },
-            60: { name: 'HalloweenBoss1', img: 'Global/Boss Spawns/HalloweenBoss1.png', showInGamemode: 'Halloween_Boss', size: 1},
-            61: { name: 'HalloweenBoss2', img: 'Global/Boss Spawns/HalloweenBoss2.png', showInGamemode: 'Halloween_Boss', size: 1},
-            62: { name: 'HalloweenBoss3', img: 'Global/Boss Spawns/HalloweenBoss3.png', showInGamemode: 'Halloween_Boss', size: 1},
-            63: { name: 'HalloweenBoss4', img: 'Global/Boss Spawns/HalloweenBoss4.png', showInGamemode: 'Halloween_Boss', size: 1},
-            64: { name: 'HalloweenBoss5', img: 'Global/Boss Spawns/HalloweenBoss5.png', showInGamemode: 'Halloween_Boss', size: 1},
-            65: { name: 'OniHunt', img: 'Global/Boss Spawns/OniHunt.png', showInGamemode: ['Halloween_Boss', 'Oni_Hunt',], size: 1},
-            66: { name: 'KaijuBoss', img: 'Global/Boss Spawns/KaijuBoss.png', showInGamemode: 'Super_City_Rampage', size: 1},
-            67: { name: 'BossSpawn', img: 'Global/Boss Spawns/BossSpawn.png', showInGamemode: ['Boss_Fight', 'Takedown',], size: 1},
+            59: { name: 'HalloweenBoss1', img: 'Global/Boss Spawns/HalloweenBoss1.png', showInGamemode: 'Halloween_Boss', size: 1},
+            60: { name: 'HalloweenBoss2', img: 'Global/Boss Spawns/HalloweenBoss2.png', showInGamemode: 'Halloween_Boss', size: 1},
+            61: { name: 'HalloweenBoss3', img: 'Global/Boss Spawns/HalloweenBoss3.png', showInGamemode: 'Halloween_Boss', size: 1},
+            62: { name: 'HalloweenBoss4', img: 'Global/Boss Spawns/HalloweenBoss4.png', showInGamemode: 'Halloween_Boss', size: 1},
+            63: { name: 'HalloweenBoss5', img: 'Global/Boss Spawns/HalloweenBoss5.png', showInGamemode: 'Halloween_Boss', size: 1},
+            64: { name: 'OniHunt', img: 'Global/Boss Spawns/OniHunt.png', showInGamemode: ['Halloween_Boss', 'Oni_Hunt',], size: 1},
+            65: { name: 'KaijuBoss', img: 'Global/Boss Spawns/KaijuBoss.png', showInGamemode: 'Super_City_Rampage', size: 1},
+            66: { name: 'BossSpawn', img: 'Global/Boss Spawns/BossSpawn.png', showInGamemode: ['Boss_Fight', 'Takedown',], size: 1},
         };
 
         // Initialize water tile filenames
@@ -2305,7 +2298,7 @@ export class MapMaker {
 
         // Define the order of tiles
         const tileOrder = [
-            'Wall', 'Wall2', 'Crate', 'Barrel', 'Cactus', 'Bush', 'Bush2', 'Fence', 'Skull', 'Rope Fence', 'BFence', 'Water', 'Unbreakable',
+            'Wall', 'Wall2', 'Crate', 'Barrel', 'Cactus', 'Bush', 'Fence', 'Skull', 'Rope Fence', 'BFence', 'Water', 'Unbreakable',
             'Blue Spawn', 'Blue Respawn', 'Red Spawn', 'Red Respawn', 'Trio Spawn', 'Objective', 'Box', 'Bumper', 'Bolt', 'TokenBlue', 'TokenRed', 'Boss Zone', 'Monster Zone', 'Track', 'Bot_Zone',
             'HalloweenBoss1', 'HalloweenBoss2', 'HalloweenBoss3', 'HalloweenBoss4', 'HalloweenBoss5', 'OniHunt', 'BossSpawn', 'KaijuBoss',
 			'Base Ike Blue', 'Base Ike Red', 'Small Ike Blue', 'Small Ike Red',
@@ -2563,38 +2556,6 @@ export class MapMaker {
                     console.error(`Failed to load track image: ${imagePath}`);
                     // Load fallback image
                     img.src = `Resources/Global/Arena/Track/Blue/Fence.png`;
-                };
-                this.tileImages[imagePath] = img;
-            }
-            
-            if (!img.complete || img.naturalWidth === 0) {
-                // Wait for image to load before drawing
-                img.onload = () => {
-                    this.drawTile(this.ctx, tileId, x, y); // Or whatever your method is to redraw that tile
-                };
-                return;
-            }
-
-        } else if (tileId === 59) {
-            // Robust check: Only try to draw BFence if allowed in this environment
-            const def = this.tileDefinitions[tileId];
-            if (!def.showInEnvironment || !def.showInEnvironment.includes(this.environment)) {
-                // Do not attempt to load or draw BFence if not supported in this environment
-                return;
-            }
-            
-            const imagePath = `Resources/${this.environment}/Tiles/Bush2.png`;
-            
-            img = this.tileImages[imagePath];
-            
-            if (!img) {
-                img = new Image();
-                img.onload = () => this.draw();
-                img.src = imagePath;
-                img.onerror = () => {
-                    console.error(`Failed to load secondary bush image: ${imagePath}`);
-                    // Load fallback image
-                    img.src = `Resources/${this.environment}/Tiles/Bush.png`;
                 };
                 this.tileImages[imagePath] = img;
             }
