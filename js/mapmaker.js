@@ -416,19 +416,19 @@ export class MapMaker {
         // Initialize environment data
         this.environmentObjectiveData = {
             City: {
-                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
+                'Gem_Grab': [2.4, 2.54, -56, -78, 1, 10],
             },
             Retropolis: {
-                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
+                'Gem_Grab': [2.4, 2.54, -56, -78, 1, 10],
             },
             Pirate_Ship: {
-                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
+                'Gem_Grab': [2.13, 2.50, -56, -65, 1, 10],
             },
             Arcade: {
-                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
+                'Gem_Grab': [2.4, 2.54, -56, -78, 1, 10],
             },
             Bazaar: {
-                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
+                'Gem_Grab': [2.4, 2.54, -56, -78, 1, 10],
             },
             Super_City: {
                 'Gem_Grab': [2.3, 2.4, -69, -60, 1, 10],
@@ -438,35 +438,35 @@ export class MapMaker {
                 'Gem_Grab': [2.7, 2.376, -85, -70, 1, 10],
             },
             Bandstand: {
-                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
+                'Gem_Grab': [2.4, 2.54, -56, -78, 1, 10],
             },
             Snowtel: {
-                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
+                'Gem_Grab': [2.4, 2.54, -56, -78, 1, 10],
             },
             Starr_Force: {
                 'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
             },
             Water_Park: {
-                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
+                'Gem_Grab': [2.4, 2.54, -56, -78, 1, 10],
             },
             Castle_Courtyard: {
-                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
+                'Gem_Grab': [2.4, 2.54, -56, -78, 1, 10],
             },
             Brawlywood: {
-                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
+                'Gem_Grab': [2.4, 2.54, -56, -78, 1, 10],
             },
             Fighting_Game: {
-                'Gem_Grab': [2*1.1, 2.09*1.1, -55, -60, 1, 10],
+                'Gem_Grab': [2.42, 2.54, -54, -76, 1, 10],
                 'Heist': [2*0.9, 3.56*0.9, -37.5, -175, 1, 10],
             },
             Biodome: {
                 'Gem_Grab': [2.4, 2.5, -65, -78, 1, 10],
             },
             Stunt_Show: {
-                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
+                'Gem_Grab': [2.18, 2.42, -59, -60, 1, 10],
             },
             Deep_Sea: {
-                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
+                'Gem_Grab': [2.18, 2.42, -59, -60, 1, 10],
                 'Heist': [2 * 1.2, 3.56 * 0.9, -75, -190, 1, 10],
 				'Paint_Brawl': [1.7, 2.5, -30, -75, 1, 10],
             },
@@ -474,7 +474,7 @@ export class MapMaker {
                 'Gem_Grab': [2.7, 2.376, -85, -70, 1, 10],
             },
             Candyland: {
-                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
+                'Gem_Grab': [2.4, 2.54, -56, -78, 1, 10],
             },
             The_Hub: {
                 'Gem_Grab': [2.4, 2.4, -64, -70, 1, 10],
@@ -488,11 +488,14 @@ export class MapMaker {
             Circus: {
                 'Gem_Grab': [2, 2.4, -48, -50, 1, 10],
             },
+            Coin_Factory: {
+                'Gem_Grab': [2.18, 2.42, -59, -60, 1, 10],
+            },
             Starr_Toon: {
-                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
+                'Gem_Grab': [2.18, 2.42, -59, -60, 1, 10],
             },
             Swamp_of_Love: {
-                'Gem_Grab': [2*1.1, 2.09*1.1, -55, -60, 1, 10]
+                'Gem_Grab': [2.5, 2.64, -58, -95, 1, 10],
             },
             Medieval_Manor: {
                 'Gem_Grab': [2.7, 2.376, -85, -70, 1, 10],
