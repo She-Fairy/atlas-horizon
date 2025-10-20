@@ -59,6 +59,7 @@ const FENCE_LOGIC_BY_ENVIRONMENT = {
     'Tropical_Island': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
     'Brawl_Arena': FENCE_LOGIC_TYPES.SIX_PIECE,
     'Subway_Surfers': FENCE_LOGIC_TYPES.BINARY_CODE,
+    'Subway_Rails': FENCE_LOGIC_TYPES.SIX_PIECE,
 };
 
 const BORDER_FENCE_LOGIC_BY_ENVIRONMENT = {
@@ -287,6 +288,7 @@ export class MapMaker {
         this.tileData = {
             'Wall': [1, 1.75, 0, -50, 1, 5],
             'Bush': [1, 1.8, 0, -51, 1, 5],
+            'Bush2': [1, 1.8, 0, -51, 1, 5],
             'Wall2': [1, 1.75, 0, -50, 1, 5],
             'Crate': [1, 1.8, 0, -51, 1, 5],
             'Barrel': [1, 1.69, 0, -42.5, 1, 5],
@@ -388,6 +390,11 @@ export class MapMaker {
             'OniHunt': [6.5, 6.5, -275, -275, 1, 10],
             'BossSpawn': [6.5, 6.5, -275, -275, 1, 10],
             'KaijuBoss': [6.5, 6.5, -275, -275, 1, 10],
+            'SubwayRun1': [1, 0.9, 0, 40, 1, 5],
+            'SubwayRun2': [0.85, 1, 15, 0, 1, 5],
+            'Subway Rails': [1, 1, 0, 0, 1, 2],
+            'IceTile': [1, 1, 0, 0, 1, 5],
+            'SnowTile': [1, 1, 0, 0, 1, 5],
         };
 
         // Initialize objective data
@@ -419,16 +426,16 @@ export class MapMaker {
                 'Gem_Grab': [2.4, 2.54, -56, -78, 1, 10],
             },
             Retropolis: {
-                'Gem_Grab': [2.4, 2.54, -56, -78, 1, 10],
+                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
             },
             Pirate_Ship: {
                 'Gem_Grab': [2.13, 2.50, -56, -65, 1, 10],
             },
             Arcade: {
-                'Gem_Grab': [2.4, 2.54, -56, -78, 1, 10],
+                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
             },
             Bazaar: {
-                'Gem_Grab': [2.4, 2.54, -56, -78, 1, 10],
+                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
             },
             Super_City: {
                 'Gem_Grab': [2.3, 2.4, -69, -60, 1, 10],
@@ -438,22 +445,22 @@ export class MapMaker {
                 'Gem_Grab': [2.7, 2.376, -85, -70, 1, 10],
             },
             Bandstand: {
-                'Gem_Grab': [2.4, 2.54, -56, -78, 1, 10],
+                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
             },
             Snowtel: {
-                'Gem_Grab': [2.4, 2.54, -56, -78, 1, 10],
+                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
             },
             Starr_Force: {
                 'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
             },
             Water_Park: {
-                'Gem_Grab': [2.4, 2.54, -56, -78, 1, 10],
+                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
             },
             Castle_Courtyard: {
-                'Gem_Grab': [2.4, 2.54, -56, -78, 1, 10],
+                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
             },
             Brawlywood: {
-                'Gem_Grab': [2.4, 2.54, -56, -78, 1, 10],
+                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
             },
             Fighting_Game: {
                 'Gem_Grab': [2.42, 2.54, -54, -76, 1, 10],
@@ -474,7 +481,7 @@ export class MapMaker {
                 'Gem_Grab': [2.7, 2.376, -85, -70, 1, 10],
             },
             Candyland: {
-                'Gem_Grab': [2.4, 2.54, -56, -78, 1, 10],
+                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
             },
             The_Hub: {
                 'Gem_Grab': [2.4, 2.4, -64, -70, 1, 10],
@@ -549,9 +556,9 @@ export class MapMaker {
                 'Barrel': [1, 1.91, 0, -61, 1, 5],
                 'Cactus': [1, 1.71, 0, -48, 1, 5],
                 'Skull': [1, 1.51, 0, -45, 1, 5],
-                'Fence': [1.27, 1.85, -15, -60, 1, 5],
-                'Horizontal': [1.08, 1.54, -5, -30, 1, 5],
-                'Vertical': [1, 1.71, -3, -42, 1, 5],
+                'Fence': [1, 1.63, 0, -55, 1, 5],
+                'Horizontal': [1.1, 1.54, -5, -45, 1, 5],
+                'Vertical': [1, 1.71, 0, -48, 1, 5],
             },
             Bandstand:{
                 'Wall': [1, 1.8, 0, -51, 1, 5],
@@ -703,7 +710,7 @@ export class MapMaker {
             },
             Biodome: {
                 'Barrel': [1, 1.81, 0, -51, 1, 5],
-                'Cactus': [1, 1.9, 0, -61, 1, 5],
+                'Cactus': [1, 1.8, 0, -51, 1, 5],
                 'Skull': [1, 1.5, 0, -25, 1, 5],
                 '0001': [1, 1.6, 0, -55, 1, 5],
                 '0010': [1, 1.8, 0, -56, 1, 5],
@@ -1224,9 +1231,9 @@ export class MapMaker {
             },
             Stadium: {
                 'Cactus': [1, 2.2, 0, -82.5, 1, 5],
-                'Fence': [1.27, 1.85, -15, -60, 1, 5],
-                'Horizontal': [1.08, 1.54, -5, -30, 1, 5],
-                'Vertical': [1, 1.71, -3, -42, 1, 5],
+                'Fence': [1, 1.63, 0, -55, 1, 5],
+                'Horizontal': [1.1, 1.54, -5, -45, 1, 5],
+                'Vertical': [1, 1.71, 0, -48, 1, 5],
                 'Wall': [1, 1.8, 0, -51, 1, 5],
                 'Wall2': [1, 1.79, 0, -51, 1, 5],
                 'Barrel': [1, 1.81, 0, -51, 1, 5],
@@ -1286,10 +1293,10 @@ export class MapMaker {
             10: { name: 'Skull', img: '${env}/Tiles/Skull.png', size: 1 },
             11: { name: 'Unbreakable', img: 'Global/Unbreakable.png', size: 1 },
              12: { name: 'Blue Spawn', size: 1, getImg: (gamemode) => {
-                return { img: gamemode === 'Showdown' || gamemode === 'Trophy_Escape' || gamemode === 'Hunters' || gamemode === 'Lone_Star' || gamemode === 'Takedown' || gamemode === 'Drumroll' ? 'Global/Spawns/3.png' : 'Global/Spawns/1.png' }; // Won't use the default spawns for the listed modes
+                return { img: gamemode === 'Showdown' || gamemode === 'Trophy_Escape' || gamemode === 'Hunters' || gamemode ==='Subway_Run' || gamemode === 'Drumroll' ? 'Global/Spawns/3.png' : 'Global/Spawns/1.png' }; // Won't use the default spawns for the listed modes
             }},
             13: { name: 'Red Spawn', size: 1, getImg: (gamemode) => { // Will Block Red spawns to appear on Trophy_Escape or any blacklisted mode
-                if (gamemode === 'Trophy_Escape' || gamemode === 'Hunters' || gamemode === 'Halloween_Boss' || gamemode === 'Boss_Fight' || gamemode === 'Super_City_Rampage' || gamemode === 'Takedown' || gamemode === 'Robo_Rumble' || gamemode === 'Lone_Star' || gamemode === 'Oni_Hunt' || gamemode === 'Drumroll') return null;
+                if (gamemode === 'Trophy_Escape' || gamemode === 'Hunters' || gamemode ==='Halloween_Boss' || gamemode ==='Subway_Run' || gamemode === 'Drumroll') return null;
                 return { img: gamemode === 'Showdown' ? 'Global/Spawns/4.png' : 'Global/Spawns/2.png' };
             }},
             14: { name: 'Objective', size: 1, getImg: (gamemode, y, mapHeight, environment) => {
@@ -1369,14 +1376,18 @@ export class MapMaker {
             56: { name: 'GodzillaSpawn', img: 'Global/Godzilla Tiles/GodzillaSpawn.png', showInGamemode: 'Godzilla_City_Smash', size: 1},
             57: { name: 'Bot_Zone', img: 'Global/Objectives/Bot_Zone.png', showInGamemode: ['Trophy_Escape', 'Samurai_Smash'], size: 1},
             58: { name: 'Escape', img: 'Global/Objectives/Escape.png', showInGamemode: 'Trophy_Escape', size: 1},
-            59: { name: 'HalloweenBoss1', img: 'Global/Boss Spawns/HalloweenBoss1.png', showInGamemode: 'Halloween_Boss', size: 1},
-            60: { name: 'HalloweenBoss2', img: 'Global/Boss Spawns/HalloweenBoss2.png', showInGamemode: 'Halloween_Boss', size: 1},
-            61: { name: 'HalloweenBoss3', img: 'Global/Boss Spawns/HalloweenBoss3.png', showInGamemode: 'Halloween_Boss', size: 1},
-            62: { name: 'HalloweenBoss4', img: 'Global/Boss Spawns/HalloweenBoss4.png', showInGamemode: 'Halloween_Boss', size: 1},
-            63: { name: 'HalloweenBoss5', img: 'Global/Boss Spawns/HalloweenBoss5.png', showInGamemode: 'Halloween_Boss', size: 1},
-            64: { name: 'OniHunt', img: 'Global/Boss Spawns/OniHunt.png', showInGamemode: ['Halloween_Boss', 'Oni_Hunt',], size: 1},
-            65: { name: 'KaijuBoss', img: 'Global/Boss Spawns/KaijuBoss.png', showInGamemode: 'Super_City_Rampage', size: 1},
-            66: { name: 'BossSpawn', img: 'Global/Boss Spawns/BossSpawn.png', showInGamemode: ['Boss_Fight', 'Takedown',], size: 1},
+            59: { name: 'Bush2', img: '${env}/Tiles/Bush2.png', size: 1 },
+            60: { name: 'HalloweenBoss1', img: 'Global/Boss Spawns/HalloweenBoss1.png', showInGamemode: 'Halloween_Boss', size: 1},
+            61: { name: 'HalloweenBoss2', img: 'Global/Boss Spawns/HalloweenBoss2.png', showInGamemode: 'Halloween_Boss', size: 1},
+            62: { name: 'HalloweenBoss3', img: 'Global/Boss Spawns/HalloweenBoss3.png', showInGamemode: 'Halloween_Boss', size: 1},
+            63: { name: 'HalloweenBoss4', img: 'Global/Boss Spawns/HalloweenBoss4.png', showInGamemode: 'Halloween_Boss', size: 1},
+            64: { name: 'HalloweenBoss5', img: 'Global/Boss Spawns/HalloweenBoss5.png', showInGamemode: 'Halloween_Boss', size: 1},
+            65: { name: 'OniHunt', img: 'Global/Boss Spawns/OniHunt.png', showInGamemode: ['Halloween_Boss', 'Oni_Hunt',], size: 1},
+            66: { name: 'SubwayRun1', img: 'Global/Objectives/SubwayRun1.png', showInGamemode: 'Subway_Run', size: 2 },
+            67: { name: 'SubwayRun2', img: 'Global/Objectives/SubwayRun2.png', showInGamemode: 'Subway_Run', size: 2 },
+            68: { name: 'Subway Rails', img: 'Global/Objectives/Subway Rails/Fence.png', showInGamemode: 'Subway_Run', size: 1},
+            69: { name: 'IceTile', img: 'Global/Special_Tiles/IceTile/00000000.png', size: 1 },
+            70: { name: 'SnowTile', img: 'Global/Special_Tiles/SnowTile/00000000.png', size: 1 },
         };
 
         // Initialize water tile filenames
@@ -1430,8 +1441,6 @@ export class MapMaker {
             "11111111.png"
           ];
           
-          
-        
         // Initialize fence logic handler
         this.fenceLogicHandler = new FenceLogicHandler();
 
@@ -1487,6 +1496,82 @@ export class MapMaker {
             this.tileImages[cacheKey] = img;
             this.tileImagePaths[cacheKey] = imagePath;
         });
+
+        // === ADIÇÃO DE SUPORTE PARA ICE E SNOW TILES ===
+        this.preloadIceAndSnowTiles();
+    }
+
+    // ======================================================
+    // === NOVO CÓDIGO ADICIONADO (SEM MEXER NO SEU ORIGINAL)
+    // ======================================================
+
+    preloadIceAndSnowTiles() {
+        if (!this.tileImages) this.tileImages = {};
+        if (!this.tileImagePaths) this.tileImagePaths = {};
+
+        const tileTypes = [
+            { key: "ice",  path: "Resources/Global/Special_Tiles/IceTile"  },
+            { key: "snow", path: "Resources/Global/Special_Tiles/SnowTile" },
+        ];
+
+        tileTypes.forEach(type => {
+            this.waterTileFilenames.forEach(filename => {
+                const imagePath = `${type.path}/${filename}`;
+                const cacheKey  = `${type.key}_${filename}`;
+
+                if (this.tileImagePaths[cacheKey] === imagePath && this.tileImages[cacheKey]?.complete) {
+                    return;
+                }
+
+                const img = new Image();
+                img.src = imagePath;
+
+                img.onerror = () => {
+                    console.error(`❌ Failed to load ${type.key} tile: ${imagePath}`);
+                    const fallbackPath = `${type.path}/00000000.png`;
+                    img.src = fallbackPath;
+                    this.tileImagePaths[cacheKey] = fallbackPath;
+                };
+
+                this.tileImages[cacheKey]  = img;
+                this.tileImagePaths[cacheKey] = imagePath;
+            });
+        });
+    }
+
+    // === LÓGICA DE CONEXÃO AUTOMÁTICA ENTRE TILES ===
+    getTileConnectionCode(x, y, type) {
+        const neighbors = [
+            [0, -1],  // N
+            [1, -1],  // NE
+            [1, 0],   // E
+            [1, 1],   // SE
+            [0, 1],   // S
+            [-1, 1],  // SW
+            [-1, 0],  // W
+            [-1, -1], // NW
+        ];
+
+        let code = "";
+
+        for (const [dx, dy] of neighbors) {
+            const neighbor = this.getTile(x + dx, y + dy);
+            code += neighbor === type ? "1" : "0";
+        }
+
+        return `${code}.png`;
+    }
+
+    renderTile(x, y, type) {
+        const filename = this.getTileConnectionCode(x, y, type);
+        const key = `${type}_${filename}`;
+        const img = this.tileImages[key];
+
+        if (img && img.complete) {
+            this.ctx.drawImage(img, x * this.tileSize, y * this.tileSize);
+        } else {
+            console.warn(`⚠️ Missing ${type} tile for ${filename}`);
+        }
     }
 
     async preloadGoalImage(name, environment) {
@@ -2301,12 +2386,12 @@ export class MapMaker {
 
         // Define the order of tiles
         const tileOrder = [
-            'Wall', 'Wall2', 'Crate', 'Barrel', 'Cactus', 'Bush', 'Fence', 'Skull', 'Rope Fence', 'BFence', 'Water', 'Unbreakable',
-            'Blue Spawn', 'Blue Respawn', 'Red Spawn', 'Red Respawn', 'Trio Spawn', 'Objective', 'Box', 'Bumper', 'Bolt', 'TokenBlue', 'TokenRed', 'Boss Zone', 'Monster Zone', 'Track', 'Bot_Zone',
-            'HalloweenBoss1', 'HalloweenBoss2', 'HalloweenBoss3', 'HalloweenBoss4', 'HalloweenBoss5', 'OniHunt', 'BossSpawn', 'KaijuBoss',
-			'Base Ike Blue', 'Base Ike Red', 'Small Ike Blue', 'Small Ike Red',
+            'Wall', 'Wall2', 'Crate', 'Barrel', 'Cactus', 'Bush', 'Bush2', 'Fence', 'Skull', 'Rope Fence', 'BFence', 'Water', 'Unbreakable',
+            'Blue Spawn', 'Blue Respawn', 'Red Spawn', 'Red Respawn', 'Trio Spawn', 'Objective', 'Box', 'Bumper', 'Bolt', 'TokenBlue', 'TokenRed', 'Boss Zone', 'Monster Zone', 'Track', 'Bot_Zone', 'SubwayRun1', 'SubwayRun2', 'Subway Rails',
+            'HalloweenBoss1', 'HalloweenBoss2', 'HalloweenBoss3', 'HalloweenBoss4', 'HalloweenBoss5', 'OniHunt',
+            'Base Ike Blue', 'Base Ike Red', 'Small Ike Blue', 'Small Ike Red',
             'GodzillaCity1', 'GodzillaCity2', 'GodzillaCity3', 'GodzillaCity4', 'GodzillaExplosive', 'GodzillaSpawn', 'Escape',
-            'TNT', /*'UnbreakableBrick',*/ 'Speed Tile','Slow Tile', 'Spikes', 'Heal Pad', 'Smoke', 'Ice', 'Snow',
+            'TNT', /*'UnbreakableBrick',*/ 'Speed Tile','Slow Tile', 'Spikes', 'Heal Pad', 'Smoke', 'IceTile', 'SnowTile',
             'Jump R', 'Jump L', 'Jump T', 'Jump B',
             'Jump BR', 'Jump TL', 'Jump BL', 'Jump TR',
             'Teleporter Blue', 'Teleporter Green', 'Teleporter Red', 'Teleporter Yellow'
@@ -2402,7 +2487,27 @@ export class MapMaker {
         if (!def) return;
 
         let img;
-        if (tileId === 8) { // Water tile
+        // === Water, Ice and Snow tiles ===
+        if (tileId === 8 || tileId === 69 || tileId === 70) {
+            // Determinar tipo e caminhos de arquivo
+            let tileType, basePath, cachePrefix;
+
+            if (tileId === 8) {
+                tileType = "Water";
+                basePath = `Resources/${this.environment}/Water`;
+                cachePrefix = `${this.environment}/water_`;
+            } 
+            else if (tileId === 69) {
+                tileType = "IceTile";
+                basePath = `Resources/Global/Special_Tiles/IceTile`;
+                cachePrefix = `global/icetile_`;
+            } 
+            else if (tileId === 70) {
+                tileType = "SnowTile";
+                basePath = `Resources/Global/Special_Tiles/SnowTile`;
+                cachePrefix = `global/snowtile_`;
+            }
+
             // Initialize the 8-bit code array
             const code = new Array(8).fill('0');
             
@@ -2412,11 +2517,19 @@ export class MapMaker {
             const isLeftEdge = x === 0;
             const isRightEdge = x === this.mapWidth - 1;
 
-            // Check direct connections first
-            const hasTop = !isTopEdge && this.mapData[y - 1][x] === 8;
-            const hasBottom = !isBottomEdge && this.mapData[y + 1][x] === 8;
-            const hasLeft = !isLeftEdge && this.mapData[y][x - 1] === 8;
-            const hasRight = !isRightEdge && this.mapData[y][x + 1] === 8;
+            // Same type tile function 
+            const isSameType = (id) => {
+                if (tileId === 8) return id === 8; // Water
+                if (tileId === 69) return id === 69; // Ice
+                if (tileId === 70) return id === 70; // Snow
+                return false;
+            };
+
+            // Check direct connections
+            const hasTop = !isTopEdge && isSameType(this.mapData[y - 1][x]);
+            const hasBottom = !isBottomEdge && isSameType(this.mapData[y + 1][x]);
+            const hasLeft = !isLeftEdge && isSameType(this.mapData[y][x - 1]);
+            const hasRight = !isRightEdge && isSameType(this.mapData[y][x + 1]);
 
             // Set direct connections
             if (hasTop) code[1] = '1';    // Top
@@ -2424,87 +2537,80 @@ export class MapMaker {
             if (hasLeft) code[3] = '1';   // Left
             if (hasRight) code[4] = '1';  // Right
 
-            // Check corner connections with adjacency rules
-            // Top-left corner
+            // Check corners (only if adjacent sides exist)
             if (!isTopEdge && !isLeftEdge && 
-                this.mapData[y - 1][x - 1] === 8 && hasTop && hasLeft) {
-                code[0] = '1';
+                isSameType(this.mapData[y - 1][x - 1]) && hasTop && hasLeft) {
+                code[0] = '1'; // Top-left
             }
 
-            // Top-right corner
             if (!isTopEdge && !isRightEdge && 
-                this.mapData[y - 1][x + 1] === 8 && hasTop && hasRight) {
-                code[2] = '1';
+                isSameType(this.mapData[y - 1][x + 1]) && hasTop && hasRight) {
+                code[2] = '1'; // Top-right
             }
 
-            // Bottom-left corner
             if (!isBottomEdge && !isLeftEdge && 
-                this.mapData[y + 1][x - 1] === 8 && hasBottom && hasLeft) {
-                code[5] = '1';
+                isSameType(this.mapData[y + 1][x - 1]) && hasBottom && hasLeft) {
+                code[5] = '1'; // Bottom-left
             }
 
-            // Bottom-right corner
             if (!isBottomEdge && !isRightEdge && 
-                this.mapData[y + 1][x + 1] === 8 && hasBottom && hasRight) {
-                code[7] = '1';
+                isSameType(this.mapData[y + 1][x + 1]) && hasBottom && hasRight) {
+                code[7] = '1'; // Bottom-right
             }
 
-            // Convert code array to string for image name
+            // Convert code to file name
             const imageName = code.join('') + '.png';
-            const cacheKey = `${this.environment}/water_${imageName}`;
+            const cacheKey = `${cachePrefix}${imageName}`;
             
-            // Get the image from the cache
-            img = this.tileImages[cacheKey];
+            // Search on cache
+            let img = this.tileImages[cacheKey];
             
-            // If image doesn't exist in cache, create it
+            // If don't exist, do
             if (!img) {
-                const imagePath = `Resources/${this.environment}/Water/${imageName}`;
+                const imagePath = `${basePath}/${imageName}`;
                 img = new Image();
                 img.src = imagePath;
                 
-                // Add error handling
+                // Error treatment + fallback image
                 img.onerror = () => {
-                    console.error(`Failed to load water image: ${imagePath}`);
-                    // Try to load a fallback image
-                    img.src = `Resources/${this.environment}/Water/00000000.png`;
+                    console.error(`Failed to load ${tileType} image: ${imagePath}`);
+                    img.src = `${basePath}/00000000.png`;
                 };
                 
-                // Store in cache
+                // Keep on cache
                 this.tileImages[cacheKey] = img;
             }
             
-            // If image isn't loaded yet, draw a placeholder
+            // If the image dont load, generate later
             if (!img.complete || img.naturalWidth === 0) {
-                // Wait for image to load before drawing
                 img.onload = () => {
-                    this.drawTile(this.ctx, tileId, x, y); // Or whatever your method is to redraw that tile
+                    this.drawTile(this.ctx, tileId, x, y);
                 };
                 return;
             }
 
-            // Get water tile dimensions
-            const dimensions = this.environmentTileData[this.environment]?.['Water'] || 
-                             this.tileData['Water'] ||
-                             [1, 1, 0, 0, 1, 5]; // Default dimensions if none specified
+            // Get dimensions by type
+            const dimensions =
+                this.environmentTileData[this.environment]?.[tileType] ||
+                this.tileData[tileType] ||
+                [1, 1, 0, 0, 1, 5]; // default
 
-            // Draw the water tile
             const [scaleX, scaleY, offsetX, offsetY, opacity] = dimensions;
             const tileSize = this.tileSize;
-            
-            // Calculate drawing dimensions
+
+            // Calculate position
             const width = tileSize * scaleX;
             const height = tileSize * scaleY;
-            
-            // Calculate position with offsets and padding
             const drawX = x * tileSize + (tileSize * offsetX / 100) + this.canvasPadding;
             const drawY = y * tileSize + (tileSize * offsetY / 100) + this.canvasPadding;
 
-            // Set opacity and draw the image
+            // Apply opacity and draw
             ctx.globalAlpha = opacity;
             ctx.drawImage(img, drawX, drawY, width, height);
             ctx.globalAlpha = 1.0;
-            
+
             return;
+
         } else if (tileId === 7 || tileId === 9) { // Fence or Rope Fence
             const isFence = tileId === 7;
             const imageName = this.fenceLogicHandler.getFenceImageName(x, y, this.mapData, this.environment, isFence);
@@ -2559,6 +2665,38 @@ export class MapMaker {
                     console.error(`Failed to load track image: ${imagePath}`);
                     // Load fallback image
                     img.src = `Resources/Global/Arena/Track/Blue/Fence.png`;
+                };
+                this.tileImages[imagePath] = img;
+            }
+            
+            if (!img.complete || img.naturalWidth === 0) {
+                // Wait for image to load before drawing
+                img.onload = () => {
+                    this.drawTile(this.ctx, tileId, x, y); // Or whatever your method is to redraw that tile
+                };
+                return;
+            }
+
+        } else if (tileId === 59) {
+            // Robust check: Only try to draw BFence if allowed in this environment
+            const def = this.tileDefinitions[tileId];
+            if (!def.showInEnvironment || !def.showInEnvironment.includes(this.environment)) {
+                // Do not attempt to load or draw BFence if not supported in this environment
+                return;
+            }
+            
+            const imagePath = `Resources/${this.environment}/Tiles/Bush2.png`;
+            
+            img = this.tileImages[imagePath];
+            
+            if (!img) {
+                img = new Image();
+                img.onload = () => this.draw();
+                img.src = imagePath;
+                img.onerror = () => {
+                    console.error(`Failed to load secondary bush image: ${imagePath}`);
+                    // Load fallback image
+                    img.src = `Resources/${this.environment}/Tiles/Bush.png`;
                 };
                 this.tileImages[imagePath] = img;
             }
@@ -3749,7 +3887,7 @@ export class MapMaker {
                 };
             };
 
-            for (let y = 0; y < this.mapHeight; y++) {
+                            for (let y = 0; y < this.mapHeight; y++) {
                 for (let x = 0; x < this.mapWidth; x++) {
                     if (this.mapData[y][x] === 47){
                         let firstRun = true;
