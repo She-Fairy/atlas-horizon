@@ -388,6 +388,11 @@ export class MapMaker {
             'OniHunt': [6.5, 6.5, -275, -275, 1, 10],
             'BossSpawn': [6.5, 6.5, -275, -275, 1, 10],
             'KaijuBoss': [6.5, 6.5, -275, -275, 1, 10],
+            //'SubwayRun1': [1, 0.9, 0, 40, 1, 5],
+            //'SubwayRun2': [0.85, 1, 15, 0, 1, 5],
+            //'Subway Rails': [1, 1, 0, 0, 1, 2],
+            'IceTile': [1, 1, 0, 0, 1, 5],
+            'SnowTile': [1, 1, 0, 0, 1, 5],
         };
 
         // Initialize objective data
@@ -1377,6 +1382,11 @@ export class MapMaker {
             64: { name: 'OniHunt', img: 'Global/Boss Spawns/OniHunt.png', showInGamemode: ['Halloween_Boss', 'Oni_Hunt',], size: 1},
             65: { name: 'KaijuBoss', img: 'Global/Boss Spawns/KaijuBoss.png', showInGamemode: 'Super_City_Rampage', size: 1},
             66: { name: 'BossSpawn', img: 'Global/Boss Spawns/BossSpawn.png', showInGamemode: ['Boss_Fight', 'Takedown',], size: 1},
+            //67: { name: 'SubwayRun1', img: 'Global/Objectives/SubwayRun1.png', showInGamemode: 'Subway_Run', size: 2 },
+            //68: { name: 'SubwayRun2', img: 'Global/Objectives/SubwayRun2.png', showInGamemode: 'Subway_Run', size: 2 },
+            69: { name: 'IceTile', img: 'Global/Special_Tiles/IceTile/00000000.png', size: 1 },
+            70: { name: 'SnowTile', img: 'Global/Special_Tiles/SnowTile/00000000.png', size: 1 },
+            //71: { name: 'Subway Rails', img: 'Global/Objectives/Subway Rails/Fence.png', showInGamemode: 'Subway_Run', size: 1},
         };
 
         // Initialize water tile filenames
