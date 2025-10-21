@@ -395,6 +395,8 @@ export class MapMaker {
             'Subway Rails': [1, 1, 0, 0, 1, 2],
             'IceTile': [1, 1, 0, 0, 1, 5],
             'SnowTile': [1, 1, 0, 0, 1, 5],
+            'TreasurePad1': [2.1, 2.21, -53, -53, 1, 7],
+            'TreasurePad2': [2.1, 2.21, -53, -53, 1, 7],
         };
 
         // Initialize objective data
@@ -1388,6 +1390,8 @@ export class MapMaker {
             68: { name: 'Subway Rails', img: 'Global/Objectives/Subway Rails/Fence.png', showInGamemode: 'Subway_Run', size: 1},
             69: { name: 'IceTile', img: 'Global/Special_Tiles/IceTile/00000000.png', size: 1 },
             70: { name: 'SnowTile', img: 'Global/Special_Tiles/SnowTile/00000000.png', size: 1 },
+            71: { name: 'TreasurePad1', img: 'Global/Objectives/TreasurePad1.png', showInGamemode: 'Treasure_Hunt', size: 1},
+            72: { name: 'TreasurePad2', img: 'Global/Objectives/TreasurePad2.png', showInGamemode: 'Treasure_Hunt', size: 1},
         };
 
         // Initialize water tile filenames
@@ -2387,7 +2391,7 @@ export class MapMaker {
         // Define the order of tiles
         const tileOrder = [
             'Wall', 'Wall2', 'Crate', 'Barrel', 'Cactus', 'Bush', 'Fence', 'Skull', 'Rope Fence', 'BFence', 'Water', 'Unbreakable',
-            'Blue Spawn', 'Blue Respawn', 'Red Spawn', 'Red Respawn', 'Trio Spawn', 'Objective', 'Box', 'Bumper', 'Bolt', 'TokenBlue', 'TokenRed', 'Boss Zone', 'Monster Zone', 'Track', 'Bot_Zone', 'SubwayRun1', 'SubwayRun2', 'Subway Rails',
+            'Blue Spawn', 'Blue Respawn', 'Red Spawn', 'Red Respawn', 'Trio Spawn', 'Objective', 'Box', 'Bumper', 'Bolt', 'TokenBlue', 'TokenRed', 'Boss Zone', 'Monster Zone', 'Track', 'Bot_Zone', 'SubwayRun1', 'SubwayRun2', 'Subway Rails','TreasurePad1','TreasurePad2',
             'HalloweenBoss1', 'HalloweenBoss2', 'HalloweenBoss3', 'HalloweenBoss4', 'HalloweenBoss5', 'OniHunt',
             'Base Ike Blue', 'Base Ike Red', 'Small Ike Blue', 'Small Ike Red',
             'GodzillaCity1', 'GodzillaCity2', 'GodzillaCity3', 'GodzillaCity4', 'GodzillaExplosive', 'GodzillaSpawn', 'Escape',
