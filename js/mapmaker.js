@@ -59,7 +59,8 @@ const FENCE_LOGIC_BY_ENVIRONMENT = {
     'Tropical_Island': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
     'Brawl_Arena': FENCE_LOGIC_TYPES.SIX_PIECE,
     'Subway_Surfers': FENCE_LOGIC_TYPES.BINARY_CODE,
-    'Subway_Rails': FENCE_LOGIC_TYPES.SIX_PIECE,
+    'Rails': FENCE_LOGIC_TYPES.SIX_PIECE,
+    'Stranger_Things': FENCE_LOGIC_TYPES.BINARY_CODE,
 };
 
 const BORDER_FENCE_LOGIC_BY_ENVIRONMENT = {
@@ -72,6 +73,7 @@ const BORDER_FENCE_LOGIC_BY_ENVIRONMENT = {
     'Katana_Kingdom': FENCE_LOGIC_TYPES.BINARY_CODE,
     'Tropical_Island': FENCE_LOGIC_TYPES.BINARY_CODE,
     'Subway_Surfers': FENCE_LOGIC_TYPES.BINARY_CODE,
+    'Stranger_Things': FENCE_LOGIC_TYPES.BINARY_CODE,
 };
 
 class FenceLogicHandler {
@@ -392,7 +394,7 @@ export class MapMaker {
             'KaijuBoss': [6.5, 6.5, -275, -275, 1, 10],
             'SubwayRun1': [1, 0.9, 0, 40, 1, 5],
             'SubwayRun2': [0.85, 1, 15, 0, 1, 5],
-            'Subway Rails': [1, 1, 0, 0, 1, 2],
+            'Rails': [1, 1, 0, 0, 1, 2],
             'IceTile': [1, 1, 0, 0, 1, 5],
             'SnowTile': [1, 1, 0, 0, 1, 5],
             'TreasurePad1': [2.1, 2.21, -53, -53, 1, 7],
@@ -426,6 +428,9 @@ export class MapMaker {
         this.environmentObjectiveData = {
             City: {
                 'Gem_Grab': [2.4, 2.54, -56, -78, 1, 10],
+            },
+            Mortuary: {
+				'Volley_Brawl': [1.7, 1.7, -36, -30, 1, 10],
             },
             Retropolis: {
                 'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
@@ -530,6 +535,9 @@ export class MapMaker {
             Katana_Kingdom: {
                 'Gem_Grab': [2.4, 2.54, -40, -70, 1, 10],
                 'Heist': [1.8 * 1.2, 3.2 * 0.9, -57, -185, 1, 10],
+            },
+            Stranger_Things: {
+                'Gem_Grab': [2.9, 2.376, -95, -70, 1, 10],
             },
         };
 
@@ -1257,6 +1265,50 @@ export class MapMaker {
                 'Barrel': [1, 1.83, 0, -52, 1, 5],
                 'Skull': [1*1.1, 1.22*1.1, -5, -5, 1, 5]
             },
+            Stranger_Things: {
+                'Wall': [1.05, 1.7, -3, -41, 1, 5],
+                'Wall2': [1.05, 1.9, -3, -63, 1, 5],
+                'Crate': [1, 1.7, 0, -31, 1, 5],
+                'Barrel': [1.05, 1.85, 0, -51, 1, 5],
+                'Cactus': [1, 1.95, 0, -71, 1, 5],
+                'Skull': [1, 1.8, 0, -51, 1, 5],
+                '0001': [1, 1.5, 0, -44, 1, 5],
+                '0010': [1, 1.7, 0, -44, 1, 5],
+                '0011': [1, 1.4, 0, -44, 1, 5],
+                '0100': [1, 1.7, 0, -44, 1, 5],
+                '0101': [1, 1.4, 0, -44, 1, 5],
+                '1000': [1, 1.7, 0, -44, 1, 5],
+                '1001': [1, 1.05, 0, -44, 1, 5],
+                '1010': [1, 1.7, 0, -44, 1, 5],
+                '1100': [1, 1.7, 0, -44, 1, 5],
+                'Fence': [1, 1.7, 0, -44, 1, 5],
+                'Post': [1, 1.7, 0, -50, 1, 5],
+                'Post_TR': [1.6, 2.47, 0, -128, 1, 5],
+                'Post_R': [1.6, 1.7, 0, -50, 1, 5],
+                'Post_T': [1, 2.47, 0, -128, 1, 5],
+            },
+            Stranger_Things_Lair: {
+                'Wall': [1, 1.8, 0, -51, 1, 5],
+                'Wall2': [1, 1.8, 0, -51, 1, 5],
+                'Crate': [1, 1.7, 0, -31, 1, 5],
+                'Barrel': [1.05, 1.85, 0, -51, 1, 5],
+                'Cactus': [1, 1.95, 0, -71, 1, 5],
+                'Skull': [1, 1.8, 0, -51, 1, 5],
+                '0001': [1, 1.6, 0, -55, 1, 5],
+                '0010': [1, 1.8, 0, -55, 1, 5],
+                '0011': [1, 1.5, 0, -55, 1, 5],
+                '0100': [1, 1.8, 0, -55, 1, 5],
+                '0101': [1, 1.5, 0, -55, 1, 5],
+                '1000': [1, 1.8, 0, -55, 1, 5],
+                '1001': [1, 1.05, 0, -55, 1, 5],
+                '1010': [1, 1.8, 0, -55, 1, 5],
+                '1100': [1, 1.8, 0, -55, 1, 5],
+                'Fence': [1, 1.8, 0, -55, 1, 5],
+                'Post': [1, 1.7, 0, -50, 1, 5],
+                'Post_TR': [1.6, 2.47, 0, -128, 1, 5],
+                'Post_R': [1.6, 1.7, 0, -50, 1, 5],
+                'Post_T': [1, 2.47, 0, -128, 1, 5],
+            },
             Fighting_Game: {
                 'Cactus': [1.18, 1.85, -9, -60, 1, 5.5],
                 'Bush': [1, 1.75, 0, -50, 1, 5],
@@ -1279,7 +1331,7 @@ export class MapMaker {
                 '1100': [1*0.875, 2.47*0.85, 0, -87.5, 1, 5],
             }
         };
-        
+
         // Initialize tile definitions
         this.tileDefinitions = {
             0: { name: 'Empty' },
@@ -1314,7 +1366,9 @@ export class MapMaker {
                         displayImg: 'Global/Objectives/SnowtelThievesBlue.png'
                     },
                     'Basket_Brawl': { img: 'Global/Objectives/Basket_Brawl.png' },
-                    'Volley_Brawl': { img: 'Global/Objectives/Volley_Brawl.png' },
+                    'Volley_Brawl': { 
+                        img: environment === 'Mortuary' ? 'Mortuary/Gamemode_Specifics/Volley_Brawl.png' : 'Global/Objectives/Volley_Brawl.png' 
+                    },
                     'Bot_Drop': { img: 'Global/Objectives/Bot_Zone.png' },
                     'Hockey': { img: 'Global/Objectives/Hockey.png' },
                     'Paint_Brawl': { 
@@ -1387,7 +1441,7 @@ export class MapMaker {
             65: { name: 'OniHunt', img: 'Global/Boss Spawns/OniHunt.png', showInGamemode: ['Halloween_Boss', 'Oni_Hunt',], size: 1},
             66: { name: 'SubwayRun1', img: 'Global/Objectives/SubwayRun1.png', showInGamemode: 'Subway_Run', size: 2 },
             67: { name: 'SubwayRun2', img: 'Global/Objectives/SubwayRun2.png', showInGamemode: 'Subway_Run', size: 2 },
-            68: { name: 'Subway Rails', img: 'Global/Objectives/Subway Rails/Fence.png', showInGamemode: 'Subway_Run', size: 1},
+            68: { name: 'Rails', img: 'Global/Special_Tiles/Rails/Fence.png', size: 1},
             69: { name: 'IceTile', img: 'Global/Special_Tiles/IceTile/00000000.png', size: 1 },
             70: { name: 'SnowTile', img: 'Global/Special_Tiles/SnowTile/00000000.png', size: 1 },
             71: { name: 'TreasurePad1', img: 'Global/Objectives/TreasurePad1.png', showInGamemode: 'Treasure_Hunt', size: 1},
@@ -2391,11 +2445,11 @@ export class MapMaker {
         // Define the order of tiles
         const tileOrder = [
             'Wall', 'Wall2', 'Crate', 'Barrel', 'Cactus', 'Bush', 'Fence', 'Skull', 'Rope Fence', 'BFence', 'Water', 'Unbreakable',
-            'Blue Spawn', 'Blue Respawn', 'Red Spawn', 'Red Respawn', 'Trio Spawn', 'Objective', 'Box', 'Bumper', 'Bolt', 'TokenBlue', 'TokenRed', 'Boss Zone', 'Monster Zone', 'Track', 'Bot_Zone', 'SubwayRun1', 'SubwayRun2', 'Subway Rails','TreasurePad1','TreasurePad2',
+            'Blue Spawn', 'Blue Respawn', 'Red Spawn', 'Red Respawn', 'Trio Spawn', 'Objective', 'Box', 'Bumper', 'Bolt', 'TokenBlue', 'TokenRed', 'Boss Zone', 'Monster Zone', 'Track', 'Bot_Zone', 'SubwayRun1', 'SubwayRun2', 'TreasurePad1','TreasurePad2',
             'HalloweenBoss1', 'HalloweenBoss2', 'HalloweenBoss3', 'HalloweenBoss4', 'HalloweenBoss5', 'OniHunt',
             'Base Ike Blue', 'Base Ike Red', 'Small Ike Blue', 'Small Ike Red',
             'GodzillaCity1', 'GodzillaCity2', 'GodzillaCity3', 'GodzillaCity4', 'GodzillaExplosive', 'GodzillaSpawn', 'Escape',
-            'TNT', /*'UnbreakableBrick',*/ 'Speed Tile','Slow Tile', 'Spikes', 'Heal Pad', 'Smoke', 'IceTile', 'SnowTile',
+            'TNT', /*'UnbreakableBrick',*/ 'Speed Tile','Slow Tile', 'Spikes', 'Heal Pad', 'Smoke', 'IceTile', 'SnowTile', 'Rails',
             'Jump R', 'Jump L', 'Jump T', 'Jump B',
             'Jump BR', 'Jump TL', 'Jump BL', 'Jump TR',
             'Teleporter Blue', 'Teleporter Green', 'Teleporter Red', 'Teleporter Yellow'
@@ -2651,6 +2705,7 @@ export class MapMaker {
                 };
                 return;
             }
+
         } else if (tileId === 40) {
             const imageName = this.fenceLogicHandler.getFenceImageName(x, y, this.mapData, 'Brawl_Arena');
 
@@ -2773,6 +2828,7 @@ export class MapMaker {
         }
 
         if (!img || !img.complete) return;
+
 
         // Get tile dimensions data
         let dimensions;
