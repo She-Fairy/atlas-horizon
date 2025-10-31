@@ -289,7 +289,6 @@ export class MapMaker {
         this.tileData = {
             'Wall': [1, 1.75, 0, -50, 1, 5],
             'Bush': [1, 1.8, 0, -51, 1, 5],
-            'Bush2': [1, 1.8, 0, -51, 1, 5],
             'Wall2': [1, 1.75, 0, -50, 1, 5],
             'Crate': [1, 1.8, 0, -51, 1, 5],
             'Barrel': [1, 1.69, 0, -42.5, 1, 5],
@@ -1409,7 +1408,6 @@ export class MapMaker {
             56: { name: 'GodzillaSpawn', img: 'Global/Godzilla Tiles/GodzillaSpawn.png', showInGamemode: 'Godzilla_City_Smash', size: 1},
             57: { name: 'Bot_Zone', img: 'Global/Objectives/Bot_Zone.png', showInGamemode: ['Trophy_Escape', 'Samurai_Smash'], size: 1},
             58: { name: 'Escape', img: 'Global/Objectives/Escape.png', showInGamemode: 'Trophy_Escape', size: 1},
-            59: { name: 'Bush2', img: '${env}/Tiles/Bush2.png', size: 1 },
             60: { name: 'HalloweenBoss1', img: 'Global/Boss Spawns/HalloweenBoss1.png', showInGamemode: 'Halloween_Boss', size: 1},
             61: { name: 'HalloweenBoss2', img: 'Global/Boss Spawns/HalloweenBoss2.png', showInGamemode: 'Halloween_Boss', size: 1},
             62: { name: 'HalloweenBoss3', img: 'Global/Boss Spawns/HalloweenBoss3.png', showInGamemode: 'Halloween_Boss', size: 1},
@@ -2701,38 +2699,6 @@ export class MapMaker {
                     console.error(`Failed to load track image: ${imagePath}`);
                     // Load fallback image
                     img.src = `Resources/Global/Arena/Track/Blue/Fence.png`;
-                };
-                this.tileImages[imagePath] = img;
-            }
-            
-            if (!img.complete || img.naturalWidth === 0) {
-                // Wait for image to load before drawing
-                img.onload = () => {
-                    this.drawTile(this.ctx, tileId, x, y); // Or whatever your method is to redraw that tile
-                };
-                return;
-            }
-
-        } else if (tileId === 59) {
-            // Robust check: Only try to draw BFence if allowed in this environment
-            const def = this.tileDefinitions[tileId];
-            if (!def.showInEnvironment || !def.showInEnvironment.includes(this.environment)) {
-                // Do not attempt to load or draw BFence if not supported in this environment
-                return;
-            }
-            
-            const imagePath = `Resources/${this.environment}/Tiles/Bush2.png`;
-            
-            img = this.tileImages[imagePath];
-            
-            if (!img) {
-                img = new Image();
-                img.onload = () => this.draw();
-                img.src = imagePath;
-                img.onerror = () => {
-                    console.error(`Failed to load secondary bush image: ${imagePath}`);
-                    // Load fallback image
-                    img.src = `Resources/${this.environment}/Tiles/Bush.png`;
                 };
                 this.tileImages[imagePath] = img;
             }
