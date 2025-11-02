@@ -431,16 +431,16 @@ export class MapMaker {
 				'Volley_Brawl': [1.7, 1.7, -36, -30, 1, 10],
             },
             Retropolis: {
-                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
+                'Gem_Grab': [2.4, 2.54, -56, -78, 1, 10],
             },
             Pirate_Ship: {
                 'Gem_Grab': [2.13, 2.50, -56, -65, 1, 10],
             },
             Arcade: {
-                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
+                'Gem_Grab': [2.4, 2.54, -56, -78, 1, 10],
             },
             Bazaar: {
-                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
+                'Gem_Grab': [2.4, 2.54, -56, -78, 1, 10],
             },
             Super_City: {
                 'Gem_Grab': [2.3, 2.4, -69, -60, 1, 10],
@@ -450,22 +450,22 @@ export class MapMaker {
                 'Gem_Grab': [2.7, 2.376, -85, -70, 1, 10],
             },
             Bandstand: {
-                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
+                'Gem_Grab': [2.4, 2.54, -56, -78, 1, 10],
             },
             Snowtel: {
-                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
+                'Gem_Grab': [2.4, 2.54, -56, -78, 1, 10],
             },
             Starr_Force: {
                 'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
             },
             Water_Park: {
-                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
+                'Gem_Grab': [2.4, 2.54, -56, -78, 1, 10],
             },
             Castle_Courtyard: {
-                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
+                'Gem_Grab': [2.4, 2.54, -56, -78, 1, 10],
             },
             Brawlywood: {
-                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
+                'Gem_Grab': [2.4, 2.54, -56, -78, 1, 10],
             },
             Fighting_Game: {
                 'Gem_Grab': [2.42, 2.54, -54, -76, 1, 10],
@@ -486,7 +486,7 @@ export class MapMaker {
                 'Gem_Grab': [2.7, 2.376, -85, -70, 1, 10],
             },
             Candyland: {
-                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
+                'Gem_Grab': [2.4, 2.54, -56, -78, 1, 10],
             },
             The_Hub: {
                 'Gem_Grab': [2.4, 2.4, -64, -70, 1, 10],
@@ -516,7 +516,7 @@ export class MapMaker {
                 'Gem_Grab': [2.7, 2.000, -85, -38, 1, 10],
             },
             Spongebob: {
-                'Gem_Grab': [2.4, 2.4, -44, -90, 1, 10],
+                'Gem_Grab': [2.7, 2.7, -66, -100, 1, 10],
             },
             Hockey: {
                 'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
@@ -538,6 +538,15 @@ export class MapMaker {
                 'Gem_Grab': [2.7, 2.7, -66, -100, 1, 10],
             },
             Stranger_Things: {
+                'Gem_Grab': [2.9, 2.376, -95, -70, 1, 10],
+            },
+            Stranger_Things_Lab: {
+                'Gem_Grab': [2.9, 2.376, -95, -70, 1, 10],
+            },
+            Stranger_Things_Forest: {
+                'Gem_Grab': [2.9, 2.376, -95, -70, 1, 10],
+            },
+            Stranger_Things_Lair: {
                 'Gem_Grab': [2.9, 2.376, -95, -70, 1, 10],
             },
         };
