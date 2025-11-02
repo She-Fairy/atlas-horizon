@@ -516,7 +516,7 @@ export class MapMaker {
                 'Gem_Grab': [2.7, 2.000, -85, -38, 1, 10],
             },
             Spongebob: {
-                'Gem_Grab': [2.7, 2.7, -66, -100, 1, 10],
+                'Gem_Grab': [2.6, 2.5, -60, -75, 1, 10],
             },
             Hockey: {
                 'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
@@ -535,7 +535,7 @@ export class MapMaker {
                 'Heist': [1.8 * 1.2, 3.2 * 0.9, -57, -185, 1, 10],
             },
             Subway_Surfers: {
-                'Gem_Grab': [2.7, 2.7, -66, -100, 1, 10],
+                'Gem_Grab': [2.6, 2.5, -60, -75, 1, 10],
             },
             Stranger_Things: {
                 'Gem_Grab': [2.9, 2.376, -95, -70, 1, 10],
