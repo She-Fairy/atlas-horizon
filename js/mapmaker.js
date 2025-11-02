@@ -528,7 +528,7 @@ export class MapMaker {
                 'Gem_Grab': [2.7, 2.376, -85, -70, 1, 10]
             },
             Skating_Bowl: {
-                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
+                'Gem_Grab': [2.18, 2.42, -59, -60, 1, 10],
             },
             Katana_Kingdom: {
                 'Gem_Grab': [2.4, 2.54, -40, -70, 1, 10],
