@@ -535,7 +535,7 @@ export class MapMaker {
                 'Heist': [1.8 * 1.2, 3.2 * 0.9, -57, -185, 1, 10],
             },
             Subway_Surfers: {
-                'Gem_Grab': [2.4, 2.4, -44, -90, 1, 10],
+                'Gem_Grab': [2.7, 2.7, -66, -100, 1, 10],
             },
             Stranger_Things: {
                 'Gem_Grab': [2.9, 2.376, -95, -70, 1, 10],
