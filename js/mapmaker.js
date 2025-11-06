@@ -61,6 +61,9 @@ const FENCE_LOGIC_BY_ENVIRONMENT = {
     'Subway_Surfers': FENCE_LOGIC_TYPES.BINARY_CODE,
     'Rails': FENCE_LOGIC_TYPES.SIX_PIECE,
     'Stranger_Things': FENCE_LOGIC_TYPES.BINARY_CODE,
+    'Stranger_Things_Lab': FENCE_LOGIC_TYPES.BINARY_CODE,
+    'Stranger_Things_Lair': FENCE_LOGIC_TYPES.BINARY_CODE,
+    'Stranger_Things_Forest': FENCE_LOGIC_TYPES.BINARY_CODE,
 };
 
 const BORDER_FENCE_LOGIC_BY_ENVIRONMENT = {
@@ -73,6 +76,9 @@ const BORDER_FENCE_LOGIC_BY_ENVIRONMENT = {
     'Katana_Kingdom': FENCE_LOGIC_TYPES.BINARY_CODE,
     'Tropical_Island': FENCE_LOGIC_TYPES.BINARY_CODE,
     'Subway_Surfers': FENCE_LOGIC_TYPES.BINARY_CODE,
+    'Stranger_Things_Lab': FENCE_LOGIC_TYPES.BINARY_CODE,
+    'Stranger_Things_Lair': FENCE_LOGIC_TYPES.BINARY_CODE,
+    'Stranger_Things_Forest': FENCE_LOGIC_TYPES.BINARY_CODE,
 };
 
 class FenceLogicHandler {
