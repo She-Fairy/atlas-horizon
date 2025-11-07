@@ -377,9 +377,9 @@ export class MapMaker {
             'Boss Zone': [7, 7, -300, -300, 1, 10],
             'Monster Zone': [7, 7, -300, -300, 1, 10],
             'Track': [1, 1, 0, 0, 1, 2],
-            'Base Ike Blue': [4.8, 6.10, -190, -270, 1, 10],
+            'Base Ike Blue': [4.8, 6, -190, -270, 1, 10],
             'Small Ike Blue': [3, 3.82, -100, -145, 1, 10],
-            'Base Ike Red': [4.8, 6.10, -190, -270, 1, 10],
+            'Base Ike Red': [4.8, 6, -190, -270, 1, 10],
             'Small Ike Red': [3, 3.4825, -100, -110, 1, 10],
             'GodzillaCity1': [1, 1.60, 0, -45, 1, 5],
             'GodzillaCity2': [1, 1.75, 0, -53, 1, 5],
@@ -1625,13 +1625,9 @@ export class MapMaker {
             this.tileImagePaths[cacheKey] = imagePath;
         });
 
-        // === ADIÇÃO DE SUPORTE PARA ICE E SNOW TILES ===
+        // === Ice and Snow support ===
         this.preloadIceAndSnowTiles();
     }
-
-    // ======================================================
-    // === NOVO CÓDIGO ADICIONADO (SEM MEXER NO SEU ORIGINAL)
-    // ======================================================
 
     preloadIceAndSnowTiles() {
         if (!this.tileImages) this.tileImages = {};
@@ -1667,7 +1663,7 @@ export class MapMaker {
         });
     }
 
-    // === LÓGICA DE CONEXÃO AUTOMÁTICA ENTRE TILES ===
+    // Tiles Connection Logic
     getTileConnectionCode(x, y, type) {
         const neighbors = [
             [0, -1],  // N
@@ -2515,9 +2511,9 @@ export class MapMaker {
         // Define the order of tiles
         const tileOrder = [
             'Wall', 'Wall2', 'Crate', 'Barrel', 'Cactus', 'Bush', 'Fence', 'Skull', 'Rope Fence', 'BFence', 'Water', 'Unbreakable',
-            'Blue Spawn', 'Blue Respawn', 'Red Spawn', 'Red Respawn', 'Trio Spawn', 'Objective', 'Box', 'Bumper', 'Bolt', 'TokenBlue', 'TokenRed', 'Boss Zone', 'Monster Zone', 'Track', 'Bot_Zone', 'SubwayRun1', 'SubwayRun2', 'TreasurePad1','TreasurePad2',
+            'Blue Spawn', 'Blue Respawn', 'Red Spawn', 'Red Respawn', 'Trio Spawn', 'Objective', 'Box', 'Bumper', 'Bolt', 'TokenBlue', 'TokenRed', 'Boss Zone', 'Monster Zone', 'Bot_Zone', 'SubwayRun1', 'SubwayRun2', 'TreasurePad1','TreasurePad2',
             'HalloweenBoss1', 'HalloweenBoss2', 'HalloweenBoss3', 'HalloweenBoss4', 'HalloweenBoss5', 'OniHunt',
-            'Base Ike Blue', 'Base Ike Red', 'Small Ike Blue', 'Small Ike Red',
+            'Track', 'Base Ike Blue', 'Base Ike Red', 'Small Ike Blue', 'Small Ike Red',
             'GodzillaCity1', 'GodzillaCity2', 'GodzillaCity3', 'GodzillaCity4', 'GodzillaExplosive', 'GodzillaSpawn', 'Escape',
             'TNT', /*'UnbreakableBrick',*/ 'Speed Tile','Slow Tile', 'Spikes', 'Heal Pad', 'Smoke', 'IceTile', 'SnowTile', 'Rails',
             'Jump R', 'Jump L', 'Jump T', 'Jump B',
