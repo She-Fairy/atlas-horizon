@@ -3425,14 +3425,22 @@ export class MapMaker {
 
         // Group tiles by layer
         const tilesByLayer = new Map();
+        if (!this.mapData || !Array.isArray(this.mapData)) {
+            console.error('mapData is invalid:', this.mapData);
+            return;
+        }
+        
         for (let layerIndex = 0; layerIndex < this.layerCount; layerIndex++) {
             const layerGrid = this.mapData[layerIndex];
-            if (!layerGrid) continue;
+            if (!layerGrid || !Array.isArray(layerGrid)) continue;
 
-            for (let y = 0; y < this.mapHeight; y++) {
-                for (let x = 0; x < this.mapWidth; x++) {
-                    const tileId = layerGrid[y][x];
-                    if (tileId === 0 || tileId === -1) continue;
+            for (let y = 0; y < this.mapHeight && y < layerGrid.length; y++) {
+                const row = layerGrid[y];
+                if (!row || !Array.isArray(row)) continue;
+                
+                for (let x = 0; x < this.mapWidth && x < row.length; x++) {
+                    const tileId = row[x];
+                    if (tileId === 0 || tileId === -1 || tileId === -2 || tileId === -3) continue;
 
                     const def = this.tileDefinitions[tileId];
                     if (!def) continue;
