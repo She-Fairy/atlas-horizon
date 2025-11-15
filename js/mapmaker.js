@@ -3029,11 +3029,15 @@ export class MapMaker {
             const [scaleX, scaleY, offsetX, offsetY, opacity] = dimensions;
             const tileSize = this.tileSize;
 
+            // Get preview offset if in headless mode (for preview images)
+            const previewOffsetX = (this.headless && this.previewOffsetX) ? this.previewOffsetX * tileSize : 0;
+            const previewOffsetY = (this.headless && this.previewOffsetY) ? this.previewOffsetY * tileSize : 0;
+
             // Calculate position
             const width = tileSize * scaleX;
             const height = tileSize * scaleY;
-            const drawX = x * tileSize + (tileSize * offsetX / 100) + this.canvasPadding;
-            const drawY = y * tileSize + (tileSize * offsetY / 100) + this.canvasPadding;
+            const drawX = x * tileSize + (tileSize * offsetX / 100) + this.canvasPadding + previewOffsetX;
+            const drawY = y * tileSize + (tileSize * offsetY / 100) + this.canvasPadding + previewOffsetY;
 
             // Apply opacity and draw
             ctx.globalAlpha = opacity;
@@ -3367,6 +3371,10 @@ export class MapMaker {
         // Clear the canvas
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
+        // Get preview offset if in headless mode (for preview images)
+        const previewOffsetX = (this.headless && this.previewOffsetX) ? this.previewOffsetX * this.tileSize : 0;
+        const previewOffsetY = (this.headless && this.previewOffsetY) ? this.previewOffsetY * this.tileSize : 0;
+
         // Draw the background grid
         for (let y = 0; y < this.mapHeight; y++) {
             for (let x = 0; x < this.mapWidth; x++) {
@@ -3394,8 +3402,8 @@ export class MapMaker {
                     if (bgImg.complete) {
                         this.ctx.drawImage(
                             bgImg,
-                            x * this.tileSize + this.canvasPadding,
-                            y * this.tileSize + this.canvasPadding,
+                            x * this.tileSize + this.canvasPadding + previewOffsetX,
+                            y * this.tileSize + this.canvasPadding + previewOffsetY,
                             this.tileSize,
                             this.tileSize
                         );
@@ -4899,10 +4907,16 @@ export class MapMaker {
 
 
         // Remove objectives
-        if (this.mapData[this.defaultTileLayer].every(row => row.every(tile => tile === 0))) {
+        const defaultLayer = this.mapData[this.defaultTileLayer];
+        if (defaultLayer && Array.isArray(defaultLayer) && 
+            defaultLayer.every(row => Array.isArray(row) && row.every(tile => tile === 0))) {
             for (let y = 0; y < this.mapHeight; y++) {
                 for (let x = 0; x < this.mapWidth; x++) {
-                    if (this.mapData[this.defaultTileLayer][y][x] === 14) this.mapData[this.defaultTileLayer][y][x] = 0;
+                    if (this.mapData[this.defaultTileLayer][y] && 
+                        Array.isArray(this.mapData[this.defaultTileLayer][y]) &&
+                        this.mapData[this.defaultTileLayer][y][x] === 14) {
+                        this.mapData[this.defaultTileLayer][y][x] = 0;
+                    }
                 }
             }
         }
@@ -5005,8 +5019,11 @@ export class MapMaker {
             );
         }
 
-        if (apply && (this.mapData[this.defaultTileLayer].every(row => row.every(tile => tile === 0 || tile === 14 || tile === 13 || tile === 12 || tile === 33)))) 
+        const defaultLayerForLayout = this.mapData[this.defaultTileLayer];
+        if (apply && defaultLayerForLayout && Array.isArray(defaultLayerForLayout) && 
+            defaultLayerForLayout.every(row => Array.isArray(row) && row.every(tile => tile === 0 || tile === 14 || tile === 13 || tile === 12 || tile === 33))) {
             this.applyDefaultLayoutIfEmpty();
+        }
 
 
         this.initializeTileSelector();
