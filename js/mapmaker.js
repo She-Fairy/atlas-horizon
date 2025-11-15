@@ -2936,11 +2936,23 @@ export class MapMaker {
                 return false;
             };
 
-            // Check direct connections
-            const hasTop = !isTopEdge && isSameType(this.mapData[this.defaultTileLayer][y - 1][x]);
-            const hasBottom = !isBottomEdge && isSameType(this.mapData[this.defaultTileLayer][y + 1][x]);
-            const hasLeft = !isLeftEdge && isSameType(this.mapData[this.defaultTileLayer][y][x - 1]);
-            const hasRight = !isRightEdge && isSameType(this.mapData[this.defaultTileLayer][y][x + 1]);
+            // Check direct connections - use getAllTilesAt to check all layers
+            const hasTop = !isTopEdge && (() => {
+                const topTiles = this.getAllTilesAt(x, y - 1);
+                return topTiles.some(t => isSameType(t.tileId));
+            })();
+            const hasBottom = !isBottomEdge && (() => {
+                const bottomTiles = this.getAllTilesAt(x, y + 1);
+                return bottomTiles.some(t => isSameType(t.tileId));
+            })();
+            const hasLeft = !isLeftEdge && (() => {
+                const leftTiles = this.getAllTilesAt(x - 1, y);
+                return leftTiles.some(t => isSameType(t.tileId));
+            })();
+            const hasRight = !isRightEdge && (() => {
+                const rightTiles = this.getAllTilesAt(x + 1, y);
+                return rightTiles.some(t => isSameType(t.tileId));
+            })();
 
             // Set direct connections
             if (hasTop) code[1] = '1';    // Top
@@ -2948,25 +2960,33 @@ export class MapMaker {
             if (hasLeft) code[3] = '1';   // Left
             if (hasRight) code[4] = '1';  // Right
 
-            // Check corners (only if adjacent sides exist)
-            if (!isTopEdge && !isLeftEdge && 
-                isSameType(this.mapData[this.defaultTileLayer][y - 1][x - 1]) && hasTop && hasLeft) {
-                code[0] = '1'; // Top-left
+            // Check corners (only if adjacent sides exist) - use getAllTilesAt to check all layers
+            if (!isTopEdge && !isLeftEdge && hasTop && hasLeft) {
+                const cornerTiles = this.getAllTilesAt(x - 1, y - 1);
+                if (cornerTiles.some(t => isSameType(t.tileId))) {
+                    code[0] = '1'; // Top-left
+                }
             }
 
-            if (!isTopEdge && !isRightEdge && 
-                isSameType(this.mapData[this.defaultTileLayer][y - 1][x + 1]) && hasTop && hasRight) {
-                code[2] = '1'; // Top-right
+            if (!isTopEdge && !isRightEdge && hasTop && hasRight) {
+                const cornerTiles = this.getAllTilesAt(x + 1, y - 1);
+                if (cornerTiles.some(t => isSameType(t.tileId))) {
+                    code[2] = '1'; // Top-right
+                }
             }
 
-            if (!isBottomEdge && !isLeftEdge && 
-                isSameType(this.mapData[this.defaultTileLayer][y + 1][x - 1]) && hasBottom && hasLeft) {
-                code[5] = '1'; // Bottom-left
+            if (!isBottomEdge && !isLeftEdge && hasBottom && hasLeft) {
+                const cornerTiles = this.getAllTilesAt(x - 1, y + 1);
+                if (cornerTiles.some(t => isSameType(t.tileId))) {
+                    code[5] = '1'; // Bottom-left
+                }
             }
 
-            if (!isBottomEdge && !isRightEdge && 
-                isSameType(this.mapData[this.defaultTileLayer][y + 1][x + 1]) && hasBottom && hasRight) {
-                code[7] = '1'; // Bottom-right
+            if (!isBottomEdge && !isRightEdge && hasBottom && hasRight) {
+                const cornerTiles = this.getAllTilesAt(x + 1, y + 1);
+                if (cornerTiles.some(t => isSameType(t.tileId))) {
+                    code[7] = '1'; // Bottom-right
+                }
             }
 
             // Convert code to file name
@@ -3125,7 +3145,8 @@ export class MapMaker {
                 return;
             }
         } else if (tileId === 68) {
-            const imageName = this.fenceLogicHandler.getFenceImageName(x, y, this.mapData[1], 'Rails');
+            // Pass all layers to check for connections across layers
+            const imageName = this.fenceLogicHandler.getFenceImageName(x, y, this.mapData, 'Rails');
             
             const imagePath = `Resources/Global/Special_Tiles/Rails/${imageName}.png`;
             
@@ -3151,7 +3172,8 @@ export class MapMaker {
                 return;
             }
         } else if ([73, 74, 75].some(a => a === tileId)) {
-            const imageName = this.fenceLogicHandler.getFenceImageName(x, y, this.mapData[1], 'Train');
+            // Pass all layers to check for connections across layers
+            const imageName = this.fenceLogicHandler.getFenceImageName(x, y, this.mapData, 'Train');
 
             const imagePath = `Resources/Global/Special_Tiles/${tileId === 73 ? 'RedTrain' : tileId === 74 ? 'YellowTrain' : 'GreenTrain'}/Train_${imageName}.png`;
 
@@ -3247,7 +3269,8 @@ export class MapMaker {
                            // Finally fall back to base tile data
                            this.tileData[isBorder ? 'BFence' : isFence ? 'Fence' : 'Rope Fence'];
             } else if (isTrain) {
-                const imageName = this.fenceLogicHandler.getFenceImageName(x, y, this.mapData[1], 'Train');
+                // Pass all layers to check for connections across layers
+                const imageName = this.fenceLogicHandler.getFenceImageName(x, y, this.mapData, 'Train');
                 dimensions = this.tileData['Train_' + imageName];
             } else {
                 dimensions = this.environmentTileData[this.environment]?.[def.name] || 
@@ -3434,16 +3457,25 @@ export class MapMaker {
             const layerGrid = this.mapData[layerIndex];
             if (!layerGrid || !Array.isArray(layerGrid)) continue;
 
-            for (let y = 0; y < this.mapHeight && y < layerGrid.length; y++) {
+            // Use actual layer dimensions - iterate through all rows in the layer
+            for (let y = 0; y < layerGrid.length; y++) {
                 const row = layerGrid[y];
                 if (!row || !Array.isArray(row)) continue;
                 
-                for (let x = 0; x < this.mapWidth && x < row.length; x++) {
+                // Use actual row width - iterate through all columns in the row
+                // But don't skip based on mapWidth/mapHeight - use actual data dimensions
+                for (let x = 0; x < row.length; x++) {
                     const tileId = row[x];
                     if (tileId === 0 || tileId === -1 || tileId === -2 || tileId === -3) continue;
 
                     const def = this.tileDefinitions[tileId];
-                    if (!def) continue;
+                    if (!def) {
+                        // Log missing definition for debugging (but don't block rendering)
+                        if (this.headless && tileId > 0) {
+                            console.warn(`Tile definition missing for tileId: ${tileId} at (${x}, ${y})`);
+                        }
+                        continue;
+                    }
 
                     const layerKey = typeof def.layer === 'number' ? def.layer : this.defaultTileLayer;
 
@@ -3802,12 +3834,26 @@ export class MapMaker {
 
     // Find the topmost placeable tile at a position (for erasing)
     findTopmostTileAt(x, y) {
+        // Bounds check
+        if (x < 0 || x >= this.mapWidth || y < 0 || y >= this.mapHeight) {
+            return null;
+        }
+        
+        if (!this.mapData || !Array.isArray(this.mapData)) {
+            return null;
+        }
+        
         // Search from highest layer to lowest
         for (let layerIndex = this.layerCount - 1; layerIndex >= 0; layerIndex--) {
             const layerGrid = this.mapData[layerIndex];
-            if (!layerGrid) continue;
+            if (!layerGrid || !Array.isArray(layerGrid)) continue;
+            if (y >= layerGrid.length) continue;
             
-            const tileId = layerGrid[y][x];
+            const row = layerGrid[y];
+            if (!row || !Array.isArray(row)) continue;
+            if (x >= row.length) continue;
+            
+            const tileId = row[x];
             if (tileId === 0 || tileId === -1 || tileId === -2 || tileId === -3) continue;
             
             const def = this.tileDefinitions[tileId];
@@ -3824,9 +3870,14 @@ export class MapMaker {
         // Fallback: return the first non-empty tile found (from top to bottom)
         for (let layerIndex = this.layerCount - 1; layerIndex >= 0; layerIndex--) {
             const layerGrid = this.mapData[layerIndex];
-            if (!layerGrid) continue;
+            if (!layerGrid || !Array.isArray(layerGrid)) continue;
+            if (y >= layerGrid.length) continue;
             
-            const tileId = layerGrid[y][x];
+            const row = layerGrid[y];
+            if (!row || !Array.isArray(row)) continue;
+            if (x >= row.length) continue;
+            
+            const tileId = row[x];
             if (tileId !== 0 && tileId !== -1 && tileId !== -2 && tileId !== -3) {
                 const def = this.tileDefinitions[tileId];
                 if (def) {
@@ -3840,12 +3891,26 @@ export class MapMaker {
 
     // Find the topmost tile at a position (for checking placeability)
     getTopmostTileAt(x, y) {
+        // Bounds check
+        if (x < 0 || x >= this.mapWidth || y < 0 || y >= this.mapHeight) {
+            return null;
+        }
+        
+        if (!this.mapData || !Array.isArray(this.mapData)) {
+            return null;
+        }
+        
         // Search from highest layer to lowest
         for (let layerIndex = this.layerCount - 1; layerIndex >= 0; layerIndex--) {
             const layerGrid = this.mapData[layerIndex];
-            if (!layerGrid) continue;
+            if (!layerGrid || !Array.isArray(layerGrid)) continue;
+            if (y >= layerGrid.length) continue;
             
-            const tileId = layerGrid[y][x];
+            const row = layerGrid[y];
+            if (!row || !Array.isArray(row)) continue;
+            if (x >= row.length) continue;
+            
+            const tileId = row[x];
             if (tileId === 0 || tileId === -1 || tileId === -2 || tileId === -3) continue;
             
             const def = this.tileDefinitions[tileId];
@@ -3860,12 +3925,27 @@ export class MapMaker {
     // Get all tiles at a position across all layers
     getAllTilesAt(x, y) {
         const tiles = [];
+        
+        // Bounds check
+        if (x < 0 || x >= this.mapWidth || y < 0 || y >= this.mapHeight) {
+            return tiles;
+        }
+        
+        if (!this.mapData || !Array.isArray(this.mapData)) {
+            return tiles;
+        }
+        
         // Search from highest layer to lowest
         for (let layerIndex = this.layerCount - 1; layerIndex >= 0; layerIndex--) {
             const layerGrid = this.mapData[layerIndex];
-            if (!layerGrid) continue;
+            if (!layerGrid || !Array.isArray(layerGrid)) continue;
+            if (y >= layerGrid.length) continue;
             
-            const tileId = layerGrid[y][x];
+            const row = layerGrid[y];
+            if (!row || !Array.isArray(row)) continue;
+            if (x >= row.length) continue;
+            
+            const tileId = row[x];
             if (tileId === 0 || tileId === -1 || tileId === -2 || tileId === -3) continue;
             
             const def = this.tileDefinitions[tileId];
