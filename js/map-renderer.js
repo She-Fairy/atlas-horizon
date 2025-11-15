@@ -15,9 +15,26 @@ const sharedResources = {
 };
 
 export async function generateMapImage(mapData, size = 'regular', gamemode = 'Gem_Grab', environment = 'Desert') {
-  const { width, height } = MAP_SIZES[size];
-  const tileSize = 32;
+  // Get actual map dimensions from mapData
+  let width, height;
+  if (mapData && mapData.length > 0 && mapData[0] && mapData[0].length > 0) {
+    // Use actual mapData dimensions
+    height = mapData[0].length;
+    width = mapData[0][0] ? mapData[0][0].length : MAP_SIZES[size].width;
+  } else {
+    // Fallback to size-based dimensions
+    ({ width, height } = MAP_SIZES[size]);
+  }
+  
+  // Calculate tile size to fit larger maps (max 800px width/height for preview)
+  const maxPreviewSize = 800;
   const padding = 16;
+  const baseTileSize = 32;
+  const totalWidth = width * baseTileSize;
+  const totalHeight = height * baseTileSize;
+  const scale = Math.min(1, maxPreviewSize / Math.max(totalWidth, totalHeight));
+  const tileSize = Math.floor(baseTileSize * scale);
+  
   const div1 = document.createElement('div');
   const div2 = document.createElement('div');
   const canvas = document.createElement('canvas');
@@ -30,9 +47,10 @@ export async function generateMapImage(mapData, size = 'regular', gamemode = 'Ge
   renderer.mapData = mapData;
   renderer.mapWidth = width;
   renderer.mapHeight = height;
-  renderer.mapSize = renderer.mapSizes[size];
+  renderer.mapSize = renderer.mapSizes[size] || { width, height };
   renderer.environment = environment;
   renderer.gamemode = gamemode;
+  renderer.tileSize = tileSize; // Use scaled tile size
 
   // Ensure environment cache exists
   if (!sharedResources.tiles[environment]) {

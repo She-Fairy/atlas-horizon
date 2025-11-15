@@ -48,6 +48,17 @@ pc {
     display: none;
 }
 
+/* Mobile-only elements (hidden on desktop) */
+.mobile-only {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .mobile-only {
+        display: block;
+    }
+}
+
 /* Fixed zoom controls relative to map-editor */
 #zoomControls {
     position: fixed;
@@ -710,6 +721,10 @@ input[type="checkbox"][style*="border-color: rgb(255, 68, 68)"] {
     mob {
         display: none;
     }
+
+    web {
+        display: block;
+    }
 }
 
 .text-btn{
@@ -1097,6 +1112,10 @@ label[for='correctMirroringBtn'], label[for='hideZoomBtn'] {
 
   pc {
     display: block;
+  }
+
+  web {
+    display: none;
   }
 
   .toolbar-section label.mirror-btn {
