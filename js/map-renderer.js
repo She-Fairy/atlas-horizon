@@ -19,34 +19,60 @@ export async function generateMapImage(mapData, size = 'regular', gamemode = 'Ge
   // CRITICAL: mapData structure is mapData[layer][y][x]
   // So mapData[0] is the first layer (array of rows)
   // mapData[0][0] is the first row (array of tileIds)
-  let width, height;
+  let actualWidth, actualHeight;
   if (mapData && Array.isArray(mapData) && mapData.length > 0) {
     const firstLayer = mapData[0];
     if (firstLayer && Array.isArray(firstLayer) && firstLayer.length > 0) {
       // height is number of rows
-      height = firstLayer.length;
+      actualHeight = firstLayer.length;
       // width is length of first row
       const firstRow = firstLayer[0];
-      width = (firstRow && Array.isArray(firstRow)) ? firstRow.length : MAP_SIZES[size].width;
+      actualWidth = (firstRow && Array.isArray(firstRow)) ? firstRow.length : MAP_SIZES[size].width;
     } else {
       // Fallback to size-based dimensions
-      ({ width, height } = MAP_SIZES[size]);
+      ({ width: actualWidth, height: actualHeight } = MAP_SIZES[size]);
     }
   } else {
     // Fallback to size-based dimensions
-    ({ width, height } = MAP_SIZES[size]);
+    ({ width: actualWidth, height: actualHeight } = MAP_SIZES[size]);
   }
   
-  // Calculate canvas padding and base tile size (actual scale computed later)
-  const maxPreviewSize = 800;
+  // For preview images, always use regular map size (21x33) as the canvas size
+  // This ensures all previews are the same size
+  const previewWidth = MAP_SIZES.regular.width;  // 21
+  const previewHeight = MAP_SIZES.regular.height; // 33
+  
+  // Calculate canvas padding and base tile size
   const padding = 16;
   const baseTileSize = 32;
+  
+  // Calculate scale to fit the actual map within the preview canvas
+  // Scale down if the map is larger than regular size
+  const widthScale = Math.min(1, previewWidth / actualWidth);
+  const heightScale = Math.min(1, previewHeight / actualHeight);
+  const scale = Math.min(widthScale, heightScale);
+  
+  // Calculate tile size for the preview (scaled to fit regular size canvas)
+  const tileSize = Math.floor(baseTileSize * scale);
+  
+  // Calculate scaled dimensions
+  const scaledWidth = actualWidth * scale;
+  const scaledHeight = actualHeight * scale;
+  
+  // Calculate offset in tiles to center the scaled map within the preview canvas
+  // For showdown maps (60x60), we'll center vertically
+  const offsetX = Math.max(0, (previewWidth - scaledWidth) / 2);
+  const offsetY = Math.max(0, (previewHeight - scaledHeight) / 2);
   
   const div1 = document.createElement('div');
   const div2 = document.createElement('div');
   const canvas = document.createElement('canvas');
   div2.append(canvas);
   div1.append(div2);
+
+  // Canvas size is always regular map size (21x33) for consistent previews
+  canvas.width = (previewWidth * baseTileSize) + (padding * 2);
+  canvas.height = (previewHeight * baseTileSize) + (padding * 2);
 
   const renderer = new MapMaker(canvas, true);
   
@@ -55,45 +81,28 @@ export async function generateMapImage(mapData, size = 'regular', gamemode = 'Ge
   renderer.environment = environment;
   renderer.gamemode = gamemode;
   
-  // CRITICAL: Set mapData and recalculate dimensions from actual mapData
+  // CRITICAL: Set mapData and use actual dimensions for rendering
   // mapData structure: mapData[layer][y][x] = tileId
   // Ensure mapData is valid - if it's null/undefined or malformed, create empty map
   if (!mapData || !Array.isArray(mapData) || mapData.length === 0) {
     console.warn('Invalid mapData, creating empty map');
-    renderer.mapData = renderer.createEmptyLayeredMap(width, height);
-    renderer.mapWidth = width;
-    renderer.mapHeight = height;
+    renderer.mapData = renderer.createEmptyLayeredMap(actualWidth, actualHeight);
+    renderer.mapWidth = actualWidth;
+    renderer.mapHeight = actualHeight;
   } else {
     renderer.mapData = mapData;
-    // Recalculate dimensions from actual mapData to ensure they match
-    const firstLayer = mapData[0];
-    if (firstLayer && Array.isArray(firstLayer) && firstLayer.length > 0) {
-      const actualHeight = firstLayer.length;
-      const firstRow = firstLayer[0];
-      const actualWidth = (firstRow && Array.isArray(firstRow)) ? firstRow.length : width;
-      renderer.mapWidth = actualWidth;
-      renderer.mapHeight = actualHeight;
-      // Update width/height for canvas sizing
-      width = actualWidth;
-      height = actualHeight;
-    } else {
-      renderer.mapWidth = width;
-      renderer.mapHeight = height;
-    }
+    // Use actual map dimensions for rendering
+    renderer.mapWidth = actualWidth;
+    renderer.mapHeight = actualHeight;
   }
   
-  // Recalculate tile size and canvas size based on actual dimensions
-  const totalWidth = width * baseTileSize;
-  const totalHeight = height * baseTileSize;
-  const scale = Math.min(1, maxPreviewSize / Math.max(totalWidth, totalHeight));
-  const tileSize = Math.floor(baseTileSize * scale);
-
-  canvas.width = (width * tileSize) + (padding * 2);
-  canvas.height = (height * tileSize) + (padding * 2);
-
-  renderer.mapSize = renderer.mapSizes[size] || { width, height };
+  renderer.mapSize = renderer.mapSizes[size] || { width: actualWidth, height: actualHeight };
   renderer.tileSize = tileSize; // Use scaled tile size
   renderer.canvasPadding = padding; // Set padding to match canvas
+  
+  // Store offset for centering
+  renderer.previewOffsetX = offsetX;
+  renderer.previewOffsetY = offsetY;
 
   // Ensure environment cache exists
   if (!sharedResources.tiles[environment]) {
@@ -228,10 +237,14 @@ export async function generateMapImage(mapData, size = 'regular', gamemode = 'Ge
       renderer.goalImageCache[goal.name];
     if (!img || !img.complete) continue;
 
+    // Apply preview offset for centering
+    const previewOffsetX = (renderer.previewOffsetX) ? renderer.previewOffsetX * baseTileSize : 0;
+    const previewOffsetY = (renderer.previewOffsetY) ? renderer.previewOffsetY * baseTileSize : 0;
+
     ctx.drawImage(
       img,
-      goal.x * tileSize + padding + (goal.offsetX || 0),
-      goal.y * tileSize + padding + (goal.offsetY || 0),
+      goal.x * tileSize + padding + (goal.offsetX || 0) + previewOffsetX,
+      goal.y * tileSize + padding + (goal.offsetY || 0) + previewOffsetY,
       (goal.w || 1) * tileSize,
       (goal.h || 1) * tileSize
     );
