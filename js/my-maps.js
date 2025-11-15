@@ -28,27 +28,28 @@ function applyFilters() {
     const searchTerm = document.getElementById('mapSearch')?.value.toLowerCase();
     const gamemodeFilter = document.getElementById('gamemodeFilter')?.value;
     const environmentFilter = document.getElementById('environmentFilter')?.value;
-    const tileFilter = document.getElementById('tileFilter')?.value;
+    const tileFilter = document.getElementById('tileFilter')?.value.toLowerCase();
 
     filteredMaps = allMaps.filter(map => {
         // Search filter
-        if (searchTerm && !(map.name).toLowerCase().includes(searchTerm)) {
+        if (searchTerm !== '' && !(map.name).toLowerCase().includes(searchTerm)) {
             return false;
         }
 
         // Gamemode filter
-        if (gamemodeFilter && map.gamemode !== gamemodeFilter) {
+        if (gamemodeFilter !== 'All Gamemodes' && map.gamemode !== gamemodeFilter) {
             return false;
         }
 
         // Environment filter
-        if (environmentFilter && map.environment !== environmentFilter) {
+        if (environmentFilter !== 'All Environments' && map.environment !== environmentFilter) {
             return false;
         }
 
         // Tile filter - check if map contains the specified tile
         if (tileFilter) {
             const tileIdMap = {
+                'filter by tile': null,
                 'wall': 1,
                 'bush': 2,
                 'water': 10,
