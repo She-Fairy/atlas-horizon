@@ -44,12 +44,16 @@ export async function generateMapImage(mapData, size = 'regular', gamemode = 'Ge
   canvas.height = (height * tileSize) + (padding * 2);
 
   const renderer = new MapMaker(canvas, true);
+  
+  // CRITICAL: Set gamemode and environment BEFORE loading tiles
+  // because loadTileImages() uses this.gamemode to determine which tiles to load
+  renderer.environment = environment;
+  renderer.gamemode = gamemode;
+  
   renderer.mapData = mapData;
   renderer.mapWidth = width;
   renderer.mapHeight = height;
   renderer.mapSize = renderer.mapSizes[size] || { width, height };
-  renderer.environment = environment;
-  renderer.gamemode = gamemode;
   renderer.tileSize = tileSize; // Use scaled tile size
 
   // Ensure environment cache exists
@@ -74,9 +78,12 @@ export async function generateMapImage(mapData, size = 'regular', gamemode = 'Ge
   // 2. Tile images (per env + gamemode)
   if (!sharedResources.tiles[environment][gamemode]) {
     await renderer.loadTileImages();
-    renderer.preloadWaterTiles();
+    await renderer.preloadWaterTiles();
 
-    // Filter out tiles that aren't allowed in this environment
+    // Filter out tiles that aren't allowed in this environment/gamemode
+    // Note: Don't filter here - loadTileImages already filters by environment
+    // We just need to ensure gamemode-specific tiles are available
+    // The filtering in loadTileImages handles environment, but we need to check gamemode here
     const filteredTileImages = {};
     for (const [tileId, img] of Object.entries(renderer.tileImages)) {
       const def = renderer.tileDefinitions[tileId];
@@ -86,7 +93,14 @@ export async function generateMapImage(mapData, size = 'regular', gamemode = 'Ge
       if (def.showInEnvironment && !def.showInEnvironment.includes(environment)) continue;
       
       // Skip tiles that are restricted to specific gamemodes
-      if (def.showInGamemode && def.showInGamemode !== gamemode) continue;
+      // showInGamemode can be a string or an array
+      if (def.showInGamemode) {
+        if (Array.isArray(def.showInGamemode)) {
+          if (!def.showInGamemode.includes(gamemode)) continue;
+        } else {
+          if (def.showInGamemode !== gamemode) continue;
+        }
+      }
       
       filteredTileImages[tileId] = img;
     }
@@ -121,8 +135,28 @@ export async function generateMapImage(mapData, size = 'regular', gamemode = 'Ge
     );
   }
 
+  // Ensure all images are loaded before drawing
+  // Wait for all tile images to be complete
+  const imagePromises = Object.values(renderer.tileImages)
+    .filter(img => img && !img.complete)
+    .map(img => waitForImage(img));
+  
+  await Promise.all(imagePromises);
 
   renderer.draw();
+
+  // Wait for any images that might have been loaded during draw
+  // (fences, water tiles, etc. are loaded dynamically)
+  const allImages = Object.values(renderer.tileImages).filter(img => img);
+  const remainingPromises = allImages
+    .filter(img => !img.complete)
+    .map(img => waitForImage(img));
+  
+  if (remainingPromises.length > 0) {
+    await Promise.all(remainingPromises);
+    // Redraw if new images were loaded
+    renderer.draw();
+  }
 
   const ctx = canvas.getContext('2d');
   for (const goal of renderer.goalImages) {

@@ -1664,38 +1664,45 @@ export class MapMaker {
         this.selectDragLastPos = null;
     }
 
-    preloadWaterTiles() {
+    async preloadWaterTiles() {
         if (!this.tileImages) this.tileImages = {};
         if (!this.tileImagePaths) this.tileImagePaths = {};
 
-        this.waterTileFilenames.forEach(filename => {
-            const imagePath = `Resources/${this.environment}/Water/${filename}`;
-            const cacheKey = `${this.environment}_water_${filename}`;
+        const waterPromises = this.waterTileFilenames.map(filename => {
+            return new Promise((resolve) => {
+                const imagePath = `Resources/${this.environment}/Water/${filename}`;
+                const cacheKey = `${this.environment}_water_${filename}`;
 
-            // Skip if already loaded with the same path
-            if (this.tileImagePaths[cacheKey] === imagePath && this.tileImages[cacheKey]?.complete) {
-                return;
-            }
+                // Skip if already loaded with the same path
+                if (this.tileImagePaths[cacheKey] === imagePath && this.tileImages[cacheKey]?.complete) {
+                    resolve();
+                    return;
+                }
 
-            const img = new Image();
-            img.src = imagePath;
+                const img = new Image();
+                img.onload = () => resolve();
+                img.onerror = () => {
+                    console.error(`Failed to load water image: ${imagePath}`);
+                    const fallbackPath = `Resources/${this.environment}/Water/00000000.png`;
+                    img.src = fallbackPath;
+                    this.tileImagePaths[cacheKey] = fallbackPath;
+                    img.onload = () => resolve();
+                    img.onerror = () => resolve(); // Resolve anyway to not block
+                };
+                img.src = imagePath;
 
-            img.onerror = () => {
-                console.error(`Failed to load water image: ${imagePath}`);
-                const fallbackPath = `Resources/${this.environment}/Water/00000000.png`;
-                img.src = fallbackPath;
-                this.tileImagePaths[cacheKey] = fallbackPath;
-            };
-
-            this.tileImages[cacheKey] = img;
-            this.tileImagePaths[cacheKey] = imagePath;
+                this.tileImages[cacheKey] = img;
+                this.tileImagePaths[cacheKey] = imagePath;
+            });
         });
 
+        await Promise.all(waterPromises);
+
         // === Ice and Snow support ===
-        this.preloadIceAndSnowTiles();
+        await this.preloadIceAndSnowTiles();
     }
 
-    preloadIceAndSnowTiles() {
+    async preloadIceAndSnowTiles() {
         if (!this.tileImages) this.tileImages = {};
         if (!this.tileImagePaths) this.tileImagePaths = {};
 
@@ -1704,29 +1711,38 @@ export class MapMaker {
             { key: "snow", path: "Resources/Global/Special_Tiles/SnowTile" },
         ];
 
+        const iceSnowPromises = [];
         tileTypes.forEach(type => {
             this.waterTileFilenames.forEach(filename => {
-                const imagePath = `${type.path}/${filename}`;
-                const cacheKey  = `${type.key}_${filename}`;
+                const promise = new Promise((resolve) => {
+                    const imagePath = `${type.path}/${filename}`;
+                    const cacheKey  = `${type.key}_${filename}`;
 
-                if (this.tileImagePaths[cacheKey] === imagePath && this.tileImages[cacheKey]?.complete) {
-                    return;
-                }
+                    if (this.tileImagePaths[cacheKey] === imagePath && this.tileImages[cacheKey]?.complete) {
+                        resolve();
+                        return;
+                    }
 
-                const img = new Image();
-                img.src = imagePath;
+                    const img = new Image();
+                    img.onload = () => resolve();
+                    img.onerror = () => {
+                        console.error(`❌ Failed to load ${type.key} tile: ${imagePath}`);
+                        const fallbackPath = `${type.path}/00000000.png`;
+                        img.src = fallbackPath;
+                        this.tileImagePaths[cacheKey] = fallbackPath;
+                        img.onload = () => resolve();
+                        img.onerror = () => resolve(); // Resolve anyway to not block
+                    };
+                    img.src = imagePath;
 
-                img.onerror = () => {
-                    console.error(`❌ Failed to load ${type.key} tile: ${imagePath}`);
-                    const fallbackPath = `${type.path}/00000000.png`;
-                    img.src = fallbackPath;
-                    this.tileImagePaths[cacheKey] = fallbackPath;
-                };
-
-                this.tileImages[cacheKey]  = img;
-                this.tileImagePaths[cacheKey] = imagePath;
+                    this.tileImages[cacheKey]  = img;
+                    this.tileImagePaths[cacheKey] = imagePath;
+                });
+                iceSnowPromises.push(promise);
             });
         });
+        
+        await Promise.all(iceSnowPromises);
     }
 
     // Tiles Connection Logic
@@ -1897,8 +1913,12 @@ export class MapMaker {
                 };
     
                 img.src = imgPath;
+                // Store with both string and number keys for compatibility
+                const numericId = parseInt(id);
                 this.tileImages[id] = img;
+                this.tileImages[numericId] = img;
                 this.tileImagePaths[id] = imgPath;
+                this.tileImagePaths[numericId] = imgPath;
             });
         });
     }
@@ -3178,7 +3198,9 @@ export class MapMaker {
                     }
                 }
             } else {
-                img = this.tileImages[tileId];
+                // Look up image by tileId (convert to string to match how it's stored)
+                const tileIdKey = String(tileId);
+                img = this.tileImages[tileIdKey] || this.tileImages[tileId];
             }
         }
 
