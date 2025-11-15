@@ -25,14 +25,14 @@ async function postMapsByUser(user = localStorage.getItem('user')) {
 }
 
 function applyFilters() {
-    const searchTerm = document.getElementById('mapSearch')?.value.toLowerCase() || '';
-    const gamemodeFilter = document.getElementById('gamemodeFilter')?.value || '';
-    const environmentFilter = document.getElementById('environmentFilter')?.value || '';
-    const tileFilter = document.getElementById('tileFilter')?.value || '';
+    const searchTerm = document.getElementById('mapSearch')?.value.toLowerCase();
+    const gamemodeFilter = document.getElementById('gamemodeFilter')?.value;
+    const environmentFilter = document.getElementById('environmentFilter')?.value;
+    const tileFilter = document.getElementById('tileFilter')?.value;
 
     filteredMaps = allMaps.filter(map => {
         // Search filter
-        if (searchTerm && !(map.name || 'unnamed').toLowerCase().includes(searchTerm)) {
+        if (searchTerm && !(map.name).toLowerCase().includes(searchTerm)) {
             return false;
         }
 
