@@ -99,7 +99,7 @@ function displayMaps() {
     if (displayedCount === 0) {
         container.innerHTML = '';
     } else {
-        // Remove load more button if it exists
+        // Remove load more button if it exists (so we can re-add it at the end)
         const existingLoadMore = document.getElementById('loadMoreBtn');
         if (existingLoadMore) {
             existingLoadMore.remove();
