@@ -50,11 +50,20 @@ export async function generateMapImage(mapData, size = 'regular', gamemode = 'Ge
   renderer.environment = environment;
   renderer.gamemode = gamemode;
   
-  renderer.mapData = mapData;
+  // CRITICAL: Set mapData BEFORE setting dimensions
+  // mapData structure: mapData[layer][y][x] = tileId
+  // Ensure mapData is valid - if it's null/undefined or malformed, create empty map
+  if (!mapData || !Array.isArray(mapData) || mapData.length === 0) {
+    console.warn('Invalid mapData, creating empty map');
+    renderer.mapData = renderer.createEmptyLayeredMap(width, height);
+  } else {
+    renderer.mapData = mapData;
+  }
   renderer.mapWidth = width;
   renderer.mapHeight = height;
   renderer.mapSize = renderer.mapSizes[size] || { width, height };
   renderer.tileSize = tileSize; // Use scaled tile size
+  renderer.canvasPadding = padding; // Set padding to match canvas
 
   // Ensure environment cache exists
   if (!sharedResources.tiles[environment]) {
@@ -81,28 +90,38 @@ export async function generateMapImage(mapData, size = 'regular', gamemode = 'Ge
     await renderer.preloadWaterTiles();
 
     // Filter out tiles that aren't allowed in this environment/gamemode
-    // Note: Don't filter here - loadTileImages already filters by environment
-    // We just need to ensure gamemode-specific tiles are available
-    // The filtering in loadTileImages handles environment, but we need to check gamemode here
+    // CRITICAL: Don't filter out dynamically loaded images (water, fences, etc.)
+    // which use cache keys instead of tileId keys
     const filteredTileImages = {};
-    for (const [tileId, img] of Object.entries(renderer.tileImages)) {
-      const def = renderer.tileDefinitions[tileId];
-      if (!def) continue;
+    for (const [key, img] of Object.entries(renderer.tileImages)) {
+      // Check if this is a tileId key (numeric string) or a cache key (like water_xxx, image paths, etc.)
+      const tileId = parseInt(key);
+      const isNumericKey = !isNaN(tileId) && String(tileId) === key;
       
-      // Skip tiles that are restricted to specific environments
-      if (def.showInEnvironment && !def.showInEnvironment.includes(environment)) continue;
-      
-      // Skip tiles that are restricted to specific gamemodes
-      // showInGamemode can be a string or an array
-      if (def.showInGamemode) {
-        if (Array.isArray(def.showInGamemode)) {
-          if (!def.showInGamemode.includes(gamemode)) continue;
-        } else {
-          if (def.showInGamemode !== gamemode) continue;
+      if (isNumericKey) {
+        // This is a tileId key - check if it should be filtered
+        const def = renderer.tileDefinitions[tileId];
+        if (!def) {
+          // No definition, keep it (might be needed)
+          filteredTileImages[key] = img;
+          continue;
+        }
+        
+        // Skip tiles that are restricted to specific environments
+        if (def.showInEnvironment && !def.showInEnvironment.includes(environment)) continue;
+        
+        // Skip tiles that are restricted to specific gamemodes
+        // showInGamemode can be a string or an array
+        if (def.showInGamemode) {
+          if (Array.isArray(def.showInGamemode)) {
+            if (!def.showInGamemode.includes(gamemode)) continue;
+          } else {
+            if (def.showInGamemode !== gamemode) continue;
+          }
         }
       }
-      
-      filteredTileImages[tileId] = img;
+      // Always keep non-numeric keys (water tiles, fence tiles, image paths, etc.)
+      filteredTileImages[key] = img;
     }
     renderer.tileImages = filteredTileImages;
 
@@ -116,7 +135,11 @@ export async function generateMapImage(mapData, size = 'regular', gamemode = 'Ge
   // Assign cached resources to mapMaker
   renderer.bgDark = sharedResources.backgrounds[environment].bgDark;
   renderer.bgLight = sharedResources.backgrounds[environment].bgLight;
-  renderer.tileImages = sharedResources.tiles[environment][gamemode];
+  
+  // CRITICAL: Merge cached images with any dynamically loaded images (water, fences, etc.)
+  // Don't replace - merge to preserve dynamically loaded images
+  const cachedImages = sharedResources.tiles[environment][gamemode];
+  renderer.tileImages = { ...cachedImages, ...renderer.tileImages };
 
   // Skip Brawl Ball corner tiles
   const isBrawlBall = gamemode === 'Brawl_Ball';
