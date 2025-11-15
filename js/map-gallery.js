@@ -1,192 +1,334 @@
-class MapGallery {
-    constructor() {
-        this.maps = [];
-        this.filteredMaps = [];
-        this.currentPage = 1;
-        this.mapsPerPage = 12;
-        this.filters = {
-            search: '',
-            gamemode: 'all',
-            environment: 'all'
-        };
+import {generateMapImage} from './map-renderer.js';
 
-        this.init();
-    }
+let allUsersMaps = {}; // {userId: [{mapId, ...mapData}, ...]}
+let filteredMaps = [];
+let displayedCount = 0;
+let mapsPerPage = 16;
+let currentUserIndex = 0; // For tracking which users we've shown
+let currentMapIndex = {}; // {userId: index} - tracks which map index we're on for each user
+let allUserIds = []; // List of all user IDs
+let displayedUsers = new Set(); // Track which users we've already displayed
 
-    async init() {
-        // Initialize event listeners
-        this.initializeEventListeners();
+async function loadAllMaps() {
+    try {
+        // Get all users
+        const users = await Firebase.readDataOnce('users');
+        if (!users) return;
+
+        allUserIds = Object.keys(users);
         
-        // Load maps data
-        await this.loadMaps();
-        
-        // Apply initial filters and render
-        this.applyFilters();
-        this.renderMaps();
-    }
-
-    initializeEventListeners() {
-        // Search input
-        const searchInput = document.querySelector('.search-bar input');
-        searchInput.addEventListener('input', (e) => {
-            this.filters.search = e.target.value.toLowerCase();
-            this.currentPage = 1;
-            this.applyFilters();
-            this.renderMaps();
+        // Load maps for each user
+        const mapPromises = allUserIds.map(async (userId) => {
+            const [maps, username] = await Promise.all([
+                Firebase.readDataOnce(`users/${userId}/maps`),
+                Firebase.readDataOnce(`users/${userId}/username`)
+            ]);
+            if (!maps) return { userId, maps: [], username: username || 'Unknown' };
+            
+            // Convert to array and sort by mapId (timestamp) descending
+            const mapsArray = Object.keys(maps).map(mapId => ({
+                mapId,
+                userId,
+                username: username || 'Unknown',
+                ...maps[mapId]
+            })).sort((a, b) => Number(b.mapId) - Number(a.mapId));
+            
+            return { userId, maps: mapsArray, username: username || 'Unknown' };
         });
 
-        // Filter selects
-        const filterSelects = document.querySelectorAll('.filter-controls select');
-        filterSelects.forEach(select => {
-            select.addEventListener('change', (e) => {
-                this.filters[e.target.name] = e.target.value;
-                this.currentPage = 1;
-                this.applyFilters();
-                this.renderMaps();
-            });
-        });
-
-        // Pagination buttons
-        const prevBtn = document.querySelector('.pagination-btn[data-action="prev"]');
-        const nextBtn = document.querySelector('.pagination-btn[data-action="next"]');
+        const results = await Promise.all(mapPromises);
         
-        prevBtn.addEventListener('click', () => {
-            if (this.currentPage > 1) {
-                this.currentPage--;
-                this.renderMaps();
+        // Store maps by user
+        for (const result of results) {
+            if (result.maps.length > 0) {
+                allUsersMaps[result.userId] = result.maps;
+                currentMapIndex[result.userId] = 0; // Start with most recent (index 0)
             }
-        });
-
-        nextBtn.addEventListener('click', () => {
-            const maxPage = Math.ceil(this.filteredMaps.length / this.mapsPerPage);
-            if (this.currentPage < maxPage) {
-                this.currentPage++;
-                this.renderMaps();
-            }
-        });
-    }
-
-    async loadMaps() {
-        try {
-            // In a real application, this would be an API call
-            // For now, we'll use sample data
-            this.maps = [
-                {
-                    id: 1,
-                    name: 'Desert Storm',
-                    gamemode: 'Gem_Grab',
-                    environment: 'Mine',
-                    thumbnail: 'path/to/thumbnail1.jpg',
-                    author: 'Player1',
-                    date: '2024-03-15'
-                },
-                // Add more sample maps here
-            ];
-        } catch (error) {
-            console.error('Error loading maps:', error);
-            // Show error message to user
-            this.showError('Failed to load maps. Please try again later.');
         }
-    }
 
-    applyFilters() {
-        this.filteredMaps = this.maps.filter(map => {
-            const matchesSearch = map.name.toLowerCase().includes(this.filters.search) ||
-                                map.author.toLowerCase().includes(this.filters.search);
-            const matchesGamemode = this.filters.gamemode === 'all' || map.gamemode === this.filters.gamemode;
-            const matchesEnvironment = this.filters.environment === 'all' || map.environment === this.filters.environment;
-
-            return matchesSearch && matchesGamemode && matchesEnvironment;
-        });
-    }
-
-    renderMaps() {
-        const mapGrid = document.querySelector('.map-grid');
-        const paginationInfo = document.querySelector('.pagination-info');
-        const prevBtn = document.querySelector('.pagination-btn[data-action="prev"]');
-        const nextBtn = document.querySelector('.pagination-btn[data-action="next"]');
-
-        // Calculate pagination
-        const startIndex = (this.currentPage - 1) * this.mapsPerPage;
-        const endIndex = startIndex + this.mapsPerPage;
-        const currentMaps = this.filteredMaps.slice(startIndex, endIndex);
-        const totalPages = Math.ceil(this.filteredMaps.length / this.mapsPerPage);
-
-        // Update pagination info
-        paginationInfo.textContent = `Page ${this.currentPage} of ${totalPages}`;
-        prevBtn.disabled = this.currentPage === 1;
-        nextBtn.disabled = this.currentPage === totalPages;
-
-        // Clear existing maps
-        mapGrid.innerHTML = '';
-
-        // Render maps
-        currentMaps.forEach(map => {
-            const mapCard = this.createMapCard(map);
-            mapGrid.appendChild(mapCard);
-        });
-
-        // Show no results message if needed
-        if (this.filteredMaps.length === 0) {
-            mapGrid.innerHTML = `
-                <div class="no-results">
-                    <p>No maps found matching your criteria.</p>
-                </div>
-            `;
-        }
-    }
-
-    createMapCard(map) {
-        const card = document.createElement('div');
-        card.className = 'map-card';
-        card.innerHTML = `
-            <div class="map-preview">
-                <img src="${map.thumbnail}" alt="${map.name}" loading="lazy">
-            </div>
-            <div class="map-info">
-                <h3>${map.name}</h3>
-                <div class="map-meta">
-                    <span>${map.gamemode}</span>
-                    <span>${map.environment}</span>
-                </div>
-                <div class="map-meta">
-                    <span>By ${map.author}</span>
-                    <span>${new Date(map.date).toLocaleDateString()}</span>
-                </div>
-            </div>
-        `;
-
-        // Add click event to open map
-        card.addEventListener('click', () => {
-            this.openMap(map.id);
-        });
-
-        return card;
-    }
-
-    openMap(mapId) {
-        // In a real application, this would navigate to the map editor
-        // or open a modal with map details
-        console.log(`Opening map ${mapId}`);
-        // Example: window.location.href = `/mapmaker.html?id=${mapId}`;
-    }
-
-    showError(message) {
-        // Create and show error message
-        const errorDiv = document.createElement('div');
-        errorDiv.className = 'error-message';
-        errorDiv.textContent = message;
-        
-        document.querySelector('.main-content').prepend(errorDiv);
-        
-        // Remove error message after 5 seconds
-        setTimeout(() => {
-            errorDiv.remove();
-        }, 5000);
+        // Apply filters and display
+        applyFilters();
+    } catch (error) {
+        console.error('Error loading maps:', error);
     }
 }
 
-// Initialize the gallery when the DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-    new MapGallery();
-}); 
+function applyFilters() {
+    const searchTerm = document.getElementById('mapSearch')?.value.toLowerCase() || '';
+    const gamemodeFilter = document.getElementById('gamemodeFilter')?.value || '';
+    const environmentFilter = document.getElementById('environmentFilter')?.value || '';
+    const tileFilter = document.getElementById('tileFilter')?.value || '';
+    const urlParams = new URLSearchParams(window.location.search);
+    const creatorFilter = urlParams.get('creator'); // Filter by specific creator if in URL
+
+    // Build filtered maps list
+    filteredMaps = [];
+    
+    for (const userId in allUsersMaps) {
+        // If creator filter is set, only include maps from that creator
+        if (creatorFilter && userId !== creatorFilter) continue;
+        
+        const userMaps = allUsersMaps[userId];
+        for (const map of userMaps) {
+            // Search filter
+            if (searchTerm && !(map.name || 'unnamed').toLowerCase().includes(searchTerm)) {
+                continue;
+            }
+
+            // Gamemode filter
+            if (gamemodeFilter && gamemodeFilter !== '' && map.gamemode !== gamemodeFilter) {
+                continue;
+            }
+
+            // Environment filter
+            if (environmentFilter && environmentFilter !== '' && map.environment !== environmentFilter) {
+                continue;
+            }
+
+            // Tile filter - check if map contains the specified tile
+            if (tileFilter) {
+                const tileIdMap = {
+                    'wall': 1,
+                    'bush': 2,
+                    'water': 10,
+                    'rope': 9,
+                    'crate': 4
+                };
+                const targetTileId = tileIdMap[tileFilter];
+                if (targetTileId) {
+                    let found = false;
+                    if (map.mapData) {
+                        for (let layer = 0; layer < map.mapData.length; layer++) {
+                            if (!map.mapData[layer]) continue;
+                            for (let y = 0; y < map.mapData[layer].length; y++) {
+                                if (!map.mapData[layer][y]) continue;
+                                for (let x = 0; x < map.mapData[layer][y].length; x++) {
+                                    if (map.mapData[layer][y][x] === targetTileId) {
+                                        found = true;
+                                        break;
+                                    }
+                                }
+                                if (found) break;
+                            }
+                            if (found) break;
+                        }
+                    }
+                    if (!found) continue;
+                }
+            }
+
+            filteredMaps.push(map);
+        }
+    }
+
+    // Group filtered maps by user
+    const mapsByUser = {};
+    for (const map of filteredMaps) {
+        if (!mapsByUser[map.userId]) {
+            mapsByUser[map.userId] = [];
+        }
+        mapsByUser[map.userId].push(map);
+    }
+
+    // Sort maps within each user by mapId (most recent first)
+    for (const userId in mapsByUser) {
+        mapsByUser[userId].sort((a, b) => Number(b.mapId) - Number(a.mapId));
+    }
+
+    // Reset display state
+    displayedCount = 0;
+    currentUserIndex = 0;
+    currentMapIndex = {};
+    displayedUsers.clear();
+    for (const userId in mapsByUser) {
+        currentMapIndex[userId] = 0;
+    }
+
+    displayMaps(mapsByUser);
+}
+
+function displayMaps(mapsByUser) {
+    const container = document.getElementById('mapsGrid');
+    if (!container) return;
+
+    // Clear container if we're starting from the beginning (filter changed)
+    if (displayedCount === 0) {
+        container.innerHTML = '';
+    } else {
+        // Remove load more button if it exists
+        const existingLoadMore = document.getElementById('loadMoreBtn');
+        if (existingLoadMore) {
+            existingLoadMore.remove();
+        }
+    }
+
+    const userIds = Object.keys(mapsByUser);
+    let mapsToDisplay = [];
+    let usersAdded = 0;
+
+    // Strategy: Get most recent map from users we haven't shown yet
+    // If we've shown all users, get next most recent from each
+    while (usersAdded < mapsPerPage && mapsToDisplay.length < mapsPerPage) {
+        // Find users we haven't displayed yet
+        const remainingUsers = userIds.filter(userId => !displayedUsers.has(userId));
+        
+        if (remainingUsers.length > 0) {
+            // Randomly select from remaining users
+            const randomIndex = Math.floor(Math.random() * remainingUsers.length);
+            const selectedUserId = remainingUsers[randomIndex];
+            const userMaps = mapsByUser[selectedUserId];
+            const mapIndex = currentMapIndex[selectedUserId] || 0;
+            
+            if (mapIndex < userMaps.length) {
+                mapsToDisplay.push(userMaps[mapIndex]);
+                currentMapIndex[selectedUserId] = mapIndex + 1;
+                displayedUsers.add(selectedUserId);
+                usersAdded++;
+            } else {
+                // This user has no more maps, mark as displayed
+                displayedUsers.add(selectedUserId);
+            }
+        } else {
+            // All users have been shown, get next map from each user
+            let foundAny = false;
+            for (const userId of userIds) {
+                const userMaps = mapsByUser[userId];
+                const mapIndex = currentMapIndex[userId] || 0;
+                
+                if (mapIndex < userMaps.length && mapsToDisplay.length < mapsPerPage) {
+                    mapsToDisplay.push(userMaps[mapIndex]);
+                    currentMapIndex[userId] = mapIndex + 1;
+                    foundAny = true;
+                }
+            }
+            
+            if (!foundAny) {
+                // No more maps to display
+                break;
+            }
+        }
+    }
+
+    // Display the maps
+    for (const map of mapsToDisplay) {
+        const username = map.username || 'Unknown';
+        const userId = map.userId;
+        try {
+            generateMapImage(
+                map.mapData,
+                map.size,
+                map.gamemode,
+                map.environment
+            ).then(pngDataUrl => {
+                const mapName = map.name || 'unnamed';
+                const card = createCard(mapName, username, pngDataUrl);
+                card.addEventListener('click', () => {
+                    window.location.href = 'map.html?id=' + map.mapId + '&user=' + map.userId;
+                });
+                container.appendChild(card);
+            }).catch(error => {
+                console.error(`Error generating image for map ${map.mapId}:`, error);
+                const card = createCard(map.name || 'unnamed', username, 'Resources/Additional/Icons/UserPfp.png');
+                card.classList.add('error-card');
+                card.addEventListener('click', () => {
+                    window.location.href = 'map.html?id=' + map.mapId + '&user=' + map.userId;
+                });
+                container.appendChild(card);
+            });
+        } catch (error) {
+            console.error(`Error for map ${map.mapId}:`, error);
+            const card = createCard(map.name || 'unnamed', username, 'Resources/Additional/Icons/UserPfp.png');
+            card.classList.add('error-card');
+            card.addEventListener('click', () => {
+                window.location.href = 'map.html?id=' + map.mapId + '&user=' + map.userId;
+            });
+            container.appendChild(card);
+        }
+    }
+
+    displayedCount += mapsToDisplay.length;
+
+    // Check if there are more maps to display
+    let hasMore = false;
+    for (const userId in mapsByUser) {
+        const userMaps = mapsByUser[userId];
+        const mapIndex = currentMapIndex[userId] || 0;
+        if (mapIndex < userMaps.length) {
+            hasMore = true;
+            break;
+        }
+    }
+
+    // Add load more button if there are more maps to display
+    if (hasMore) {
+        const loadMoreBtn = document.createElement('button');
+        loadMoreBtn.id = 'loadMoreBtn';
+        loadMoreBtn.textContent = 'Load More';
+        loadMoreBtn.classList.add('load-more-btn');
+        loadMoreBtn.addEventListener('click', () => {
+            displayMaps(mapsByUser);
+        });
+        container.appendChild(loadMoreBtn);
+    }
+}
+
+function createCard(name, user, image) {
+    const card = document.createElement('div');
+    card.classList.add('card');
+
+    const mapImage = document.createElement('img');
+    mapImage.src = image;
+    mapImage.alt = 'Map image';
+    mapImage.classList.add('card-map-image');
+
+    const detailsDiv = document.createElement('div');
+    detailsDiv.classList.add('card-map-name');
+    detailsDiv.textContent = name;
+
+    const mapCreatorName = document.createElement('h2');
+    mapCreatorName.classList.add('card-map-creator');
+    mapCreatorName.textContent = user;
+
+    detailsDiv.appendChild(mapCreatorName);
+
+    card.appendChild(mapImage);
+    card.appendChild(detailsDiv);
+
+    return card;
+}
+
+window.addEventListener('load', () => {
+    // Set up filter event listeners
+    const searchInput = document.getElementById('mapSearch');
+    const gamemodeFilter = document.getElementById('gamemodeFilter');
+    const environmentFilter = document.getElementById('environmentFilter');
+    const tileFilter = document.getElementById('tileFilter');
+
+    if (searchInput) {
+        searchInput.addEventListener('input', () => {
+            applyFilters();
+        });
+    }
+    if (gamemodeFilter) {
+        gamemodeFilter.addEventListener('change', () => {
+            applyFilters();
+        });
+    }
+    if (environmentFilter) {
+        environmentFilter.addEventListener('change', () => {
+            applyFilters();
+        });
+    }
+    if (tileFilter) {
+        tileFilter.addEventListener('change', () => {
+            applyFilters();
+        });
+    }
+    
+    // Load maps from all users
+    if (typeof Firebase !== 'undefined') {
+        loadAllMaps();
+    } else {
+        console.warn('Firebase not available');
+    }
+});

@@ -41,7 +41,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (!mapData) return showError('Map Not Found');
 
         document.getElementById('mapTitle').textContent = mapData.name || 'Untitled Map';
-        document.getElementById('mapAuthor').textContent = await Firebase.readDataOnce(`users/${user}/username`) || 'Unknown';
+        const authorName = await Firebase.readDataOnce(`users/${user}/username`) || 'Unknown';
+        const mapAuthorElement = document.getElementById('mapAuthor');
+        mapAuthorElement.textContent = authorName;
+        // Make creator name clickable
+        mapAuthorElement.style.cursor = 'pointer';
+        mapAuthorElement.style.textDecoration = 'underline';
+        mapAuthorElement.style.color = 'var(--primary-color, #007bff)';
+        mapAuthorElement.addEventListener('click', () => {
+            window.location.href = `map-gallery.html?creator=${user}`;
+        });
         document.getElementById('mapGamemode').textContent = format(mapData.gamemode);
         document.getElementById('mapEnvironment').textContent = format(mapData.environment);
 

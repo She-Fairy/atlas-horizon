@@ -6,7 +6,7 @@
     <title>Atlas Horizon- Gallery</title>
     <link rel="icon" href="./Resources/Additional/Icons/AtlasLogo.ico" type="image/x-icon">
     <link rel="stylesheet" href="./css/style.css">
-    <link rel="stylesheet" href="./css/map-gallery.css">
+    <link rel="stylesheet" href="./css/my-maps.css">
     <base href="https://she-fairy.github.io/atlas-horizon/">
 </head>
 <body>
@@ -25,64 +25,92 @@
         </div>
     </nav>
 
-    <div class="gallery-container">
-        <div class="gallery-header">
+    <main class="my-maps-container">
+        <div class="filters-section">
             <div class="search-bar">
-                <input type="text" id="searchInput" placeholder="Search maps..." class="search-input">
+                <input type="text" id="mapSearch" placeholder="Search maps by name..." class="search-input">
             </div>
+            
             <div class="filter-controls">
-                <div class="select-container">
-                    <label for="gamemodeFilter">Game Mode:</label>
-                    <select id="gamemodeFilter" name="gamemode">
-                        <option value="all">All Game Modes</option>
-                        <option value="Gem_Grab">Gem Grab</option>
-                        <option value="Showdown">Showdown</option>
-                        <option value="Heist">Heist</option>
-                        <option value="Bounty">Bounty</option>
-                        <option value="Brawl_Ball">Brawl Ball</option>
-                        <option value="Hot_Zone">Hot Zone</option>
-                        <option value="Snowtel_Thieves">Snowtel Thieves</option>
-                        <option value="Basket_Brawl">Basket Brawl</option>
-                        <option value="Volley_Brawl">Volley Brawl</option>
-                        <option value="Siege">Siege</option>
-                        <option value="Hold_The_Trophy">Hold The Trophy</option>
-                    </select>
-                </div>
-                <div class="select-container">
-                    <label for="environmentFilter">Environment:</label>
-                    <select id="environmentFilter" name="environment">
-                        <option value="all">All Environments</option>
-                        <option value="Desert">Desert</option>
-                        <option value="Mine">Mine</option>
-                        <option value="Mortuary">Mortuary</option>
-                        <option value="Oasis">Oasis</option>
-                        <option value="Grassy_Field">Grassy Field</option>
-                        <option value="City">City</option>
-                        <option value="Retropolis">Retropolis</option>
-                        <option value="Arcade">Arcade</option>
-                        <option value="Stadium">Stadium</option>
-                        <option value="Bazaar">Bazaar</option>
-                        <option value="Bandstand">Bandstand</option>
-                        <option value="Snowtel">Snowtel</option>
-                        <option value="Wild_West">Wild West</option>
-                        <option value="Castle_Courtyard">Castle Courtyard</option>
-                        <option value="Swamp_of_Love">Swamp of Love</option>
-                        <option value="Oddities Shop">Oddities Shop</option>
-                    </select>
-                </div>
+                <select id="gamemodeFilter" class="filter-select">
+                    <option value="">All Gamemodes</option>
+                    <option value="Gem_Grab">Gem Grab</option>
+                    <option value="Showdown">Showdown</option>
+                    <option value="Heist">Heist</option>
+                    <option value="Bounty">Bounty</option>
+                    <option value="Brawl_Ball">Brawl Ball</option>
+                    <option value="Hot_Zone">Hot Zone</option>
+                    <option value="Knockout">Knockout</option>
+                    <option value="Wipeout">Wipeout</option>
+                    <option value="Duels">Duels</option>
+                    <option value="Snowtel_Thieves">Snowtel Thieves</option>
+                    <option value="Basket_Brawl">Basket Brawl</option>
+                    <option value="Volley_Brawl">Volley Brawl</option>
+                    <option value="Siege">Siege</option>
+                    <option value="Hold_The_Trophy">Hold The Trophy</option>
+                </select>
+
+                <select id="environmentFilter" class="filter-select">
+                    <option value="">All Environments</option>
+                    <option value="Desert">Desert</option>
+                    <option value="Mine">Mine</option>
+                    <option value="Oasis">Oasis</option>
+                    <option value="Grassy_Field">Grassy Field</option>
+                    <option value="City">City</option>
+                    <option value="Retropolis">Retropolis</option>
+                    <option value="Mortuary">Mortuary</option>
+                    <option value="Pirate_Ship">Pirate Ship</option>
+                    <option value="Arcade">Arcade</option>
+                    <option value="Stadium">Stadium</option>
+                    <option value="Bazaar">Bazaar</option>
+                    <option value="Super_City">Super City</option>
+                    <option value="Gift_Shop">Gift Shop</option>
+                    <option value="Bandstand">Bandstand</option> 
+                    <option value="Snowtel">Snowtel</option>
+                    <option value="Scrapyard">Scrapyard</option>
+                    <option value="Starr_Force">Starr Force</option>
+                    <option value="Wild_West">Wild West</option>
+                    <option value="Water_Park">Water Park</option>
+                    <option value="Castle_Courtyard">Castle Courtyard</option>
+                    <option value="Brawlywood">Brawlywood</option>
+                    <option value="Fighting_Game">Fighting Game</option>
+                    <option value="Biodome">Biodome</option>
+                    <option value="Stunt_Show">Stunt Show</option>
+                    <option value="Deep_Sea">Deep Sea</option>
+                    <option value="Robot_Factory">Robot Factory</option>
+                    <option value="Ghost_Station">Ghost Station</option>
+                    <option value="Candyland">Candyland</option>
+                    <option value="The_Hub">The Hub</option>
+                    <option value="Rumble_Jungle">Rumble Jungle</option>
+                    <option value="Enchanted_Woods">Enchanted Woods</option>
+                    <option value="Circus">Circus</option>
+                    <option value="Starr_Toon">Starr Toon</option>
+                    <option value="Swamp_of_Love">Swamp of Love</option>
+                    <option value="Rooftop">Rooftop</option>
+                    <option value="Coin_Factory">Coin Factory</option>
+                    <option value="Snowtel_2">Ice Island</option>
+                    <option value="Medieval Manor">MadEvil Manor</option>
+                    <option value="Super_City_2">Kaiju Park</option>
+                    <option value="Spongebob">Bikini Bottom</option>
+                    <option value="Oddities Shop">Oddities Shop</option>
+                    <option value="Skating_Bowl">Skating Bowl</option>
+                    <option value="Hockey">Ice Rink</option>
+                    <option value="Escape_Room">Escape Room</option>
+                </select>
+
+                <select id="tileFilter" class="filter-select">
+                    <option value="">Filter by Tile</option>
+                    <option value="wall">Wall</option>
+                    <option value="bush">Bush</option>
+                    <option value="water">Water</option>
+                    <option value="rope">Rope Fence</option>
+                    <option value="crate">Crate</option>
+                </select>
             </div>
         </div>
 
-        <div class="map-grid">
-            <!-- Map cards will be dynamically inserted here -->
-        </div>
-
-        <div class="pagination">
-            <button class="pagination-btn text-btn" data-action="prev">Previous</button>
-            <span class="pagination-info">Page 1 of 1</span>
-            <button class="pagination-btn text-btn" data-action="next">Next</button>
-        </div>
-    </div>
+        <div class="maps-grid" id="mapsGrid"></div>
+    </main>
 
     <script>
         const avatar = document.getElementById('avatar');
