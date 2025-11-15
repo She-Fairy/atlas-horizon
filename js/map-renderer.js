@@ -16,11 +16,22 @@ const sharedResources = {
 
 export async function generateMapImage(mapData, size = 'regular', gamemode = 'Gem_Grab', environment = 'Desert') {
   // Get actual map dimensions from mapData
+  // CRITICAL: mapData structure is mapData[layer][y][x]
+  // So mapData[0] is the first layer (array of rows)
+  // mapData[0][0] is the first row (array of tileIds)
   let width, height;
-  if (mapData && mapData.length > 0 && mapData[0] && mapData[0].length > 0) {
-    // Use actual mapData dimensions
-    height = mapData[0].length;
-    width = mapData[0][0] ? mapData[0][0].length : MAP_SIZES[size].width;
+  if (mapData && Array.isArray(mapData) && mapData.length > 0) {
+    const firstLayer = mapData[0];
+    if (firstLayer && Array.isArray(firstLayer) && firstLayer.length > 0) {
+      // height is number of rows
+      height = firstLayer.length;
+      // width is length of first row
+      const firstRow = firstLayer[0];
+      width = (firstRow && Array.isArray(firstRow)) ? firstRow.length : MAP_SIZES[size].width;
+    } else {
+      // Fallback to size-based dimensions
+      ({ width, height } = MAP_SIZES[size]);
+    }
   } else {
     // Fallback to size-based dimensions
     ({ width, height } = MAP_SIZES[size]);
@@ -40,8 +51,6 @@ export async function generateMapImage(mapData, size = 'regular', gamemode = 'Ge
   const canvas = document.createElement('canvas');
   div2.append(canvas);
   div1.append(div2);
-  canvas.width = (width * tileSize) + (padding * 2);
-  canvas.height = (height * tileSize) + (padding * 2);
 
   const renderer = new MapMaker(canvas, true);
   
@@ -50,19 +59,44 @@ export async function generateMapImage(mapData, size = 'regular', gamemode = 'Ge
   renderer.environment = environment;
   renderer.gamemode = gamemode;
   
-  // CRITICAL: Set mapData BEFORE setting dimensions
+  // CRITICAL: Set mapData and recalculate dimensions from actual mapData
   // mapData structure: mapData[layer][y][x] = tileId
   // Ensure mapData is valid - if it's null/undefined or malformed, create empty map
   if (!mapData || !Array.isArray(mapData) || mapData.length === 0) {
     console.warn('Invalid mapData, creating empty map');
     renderer.mapData = renderer.createEmptyLayeredMap(width, height);
+    renderer.mapWidth = width;
+    renderer.mapHeight = height;
   } else {
     renderer.mapData = mapData;
+    // Recalculate dimensions from actual mapData to ensure they match
+    const firstLayer = mapData[0];
+    if (firstLayer && Array.isArray(firstLayer) && firstLayer.length > 0) {
+      const actualHeight = firstLayer.length;
+      const firstRow = firstLayer[0];
+      const actualWidth = (firstRow && Array.isArray(firstRow)) ? firstRow.length : width;
+      renderer.mapWidth = actualWidth;
+      renderer.mapHeight = actualHeight;
+      // Update width/height for canvas sizing
+      width = actualWidth;
+      height = actualHeight;
+    } else {
+      renderer.mapWidth = width;
+      renderer.mapHeight = height;
+    }
   }
-  renderer.mapWidth = width;
-  renderer.mapHeight = height;
+  
+  // Recalculate tileSize and canvas size based on actual dimensions
+  const totalWidth = width * baseTileSize;
+  const totalHeight = height * baseTileSize;
+  const scale = Math.min(1, maxPreviewSize / Math.max(totalWidth, totalHeight));
+  const finalTileSize = Math.floor(baseTileSize * scale);
+  
+  canvas.width = (width * finalTileSize) + (padding * 2);
+  canvas.height = (height * finalTileSize) + (padding * 2);
+  
   renderer.mapSize = renderer.mapSizes[size] || { width, height };
-  renderer.tileSize = tileSize; // Use scaled tile size
+  renderer.tileSize = finalTileSize; // Use scaled tile size
   renderer.canvasPadding = padding; // Set padding to match canvas
 
   // Ensure environment cache exists
@@ -166,11 +200,14 @@ export async function generateMapImage(mapData, size = 'regular', gamemode = 'Ge
   
   await Promise.all(imagePromises);
 
+  // Draw the map
   renderer.draw();
 
   // Wait for any images that might have been loaded during draw
   // (fences, water tiles, etc. are loaded dynamically)
-  const allImages = Object.values(renderer.tileImages).filter(img => img);
+  // Collect all images from tileImages (including dynamically added ones)
+  const allImageKeys = Object.keys(renderer.tileImages);
+  const allImages = allImageKeys.map(key => renderer.tileImages[key]).filter(img => img);
   const remainingPromises = allImages
     .filter(img => !img.complete)
     .map(img => waitForImage(img));
@@ -180,6 +217,13 @@ export async function generateMapImage(mapData, size = 'regular', gamemode = 'Ge
     // Redraw if new images were loaded
     renderer.draw();
   }
+  
+  // Final check - wait a bit more for any last-minute image loads
+  // This is especially important for dynamically loaded images
+  await new Promise(resolve => setTimeout(resolve, 100));
+  
+  // One final draw to ensure everything is rendered
+  renderer.draw();
 
   const ctx = canvas.getContext('2d');
   for (const goal of renderer.goalImages) {
