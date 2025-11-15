@@ -37,14 +37,10 @@ export async function generateMapImage(mapData, size = 'regular', gamemode = 'Ge
     ({ width, height } = MAP_SIZES[size]);
   }
   
-  // Calculate tile size to fit larger maps (max 800px width/height for preview)
+  // Calculate canvas padding and base tile size (actual scale computed later)
   const maxPreviewSize = 800;
   const padding = 16;
   const baseTileSize = 32;
-  const totalWidth = width * baseTileSize;
-  const totalHeight = height * baseTileSize;
-  const scale = Math.min(1, maxPreviewSize / Math.max(totalWidth, totalHeight));
-  const tileSize = Math.floor(baseTileSize * scale);
   
   const div1 = document.createElement('div');
   const div2 = document.createElement('div');
@@ -86,17 +82,17 @@ export async function generateMapImage(mapData, size = 'regular', gamemode = 'Ge
     }
   }
   
-  // Recalculate tileSize and canvas size based on actual dimensions
+  // Recalculate tile size and canvas size based on actual dimensions
   const totalWidth = width * baseTileSize;
   const totalHeight = height * baseTileSize;
   const scale = Math.min(1, maxPreviewSize / Math.max(totalWidth, totalHeight));
-  const finalTileSize = Math.floor(baseTileSize * scale);
-  
-  canvas.width = (width * finalTileSize) + (padding * 2);
-  canvas.height = (height * finalTileSize) + (padding * 2);
-  
+  const tileSize = Math.floor(baseTileSize * scale);
+
+  canvas.width = (width * tileSize) + (padding * 2);
+  canvas.height = (height * tileSize) + (padding * 2);
+
   renderer.mapSize = renderer.mapSizes[size] || { width, height };
-  renderer.tileSize = finalTileSize; // Use scaled tile size
+  renderer.tileSize = tileSize; // Use scaled tile size
   renderer.canvasPadding = padding; // Set padding to match canvas
 
   // Ensure environment cache exists
