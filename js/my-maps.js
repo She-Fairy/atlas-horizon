@@ -28,6 +28,7 @@ function applyFilters() {
     const searchTerm = document.getElementById('mapSearch')?.value.toLowerCase();
     const gamemodeFilter = document.getElementById('gamemodeFilter')?.value;
     const environmentFilter = document.getElementById('environmentFilter')?.value;
+    const sizeFilter = document.getElementById('sizeFilter')?.value;
     const tileFilter = document.getElementById('tileFilter')?.value.toLowerCase();
 
     filteredMaps = allMaps.filter(map => {
@@ -37,19 +38,23 @@ function applyFilters() {
         }
 
         // Gamemode filter
-        if (gamemodeFilter !== 'All Gamemodes' && map.gamemode !== gamemodeFilter) {
+        if (gamemodeFilter && map.gamemode !== gamemodeFilter) {
             return false;
         }
 
         // Environment filter
-        if (environmentFilter !== 'All Environments' && map.environment !== environmentFilter) {
+        if (environmentFilter && map.environment !== environmentFilter) {
+            return false;
+        }
+
+        // Size filter
+        if (sizeFilter && map.size !== sizeFilter) {
             return false;
         }
 
         // Tile filter - check if map contains the specified tile
         if (tileFilter) {
             const tileIdMap = {
-                'filter by tile': null,
                 'wall': 1,
                 'bush': 2,
                 'water': 10,
@@ -187,6 +192,7 @@ window.addEventListener('load', () => {
     const searchInput = document.getElementById('mapSearch');
     const gamemodeFilter = document.getElementById('gamemodeFilter');
     const environmentFilter = document.getElementById('environmentFilter');
+    const sizeFilter = document.getElementById('sizeFilter');
     const tileFilter = document.getElementById('tileFilter');
 
     if (searchInput) {
@@ -201,6 +207,11 @@ window.addEventListener('load', () => {
     }
     if (environmentFilter) {
         environmentFilter.addEventListener('change', () => {
+            applyFilters();
+        });
+    }
+    if (sizeFilter) {
+        sizeFilter.addEventListener('change', () => {
             applyFilters();
         });
     }
