@@ -18,7 +18,11 @@ export async function generateMapImage(mapData, size = 'regular', gamemode = 'Ge
   const { width, height } = MAP_SIZES[size];
   const tileSize = 32;
   const padding = 16;
+  const div1 = document.createElement('div');
+  const div2 = document.createElement('div');
   const canvas = document.createElement('canvas');
+  div2.append(canvas);
+  div1.append(div2);
   canvas.width = (width * tileSize) + (padding * 2);
   canvas.height = (height * tileSize) + (padding * 2);
 

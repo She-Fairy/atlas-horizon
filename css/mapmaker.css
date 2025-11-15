@@ -1,74 +1,253 @@
-.mapmaker-container {
-    display: flex;
-    gap: 2rem;
-    padding: 2rem;
-    height: calc(100vh - 4rem);
-}
-
+/* Base toolbar */
 .toolbar {
-    width: 250px;
-    background-color: var(--surface-color);
-    padding: 1rem;
-    border-radius: 0.5rem;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 0.5rem 1rem;
+  margin: 0 1rem;
+  background: var(--surface-color, #1e2a38);
+  border: 1px solid var(--border-color, #3a4a5a);
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  box-sizing: border-box;
 }
 
-.map-area {
-    flex-grow: 1;
+/* Sections inside */
+.toolbar-section {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.75rem;
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+/* Divider */
+.toolbar-divider {
+  width: 2px;
+  height: 2.5rem;
+  background: var(--divider-color, #3a4a5a);
+  border-radius: 1px;
+  margin: 0 0.5rem;
+  align-self: stretch;
+}
+
+/* Icon buttons */
+.icon-btn img,
+.zoom-btn img {
+  width: 1.5rem;
+  height: 1.5rem;
+  vertical-align: middle;
+}
+
+
+pc {
+    display: none;
+}
+
+/* Fixed zoom controls relative to map-editor */
+#zoomControls {
+    position: fixed;
+    z-index: 100;
+    top: 0; /* Will be set by JS */
+    left: 0; /* Will be set by JS */
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+}
+.map-editor-overlay {
+    position: absolute;
+    top: 25rem;
+    left: 3rem;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 20;
+}
+
+.map-editor-overlay .zoom-controls {
+    pointer-events: auto;
+}
+.mapmaker-container {
+    position: relative;
+    padding: 1rem;
+    min-height: calc(100vh - 4rem);
+    overflow-y: visible;
+}
+
+.hamburger {
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    width: 48px;
+    height: 48px;
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    background: var(--surface-color);
+    cursor: pointer;
+    z-index: 1001;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transition: all 0.3s ease;
+}
+
+.hamburger:hover {
+    background: var(--surface-color-hover);
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+}
+
+.hamburger::before {
+    content: "";
+    display: block;
+    width: 24px;
+    height: 3px;
+    background: var(--text-color);
+    box-shadow: 0 7px 0 var(--text-color), 0 -7px 0 var(--text-color);
+    margin: 0 auto;
+    transition: all 0.3s ease;
+}
+
+.side-panel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 22%;
+    min-width: 16rem;
+    max-width: 17rem;
+    height: 100vh;
+    background: var(--surface-color);
+    border-right: 2px solid var(--border-color);
+    box-shadow: 4px 0 20px rgba(0,0,0,0.15);
+    padding: 1rem;
+    overflow-y: auto;
+    z-index: 1000;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+}
+
+.side-panel[aria-hidden="false"] {
+    transform: translateX(0);
+}
+
+.side-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 3.75rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.side-panel-header h3 {
+    margin: 0;
+    color: var(--primary-color);
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.side-panel-content {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 1.5rem;
 }
 
-.map-toolbar {
-    background-color: var(--surface-color);
-    padding: 0.75rem;
-    border-radius: 0.5rem;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+.content, .center-panel {
+    width: 100%;
     display: flex;
-    justify-content:baseline;
-    align-items: center;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1.5rem;
+}
+
+.controls-bar {
+    display: grid;
+    grid-template-columns: 1fr repeat(3, minmax(180px, 280px));
     gap: 1rem;
-}
-
-.tool-buttons, .action-buttons {
-    display: flex;
-    gap: 0.75rem;
-}
-
-label[for='blue2RedBtn'] {
-    width: 36px;
-    height: 36px;
-    padding: 0px;
+    align-items: start;
+    background: var(--surface-color);
+    padding: 1.25rem;
+    margin: 0 1rem;
+    border-radius: 12px;
     border: 1px solid var(--border-color);
-    border-radius: 0.25rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.controls-bar > div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.controls-bar > div:first-child {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.controls-bar > div:first-child > *:first-child:not(input) {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-color-secondary);
+    margin: 0;
+}
+
+.controls-bar input[type="text"] {
+    height: 44px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    padding: 0 0.75rem;
+    border: 1px solid var(--border-color);
     background-color: var(--surface-color);
     color: var(--text-color);
-    cursor: pointer;
-    transition: all 0.2s;
+    transition: border-color 0.2s, background-color 0.2s;
+}
+
+.controls-bar input[type="text"]:hover {
+    border-color: var(--primary-color);
+}
+
+.select-inline {
     display: flex;
-    align-items: center;
-    justify-content: center;
+    flex-direction: column;
+    gap: 0.5rem;
 }
 
-label[for='blue2RedBtn'] img {
-    width: 23px;
-    height: 23px;
-    object-fit: contain;
-    filter: brightness(0.9)
+.select-inline label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-color-secondary);
+    margin: 0;
 }
 
-label[for='blue2RedBtn']:hover {
-    background-color: var(--surface-color-hover);
+.select-inline select {
+    height: 44px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    padding: 0 0.75rem;
+    border: 1px solid var(--border-color);
+    background-color: var(--surface-color);
+    color: var(--text-color);
+    transition: border-color 0.2s, background-color 0.2s;
+}
+
+.select-inline select:hover {
     border-color: var(--primary-color);
 }
 
-label[for='blue2RedBtn'].active {
-    background-color: var(--surface-color-hover);
-    border-color: var(--primary-color);
+.tool-buttons, .action-buttons, .select-tool-buttons {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin: 0 0;
 }
 
-.icon-btn {
+
+.icon-btn, .zoom-btn, .select-btn {
     width: 36px;
     height: 36px;
     padding: 7px;
@@ -83,7 +262,7 @@ label[for='blue2RedBtn'].active {
     justify-content: center;
 }
 
-.icon-btn img {
+.icon-btn img, .zoom-btn img, .select-btn img {
     width: 20px;
     height: 20px;
     object-fit: contain;
@@ -91,58 +270,115 @@ label[for='blue2RedBtn'].active {
     transition: filter 0.2s;
 }
 
-.icon-btn:hover {
+.icon-btn:hover, .zoom-btn:hover, .select-btn:hover {
     background-color: var(--surface-color-hover);
     border-color: var(--primary-color);
 }
 
-.icon-btn:hover img {
+.icon-btn:hover img, .zoom-btn:hover img, .select-btn:hover img {
     filter: brightness(0) invert(1) brightness(200%);
 }
 
-.icon-btn.active {
+.icon-btn.active, .zoom-btn.active, .select-btn.active {
     background-color: var(--primary-color);
     border-color: var(--primary-color);
 }
 
-.icon-btn.active img {
+.icon-btn.active img, .zoom-btn.active img, .select-btn.active img {
     filter: brightness(0) invert(1) brightness(200%);
 }
 
-.map-editor {
-    flex: 1;
-    position: relative;
-    overflow: auto;
-    background: var(--surface-color);
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    min-height: 0;
-    height: calc(100vh - 250px);
-    padding: 20px;
+
+.select-btn {
+    width: 13vw;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }
 
-.map-editor.scrollable {
-    overflow: auto;
+.tiles-section {
+    background: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin: 0 1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    /* allow children to control scrolling; avoid automatic stretching that prevents overflow */
+    min-height: 0;
+}
+
+.selections-section {
+    background: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin: 1.5rem 1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.tiles-grid {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: stretch;
+    /* allow this column to shrink so inner selector can scroll */
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+.tiles-grid h4 {
+    font-size: 1.125rem;
+    font-weight: 600;
+}
+
+.tiles-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: center;
+    padding: 1rem;
+    background: rgba(var(--primary-color-rgb), 0.05);
+    border-radius: 8px;
+    border: 1px solid rgba(var(--primary-color-rgb), 0.1);
+}
+
+.map-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 60vh;
+}
+
+
+.map-editor {
+    position: relative;
+    overflow: auto; /* allow scrollbars */
+    width: 100%;
+    max-height: 95vh;
+    min-height: 60vh;
+    margin: 0 1rem;
+    background: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
 }
 
 .map-container {
     position: relative;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: flex-start;
-    align-items: flex-start;
+    width: fit-content;
+    height: fit-content;
+    margin: auto; /* let initial centering happen */
 }
 
 #mapCanvas {
-    position: absolute;
-    top: 0;
-    left: 0;
-    transform-origin: top left;
+    display: block;
     image-rendering: pixelated;
-    margin: 0px;
-    padding:0;
 }
+
+
 
 /* Ensure scrollbars are always visible */
 .map-editor::-webkit-scrollbar {
@@ -205,42 +441,54 @@ label[for='blue2RedBtn'].active {
     color: var(--text-color);
 }
 
+
 #tileSelector {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
-    gap: 4px;
+    grid-template-columns: repeat(auto-fill, minmax(52px, max-content));
+    gap: 8px;
     padding: 8px;
-    max-height: 300px;
-    overflow-y: auto;
+    background: rgba(255,255,255,0.02);
+
+    border-radius: 8px;
 }
 
+
+
 .tile-btn {
-    width: 40px;
-    height: 40px;
-    padding: 2px;
+    padding: 4px;
     border: 2px solid transparent;
-    border-radius: 4px;
+    border-radius: 8px;
     background: var(--surface-color);
     cursor: pointer;
     transition: all 0.2s;
     display: flex;
     align-items: center;
     justify-content: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+
+    width: 100%;
+    min-width: 52px;
+    aspect-ratio: 1 / 1;
+    box-sizing: border-box;
 }
 
+
 .tile-btn:hover {
-    background: var(--surface-hover-color);
-    border-color: var(--primary-color-light);
+    background: var(--surface-color-hover);
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
 
 .tile-btn.selected {
     border-color: var(--primary-color);
     background: rgba(var(--primary-color-rgb), 0.2);
+    box-shadow: 0 0 0 2px rgba(var(--primary-color-rgb), 0.3);
 }
 
 .tile-btn img {
-    max-width: 100%;
-    max-height: 100%;
+    width: 70%;
+    height: 70%;
     object-fit: contain;
 }
 
@@ -260,16 +508,10 @@ label[for='blue2RedBtn'].active {
 
 .checkbox-container {
     display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 4px 8px;
+    align-items: flex-start;
+    justify-content: space-between;
     border-radius: 4px;
-    background: rgba(255, 255, 255, 0.1);
     transition: all 0.2s ease;
-}
-
-.checkbox-container:hover {
-    background: rgba(255, 255, 255, 0.15);
 }
 
 /* Add styles for checkboxes with red border */
@@ -296,13 +538,178 @@ input[type="checkbox"][style*="border-color: rgb(255, 68, 68)"] {
     color: white;
 }
 
+.below-map {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    background: var(--surface-color);
+    padding: 1.25rem;
+    margin: 0 1rem;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
 .save-export-buttons {
     display: flex;
     flex-direction: row;
-    gap: 0.5rem;
+    gap: 1rem;
     align-items: center;
     justify-content: center;
-    margin-top: 1rem;
+}
+
+.save-export-buttons .text-btn {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    border-radius: 8px;
+    min-width: 120px;
+}
+
+.map-link {
+    text-align: center;
+    padding: 0.75rem;
+    background: rgba(var(--primary-color-rgb), 0.05);
+    border-radius: 8px;
+    border: 1px solid rgba(var(--primary-color-rgb), 0.1);
+}
+
+.map-link span {
+    font-weight: 600;
+    color: var(--text-color-secondary);
+    margin-right: 0.5rem;
+}
+
+.link-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    justify-content: center;
+    margin-top: 0.5rem;
+}
+
+.copy-btn {
+    width: 32px;
+    height: 32px;
+    padding: 6px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background: var(--surface-color);
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.copy-btn:hover {
+    background: var(--surface-color-hover);
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.copy-btn:active {
+    transform: scale(0.95);
+}
+
+.copy-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+
+@media (max-width: 900px) {
+    .mapmaker-container {
+        padding: 0.75rem;
+    }
+
+    .hamburger {
+        top: 0.75rem;
+        left: 0.75rem;
+        width: 44px;
+        height: 44px;
+    }
+
+    .content {
+        gap: 1rem;
+    }
+
+    .controls-bar {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+        padding: 1rem;
+        margin: 0 0.5rem;
+    }
+
+    .tiles-section {
+        margin: 0 0.5rem;
+    }
+
+    .tiles-content {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .tiles-controls {
+        flex-direction: row;
+        justify-content: center;
+        padding: 0.75rem;
+    }
+
+    .map-editor {
+        padding: 1rem;
+        min-height: 50vh;
+        margin: 0 0.5rem;
+    }
+
+    .below-map {
+        margin: 0 0.5rem;
+    }
+
+    .tiles-grid{
+        overflow-x: auto;
+        max-height: 30vh;
+    }
+
+    .save-export-buttons {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .save-export-buttons .text-btn {
+        width: 100%;
+        min-width: unset;
+    }
+
+    .link-container {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .copy-btn {
+        align-self: center;
+    }
+
+    .select-btn {
+        width: 36px;
+        height: 36px;
+        padding: 7px;
+        border: 1px solid var(--border-color);
+        border-radius: 0.25rem;
+        background-color: var(--surface-color);
+        color: var(--text-color);
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    mob {
+        display: none;
+    }
 }
 
 .text-btn{
@@ -367,13 +774,14 @@ input[type="text"] {
     transition: border-color 0.2s, background-color 0.2s;
 }
 
-.radio-container {
+.selections-container {
     display: flex;
-    gap: 10px;
-    margin: 10px 0;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0 0;
 }
 
-.radio-container label {
+.selections-container label {
     display: flex;
     align-items: center;
     gap: 5px;
@@ -519,20 +927,6 @@ label:has(input[type="radio"]:checked) {
     text-align: center;
 }
 
-.logo {
-    font-size: 1.5rem;
-    color: var(--primary-color);
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-}
-
-.logo-img {
-    height: 3rem;
-    width: auto;
-    object-fit: contain;
-}
-
 .environments-list {
     list-style: none;
     padding: 0;
@@ -545,6 +939,16 @@ label:has(input[type="radio"]:checked) {
     align-items: flex-start;
 }
 
+label[for='correctMirroringBtn'], label[for='hideZoomBtn'] {
+    width: 100%;
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background-color: var(--surface-color);
+}
 
 ::-webkit-scrollbar {
     width: 12px;
@@ -563,4 +967,174 @@ label:has(input[type="radio"]:checked) {
 
 ::-webkit-scrollbar-thumb:hover {
     background-color: var(--primary-color);
+}
+
+
+/* Default stays stacked (your current setup) */
+
+/* On wide screens, switch to row layout */
+@media (min-width: 1500px) {
+  .center-panel {
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: center;
+    height: 70vh;
+    gap: 2rem;
+    min-height: 0;
+  }
+
+  .left-panel,
+  .right-panel {
+    display: flex;
+    flex-direction: column;
+    align-self: stretch;
+    gap: 1rem;
+    flex: 0 0 350px; /* fixed side columns */
+    min-height: 0;
+    height: 100%;
+  }
+
+  .right-panel {
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+
+
+  .map-wrapper {
+    flex: 1;
+    min-height: 0;
+    height: 100%;
+    }
+
+    .map-editor {
+        max-height: 70vh;
+        min-height: 70vh;
+        width: calc(100vw - 850px);
+        max-width: calc(100vw - 600px);
+    }
+
+  /* Toolbar switches to vertical column */
+  .toolbar.toolbar-horizontal, .selections-section {
+    flex-direction: column;
+    align-items: flex-start;
+    padding-top: 25px;
+    height: 45%;
+    width: 95%;
+    flex: 0 0 0;
+  }
+
+  .toolbar.toolbar-horizontal{
+    gap: 13px;
+    height: 70%;
+    justify-content: flex-start;
+  }
+
+  section.selections-section {
+    padding-bottom: 0.75rem;
+    padding-top: 0.75rem;
+    margin: 0 1rem;
+  }
+
+  .toolbar-section {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-between;
+    flex: 0 0 auto;
+  }
+
+  .tiles-section {
+    flex-direction: column;
+    align-items: center;
+    width: 95%;
+    padding: 25px 15px;
+    height: 100%;
+    max-height: 100%;
+  }
+
+  .tiles-grid {
+    width: 100%;
+    max-height: max-content;
+    height:fit-content;
+    padding: 0;
+    overflow-y:auto;
+  }
+
+  #tilesTitle {
+    width: 100%;
+    text-align: center;
+    margin: 0 0 0 0;
+  }
+
+  #tileSelector {
+    /* Wide screens: allow normal grid wrapping into rows and let rows
+       stretch/stack vertically inside the tiles column. */
+    display: grid;
+    grid-auto-flow: row; /* normal row flow (wrap into multiple rows) */
+    grid-template-columns: repeat(auto-fill, minmax(52px, 1fr));
+    grid-auto-rows: auto;
+    gap: 8px;
+    padding: 8px;
+    background: rgba(255,255,255,0.02);
+
+    /* vertical behavior: allow the grid to take available height and stretch rows */
+    align-content: stretch;   /* let rows expand vertically to fill the container */
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    /* keep it flexible inside parent containers */
+    width: 100%;
+    height: 100%;
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+
+  .toolbar-divider {
+    width: 100%;
+    height: 2px;
+    margin: 0 0;
+  }
+
+  pc {
+    display: block;
+  }
+
+  .toolbar-section label.mirror-btn {
+    height: min-content;
+    height: fit-content;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+
+  .long-btn {
+    width: 100%;
+    margin-top: 0;
+    padding: 0.5rem;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background-color: var(--surface-color);
+  }
+
+  .selections-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    gap: 1rem;
+  }
+
+  .select-btn {
+    width: 100%;
+  }
+
+  .toolbar.toolbar-horizontal .toolbar-divider {
+    width: 100%;
+    height: 2px;
+    margin: 0.5rem 0;
+  }
 }

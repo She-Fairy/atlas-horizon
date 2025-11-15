@@ -10,12 +10,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.log('from URL:', user, typeof user);
     console.log('from storage:', localStorage.getItem('user'), typeof localStorage.getItem('user'));
     console.log('equal:', user === localStorage.getItem('user'));
+    document.getElementById('openMapBtn').onclick = () => {
+            window.location.href = window.location.href.replace('map.html', 'mapmaker.html');
+        };
 
     if (user === localStorage.getItem('user')) {
         document.getElementById('openMapBtn').textContent = 'Open in Map Maker';
-        document.getElementById('openMapBtn').onclick = () => {
-            window.location.href = window.location.href.replace('map.html', 'mapmaker.html');
-        };
         document.getElementById('deleteMapBtn').style.display = 'inline-block';
     }
 

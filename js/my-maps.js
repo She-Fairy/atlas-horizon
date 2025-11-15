@@ -46,6 +46,7 @@ async function postMapsByUser(user = localStorage.getItem('user')) {
     }
 }
 
+
 function createCard(name, user, image) {
     const card = document.createElement('div');
     card.classList.add('card');
