@@ -57,6 +57,7 @@ function applyFilters() {
     const searchTerm = document.getElementById('mapSearch')?.value.toLowerCase() || '';
     const gamemodeFilter = document.getElementById('gamemodeFilter')?.value || '';
     const environmentFilter = document.getElementById('environmentFilter')?.value || '';
+    const sizeFilter = document.getElementById('sizeFilter')?.value || '';
     const tileFilter = document.getElementById('tileFilter')?.value || '';
     const urlParams = new URLSearchParams(window.location.search);
     const creatorFilter = urlParams.get('creator'); // Filter by specific creator if in URL
@@ -76,12 +77,17 @@ function applyFilters() {
             }
 
             // Gamemode filter
-            if (gamemodeFilter && gamemodeFilter !== '' && map.gamemode !== gamemodeFilter) {
+            if (gamemodeFilter && map.gamemode !== gamemodeFilter) {
                 continue;
             }
 
             // Environment filter
-            if (environmentFilter && environmentFilter !== '' && map.environment !== environmentFilter) {
+            if (environmentFilter && map.environment !== environmentFilter) {
+                continue;
+            }
+
+            // Size filter
+            if (sizeFilter && map.size !== sizeFilter) {
                 continue;
             }
 
@@ -302,6 +308,7 @@ window.addEventListener('load', () => {
     const searchInput = document.getElementById('mapSearch');
     const gamemodeFilter = document.getElementById('gamemodeFilter');
     const environmentFilter = document.getElementById('environmentFilter');
+    const sizeFilter = document.getElementById('sizeFilter');
     const tileFilter = document.getElementById('tileFilter');
 
     if (searchInput) {
@@ -316,6 +323,11 @@ window.addEventListener('load', () => {
     }
     if (environmentFilter) {
         environmentFilter.addEventListener('change', () => {
+            applyFilters();
+        });
+    }
+    if (sizeFilter) {
+        sizeFilter.addEventListener('change', () => {
             applyFilters();
         });
     }
