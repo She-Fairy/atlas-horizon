@@ -267,14 +267,24 @@ function displayMaps(mapsByUser) {
 
     // Add load more button if there are more maps to display
     if (hasMore) {
-        const loadMoreBtn = document.createElement('button');
-        loadMoreBtn.id = 'loadMoreBtn';
-        loadMoreBtn.textContent = 'Load More';
-        loadMoreBtn.classList.add('load-more-btn');
-        loadMoreBtn.addEventListener('click', () => {
-            displayMaps(mapsByUser);
-        });
-        container.appendChild(loadMoreBtn);
+        const loadMoreContainer = document.getElementById('loadMoreContainer');
+        if (loadMoreContainer) {
+            loadMoreContainer.innerHTML = '';
+            const loadMoreBtn = document.createElement('button');
+            loadMoreBtn.id = 'loadMoreBtn';
+            loadMoreBtn.textContent = 'Load More';
+            loadMoreBtn.classList.add('load-more-btn');
+            loadMoreBtn.addEventListener('click', () => {
+                displayMaps(mapsByUser);
+            });
+            loadMoreContainer.appendChild(loadMoreBtn);
+        }
+    } else {
+        // Clear the container if no more maps
+        const loadMoreContainer = document.getElementById('loadMoreContainer');
+        if (loadMoreContainer) {
+            loadMoreContainer.innerHTML = '';
+        }
     }
 }
 

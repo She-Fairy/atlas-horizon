@@ -112,9 +112,9 @@
 }
 
 .load-more-btn {
-    grid-column: 1 / -1;
     padding: 1rem 2rem;
     margin: 1rem auto;
+    display: block;
     background-color: var(--primary-color);
     color: var(--text-color);
     border: none;
@@ -128,4 +128,9 @@
     background-color: var(--primary-color);
     opacity: 0.8;
     transform: scale(1.05);
+}
+
+.load-more-container {
+    text-align: center;
+    padding: 1rem 0;
 }
