@@ -5,19 +5,6 @@ const FENCE_LOGIC_TYPES = {
     FOUR_PIECE: 4       // Logic 4: Single, T, TR, R
 };
 
-/*I am making a mapmaking tool to which I recently added layers- placing stuff on top of other stuff. This caused a bunch off issues that maybe you could fix:
-
-Select (hence also multidragging) and erase features only apply to one layer and not to all of them. Regular dragging should work only on the tile that is placeableOn or not with placeableOnThis if there are multiple layers occupied on that tile.
-
-Tiles with the placeableOnThis property are not draggable if currently placing a tile that is placeable on them since that tile is being placed- placing should only occur upon mouseUp and not before dragging.
-
-Dragging a tile on top of another tile used to and should replace the existing tile with the dragged tile but not the dragged tile is just being rejected and gone.
-
-Placing multiple tiles atop a tile with placeableOnThis property should not be allowed unless all tiles have properties that allow it (e.g. placing a rail on top of an objective and later placing a train on top of both).
-
-placeableOnThis property should also allow that tile to be placed atop tiles that are placeableOn it as the results of placing it and placing them are the same */
-
-
 const FENCE_LOGIC_BY_ENVIRONMENT = {
     // To be filled with actual environment mappings
     // Example: 'Desert': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
@@ -126,45 +113,15 @@ class FenceLogicHandler {
     }
 
     getConnections(x, y, mapData, isFence, isBorder, environment) {
-        // Detect if mapData is full structure [layer][y][x] or single layer [y][x]
-        // Full structure: mapData[0] is [y][x], mapData[0][0] is [x] (array)
-        // Single layer: mapData[0] is [x] (array), mapData[0][0] is number
-        const isFullStructure = mapData && mapData[0] && Array.isArray(mapData[0][0]);
-        
-        let height, width;
-        if (isFullStructure) {
-            // Full structure: get dimensions from first layer
-            height = mapData[0].length;
-            width = mapData[0][0] ? mapData[0][0].length : 0;
-        } else {
-            // Single layer
-            height = mapData.length;
-            width = mapData[0] ? mapData[0].length : 0;
-        }
+        const height = mapData.length;
+        const width = mapData[0].length;
         
         // Helper function to check if a tile is a fence/rope
         const isSameType = (x, y) => {
             if (x < 0 || x >= width || y < 0 || y >= height) return false;
-            
-            let tileId = 0;
-            if (isFullStructure) {
-                // Check all layers for the tile
-                for (let layer = 0; layer < mapData.length; layer++) {
-                    if (mapData[layer] && mapData[layer][y] && mapData[layer][y][x] !== undefined) {
-                        const id = mapData[layer][y][x];
-                        if (id !== 0 && id !== -1 && id !== -2 && id !== -3) {
-                            tileId = id;
-                            break; // Take first non-empty tile
-                        }
-                    }
-                }
-            } else {
-                // Single layer
-                tileId = mapData[y][x];
-            }
-            
+            const tileId = mapData[y][x];
             if (environment === 'Brawl_Arena') return tileId === 40 || tileId === 43 || tileId === 44;
-            if (environment === 'Rails' || environment === 'Train') return tileId === 68;
+            if (environment === 'Rails' || 'Train') return tileId === 68;
             if (isBorder) return tileId === 45;
             return isFence ? (tileId === 7) : (tileId === 9); // Assuming 7 is fence and 9 is rope
         };
@@ -457,7 +414,7 @@ export class MapMaker {
             'Train_TR': [1, 1.75, 0, -50, 1, 5],
             'Train_BL': [1, 1.75, 0, -50, 1, 5],
             'Train_BR': [1, 1.75, 0, -50, 1, 5],
-            'Train_Ver': [1*1.4, 1.72*1.5, -12.5, -65, 1, 5],
+            'Train_Ver': [1*1.4, 1.72*1.4, 1, -65, 1, 5],
         };
 
         // Initialize objective data
@@ -1664,45 +1621,38 @@ export class MapMaker {
         this.selectDragLastPos = null;
     }
 
-    async preloadWaterTiles() {
+    preloadWaterTiles() {
         if (!this.tileImages) this.tileImages = {};
         if (!this.tileImagePaths) this.tileImagePaths = {};
 
-        const waterPromises = this.waterTileFilenames.map(filename => {
-            return new Promise((resolve) => {
-                const imagePath = `Resources/${this.environment}/Water/${filename}`;
-                const cacheKey = `${this.environment}_water_${filename}`;
+        this.waterTileFilenames.forEach(filename => {
+            const imagePath = `Resources/${this.environment}/Water/${filename}`;
+            const cacheKey = `${this.environment}_water_${filename}`;
 
-                // Skip if already loaded with the same path
-                if (this.tileImagePaths[cacheKey] === imagePath && this.tileImages[cacheKey]?.complete) {
-                    resolve();
-                    return;
-                }
+            // Skip if already loaded with the same path
+            if (this.tileImagePaths[cacheKey] === imagePath && this.tileImages[cacheKey]?.complete) {
+                return;
+            }
 
-                const img = new Image();
-                img.onload = () => resolve();
-                img.onerror = () => {
-                    console.error(`Failed to load water image: ${imagePath}`);
-                    const fallbackPath = `Resources/${this.environment}/Water/00000000.png`;
-                    img.src = fallbackPath;
-                    this.tileImagePaths[cacheKey] = fallbackPath;
-                    img.onload = () => resolve();
-                    img.onerror = () => resolve(); // Resolve anyway to not block
-                };
-                img.src = imagePath;
+            const img = new Image();
+            img.src = imagePath;
 
-                this.tileImages[cacheKey] = img;
-                this.tileImagePaths[cacheKey] = imagePath;
-            });
+            img.onerror = () => {
+                console.error(`Failed to load water image: ${imagePath}`);
+                const fallbackPath = `Resources/${this.environment}/Water/00000000.png`;
+                img.src = fallbackPath;
+                this.tileImagePaths[cacheKey] = fallbackPath;
+            };
+
+            this.tileImages[cacheKey] = img;
+            this.tileImagePaths[cacheKey] = imagePath;
         });
 
-        await Promise.all(waterPromises);
-
         // === Ice and Snow support ===
-        await this.preloadIceAndSnowTiles();
+        this.preloadIceAndSnowTiles();
     }
 
-    async preloadIceAndSnowTiles() {
+    preloadIceAndSnowTiles() {
         if (!this.tileImages) this.tileImages = {};
         if (!this.tileImagePaths) this.tileImagePaths = {};
 
@@ -1711,38 +1661,29 @@ export class MapMaker {
             { key: "snow", path: "Resources/Global/Special_Tiles/SnowTile" },
         ];
 
-        const iceSnowPromises = [];
         tileTypes.forEach(type => {
             this.waterTileFilenames.forEach(filename => {
-                const promise = new Promise((resolve) => {
-                    const imagePath = `${type.path}/${filename}`;
-                    const cacheKey  = `${type.key}_${filename}`;
+                const imagePath = `${type.path}/${filename}`;
+                const cacheKey  = `${type.key}_${filename}`;
 
-                    if (this.tileImagePaths[cacheKey] === imagePath && this.tileImages[cacheKey]?.complete) {
-                        resolve();
-                        return;
-                    }
+                if (this.tileImagePaths[cacheKey] === imagePath && this.tileImages[cacheKey]?.complete) {
+                    return;
+                }
 
-                    const img = new Image();
-                    img.onload = () => resolve();
-                    img.onerror = () => {
-                        console.error(`❌ Failed to load ${type.key} tile: ${imagePath}`);
-                        const fallbackPath = `${type.path}/00000000.png`;
-                        img.src = fallbackPath;
-                        this.tileImagePaths[cacheKey] = fallbackPath;
-                        img.onload = () => resolve();
-                        img.onerror = () => resolve(); // Resolve anyway to not block
-                    };
-                    img.src = imagePath;
+                const img = new Image();
+                img.src = imagePath;
 
-                    this.tileImages[cacheKey]  = img;
-                    this.tileImagePaths[cacheKey] = imagePath;
-                });
-                iceSnowPromises.push(promise);
+                img.onerror = () => {
+                    console.error(`❌ Failed to load ${type.key} tile: ${imagePath}`);
+                    const fallbackPath = `${type.path}/00000000.png`;
+                    img.src = fallbackPath;
+                    this.tileImagePaths[cacheKey] = fallbackPath;
+                };
+
+                this.tileImages[cacheKey]  = img;
+                this.tileImagePaths[cacheKey] = imagePath;
             });
         });
-        
-        await Promise.all(iceSnowPromises);
     }
 
     // Tiles Connection Logic
@@ -1913,12 +1854,8 @@ export class MapMaker {
                 };
     
                 img.src = imgPath;
-                // Store with both string and number keys for compatibility
-                const numericId = parseInt(id);
                 this.tileImages[id] = img;
-                this.tileImages[numericId] = img;
                 this.tileImagePaths[id] = imgPath;
-                this.tileImagePaths[numericId] = imgPath;
             });
         });
     }
@@ -2056,12 +1993,8 @@ export class MapMaker {
                 this.selectionMode = e.target.value;
                 document.getElementById('selectedAreaToolsDiv').style.display = selectBtn.checked ? 'flex' : 'none';
                 document.getElementById('lastDivider').style.display = selectBtn.checked ? 'block' : 'none';
-                this.updateTransformButtonsVisibility();
             });
         });
-
-        // Initialize transform buttons visibility
-        this.updateTransformButtonsVisibility();
 
         eraseBtn.addEventListener('change', (e) => {
             this.isErasing = e.target.checked;
@@ -2072,16 +2005,6 @@ export class MapMaker {
         zoomInBtnBottom.addEventListener('click', () => this.zoom(this.zoomStep));
         zoomOutBtn.addEventListener('click', () => this.zoom(-this.zoomStep));
         zoomOutBtnBottom.addEventListener('click', () => this.zoom(-this.zoomStep));
-        
-        // Mobile eyedropper button (only shown on mobile)
-        const eyedropperBtn = document.getElementById('eyedropperBtn');
-        if (eyedropperBtn) {
-            eyedropperBtn.addEventListener('click', () => {
-                // Enable eyedropper mode - next click will select tile
-                this.eyedropperMode = true;
-                this.canvas.style.cursor = 'crosshair';
-            });
-        }
         clearBtn.addEventListener('click', () => this.clearMap());
         saveBtn.addEventListener('click', () => this.saveMap());
         exportBtn.addEventListener('click', async () => await this.exportMap());
@@ -2111,16 +2034,6 @@ export class MapMaker {
         
         // Rotate button
         document.getElementById('rotateBtn').addEventListener('click', () => this.rotateSelectedTiles());
-        
-        // Flip buttons
-        const flipHorizontalBtn = document.getElementById('flipHorizontalBtn');
-        const flipVerticalBtn = document.getElementById('flipVerticalBtn');
-        if (flipHorizontalBtn) {
-            flipHorizontalBtn.addEventListener('click', () => this.flipHorizontalSelectedTiles());
-        }
-        if (flipVerticalBtn) {
-            flipVerticalBtn.addEventListener('click', () => this.flipVerticalSelectedTiles());
-        }
 
         // Add keyboard shortcuts
         document.addEventListener('keydown', (e) => {
@@ -2304,10 +2217,7 @@ export class MapMaker {
 
     handleRightClick(event) {
         event.preventDefault();
-        this.selectTileAtPosition(event);
-    }
-    
-    selectTileAtPosition(event) {
+        
         const coords = this.getTileCoordinates(event);
         if (coords.x < 0 || coords.x >= this.mapWidth || coords.y < 0 || coords.y >= this.mapHeight) return;
 
@@ -2316,19 +2226,11 @@ export class MapMaker {
             return;
         }
 
-        // Get topmost tile at position (across all layers)
-        const topmostTile = this.getTopmostTileAt(coords.x, coords.y);
-        if (!topmostTile || topmostTile.tileId < 1) return;
+        if (this.mapData[this.defaultTileLayer][coords.y][coords.x] < 1) return;
 
-        this.selectedTile = { id: topmostTile.tileId, ...this.tileDefinitions[topmostTile.tileId] };
+        this.selectedTile = { id: this.mapData[this.defaultTileLayer][coords.y][coords.x], ...this.tileDefinitions[this.mapData[this.defaultTileLayer][coords.y][coords.x]] };
         document.getElementById('tileSelector').querySelectorAll('.tile-btn').forEach(b => b.classList.remove('selected'));
-        const btn = document.getElementById('tileSelector').querySelector(`.tile-btn[id="${this.selectedTile.id}"]`);
-        if (btn) {
-            btn.classList.add('selected');
-        }
-        
-        // Disable eyedropper mode after selection
-        this.eyedropperMode = false;
+        document.getElementById('tileSelector').querySelector(`.tile-btn[id="${this.selectedTile.id}"]`).classList.add('selected');
     }
 
     handleMouseDown(event) {
@@ -2337,12 +2239,6 @@ export class MapMaker {
         const coords = this.getTileCoordinates(event);
         
         if (coords.x < 0 || coords.x >= this.mapWidth || coords.y < 0 || coords.y >= this.mapHeight) return;
-        
-        // Handle eyedropper mode (mobile)
-        if (this.eyedropperMode) {
-            this.selectTileAtPosition(event);
-            return;
-        }
 
         if (this.selectionMode === 'select' && this.selectedTiles.length > 0 && this.selectedTiles.some(t => t.x === coords.x && t.y === coords.y)) {
             // Start select-drag
@@ -2350,59 +2246,10 @@ export class MapMaker {
             this.selectDragStart = { ...coords };
             this.selectDragLastPos = { ...coords };
             this.selectDragTiles = this.selectedTiles.map(t => ({ ...t })); // deep copy
-            // Save state and remove tiles from map (preserve all layers by removing from specific layers)
+            // Save state and remove tiles from map using eraseTile (handles 2x2 and mirroring)
             this.saveState();
             for (const t of this.selectDragTiles) {
-                const layer = t.layer !== undefined ? t.layer : this.defaultTileLayer;
-                // Remove from specific layer instead of using eraseTile which finds topmost
-                this.mapData[layer][t.y][t.x] = 0;
-                
-                // Handle 2x2 tiles
-                const def = this.tileDefinitions[t.id];
-                if (def && def.size === 2) {
-                    this.mapData[layer][t.y][t.x + 1] = 0;
-                    this.mapData[layer][t.y + 1][t.x] = 0;
-                    this.mapData[layer][t.y + 1][t.x + 1] = 0;
-                }
-                
-                // Also clear mirrored tiles if mirroring is enabled
-                if (this.mirrorVertical) {
-                    const mirrorY = this.mapHeight - 1 - t.y;
-                    const allMirrorTiles = this.getAllTilesAt(t.x, mirrorY);
-                    for (const mirrorTile of allMirrorTiles) {
-                        this.mapData[mirrorTile.layerIndex][mirrorY][t.x] = 0;
-                        if (def && def.size === 2) {
-                            this.mapData[mirrorTile.layerIndex][mirrorY][t.x + 1] = 0;
-                            this.mapData[mirrorTile.layerIndex][mirrorY - 1][t.x] = 0;
-                            this.mapData[mirrorTile.layerIndex][mirrorY - 1][t.x + 1] = 0;
-                        }
-                    }
-                }
-                if (this.mirrorHorizontal) {
-                    const mirrorX = this.mapWidth - 1 - t.x;
-                    const allMirrorTiles = this.getAllTilesAt(mirrorX, t.y);
-                    for (const mirrorTile of allMirrorTiles) {
-                        this.mapData[mirrorTile.layerIndex][t.y][mirrorX] = 0;
-                        if (def && def.size === 2) {
-                            this.mapData[mirrorTile.layerIndex][t.y][mirrorX + 1] = 0;
-                            this.mapData[mirrorTile.layerIndex][t.y + 1][mirrorX] = 0;
-                            this.mapData[mirrorTile.layerIndex][t.y + 1][mirrorX + 1] = 0;
-                        }
-                    }
-                }
-                if (this.mirrorDiagonal) {
-                    const mirrorX = this.mapWidth - 1 - t.x;
-                    const mirrorY = this.mapHeight - 1 - t.y;
-                    const allMirrorTiles = this.getAllTilesAt(mirrorX, mirrorY);
-                    for (const mirrorTile of allMirrorTiles) {
-                        this.mapData[mirrorTile.layerIndex][mirrorY][mirrorX] = 0;
-                        if (def && def.size === 2) {
-                            this.mapData[mirrorTile.layerIndex][mirrorY][mirrorX + 1] = 0;
-                            this.mapData[mirrorTile.layerIndex][mirrorY + 1][mirrorX] = 0;
-                            this.mapData[mirrorTile.layerIndex][mirrorY + 1][mirrorX + 1] = 0;
-                        }
-                    }
-                }
+                this.eraseTile(t.x, t.y, false);
             }
             this.draw();
             // Draw ghost tiles at original positions
@@ -2434,96 +2281,95 @@ export class MapMaker {
             return;
         }
 
-        // Check if we're starting to drag an existing tile
-        // Use findDraggableTileAt to find the tile that can be dragged (placeableOn or not placeableOnThis)
+        // Check if we can place the selected tile on the existing tile
         if (!this.isErasing && this.selectionMode !== 'fill' && this.selectionMode !== 'select') {
-            const draggableTile = this.findDraggableTileAt(coords.x, coords.y);
+            const topmostTile = this.getTopmostTileAt(coords.x, coords.y);
             
-            if (draggableTile) {
+            if (topmostTile) {
+                // Check if we can place the selected tile on this existing tile
+                if (this.canPlaceTileOn(this.selectedTile.id, topmostTile.tileId)) {
+                    // Place the tile instead of dragging
+                    this.placeTile(coords.x, coords.y, this.selectedTile.id, true);
+                    return;
+                }
+            }
+        }
+
+        // Check if we're starting to drag an existing tile
+        if (!this.isErasing && this.selectionMode !== 'fill' && this.selectionMode !== 'select') {
+            const topmostTile = this.findTopmostTileAt(coords.x, coords.y);
+            
+            if (topmostTile) {
                 this.isDragging = true;
-                this.draggedTileId = draggableTile.tileId;
-                this.draggedTileLayer = draggableTile.layerIndex;
+                this.draggedTileId = topmostTile.tileId;
+                this.draggedTileLayer = topmostTile.layerIndex;
                 this.dragStartX = coords.x;
                 this.dragStartY = coords.y;
                 this.saveState();
                 
                 // Get the tile definition to check if it's a 2x2 tile
-                const def = draggableTile.def;
+                const def = topmostTile.def;
                 const is2x2 = def && def.size === 2;
                 
                 // Store the negative IDs for size 2 tiles so they move together
                 this.draggedNegativeIds = null;
                 if (is2x2) {
                     this.draggedNegativeIds = {
-                        right: this.mapData[draggableTile.layerIndex][coords.y][coords.x + 1],
-                        bottom: this.mapData[draggableTile.layerIndex][coords.y + 1][coords.x],
-                        bottomRight: this.mapData[draggableTile.layerIndex][coords.y + 1][coords.x + 1]
+                        right: this.mapData[topmostTile.layerIndex][coords.y][coords.x + 1],
+                        bottom: this.mapData[topmostTile.layerIndex][coords.y + 1][coords.x],
+                        bottomRight: this.mapData[topmostTile.layerIndex][coords.y + 1][coords.x + 1]
                     };
                 }
                 
-                // Check if the dragged tile has placeableOn property
-                // If it does, we don't remove it from original position (it will be placed on top)
-                // Otherwise, remove it from original position (normal dragging behavior)
-                const draggedDef = draggableTile.def;
-                const isPlaceableOn = draggedDef && draggedDef.placeableOn;
-                
-                if (!isPlaceableOn) {
-                    // Normal dragging: remove tile from original position immediately
-                    this.mapData[draggableTile.layerIndex][coords.y][coords.x] = 0;
-                    
-                    // If it's a 2x2 tile, also remove the other three tiles
-                    if (is2x2) {
-                        this.mapData[draggableTile.layerIndex][coords.y][coords.x + 1] = 0;
-                        this.mapData[draggableTile.layerIndex][coords.y + 1][coords.x] = 0;
-                        this.mapData[draggableTile.layerIndex][coords.y + 1][coords.x + 1] = 0;
-                    }
-                } else {
-                    // PlaceableOn tile: don't remove from original, will place on top
-                    // Store flag to indicate this is a placeableOn drag
-                    this.isPlaceableOnDrag = true;
-                }
+                // Remove tile from original position immediately
+                this.mapData[topmostTile.layerIndex][coords.y][coords.x] = 0;
             
-            // Apply mirroring for removal (only if not placeableOn drag)
-            if (!isPlaceableOn) {
-                if (this.mirrorVertical) {
-                    const mirrorY = this.mapHeight - 1 - coords.y;
-                    const mirrorTopmost = this.findTopmostTileAt(coords.x, mirrorY);
-                    const mirrorLayer = mirrorTopmost ? mirrorTopmost.layerIndex : draggableTile.layerIndex;
-                    this.mapData[mirrorLayer][mirrorY][coords.x] = 0;
-                    
-                    // If it's a 2x2 tile, also remove the other three tiles
-                    if (is2x2) {
-                        this.mapData[mirrorLayer][mirrorY][coords.x + 1] = 0;
-                        this.mapData[mirrorLayer][mirrorY - 1][coords.x] = 0;
-                        this.mapData[mirrorLayer][mirrorY - 1][coords.x + 1] = 0;
-                    }
+            // If it's a 2x2 tile, also remove the other three tiles
+            if (is2x2) {
+                this.mapData[topmostTile.layerIndex][coords.y][coords.x + 1] = 0;
+                this.mapData[topmostTile.layerIndex][coords.y + 1][coords.x] = 0;
+                this.mapData[topmostTile.layerIndex][coords.y + 1][coords.x + 1] = 0;
+            }
+            
+            // Apply mirroring for removal
+            if (this.mirrorVertical) {
+                const mirrorY = this.mapHeight - 1 - coords.y;
+                const mirrorTopmost = this.findTopmostTileAt(coords.x, mirrorY);
+                const mirrorLayer = mirrorTopmost ? mirrorTopmost.layerIndex : topmostTile.layerIndex;
+                this.mapData[mirrorLayer][mirrorY][coords.x] = 0;
+                
+                // If it's a 2x2 tile, also remove the other three tiles
+                if (is2x2) {
+                    this.mapData[mirrorLayer][mirrorY][coords.x + 1] = 0;
+                    this.mapData[mirrorLayer][mirrorY - 1][coords.x] = 0;
+                    this.mapData[mirrorLayer][mirrorY - 1][coords.x + 1] = 0;
                 }
-                if (this.mirrorHorizontal) {
-                    const mirrorX = this.mapWidth - 1 - coords.x;
-                    const mirrorTopmost = this.findTopmostTileAt(mirrorX, coords.y);
-                    const mirrorLayer = mirrorTopmost ? mirrorTopmost.layerIndex : draggableTile.layerIndex;
-                    this.mapData[mirrorLayer][coords.y][mirrorX] = 0;
-                    
-                    // If it's a 2x2 tile, also remove the other three tiles
-                    if (is2x2) {
-                        this.mapData[mirrorLayer][coords.y][mirrorX - 1] = 0;
-                        this.mapData[mirrorLayer][coords.y + 1][mirrorX] = 0;
-                        this.mapData[mirrorLayer][coords.y + 1][mirrorX - 1] = 0;
-                    }
+            }
+            if (this.mirrorHorizontal) {
+                const mirrorX = this.mapWidth - 1 - coords.x;
+                const mirrorTopmost = this.findTopmostTileAt(mirrorX, coords.y);
+                const mirrorLayer = mirrorTopmost ? mirrorTopmost.layerIndex : topmostTile.layerIndex;
+                this.mapData[mirrorLayer][coords.y][mirrorX] = 0;
+                
+                // If it's a 2x2 tile, also remove the other three tiles
+                if (is2x2) {
+                    this.mapData[mirrorLayer][coords.y][mirrorX - 1] = 0;
+                    this.mapData[mirrorLayer][coords.y + 1][mirrorX] = 0;
+                    this.mapData[mirrorLayer][coords.y + 1][mirrorX - 1] = 0;
                 }
-                if (this.mirrorDiagonal) {
-                    const mirrorX = this.mapWidth - 1 - coords.x;
-                    const mirrorY = this.mapHeight - 1 - coords.y;
-                    const mirrorTopmost = this.findTopmostTileAt(mirrorX, mirrorY);
-                    const mirrorLayer = mirrorTopmost ? mirrorTopmost.layerIndex : draggableTile.layerIndex;
-                    this.mapData[mirrorLayer][mirrorY][mirrorX] = 0;
-                    
-                    // If it's a 2x2 tile, also remove the other three tiles
-                    if (is2x2) {
-                        this.mapData[mirrorLayer][mirrorY][mirrorX - 1] = 0;
-                        this.mapData[mirrorLayer][mirrorY - 1][mirrorX] = 0;
-                        this.mapData[mirrorLayer][mirrorY - 1][mirrorX - 1] = 0;
-                    }
+            }
+            if (this.mirrorDiagonal) {
+                const mirrorX = this.mapWidth - 1 - coords.x;
+                const mirrorY = this.mapHeight - 1 - coords.y;
+                const mirrorTopmost = this.findTopmostTileAt(mirrorX, mirrorY);
+                const mirrorLayer = mirrorTopmost ? mirrorTopmost.layerIndex : topmostTile.layerIndex;
+                this.mapData[mirrorLayer][mirrorY][mirrorX] = 0;
+                
+                // If it's a 2x2 tile, also remove the other three tiles
+                if (is2x2) {
+                    this.mapData[mirrorLayer][mirrorY][mirrorX - 1] = 0;
+                    this.mapData[mirrorLayer][mirrorY - 1][mirrorX] = 0;
+                    this.mapData[mirrorLayer][mirrorY - 1][mirrorX - 1] = 0;
                 }
             }
             
@@ -2534,9 +2380,6 @@ export class MapMaker {
         }
 
         // Start selection
-        // Track if we started on an empty tile for single placing override behavior
-        const topmostTileAtStart = this.getTopmostTileAt(coords.x, coords.y);
-        this.startedOnEmptyTile = !topmostTileAtStart;
 
         this.isDrawing = true;
         this.selectionStart = coords;
@@ -2597,15 +2440,8 @@ export class MapMaker {
         if (this.isSelectDragging) {
             const offsetX = this.selectDragOffset.x;
             const offsetY = this.selectDragOffset.y;
-            // Sort tiles by layer (lower layers first) to ensure dependencies are placed correctly
-            // (e.g., rails before trains)
-            const sortedTiles = [...this.selectDragTiles].sort((a, b) => {
-                const layerA = a.layer !== undefined ? a.layer : this.defaultTileLayer;
-                const layerB = b.layer !== undefined ? b.layer : this.defaultTileLayer;
-                return layerA - layerB;
-            });
             // Place tiles using placeTile (handles 2x2 and mirroring). We already saved state at drag-start.
-            for (const t of sortedTiles) {
+            for (const t of this.selectDragTiles) {
                 const newX = t.x + offsetX;
                 const newY = t.y + offsetY;
                 if (
@@ -2644,27 +2480,7 @@ export class MapMaker {
                     if (this.isErasing) {
                         this.eraseTile(coords.x, coords.y);
                     } else {
-                        // Single placing: if started on empty and moved to occupied, override like dragging
-                        const topmostTile = this.getTopmostTileAt(coords.x, coords.y);
-                        const selectedDef = this.tileDefinitions[this.selectedTile.id];
-                        
-                        if (this.startedOnEmptyTile && topmostTile && selectedDef) {
-                            // Started on empty, now on occupied tile
-                            // Override if the placed tile is not placeableOn the tile it's being dragged onto
-                            const canPlaceOn = this.canPlaceTileOn(this.selectedTile.id, topmostTile.tileId);
-                            if (!canPlaceOn) {
-                                // Override: erase and place (like dragging)
-                                this.isDragging = true; // Temporarily set to use drag logic
-                                this.placeTile(coords.x, coords.y, this.selectedTile.id, false);
-                                this.isDragging = false;
-                            } else {
-                                // Can place on, so place normally
-                                this.placeTile(coords.x, coords.y, this.selectedTile.id, false);
-                            }
-                        } else {
-                            // Normal placement
-                            this.placeTile(coords.x, coords.y);
-                        }
+                        this.placeTile(coords.x, coords.y);
                     }
                 } else {
                     this.placeTilesInSelection();
@@ -2673,41 +2489,10 @@ export class MapMaker {
         } else if (this.isDragging) {
             const coords = this.getTileCoordinates(event);
             if (coords.x >= 0 && coords.x < this.mapWidth && coords.y >= 0 && coords.y < this.mapHeight) {
-				// When dragging, replace the existing tile if there is one
 				// Delegate to existing placement logic (handles validation, 2x2, mirroring, state)
 				this.placeTile(coords.x, coords.y, this.draggedTileId);
                 this.draw();
                 this.checkForErrors();
-            }
-        } else if (!this.isErasing && this.selectionMode !== 'fill' && this.selectionMode !== 'select') {
-            // Handle placement on mouseUp (not during drag)
-            const coords = this.getTileCoordinates(event);
-            if (coords.x >= 0 && coords.x < this.mapWidth && coords.y >= 0 && coords.y < this.mapHeight) {
-                const topmostTile = this.getTopmostTileAt(coords.x, coords.y);
-                const selectedDef = this.tileDefinitions[this.selectedTile.id];
-                
-                if (topmostTile) {
-                    const topmostDef = topmostTile.def;
-                    // New approach: 
-                    // - If target has placeableOnThis, only allow placement via dragging (not regular placement)
-                    // - If selected tile has placeableOn, allow regular placement on tiles it can be placed on
-                    if (topmostDef && topmostDef.placeableOnThis) {
-                        // Cannot place on placeableOnThis tiles via regular placement - only via dragging
-                        return;
-                    }
-                    
-                    // Check if selected tile has placeableOn and can be placed on this tile
-                    if (selectedDef && selectedDef.placeableOn) {
-                        if (this.canPlaceTileOn(this.selectedTile.id, topmostTile.tileId)) {
-                            this.placeTile(coords.x, coords.y, this.selectedTile.id, true);
-                        }
-                    }
-                } else {
-                    // No tile, check if we can place on empty
-                    if (this.canPlaceTileOn(this.selectedTile.id, 0)) {
-                        this.placeTile(coords.x, coords.y, this.selectedTile.id, true);
-                    }
-                }
             }
         }
         
@@ -2717,8 +2502,6 @@ export class MapMaker {
         this.draggedTileId = null;
         this.dragStartX = null;
         this.dragStartY = null;
-        this.isPlaceableOnDrag = false;
-        this.startedOnEmptyTile = false;
         this.selectionStart = null;
         this.selectionEnd = null;
         this.hoveredTiles.clear();
@@ -2893,7 +2676,7 @@ export class MapMaker {
         this.canvas.height = this.mapSize.height * this.tileSize;
     }
 
-    drawTile(ctx, tileId, x, y, red = false, customOpacity = null) {
+    drawTile(ctx, tileId, x, y, red = false) {
         const def = this.tileDefinitions[tileId];
         if (!def) return;
 
@@ -2936,23 +2719,11 @@ export class MapMaker {
                 return false;
             };
 
-            // Check direct connections - use getAllTilesAt to check all layers
-            const hasTop = !isTopEdge && (() => {
-                const topTiles = this.getAllTilesAt(x, y - 1);
-                return topTiles.some(t => isSameType(t.tileId));
-            })();
-            const hasBottom = !isBottomEdge && (() => {
-                const bottomTiles = this.getAllTilesAt(x, y + 1);
-                return bottomTiles.some(t => isSameType(t.tileId));
-            })();
-            const hasLeft = !isLeftEdge && (() => {
-                const leftTiles = this.getAllTilesAt(x - 1, y);
-                return leftTiles.some(t => isSameType(t.tileId));
-            })();
-            const hasRight = !isRightEdge && (() => {
-                const rightTiles = this.getAllTilesAt(x + 1, y);
-                return rightTiles.some(t => isSameType(t.tileId));
-            })();
+            // Check direct connections
+            const hasTop = !isTopEdge && isSameType(this.mapData[this.defaultTileLayer][y - 1][x]);
+            const hasBottom = !isBottomEdge && isSameType(this.mapData[this.defaultTileLayer][y + 1][x]);
+            const hasLeft = !isLeftEdge && isSameType(this.mapData[this.defaultTileLayer][y][x - 1]);
+            const hasRight = !isRightEdge && isSameType(this.mapData[this.defaultTileLayer][y][x + 1]);
 
             // Set direct connections
             if (hasTop) code[1] = '1';    // Top
@@ -2960,33 +2731,25 @@ export class MapMaker {
             if (hasLeft) code[3] = '1';   // Left
             if (hasRight) code[4] = '1';  // Right
 
-            // Check corners (only if adjacent sides exist) - use getAllTilesAt to check all layers
-            if (!isTopEdge && !isLeftEdge && hasTop && hasLeft) {
-                const cornerTiles = this.getAllTilesAt(x - 1, y - 1);
-                if (cornerTiles.some(t => isSameType(t.tileId))) {
-                    code[0] = '1'; // Top-left
-                }
+            // Check corners (only if adjacent sides exist)
+            if (!isTopEdge && !isLeftEdge && 
+                isSameType(this.mapData[this.defaultTileLayer][y - 1][x - 1]) && hasTop && hasLeft) {
+                code[0] = '1'; // Top-left
             }
 
-            if (!isTopEdge && !isRightEdge && hasTop && hasRight) {
-                const cornerTiles = this.getAllTilesAt(x + 1, y - 1);
-                if (cornerTiles.some(t => isSameType(t.tileId))) {
-                    code[2] = '1'; // Top-right
-                }
+            if (!isTopEdge && !isRightEdge && 
+                isSameType(this.mapData[this.defaultTileLayer][y - 1][x + 1]) && hasTop && hasRight) {
+                code[2] = '1'; // Top-right
             }
 
-            if (!isBottomEdge && !isLeftEdge && hasBottom && hasLeft) {
-                const cornerTiles = this.getAllTilesAt(x - 1, y + 1);
-                if (cornerTiles.some(t => isSameType(t.tileId))) {
-                    code[5] = '1'; // Bottom-left
-                }
+            if (!isBottomEdge && !isLeftEdge && 
+                isSameType(this.mapData[this.defaultTileLayer][y + 1][x - 1]) && hasBottom && hasLeft) {
+                code[5] = '1'; // Bottom-left
             }
 
-            if (!isBottomEdge && !isRightEdge && hasBottom && hasRight) {
-                const cornerTiles = this.getAllTilesAt(x + 1, y + 1);
-                if (cornerTiles.some(t => isSameType(t.tileId))) {
-                    code[7] = '1'; // Bottom-right
-                }
+            if (!isBottomEdge && !isRightEdge && 
+                isSameType(this.mapData[this.defaultTileLayer][y + 1][x + 1]) && hasBottom && hasRight) {
+                code[7] = '1'; // Bottom-right
             }
 
             // Convert code to file name
@@ -3029,15 +2792,11 @@ export class MapMaker {
             const [scaleX, scaleY, offsetX, offsetY, opacity] = dimensions;
             const tileSize = this.tileSize;
 
-            // Get preview offset if in headless mode (for preview images)
-            const previewOffsetX = (this.headless && this.previewOffsetX) ? this.previewOffsetX * tileSize : 0;
-            const previewOffsetY = (this.headless && this.previewOffsetY) ? this.previewOffsetY * tileSize : 0;
-
             // Calculate position
             const width = tileSize * scaleX;
             const height = tileSize * scaleY;
-            const drawX = x * tileSize + (tileSize * offsetX / 100) + this.canvasPadding + previewOffsetX;
-            const drawY = y * tileSize + (tileSize * offsetY / 100) + this.canvasPadding + previewOffsetY;
+            const drawX = x * tileSize + (tileSize * offsetX / 100) + this.canvasPadding;
+            const drawY = y * tileSize + (tileSize * offsetY / 100) + this.canvasPadding;
 
             // Apply opacity and draw
             ctx.globalAlpha = opacity;
@@ -3048,8 +2807,7 @@ export class MapMaker {
 
         } else if (tileId === 7 || tileId === 9) { // Fence or Rope Fence
             const isFence = tileId === 7;
-            // Pass all layers to check for connections across layers
-            const imageName = this.fenceLogicHandler.getFenceImageName(x, y, this.mapData, this.environment, isFence);
+            const imageName = this.fenceLogicHandler.getFenceImageName(x, y, this.mapData[this.defaultTileLayer], this.environment, isFence);
             
             // For rope fence, map the image name to the corresponding Post variation
             const ropeMapping = {
@@ -3085,7 +2843,7 @@ export class MapMaker {
             }
 
         } else if (tileId === 40) {
-            const imageName = this.fenceLogicHandler.getFenceImageName(x, y, this.mapData, 'Brawl_Arena');
+            const imageName = this.fenceLogicHandler.getFenceImageName(x, y, this.mapData[this.defaultTileLayer], 'Brawl_Arena');
 
             const pathColor = red ? 'Red' : 'Blue';
             const imagePath = `Resources/Global/Arena/Track/${pathColor}/${imageName}.png`;
@@ -3122,8 +2880,7 @@ export class MapMaker {
                 return;
             }
 
-            // Pass all layers to check for connections across layers
-            const imageName = this.fenceLogicHandler.getFenceImageName(x, y, this.mapData, this.environment, false, true);
+            const imageName = this.fenceLogicHandler.getFenceImageName(x, y, this.mapData[this.defaultTileLayer], this.environment, false, true);
             
             const imagePath = `Resources/${this.environment}/Fence_5v5/${imageName}.png`;
             
@@ -3149,8 +2906,7 @@ export class MapMaker {
                 return;
             }
         } else if (tileId === 68) {
-            // Pass all layers to check for connections across layers
-            const imageName = this.fenceLogicHandler.getFenceImageName(x, y, this.mapData, 'Rails');
+            const imageName = this.fenceLogicHandler.getFenceImageName(x, y, this.mapData[1], 'Rails');
             
             const imagePath = `Resources/Global/Special_Tiles/Rails/${imageName}.png`;
             
@@ -3176,8 +2932,7 @@ export class MapMaker {
                 return;
             }
         } else if ([73, 74, 75].some(a => a === tileId)) {
-            // Pass all layers to check for connections across layers
-            const imageName = this.fenceLogicHandler.getFenceImageName(x, y, this.mapData, 'Train');
+            const imageName = this.fenceLogicHandler.getFenceImageName(x, y, this.mapData[1], 'Train');
 
             const imagePath = `Resources/Global/Special_Tiles/${tileId === 73 ? 'RedTrain' : tileId === 74 ? 'YellowTrain' : 'GreenTrain'}/Train_${imageName}.png`;
 
@@ -3224,9 +2979,7 @@ export class MapMaker {
                     }
                 }
             } else {
-                // Look up image by tileId (convert to string to match how it's stored)
-                const tileIdKey = String(tileId);
-                img = this.tileImages[tileIdKey] || this.tileImages[tileId];
+                img = this.tileImages[tileId];
             }
         }
 
@@ -3254,8 +3007,7 @@ export class MapMaker {
             const isBorder = tileId === 45;
             const isTrain = [73, 74, 75].includes(tileId);
             if (isFence || isRope || isBorder) {
-                // Pass all layers to check for connections across layers
-                const imageName = this.fenceLogicHandler.getFenceImageName(x, y, this.mapData, this.environment, isFence, isBorder);
+                const imageName = this.fenceLogicHandler.getFenceImageName(x, y, this.mapData[this.defaultTileLayer], this.environment, isFence, isBorder);
                 const ropeMapping = {
                     'T': 'Post_T',
                     'R': 'Post_R',
@@ -3273,8 +3025,7 @@ export class MapMaker {
                            // Finally fall back to base tile data
                            this.tileData[isBorder ? 'BFence' : isFence ? 'Fence' : 'Rope Fence'];
             } else if (isTrain) {
-                // Pass all layers to check for connections across layers
-                const imageName = this.fenceLogicHandler.getFenceImageName(x, y, this.mapData, 'Train');
+                const imageName = this.fenceLogicHandler.getFenceImageName(x, y, this.mapData[1], 'Train');
                 dimensions = this.tileData['Train_' + imageName];
             } else {
                 dimensions = this.environmentTileData[this.environment]?.[def.name] || 
@@ -3294,8 +3045,8 @@ export class MapMaker {
         const drawX = x * tileSize + (tileSize * offsetX / 100) + this.canvasPadding;
         const drawY = y * tileSize + (tileSize * offsetY / 100) + this.canvasPadding;
 
-        // Set opacity (use custom opacity if provided, otherwise use default from dimensions)
-        ctx.globalAlpha = customOpacity !== null ? customOpacity : opacity;
+        // Set opacity
+        ctx.globalAlpha = opacity;
 
         // Draw the tile
         ctx.drawImage(img, drawX, drawY, width, height);
@@ -3371,10 +3122,6 @@ export class MapMaker {
         // Clear the canvas
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-        // Get preview offset if in headless mode (for preview images)
-        const previewOffsetX = (this.headless && this.previewOffsetX) ? this.previewOffsetX * this.tileSize : 0;
-        const previewOffsetY = (this.headless && this.previewOffsetY) ? this.previewOffsetY * this.tileSize : 0;
-
         // Draw the background grid
         for (let y = 0; y < this.mapHeight; y++) {
             for (let x = 0; x < this.mapWidth; x++) {
@@ -3402,8 +3149,8 @@ export class MapMaker {
                     if (bgImg.complete) {
                         this.ctx.drawImage(
                             bgImg,
-                            x * this.tileSize + this.canvasPadding + previewOffsetX,
-                            y * this.tileSize + this.canvasPadding + previewOffsetY,
+                            x * this.tileSize + this.canvasPadding,
+                            y * this.tileSize + this.canvasPadding,
                             this.tileSize,
                             this.tileSize
                         );
@@ -3456,34 +3203,17 @@ export class MapMaker {
 
         // Group tiles by layer
         const tilesByLayer = new Map();
-        if (!this.mapData || !Array.isArray(this.mapData)) {
-            console.error('mapData is invalid:', this.mapData);
-            return;
-        }
-        
         for (let layerIndex = 0; layerIndex < this.layerCount; layerIndex++) {
             const layerGrid = this.mapData[layerIndex];
-            if (!layerGrid || !Array.isArray(layerGrid)) continue;
+            if (!layerGrid) continue;
 
-            // Use actual layer dimensions - iterate through all rows in the layer
-            for (let y = 0; y < layerGrid.length; y++) {
-                const row = layerGrid[y];
-                if (!row || !Array.isArray(row)) continue;
-                
-                // Use actual row width - iterate through all columns in the row
-                // But don't skip based on mapWidth/mapHeight - use actual data dimensions
-                for (let x = 0; x < row.length; x++) {
-                    const tileId = row[x];
-                    if (tileId === 0 || tileId === -1 || tileId === -2 || tileId === -3) continue;
+            for (let y = 0; y < this.mapHeight; y++) {
+                for (let x = 0; x < this.mapWidth; x++) {
+                    const tileId = layerGrid[y][x];
+                    if (tileId === 0 || tileId === -1) continue;
 
                     const def = this.tileDefinitions[tileId];
-                    if (!def) {
-                        // Log missing definition for debugging (but don't block rendering)
-                        if (this.headless && tileId > 0) {
-                            console.warn(`Tile definition missing for tileId: ${tileId} at (${x}, ${y})`);
-                        }
-                        continue;
-                    }
+                    if (!def) continue;
 
                     const layerKey = typeof def.layer === 'number' ? def.layer : this.defaultTileLayer;
 
@@ -3589,20 +3319,8 @@ export class MapMaker {
                         rowTiles.forEach(({ x, y, tileId }) => {
                             const tile = getTileAt(layerKey, x, y);
                             const red = tile?.red ?? false;
-                            
-                            // Check if this tile has placeableOnThis and has a tile on top of it
-                            const def = this.tileDefinitions[tileId];
-                            let opacity = 1.0;
-                            if (def && def.placeableOnThis) {
-                                // Check if there's a tile on top of this one
-                                const allTiles = this.getAllTilesAt(x, y);
-                                if (allTiles.length > 1) {
-                                    // There's at least one tile on top, reduce opacity to 70%
-                                    opacity = 0.7;
-                                }
-                            }
 
-                            this.drawTile(this.ctx, tileId, x, y, red, opacity);
+                            this.drawTile(this.ctx, tileId, x, y, red);
                         });
                     });
             });
@@ -3744,124 +3462,47 @@ export class MapMaker {
         
         if (!placingDef) return false;
         
-        // If placing tile has placeableOn property, it is STRICTLY limited to what's in that list
-        if (placingDef.placeableOn) {
-            // If target is empty (0), check if -100 (all tiles) or 0 (empty) is in the list
-            if (targetTileId === 0) {
-                return placingDef.placeableOn.includes(-100) || placingDef.placeableOn.includes(0);
-            }
-            
-            // For non-empty targets, check if target tile ID is in the list
-            // -100 means placeable on all tiles
-            if (placingDef.placeableOn.includes(-100)) return true;
-            // Check if target tile ID is in the list
-            if (placingDef.placeableOn.includes(targetTileId)) return true;
-            
-            // If placeableOn is defined, it's strict - don't check other properties
-            return false;
-        }
-        
-        // If target is empty (0), tiles without placeableOn can be placed on empty
+        // If target is empty (0), check if placing tile can be placed on empty tiles
         if (targetTileId === 0) {
+            // If placing tile has placeableOn property (and it's not -100), it cannot be placed on empty tiles
+            if (placingDef.placeableOn && !placingDef.placeableOn.includes(-100)) {
+                return false;
+            }
+            // Otherwise, can be placed on empty tiles
             return true;
         }
         
         const targetDef = this.tileDefinitions[targetTileId];
         if (!targetDef) return false;
         
+        // If placing tile has placeableOn property
+        if (placingDef.placeableOn) {
+            // -100 means placeable on all tiles (including empty, but we already handled empty above)
+            if (placingDef.placeableOn.includes(-100)) return true;
+            // Check if target tile ID is in the list
+            return placingDef.placeableOn.includes(targetTileId);
+        }
+        
         // If target tile has placeableOnThis property
         if (targetDef.placeableOnThis) {
             // -100 means all tiles can be placed on it
             if (targetDef.placeableOnThis.includes(-100)) return true;
             // Check if placing tile ID is in the list
-            if (targetDef.placeableOnThis.includes(placingTileId)) return true;
-        }
-        
-        // Bidirectional check: If placing tile has placeableOnThis and target has placeableOn,
-        // and placing tile's placeableOnThis includes target's ID, allow it
-        // (e.g., if A has placeableOnThis=[B] and B has placeableOn=[A], A can be placed on B)
-        if (placingDef.placeableOnThis && targetDef.placeableOn) {
-            if (placingDef.placeableOnThis.includes(-100) || targetDef.placeableOn.includes(-100)) return true;
-            // Check if placing tile allows target tile to be placed on it, and target tile can be placed on placing tile
-            if (placingDef.placeableOnThis.includes(targetTileId) && targetDef.placeableOn.includes(placingTileId)) {
-                return true;
-            }
+            return targetDef.placeableOnThis.includes(placingTileId);
         }
         
         // Default: cannot place on existing tiles
         return false;
     }
 
-    // Check if a tile can be placed on a stack of tiles (all tiles must allow it)
-    canPlaceTileOnStack(placingTileId, x, y) {
-        const allTiles = this.getAllTilesAt(x, y);
-        
-        // If no tiles, check if can place on empty
-        if (allTiles.length === 0) {
-            return this.canPlaceTileOn(placingTileId, 0);
-        }
-        
-        // Check if placing tile can be placed on the topmost tile
-        const topmostTile = allTiles[0]; // First tile is topmost (from getAllTilesAt)
-        if (!this.canPlaceTileOn(placingTileId, topmostTile.tileId)) {
-            return false;
-        }
-        
-        // If the topmost tile has placeableOnThis, we need to check if all tiles in the stack
-        // allow the new tile to be placed on them
-        const topmostDef = topmostTile.def;
-        if (topmostDef && topmostDef.placeableOnThis) {
-            // Check all tiles in the stack to ensure they all allow placement
-            for (const tile of allTiles) {
-                const tileDef = tile.def;
-                if (!tileDef) continue;
-                
-                // If this tile has placeableOnThis, check if it allows the placing tile
-                if (tileDef.placeableOnThis) {
-                    if (!tileDef.placeableOnThis.includes(-100) && !tileDef.placeableOnThis.includes(placingTileId)) {
-                        // This tile doesn't allow the placing tile, so we can't place
-                        return false;
-                    }
-                } else {
-                    // If a tile doesn't have placeableOnThis, it's a base tile and we can't place on it
-                    // unless the placing tile has placeableOn that includes this tile
-                    const placingDef = this.tileDefinitions[placingTileId];
-                    if (placingDef && placingDef.placeableOn) {
-                        if (!placingDef.placeableOn.includes(-100) && !placingDef.placeableOn.includes(tile.tileId)) {
-                            return false;
-                        }
-                    } else {
-                        return false;
-                    }
-                }
-            }
-        }
-        
-        return true;
-    }
-
     // Find the topmost placeable tile at a position (for erasing)
     findTopmostTileAt(x, y) {
-        // Bounds check
-        if (x < 0 || x >= this.mapWidth || y < 0 || y >= this.mapHeight) {
-            return null;
-        }
-        
-        if (!this.mapData || !Array.isArray(this.mapData)) {
-            return null;
-        }
-        
         // Search from highest layer to lowest
         for (let layerIndex = this.layerCount - 1; layerIndex >= 0; layerIndex--) {
             const layerGrid = this.mapData[layerIndex];
-            if (!layerGrid || !Array.isArray(layerGrid)) continue;
-            if (y >= layerGrid.length) continue;
+            if (!layerGrid) continue;
             
-            const row = layerGrid[y];
-            if (!row || !Array.isArray(row)) continue;
-            if (x >= row.length) continue;
-            
-            const tileId = row[x];
+            const tileId = layerGrid[y][x];
             if (tileId === 0 || tileId === -1 || tileId === -2 || tileId === -3) continue;
             
             const def = this.tileDefinitions[tileId];
@@ -3878,14 +3519,9 @@ export class MapMaker {
         // Fallback: return the first non-empty tile found (from top to bottom)
         for (let layerIndex = this.layerCount - 1; layerIndex >= 0; layerIndex--) {
             const layerGrid = this.mapData[layerIndex];
-            if (!layerGrid || !Array.isArray(layerGrid)) continue;
-            if (y >= layerGrid.length) continue;
+            if (!layerGrid) continue;
             
-            const row = layerGrid[y];
-            if (!row || !Array.isArray(row)) continue;
-            if (x >= row.length) continue;
-            
-            const tileId = row[x];
+            const tileId = layerGrid[y][x];
             if (tileId !== 0 && tileId !== -1 && tileId !== -2 && tileId !== -3) {
                 const def = this.tileDefinitions[tileId];
                 if (def) {
@@ -3899,94 +3535,6 @@ export class MapMaker {
 
     // Find the topmost tile at a position (for checking placeability)
     getTopmostTileAt(x, y) {
-        // Bounds check
-        if (x < 0 || x >= this.mapWidth || y < 0 || y >= this.mapHeight) {
-            return null;
-        }
-        
-        if (!this.mapData || !Array.isArray(this.mapData)) {
-            return null;
-        }
-        
-        // Search from highest layer to lowest
-        for (let layerIndex = this.layerCount - 1; layerIndex >= 0; layerIndex--) {
-            const layerGrid = this.mapData[layerIndex];
-            if (!layerGrid || !Array.isArray(layerGrid)) continue;
-            if (y >= layerGrid.length) continue;
-            
-            const row = layerGrid[y];
-            if (!row || !Array.isArray(row)) continue;
-            if (x >= row.length) continue;
-            
-            const tileId = row[x];
-            if (tileId === 0 || tileId === -1 || tileId === -2 || tileId === -3) continue;
-            
-            const def = this.tileDefinitions[tileId];
-            if (def) {
-                return { layerIndex, tileId, def };
-            }
-        }
-        
-        return null;
-    }
-
-    // Get all tiles at a position across all layers
-    getAllTilesAt(x, y) {
-        const tiles = [];
-        
-        // Bounds check
-        if (x < 0 || x >= this.mapWidth || y < 0 || y >= this.mapHeight) {
-            return tiles;
-        }
-        
-        if (!this.mapData || !Array.isArray(this.mapData)) {
-            return tiles;
-        }
-        
-        // Search from highest layer to lowest
-        for (let layerIndex = this.layerCount - 1; layerIndex >= 0; layerIndex--) {
-            const layerGrid = this.mapData[layerIndex];
-            if (!layerGrid || !Array.isArray(layerGrid)) continue;
-            if (y >= layerGrid.length) continue;
-            
-            const row = layerGrid[y];
-            if (!row || !Array.isArray(row)) continue;
-            if (x >= row.length) continue;
-            
-            const tileId = row[x];
-            if (tileId === 0 || tileId === -1 || tileId === -2 || tileId === -3) continue;
-            
-            const def = this.tileDefinitions[tileId];
-            if (def) {
-                tiles.push({ layerIndex, tileId, def });
-            }
-        }
-        
-        return tiles;
-    }
-
-    // Find the draggable tile at a position (tile that is placeableOn, placeableOnThis, or not with placeableOnThis)
-    // When multiple layers exist, only drag the tile that doesn't have placeableOnThis property
-    findDraggableTileAt(x, y) {
-        // First, get all tiles at this position
-        const allTiles = this.getAllTilesAt(x, y);
-        
-        if (allTiles.length === 0) return null;
-        
-        // If multiple layers exist, prefer the tile that doesn't have placeableOnThis
-        if (allTiles.length > 1) {
-            for (const tile of allTiles) {
-                const def = tile.def;
-                if (!def) continue;
-                
-                // Prefer tiles without placeableOnThis when multiple layers exist
-                if (!def.placeableOnThis) {
-                    return { layerIndex: tile.layerIndex, tileId: tile.tileId, def };
-                }
-            }
-        }
-        
-        // If only one layer or all have placeableOnThis, use the topmost one
         // Search from highest layer to lowest
         for (let layerIndex = this.layerCount - 1; layerIndex >= 0; layerIndex--) {
             const layerGrid = this.mapData[layerIndex];
@@ -3996,13 +3544,7 @@ export class MapMaker {
             if (tileId === 0 || tileId === -1 || tileId === -2 || tileId === -3) continue;
             
             const def = this.tileDefinitions[tileId];
-            if (!def) continue;
-            
-            // A tile is draggable if:
-            // 1. It has placeableOn property (can be placed on others), OR
-            // 2. It has placeableOnThis property (can have things placed on it), OR
-            // 3. It doesn't have placeableOnThis property (others can't be placed on it, so it's a base tile)
-            if (def.placeableOn || def.placeableOnThis || !def.placeableOnThis) {
+            if (def) {
                 return { layerIndex, tileId, def };
             }
         }
@@ -4119,16 +3661,7 @@ export class MapMaker {
         
         if (this.selectionMode === 'single') {
             if (this.isErasing) {
-                // Erase all tiles at this position across all layers
-                // Keep erasing until no more tiles are found
-                let erased = true;
-                while (erased) {
-                    const beforeTiles = this.getAllTilesAt(this.selectionEnd.x, this.selectionEnd.y);
-                    if (beforeTiles.length === 0) break;
-                    this.eraseTile(this.selectionEnd.x, this.selectionEnd.y, false);
-                    const afterTiles = this.getAllTilesAt(this.selectionEnd.x, this.selectionEnd.y);
-                    erased = afterTiles.length < beforeTiles.length;
-                }
+                this.eraseTile(this.selectionEnd.x, this.selectionEnd.y, false);
             } else {
                 this.placeTile(this.selectionEnd.x, this.selectionEnd.y, null, false);
             }
@@ -4137,19 +3670,8 @@ export class MapMaker {
             for (const tilePos of this.hoveredTiles) {
                 const [x, y] = tilePos.split(',').map(Number);
                 if (this.isErasing) {
-                    // Erase all tiles at this position across all layers
-                    // Keep erasing until no more tiles are found
-                    let erased = true;
-                    while (erased) {
-                        const beforeTiles = this.getAllTilesAt(x, y);
-                        if (beforeTiles.length === 0) break;
-                        this.eraseTile(x, y, false);
-                        const afterTiles = this.getAllTilesAt(x, y);
-                        erased = afterTiles.length < beforeTiles.length;
-                    }
-                } else {
-                    // Override existing tiles by erasing first
                     this.eraseTile(x, y, false);
+                } else {
                     this.placeTile(x, y, null, false);
                 }
             }
@@ -4162,19 +3684,8 @@ export class MapMaker {
             for (let y = startY; y <= endY; y++) {
                 for (let x = startX; x <= endX; x++) {
                     if (this.isErasing) {
-                        // Erase all tiles at this position across all layers
-                        // Keep erasing until no more tiles are found
-                        let erased = true;
-                        while (erased) {
-                            const beforeTiles = this.getAllTilesAt(x, y);
-                            if (beforeTiles.length === 0) break;
-                            this.eraseTile(x, y, false);
-                            const afterTiles = this.getAllTilesAt(x, y);
-                            erased = afterTiles.length < beforeTiles.length;
-                        }
-                    } else {
-                        // Override existing tiles by erasing first
                         this.eraseTile(x, y, false);
+                    } else {
                         this.placeTile(x, y, null, false);
                     }
                 }
@@ -4182,25 +3693,20 @@ export class MapMaker {
         } else if (this.selectionMode === 'fill') {
             // Get the topmost tile at the fill start position
             const startTile = this.getTopmostTileAt(this.selectionEnd.x, this.selectionEnd.y);
+            if (!startTile) return;
             
-            // Always use the selected tile for filling (override existing tiles)
-            const tileId = this.selectedTile.id;
-            const fillLayer = typeof this.tileDefinitions[this.selectedTile.id]?.layer === 'number' ? this.tileDefinitions[this.selectedTile.id].layer : this.defaultTileLayer;
-            
-            // If clicking on an existing tile, we need to fill all connected tiles of that type
-            // But replace them with the selected tile
-            const targetTileId = startTile ? startTile.tileId : tileId;
-            const targetLayer = startTile ? startTile.layerIndex : fillLayer;
+            const tileId = startTile.tileId;
+            const fillLayer = startTile.layerIndex;
 
-            const getConnectionsOfSameTile = (x, y, targetTileId, targetLayerIndex) => {
-                const height = this.mapData[targetLayerIndex].length;
-                const width = this.mapData[targetLayerIndex][0].length;
+            const getConnectionsOfSameTile = (x, y, tileId, layerIndex) => {
+                const height = this.mapData[layerIndex].length;
+                const width = this.mapData[layerIndex][0].length;
 
                 const isSameType = (x, y) => {
                     if (x < 0 || x >= width || y < 0 || y >= height) return false;
                     // Check the same layer for same tile type
                     const topmost = this.getTopmostTileAt(x, y);
-                    return topmost && topmost.tileId === targetTileId && topmost.layerIndex === targetLayerIndex;
+                    return topmost && topmost.tileId === tileId && topmost.layerIndex === layerIndex;
                 };
 
                 return {
@@ -4211,33 +3717,24 @@ export class MapMaker {
                 };
             };
 
-            const filled = new Set(); // Track filled positions to avoid infinite loops
-
             const fill = (x, y) => {
                 if (x < 0 || x >= this.mapWidth || y < 0 || y >= this.mapHeight) {
                     return;
                 }
 
-                const key = `${x},${y}`;
-                if (filled.has(key)) return;
-                
-                // Check if current position has the target tile on the target layer
+                // Check if current position has the same tile on the same layer
                 const currentTile = this.getTopmostTileAt(x, y);
-                if (!currentTile || currentTile.tileId !== targetTileId || currentTile.layerIndex !== targetLayer) {
+                if (!currentTile || currentTile.tileId !== tileId || currentTile.layerIndex !== fillLayer) {
                     return;
                 }
-
-                filled.add(key);
 
                 if (this.isErasing) {
                     this.eraseTile(x, y, false);
                 } else {
-                    // Override by erasing first, then placing the selected tile
-                    this.eraseTile(x, y, false);
                     this.placeTile(x, y, null, false);
                 }
 
-                const { top, right, bottom, left } = getConnectionsOfSameTile(x, y, targetTileId, targetLayer);
+                const { top, right, bottom, left } = getConnectionsOfSameTile(x, y, tileId, fillLayer);
 
                 if (top) fill(x, y - 1);
                 if (right) fill(x + 1, y);
@@ -4255,17 +3752,15 @@ export class MapMaker {
             // Check all layers for tiles in the selection area
             for (let y = startY; y <= endY; y++) {
                 for (let x = startX; x <= endX; x++) {
-                    // Get all tiles at this position across all layers
-                    const allTiles = this.getAllTilesAt(x, y);
-                    for (const tile of allTiles) {
-                        if (tile.tileId !== 0 && tile.tileId !== -1 && tile.tileId !== -2 && tile.tileId !== -3 && tile.tileId !== 33) {
-                            this.selectedTiles.push({
-                                x: x, 
-                                y: y,
-                                id: tile.tileId,
-                                layer: tile.layerIndex
-                            });
-                        }
+                    // Find topmost tile at this position across all layers
+                    const topmostTile = this.getTopmostTileAt(x, y);
+                    if (topmostTile && topmostTile.tileId !== 0 && topmostTile.tileId !== -1 && topmostTile.tileId !== -2 && topmostTile.tileId !== -3 && topmostTile.tileId !== 33) {
+                        this.selectedTiles.push({
+                            x: x, 
+                            y: y,
+                            id: topmostTile.tileId,
+                            layer: topmostTile.layerIndex
+                        });
                     }
                 }
             }
@@ -4293,7 +3788,16 @@ export class MapMaker {
                 return;
         }
 
+        // Check if we're placing on an existing tile or empty tile
         const topmostTile = this.getTopmostTileAt(x, y);
+        const targetTileId = topmostTile ? topmostTile.tileId : 0;
+        const canPlace = this.canPlaceTileOn(id, targetTileId);
+        
+        if (!canPlace) {
+            // Cannot place this tile here
+            return;
+        }
+        
         const isPlacingOnExisting = topmostTile !== null;
         
         // Determine which layer to place on
@@ -4303,73 +3807,24 @@ export class MapMaker {
             ? this.draggedTileLayer 
             : (typeof def.layer === 'number' ? def.layer : this.defaultTileLayer);
         
-        // If dragging and placing on an existing tile
-        if (this.isDragging && isPlacingOnExisting) {
-            const draggedDef = this.tileDefinitions[id];
-            const isPlaceableOn = draggedDef && draggedDef.placeableOn;
-            
-            // Check if we can place the dragged tile on the target tile
-            const canPlaceOnTarget = this.canPlaceTileOn(id, topmostTile.tileId);
-            
-            if (isPlaceableOn && this.isPlaceableOnDrag) {
-                // PlaceableOn tile: check if we can place on the stack
-                if (!this.canPlaceTileOnStack(id, x, y)) {
-                    // Cannot place - forget the tile (do nothing, return early)
-                    return;
-                }
-                // Can place - place on top without removing original
-                // Don't erase, just place on top
-            } else if (canPlaceOnTarget) {
-                // Can place on target - place on top without removing original
-                // Don't erase, just place on top
-            } else {
-                // Cannot place on target - replace it
-                // Check if dragged tile can be placed on empty (for replacement)
-                if (!this.canPlaceTileOn(id, 0)) {
-                    // Cannot place on empty either - forget the tile (do nothing, return early)
-                    return;
-                }
-                
-                // Can place on empty - replace the existing tile
-                this.eraseTile(x, y, false);
+        // If placing on an existing tile, don't erase it - place on top
+        // Otherwise, erase the existing tile first
+        if (!isPlacingOnExisting) {
+            this.eraseTile(x, y, false);
 
-                // Check if we can place this tile (for 2x2 tiles)
-                if (def.size === 2) {
-                    if (x >= this.mapWidth - 1 || y >= this.mapHeight - 1) return;
-                    for (let dy = 0; dy < 2; dy++) {
-                        for (let dx = 0; dx < 2; dx++) {
-                            this.eraseTile(x + dx, y + dy, false);
-                        }
+            // Check if we can place this tile (for 2x2 tiles)
+            if (def.size === 2) {
+                if (x >= this.mapWidth - 1 || y >= this.mapHeight - 1) return;
+                for (let dy = 0; dy < 2; dy++) {
+                    for (let dx = 0; dx < 2; dx++) {
+                        this.eraseTile(x + dx, y + dy, false);
                     }
                 }
             }
         } else {
-            // Check if we can place this tile on the stack
-            const canPlace = this.canPlaceTileOnStack(id, x, y);
-            
-            if (!canPlace) {
-                // Cannot place this tile here
-                return;
-            }
-            
-            // If not placing on existing tile, erase any existing tiles first
-            if (!isPlacingOnExisting) {
-                this.eraseTile(x, y, false);
-
-                // Check if we can place this tile (for 2x2 tiles)
-                if (def.size === 2) {
-                    if (x >= this.mapWidth - 1 || y >= this.mapHeight - 1) return;
-                    for (let dy = 0; dy < 2; dy++) {
-                        for (let dx = 0; dx < 2; dx++) {
-                            this.eraseTile(x + dx, y + dy, false);
-                        }
-                    }
-                }
-            } else {
-                // When placing on existing tile (not dragging), check 2x2 bounds
-                if (def.size === 2) {
-                    if (x >= this.mapWidth - 1 || y >= this.mapHeight - 1) return;
-                }
+            // When placing on existing tile, check 2x2 bounds
+            if (def.size === 2) {
+                if (x >= this.mapWidth - 1 || y >= this.mapHeight - 1) return;
             }
         }
 
@@ -4623,7 +4078,7 @@ export class MapMaker {
                 size: document.getElementById('mapSize').value,
                 gamemode: document.getElementById('gamemode').value,
                 environment: document.getElementById('environment').value,
-                mapData: this.mapData[this.defaultTileLayer]
+                mapData: this.mapData
             };
     
             await window.Firebase.writeData(`users/${localStorage.getItem('user')}/maps/${mapId}`, mapData);
@@ -4907,16 +4362,10 @@ export class MapMaker {
 
 
         // Remove objectives
-        const defaultLayer = this.mapData[this.defaultTileLayer];
-        if (defaultLayer && Array.isArray(defaultLayer) && 
-            defaultLayer.every(row => Array.isArray(row) && row.every(tile => tile === 0))) {
+        if (this.mapData[this.defaultTileLayer].every(row => row.every(tile => tile === 0))) {
             for (let y = 0; y < this.mapHeight; y++) {
                 for (let x = 0; x < this.mapWidth; x++) {
-                    if (this.mapData[this.defaultTileLayer][y] && 
-                        Array.isArray(this.mapData[this.defaultTileLayer][y]) &&
-                        this.mapData[this.defaultTileLayer][y][x] === 14) {
-                        this.mapData[this.defaultTileLayer][y][x] = 0;
-                    }
+                    if (this.mapData[this.defaultTileLayer][y][x] === 14) this.mapData[this.defaultTileLayer][y][x] = 0;
                 }
             }
         }
@@ -5019,11 +4468,8 @@ export class MapMaker {
             );
         }
 
-        const defaultLayerForLayout = this.mapData[this.defaultTileLayer];
-        if (apply && defaultLayerForLayout && Array.isArray(defaultLayerForLayout) && 
-            defaultLayerForLayout.every(row => Array.isArray(row) && row.every(tile => tile === 0 || tile === 14 || tile === 13 || tile === 12 || tile === 33))) {
+        if (apply && (this.mapData[this.defaultTileLayer].every(row => row.every(tile => tile === 0 || tile === 14 || tile === 13 || tile === 12 || tile === 33)))) 
             this.applyDefaultLayoutIfEmpty();
-        }
 
 
         this.initializeTileSelector();
@@ -5170,30 +4616,14 @@ export class MapMaker {
                 this.mapHeight = newSize.height;
                 this.resetAllLayers();
 
-                // ——— Calculate zoom based on map size ———
-                // Calculate zoom to fit map to screen based on map dimensions
-                const container = this.canvas.parentElement.parentElement;
-                const containerWidth = container.clientWidth - 40;
-                const containerHeight = container.clientHeight - 40;
-                
-                const canvasWidth = newSize.width * this.tileSize + this.canvasPadding * 2;
-                const canvasHeight = newSize.height * this.tileSize + this.canvasPadding * 2;
-                
-                const scaleX = containerWidth / canvasWidth;
-                const scaleY = containerHeight / canvasHeight;
-                const targetZoom = Math.min(scaleX, scaleY, this.maxZoom);
-                
-                // Set zoom based on map size (smaller maps need less zoom, larger maps need more)
-                // Use a base zoom that scales with map size
-                const baseZoom = Math.max(this.minZoom, Math.min(this.maxZoom, targetZoom * 0.9));
-                
+                // ——— Showdown ↔ other: adjust Objective tile + data sizes ———
                 const isShowdown = size => size === this.mapSizes.showdown;
                 const isShowdownNow = isShowdown(newSize);
 
                 if (!isShowdownNow) {
                     this.minZoom = 0.4;
                     this.delta = 1.75;
-                    this.zoomLevel = baseZoom;
+                    this.zoomLevel = 0.575;
                     this.tileDefinitions[14].size = 1;
                     this.objectiveData.Gem_Grab[0] = 2; // width
                     this.objectiveData.Gem_Grab[1] = 2; // height
@@ -5232,10 +4662,9 @@ export class MapMaker {
                     this.objectiveData.Hockey[2] = -10;
                     this.objectiveData.Hockey[3] = -15; 
                 } else {
-                    // Showdown is larger, needs different zoom settings
                     this.minZoom = 0.15;
                     this.delta = 0.5;
-                    this.zoomLevel = baseZoom;
+                    this.zoomLevel = 0.3;
                     this.tileDefinitions[14].size = 2;
                     // restore original width/height
                     this.objectiveData.Gem_Grab[0] = 1;
@@ -5289,9 +4718,6 @@ export class MapMaker {
     }
 
     async setEnvironment(environment) {
-        // Preserve the currently selected tile ID before environment change
-        const currentSelectedTileId = this.selectedTile.id;
-        
         this.environment = environment;
         this.loadEnvironmentBackgrounds();
         this.loadTileImages();
@@ -5299,17 +4725,6 @@ export class MapMaker {
         this.preloadGoalImage();
         await this.setGamemode(this.gamemode, false);
         this.initializeTileSelector();
-        
-        // Restore the selected tile visually if it still exists in the new environment
-        if (this.tileDefinitions[currentSelectedTileId]) {
-            this.selectedTile = { id: currentSelectedTileId, ...this.tileDefinitions[currentSelectedTileId] };
-            document.getElementById('tileSelector').querySelectorAll('.tile-btn').forEach(b => b.classList.remove('selected'));
-            const btn = document.getElementById('tileSelector').querySelector(`.tile-btn[id="${currentSelectedTileId}"]`);
-            if (btn) {
-                btn.classList.add('selected');
-            }
-        }
-        
         this.draw();
     }
 
@@ -5358,20 +4773,6 @@ export class MapMaker {
         document.querySelectorAll('input[name="selectionMode"]').forEach(radio => {
             radio.checked = radio.value === mode;
         });
-        // Update visibility of transform buttons
-        this.updateTransformButtonsVisibility();
-    }
-
-    updateTransformButtonsVisibility() {
-        const rotateBtn = document.getElementById('rotateBtn');
-        const flipHorizontalBtn = document.getElementById('flipHorizontalBtn');
-        const flipVerticalBtn = document.getElementById('flipVerticalBtn');
-        
-        const isSelectMode = this.selectionMode === 'select';
-        
-        if (rotateBtn) rotateBtn.style.display = isSelectMode ? '' : 'none';
-        if (flipHorizontalBtn) flipHorizontalBtn.style.display = isSelectMode ? '' : 'none';
-        if (flipVerticalBtn) flipVerticalBtn.style.display = isSelectMode ? '' : 'none';
     }
 
     toggleMirroring() {
@@ -5448,8 +4849,7 @@ export class MapMaker {
         this.draw();
     }
 
-    // Helper function to apply transformation to selected tiles and mirrored areas
-    applyTransformationToSelected(transformFn, transformName) {
+    rotateSelectedTiles() {
         if (this.selectedTiles.length === 0 || this.isSelectDragging) return;
 
         // Save state before making changes
@@ -5500,244 +4900,40 @@ export class MapMaker {
         // Clear selected tiles array
         this.selectedTiles = [];
 
-        // Helper function to place a tile at a position
-        const placeTransformedTile = (newX, newY, originalTile, addToSelection = true) => {
-            if (newX >= 0 && newX < this.mapWidth && newY >= 0 && newY < this.mapHeight) {
-                // Place the tile at the new position on the correct layer
-                this.mapData[originalTile.layer][newY][newX] = originalTile.id;
-                
-                // Handle negative IDs for size 2 tiles
-                const def = this.tileDefinitions[originalTile.id];
-                if (def && def.size === 2) {
-                    this.mapData[originalTile.layer][newY][newX + 1] = -1;
-                    this.mapData[originalTile.layer][newY + 1][newX] = -2;
-                    this.mapData[originalTile.layer][newY + 1][newX + 1] = -3;
-                }
-                
-                // Add to selected tiles array only if requested (not for mirrored tiles)
-                if (addToSelection) {
-                    this.selectedTiles.push({
-                        x: newX,
-                        y: newY,
-                        id: originalTile.id,
-                        layer: originalTile.layer
-                    });
-                }
-            }
-        };
-
-        // Sort tiles by layer (lower layers first) to ensure dependencies are placed correctly
-        const tilesToPlace = [];
+        // Rotate the tiles 90 degrees clockwise around the top-left corner (minX, minY)
+        // For a 90-degree clockwise rotation: (x, y) -> (y, width - 1 - x)
         for (let y = 0; y < height; y++) {
             for (let x = 0; x < width; x++) {
                 const originalTile = originalTiles[y][x];
                 if (originalTile) {
-                    const newPos = transformFn(x, y, width, height, minX, minY);
-                    tilesToPlace.push({ tile: originalTile, pos: newPos });
-                }
-            }
-        }
-        tilesToPlace.sort((a, b) => a.tile.layer - b.tile.layer);
-        
-        // Apply transformation to original area
-        for (const { tile, pos } of tilesToPlace) {
-            placeTransformedTile(pos.x, pos.y, tile);
-        }
-
-        // Apply transformation to mirrored areas if mirroring is enabled
-        // We need to find tiles in the mirrored area and apply the same transformation
-        if (this.mirrorVertical || this.mirrorHorizontal || this.mirrorDiagonal) {
-            // Calculate mirrored bounding boxes
-            if (this.mirrorVertical) {
-                const mirrorMinX = minX;
-                const mirrorMaxX = maxX;
-                const mirrorMinY = this.mapHeight - 1 - maxY;
-                const mirrorMaxY = this.mapHeight - 1 - minY;
-                const mirrorWidth = mirrorMaxX - mirrorMinX + 1;
-                const mirrorHeight = mirrorMaxY - mirrorMinY + 1;
-                
-                // Get ALL tiles in the mirrored area (all layers)
-                const mirrorTiles = []; // Array of {x, y, id, layer} for all tiles
-                for (let y = mirrorMinY; y <= mirrorMaxY; y++) {
-                    for (let x = mirrorMinX; x <= mirrorMaxX; x++) {
-                        const allTilesAtPos = this.getAllTilesAt(x, y);
-                        for (const tile of allTilesAtPos) {
-                            const relativeX = x - mirrorMinX;
-                            const relativeY = y - mirrorMinY;
-                            mirrorTiles.push({
-                                id: tile.tileId,
-                                x: x,
-                                y: y,
-                                relativeX: relativeX,
-                                relativeY: relativeY,
-                                layer: tile.layerIndex
-                            });
+                    // Calculate new position after 90-degree clockwise rotation
+                    const newRelativeX = y;
+                    const newRelativeY = width - 1 - x;
+                    
+                    const newX = minX + newRelativeX;
+                    const newY = minY + newRelativeY;
+                    
+                    // Check if the new position is within map bounds
+                    if (newX >= 0 && newX < this.mapWidth && newY >= 0 && newY < this.mapHeight) {
+                        // Place the tile at the new position on the correct layer
+                        this.mapData[originalTile.layer][newY][newX] = originalTile.id;
+                        
+                        // Handle negative IDs for size 2 tiles
+                        const def = this.tileDefinitions[originalTile.id];
+                        if (def && def.size === 2) {
+                            this.mapData[originalTile.layer][newY][newX + 1] = -1;
+                            this.mapData[originalTile.layer][newY + 1][newX] = -2;
+                            this.mapData[originalTile.layer][newY + 1][newX + 1] = -3;
                         }
+                        
+                        // Add to selected tiles array
+                        this.selectedTiles.push({
+                            x: newX,
+                            y: newY,
+                            id: originalTile.id,
+                            layer: originalTile.layer
+                        });
                     }
-                }
-                
-                // Clear all mirrored tiles
-                for (const tile of mirrorTiles) {
-                    this.mapData[tile.layer][tile.y][tile.x] = 0;
-                    const def = this.tileDefinitions[tile.id];
-                    if (def && def.size === 2) {
-                        this.mapData[tile.layer][tile.y][tile.x + 1] = 0;
-                        this.mapData[tile.layer][tile.y + 1][tile.x] = 0;
-                        this.mapData[tile.layer][tile.y + 1][tile.x + 1] = 0;
-                    }
-                }
-                
-                // Sort by layer (lower layers first) to ensure dependencies are placed correctly
-                mirrorTiles.sort((a, b) => a.layer - b.layer);
-                
-                // Apply transformation to mirrored area
-                // Convert mirrored coords to original coords, apply transformation, then mirror back
-                for (const tile of mirrorTiles) {
-                    // Map from mirrored space back to original space
-                    const logicalX = tile.relativeX;
-                    const logicalY = height - 1 - tile.relativeY; // Flip Y back to original space
-                    
-                    // Apply transformation in original coordinate space
-                    const newPos = transformFn(logicalX, logicalY, width, height, minX, minY, false);
-                    
-                    // Mirror the result back to mirrored space (only Y axis)
-                    const finalX = newPos.x;
-                    const finalY = this.mapHeight - 1 - newPos.y;
-                    
-                    const def = this.tileDefinitions[tile.id];
-                    const size = def && def.size === 2 ? 2 : 1;
-                    const adjustedY = size === 2 ? finalY - 1 : finalY;
-                    const mirrorId = this.getMirroredTileId(tile.id, 'vertical');
-                    placeTransformedTile(finalX, adjustedY, { ...tile, id: mirrorId }, false);
-                }
-            }
-            
-            if (this.mirrorHorizontal) {
-                const mirrorMinX = this.mapWidth - 1 - maxX;
-                const mirrorMaxX = this.mapWidth - 1 - minX;
-                const mirrorMinY = minY;
-                const mirrorMaxY = maxY;
-                const mirrorWidth = mirrorMaxX - mirrorMinX + 1;
-                const mirrorHeight = mirrorMaxY - mirrorMinY + 1;
-                
-                // Get ALL tiles in the mirrored area (all layers)
-                const mirrorTiles = []; // Array of {x, y, id, layer} for all tiles
-                for (let y = mirrorMinY; y <= mirrorMaxY; y++) {
-                    for (let x = mirrorMinX; x <= mirrorMaxX; x++) {
-                        const allTilesAtPos = this.getAllTilesAt(x, y);
-                        for (const tile of allTilesAtPos) {
-                            const relativeX = x - mirrorMinX;
-                            const relativeY = y - mirrorMinY;
-                            mirrorTiles.push({
-                                id: tile.tileId,
-                                x: x,
-                                y: y,
-                                relativeX: relativeX,
-                                relativeY: relativeY,
-                                layer: tile.layerIndex
-                            });
-                        }
-                    }
-                }
-                
-                // Clear all mirrored tiles
-                for (const tile of mirrorTiles) {
-                    this.mapData[tile.layer][tile.y][tile.x] = 0;
-                    const def = this.tileDefinitions[tile.id];
-                    if (def && def.size === 2) {
-                        this.mapData[tile.layer][tile.y][tile.x + 1] = 0;
-                        this.mapData[tile.layer][tile.y + 1][tile.x] = 0;
-                        this.mapData[tile.layer][tile.y + 1][tile.x + 1] = 0;
-                    }
-                }
-                
-                // Sort by layer (lower layers first) to ensure dependencies are placed correctly
-                mirrorTiles.sort((a, b) => a.layer - b.layer);
-                
-                // Apply transformation to mirrored area
-                // Convert mirrored coords to original coords, apply transformation, then mirror back
-                for (const tile of mirrorTiles) {
-                    // Map from mirrored space back to original space
-                    const logicalX = width - 1 - tile.relativeX; // Flip X back to original space
-                    const logicalY = tile.relativeY;
-                    
-                    // Apply transformation in original coordinate space
-                    const newPos = transformFn(logicalX, logicalY, width, height, minX, minY, false);
-                    
-                    // Mirror the result back to mirrored space (only X axis)
-                    const finalX = this.mapWidth - 1 - newPos.x;
-                    const finalY = newPos.y;
-                    
-                    const def = this.tileDefinitions[tile.id];
-                    const size = def && def.size === 2 ? 2 : 1;
-                    const adjustedX = size === 2 ? finalX - 1 : finalX;
-                    const mirrorId = this.getMirroredTileId(tile.id, 'horizontal');
-                    placeTransformedTile(adjustedX, finalY, { ...tile, id: mirrorId }, false);
-                }
-            }
-            
-            if (this.mirrorDiagonal) {
-                const mirrorMinX = this.mapWidth - 1 - maxX;
-                const mirrorMaxX = this.mapWidth - 1 - minX;
-                const mirrorMinY = this.mapHeight - 1 - maxY;
-                const mirrorMaxY = this.mapHeight - 1 - minY;
-                const mirrorWidth = mirrorMaxX - mirrorMinX + 1;
-                const mirrorHeight = mirrorMaxY - mirrorMinY + 1;
-                
-                // Get ALL tiles in the mirrored area (all layers)
-                const mirrorTiles = []; // Array of {x, y, id, layer} for all tiles
-                for (let y = mirrorMinY; y <= mirrorMaxY; y++) {
-                    for (let x = mirrorMinX; x <= mirrorMaxX; x++) {
-                        const allTilesAtPos = this.getAllTilesAt(x, y);
-                        for (const tile of allTilesAtPos) {
-                            const relativeX = x - mirrorMinX;
-                            const relativeY = y - mirrorMinY;
-                            mirrorTiles.push({
-                                id: tile.tileId,
-                                x: x,
-                                y: y,
-                                relativeX: relativeX,
-                                relativeY: relativeY,
-                                layer: tile.layerIndex
-                            });
-                        }
-                    }
-                }
-                
-                // Clear all mirrored tiles
-                for (const tile of mirrorTiles) {
-                    this.mapData[tile.layer][tile.y][tile.x] = 0;
-                    const def = this.tileDefinitions[tile.id];
-                    if (def && def.size === 2) {
-                        this.mapData[tile.layer][tile.y][tile.x + 1] = 0;
-                        this.mapData[tile.layer][tile.y + 1][tile.x] = 0;
-                        this.mapData[tile.layer][tile.y + 1][tile.x + 1] = 0;
-                    }
-                }
-                
-                // Sort by layer (lower layers first) to ensure dependencies are placed correctly
-                mirrorTiles.sort((a, b) => a.layer - b.layer);
-                
-                // Apply transformation to mirrored area
-                // Convert mirrored coords to original coords, apply transformation, then mirror back
-                for (const tile of mirrorTiles) {
-                    // Map from mirrored space back to original space
-                    const logicalX = width - 1 - tile.relativeX; // Flip X back to original space
-                    const logicalY = height - 1 - tile.relativeY; // Flip Y back to original space
-                    
-                    // Apply transformation in original coordinate space
-                    const newPos = transformFn(logicalX, logicalY, width, height, minX, minY, false);
-                    
-                    // Mirror the result back to mirrored space (both X and Y axes)
-                    const finalX = this.mapWidth - 1 - newPos.x;
-                    const finalY = this.mapHeight - 1 - newPos.y;
-                    
-                    const def = this.tileDefinitions[tile.id];
-                    const size = def && def.size === 2 ? 2 : 1;
-                    const adjustedX = size === 2 ? finalX - 1 : finalX;
-                    const adjustedY = size === 2 ? finalY - 1 : finalY;
-                    const mirrorId = this.getMirroredTileId(tile.id, 'diagonal');
-                    placeTransformedTile(adjustedX, adjustedY, { ...tile, id: mirrorId }, false);
                 }
             }
         }
@@ -5745,58 +4941,6 @@ export class MapMaker {
         // Redraw the map
         this.draw();
         this.checkForErrors();
-    }
-
-    rotateSelectedTiles() {
-        // 90-degree clockwise rotation: (x, y) -> (y, width - 1 - x)
-        // For mirrored areas, apply counter-clockwise rotation (opposite transformation)
-        this.applyTransformationToSelected((x, y, width, height, minX, minY, isMirror = false) => {
-            if (isMirror) {
-                // Counter-clockwise rotation for mirrored area: (x, y) -> (height - 1 - y, x)
-                const newRelativeX = height - 1 - y;
-                const newRelativeY = x;
-                return {
-                    x: minX + newRelativeX,
-                    y: minY + newRelativeY
-                };
-            } else {
-                // Clockwise rotation for original area
-                const newRelativeX = y;
-                const newRelativeY = width - 1 - x;
-                return {
-                    x: minX + newRelativeX,
-                    y: minY + newRelativeY
-                };
-            }
-        }, 'rotate');
-    }
-
-    flipHorizontalSelectedTiles() {
-        // Horizontal flip: (x, y) -> (width - 1 - x, y)
-        // For mirrored areas, no flip needed (already mirrored horizontally)
-        this.applyTransformationToSelected((x, y, width, height, minX, minY, isMirror = false) => {
-            // Horizontal flip for both original and mirrored (they use same transformation)
-            const newRelativeX = width - 1 - x;
-            const newRelativeY = y;
-            return {
-                x: minX + newRelativeX,
-                y: minY + newRelativeY
-            };
-        }, 'flipHorizontal');
-    }
-
-    flipVerticalSelectedTiles() {
-        // Vertical flip: (x, y) -> (x, height - 1 - y)
-        // For mirrored areas, no flip needed (already mirrored vertically)
-        this.applyTransformationToSelected((x, y, width, height, minX, minY, isMirror = false) => {
-            // Vertical flip for both original and mirrored (they use same transformation)
-            const newRelativeX = x;
-            const newRelativeY = height - 1 - y;
-            return {
-                x: minX + newRelativeX,
-                y: minY + newRelativeY
-            };
-        }, 'flipVertical');
     }
 
     toggleHideZoom() {
