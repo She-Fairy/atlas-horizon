@@ -121,7 +121,7 @@ class FenceLogicHandler {
             if (x < 0 || x >= width || y < 0 || y >= height) return false;
             const tileId = mapData[y][x];
             if (environment === 'Brawl_Arena') return tileId === 40 || tileId === 43 || tileId === 44;
-            if (environment === 'Rails' || 'Train') return tileId === 68;
+            if (environment === 'Rails' || environment === 'Train') return tileId === 68;
             if (isBorder) return tileId === 45;
             return isFence ? (tileId === 7) : (tileId === 9); // Assuming 7 is fence and 9 is rope
         };
