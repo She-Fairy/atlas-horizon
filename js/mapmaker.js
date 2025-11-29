@@ -4047,8 +4047,8 @@ export class MapMaker {
         }
     }
 
-    async generateMapId() {
-        const maps = await Firebase.readDataOnce(`users/${localStorage.getItem('user')}/maps`);
+    async generateMapId(user = localStorage.getItem('user')) {
+        const maps = await Firebase.readDataOnce(`users/${user}/maps`);
 
         if (!maps) return 1;
 
@@ -5237,7 +5237,7 @@ window.addEventListener('load', () => {
                 if (data) {
                     data.name += ` (Copy)`;
                     let currentUserData = await window.Firebase.readDataOnce(`users/${localStorage.getItem('user')}`);
-                    let newId = currentUserData.maps.map(map => map.id).reduce((a, b) => Math.max(a, b), 0) + 1;
+                    let newId = await window.mapMaker.generateMapId(user);
                     await window.Firebase.writeData(`users/${localStorage.getItem('user')}/maps/${newId}`, data);
                     window.location.href = `https://she-fairy.github.io/atlas-horizon/mapmaker.html?id=${newId}&user=${localStorage.getItem('username')}`;
                 }
