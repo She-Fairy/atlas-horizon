@@ -5237,7 +5237,7 @@ window.addEventListener('load', () => {
                 if (data) {
                     data.name += ` (Copy)`;
                     let currentUserData = await window.Firebase.readDataOnce(`users/${localStorage.getItem('user')}`);
-                    let newId = await window.mapMaker.generateMapId(user);
+                    let newId = await window.mapMaker.generateMapId(localStorage.getItem('user'));
                     await window.Firebase.writeData(`users/${localStorage.getItem('user')}/maps/${newId}`, data);
                     window.location.href = `https://she-fairy.github.io/atlas-horizon/mapmaker.html?id=${newId}&user=${localStorage.getItem('username')}`;
                 }
