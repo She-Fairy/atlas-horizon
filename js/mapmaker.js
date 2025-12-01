@@ -355,7 +355,8 @@ export class MapMaker {
             'Red Spawn': [1.7, 1.7, -35, -35, 0.85, 7],
             'Blue Respawn': [1.7, 1.7, -35, -35, 0.85, 7],
             'Red Respawn': [1.7, 1.7, -35, -35, 0.85, 7],
-            'Trio Spawn': [1.7, 1.7, -27.5, -27.5, 0.85, 7],
+            'Trio Spawn': [1.7, 1.7, -35, -35, 0.85, 7],
+            'Yellow Spawn': [1.7, 1.7, -35, -35, 0.85, 7],
             'Objective': [2, 2.21, -50, -115, 1, 10],
             'Smoke': [1*1.4, 1.1*1.4, -15, -35, 1, 5],
             'Heal Pad': [1, 1.12, 0, 0, 1, 5],
@@ -1491,7 +1492,9 @@ export class MapMaker {
             32: { name: 'Bolt', img: 'Global/Objectives/Bolt.png', size: 1, showInGamemode: 'Siege' },
             34: { name: 'TokenBlue', img: 'Global/Objectives/TokenBlue.png', size: 1, showInGamemode: 'Token_Run' },
             35: { name: 'TokenRed', img: 'Global/Objectives/TokenRed.png', size: 1, showInGamemode: 'Token_Run' },
-            36: { name: 'Trio Spawn', size: 1, showInGamemode: 'Showdown', img: 'Global/Spawns/7.png' },
+            36: { name: 'Trio Spawn', size: 1, showInGamemode: ['Showdown', 'Gem_Grab', 'Wipeout'], layer:this.layerCount -1,  getImg: (gamemode) => {
+                return { img: gamemode === 'Showdown' || gamemode === 'showdown' ? 'Global/Spawns/7.png' : 'Global/Spawns/8.png' }; // Won't use the default spawns for the listed modes
+            }},
             37: { name: 'Box', img: 'Global/Objectives/Box.png', showInGamemode: ['Showdown', 'Trophy_Escape'], size: 1},
             38: { name: 'Boss Zone', layer: this.layerCount -2, img: 'Global/Arena/Boss_Zone.png', showInGamemode: 'Brawl_Arena', size: 1},
             39: { name: 'Monster Zone', layer: this.layerCount -2, img: 'Global/Arena/Monster_Zone.png', showInGamemode: 'Brawl_Arena', size: 1},
@@ -1532,6 +1535,7 @@ export class MapMaker {
             73: { name: 'RedTrain', img: 'Global/Special_Tiles/RedTrain/Train_Fence.png', placeableOn: [68], size: 1},
             74: { name: 'YellowTrain', img: 'Global/Special_Tiles/YellowTrain/Train_Fence.png', placeableOn: [68], size: 1},
             75: { name: 'GreenTrain', img: 'Global/Special_Tiles/GreenTrain/Train_Fence.png', placeableOn: [68], size: 1},
+		    76: { name: 'Yellow Spawn', img: 'Global/Spawns/9.png', showInGamemode: ['Gem_Grab', 'Wipeout'], size: 1 },
         };
 
         Object.values(this.tileDefinitions).forEach(def => {
@@ -2581,7 +2585,7 @@ export class MapMaker {
         // Define the order of tiles
         const tileOrder = [
             'Wall', 'Wall2', 'Crate', 'Barrel', 'Cactus', 'Bush', 'Fence', 'Skull', 'Rope Fence', 'BFence', 'Water', 'Unbreakable',
-            'Blue Spawn', 'Blue Respawn', 'Red Spawn', 'Red Respawn', 'Trio Spawn', 'Objective', 'Box', 'Bumper', 'Bolt', 'TokenBlue', 'TokenRed', 'Boss Zone', 'Monster Zone', 'Bot_Zone', 'SubwayRun1', 'SubwayRun2', 'TreasurePad1','TreasurePad2',
+            'Blue Spawn', 'Blue Respawn', 'Red Spawn', 'Red Respawn', 'Trio Spawn', 'Yellow Spawn', 'Objective', 'Box', 'Bumper', 'Bolt', 'TokenBlue', 'TokenRed', 'Boss Zone', 'BossSpawn', 'Monster Zone', 'KaijuBoss', 'Bot_Zone', 'SubwayRun1', 'SubwayRun2', 'TreasurePad1','TreasurePad2',
             'HalloweenBoss1', 'HalloweenBoss2', 'HalloweenBoss3', 'HalloweenBoss4', 'HalloweenBoss5', 'OniHunt',
             'Track', 'Base Ike Blue', 'Base Ike Red', 'Small Ike Blue', 'Small Ike Red',
             'GodzillaCity1', 'GodzillaCity2', 'GodzillaCity3', 'GodzillaCity4', 'GodzillaExplosive', 'GodzillaSpawn', 'Escape',
