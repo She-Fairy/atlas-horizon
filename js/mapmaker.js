@@ -1438,7 +1438,7 @@ export class MapMaker {
                 return { img: gamemode === 'Showdown' || gamemode === 'Trophy_Escape' || gamemode === 'Hunters' || gamemode ==='Subway_Run' || gamemode === 'Drumroll' ? 'Global/Spawns/3.png' : 'Global/Spawns/1.png' }; // Won't use the default spawns for the listed modes
             }},
             13: { name: 'Red Spawn', size: 1, layer:this.layerCount -1, getImg: (gamemode) => { // Will Block Red spawns to appear on Trophy_Escape or any blacklisted mode
-                if (gamemode === 'Trophy_Escape' || gamemode === 'Hunters' || gamemode ==='Halloween_Boss' || gamemode ==='Subway_Run' || gamemode === 'Drumroll') return null;
+                if (gamemode === 'Trophy_Escape' || gamemode === 'Hunters' || gamemode ==='Halloween_Boss' ||  gamemode ==='Hawkins_Hunt' || gamemode ==='Subway_Run' || gamemode === 'Drumroll') return null;
                 return { img: gamemode === 'Showdown' ? 'Global/Spawns/4.png' : 'Global/Spawns/2.png' };
             }},
             14: { name: 'Objective', placeableOnThis: [-100], size: 1, layer: this.layerCount -2, getImg: (gamemode, y, mapHeight, environment) => {
