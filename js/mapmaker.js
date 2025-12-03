@@ -1543,7 +1543,7 @@ export class MapMaker {
             78: { name: 'HawkinsBoss2', img: 'Global/Boss Spawns/HawkinsBoss2.png', showInGamemode: 'Hawkins_Hunt', size: 1},
             79: { name: 'HawkinsBoss3', img: 'Global/Boss Spawns/HawkinsBoss3.png', showInGamemode: 'Hawkins_Hunt', size: 1},
             80: { name: 'KaijuBoss', img: 'Global/Boss Spawns/KaijuBoss.png', showInGamemode: 'Super_City_Rampage', size: 1},
-            79: { name: 'BossSpawn', img: 'Global/Boss Spawns/BossSpawn.png', showInGamemode: ['Boss_Fight', 'Takedown'], size: 1 },
+            81: { name: 'BossSpawn', img: 'Global/Boss Spawns/BossSpawn.png', showInGamemode: ['Boss_Fight', 'Takedown'], size: 1 },
         };
 
         Object.values(this.tileDefinitions).forEach(def => {
