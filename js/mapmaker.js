@@ -416,6 +416,9 @@ export class MapMaker {
             'Train_TR': [2, 2.4, -12, -155, 1, 5],
             'Train_BL': [2, 2.4, -82, -90, 1, 3],
             'Train_BR': [2, 2.4, -12, -90, 1, 5],
+            'HawkinsBoss1': [6.5, 6.5, -275, -275, 1, 10],
+            'HawkinsBoss2': [6.5, 6.5, -275, -275, 1, 10],
+            'HawkinsBoss3': [6.5, 6.5, -275, -275, 1, 10],
         };
 
         // Initialize objective data
@@ -1536,6 +1539,11 @@ export class MapMaker {
             74: { name: 'YellowTrain', img: 'Global/Special_Tiles/YellowTrain/Train_Fence.png', placeableOn: [68], size: 1},
             75: { name: 'GreenTrain', img: 'Global/Special_Tiles/GreenTrain/Train_Fence.png', placeableOn: [68], size: 1},
 		    76: { name: 'Yellow Spawn', img: 'Global/Spawns/9.png', showInGamemode: ['Gem_Grab', 'Wipeout'], size: 1 },
+            77: { name: 'HawkinsBoss1', img: 'Global/Boss Spawns/HawkinsBoss1.png', showInGamemode: 'Hawkins_Hunt', size: 1},
+            78: { name: 'HawkinsBoss2', img: 'Global/Boss Spawns/HawkinsBoss2.png', showInGamemode: 'Hawkins_Hunt', size: 1},
+            79: { name: 'HawkinsBoss3', img: 'Global/Boss Spawns/HawkinsBoss3.png', showInGamemode: 'Hawkins_Hunt', size: 1},
+            80: { name: 'KaijuBoss', img: 'Global/Boss Spawns/KaijuBoss.png', showInGamemode: 'Super_City_Rampage', size: 1},
+            79: { name: 'BossSpawn', img: 'Global/Boss Spawns/BossSpawn.png', showInGamemode: ['Boss_Fight', 'Takedown'], size: 1 },
         };
 
         Object.values(this.tileDefinitions).forEach(def => {
@@ -2585,8 +2593,8 @@ export class MapMaker {
         // Define the order of tiles
         const tileOrder = [
             'Wall', 'Wall2', 'Crate', 'Barrel', 'Cactus', 'Bush', 'Fence', 'Skull', 'Rope Fence', 'BFence', 'Water', 'Unbreakable',
-            'Blue Spawn', 'Blue Respawn', 'Red Spawn', 'Red Respawn', 'Trio Spawn', 'Yellow Spawn', 'Objective', 'Box', 'Bumper', 'Bolt', 'TokenBlue', 'TokenRed', 'Boss Zone', 'BossSpawn', 'Monster Zone', 'KaijuBoss', 'Bot_Zone', 'SubwayRun1', 'SubwayRun2', 'TreasurePad1','TreasurePad2',
-            'HalloweenBoss1', 'HalloweenBoss2', 'HalloweenBoss3', 'HalloweenBoss4', 'HalloweenBoss5', 'OniHunt',
+            'Blue Spawn', 'Blue Respawn', 'Red Spawn', 'Red Respawn', 'Objective', 'Trio Spawn', 'Yellow Spawn', 'Box', 'Bumper', 'Bolt', 'TokenBlue', 'TokenRed', 'Boss Zone', 'Monster Zone', 'Bot_Zone', 'SubwayRun1', 'SubwayRun2', 'TreasurePad1','TreasurePad2',
+            'BossSpawn', 'KaijuBoss','HalloweenBoss1', 'HalloweenBoss2', 'HalloweenBoss3', 'HalloweenBoss4', 'HalloweenBoss5', 'OniHunt', 'HawkinsBoss1', 'HawkinsBoss2', 'HawkinsBoss3',
             'Track', 'Base Ike Blue', 'Base Ike Red', 'Small Ike Blue', 'Small Ike Red',
             'GodzillaCity1', 'GodzillaCity2', 'GodzillaCity3', 'GodzillaCity4', 'GodzillaExplosive', 'GodzillaSpawn', 'Escape',
             'TNT', /*'UnbreakableBrick',*/ 'Speed Tile','Slow Tile', 'Spikes', 'Heal Pad', 'Smoke', 'IceTile', 'SnowTile', 'Rails', 'RedTrain', 'GreenTrain', 'YellowTrain',
