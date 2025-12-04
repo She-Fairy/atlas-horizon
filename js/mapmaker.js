@@ -428,6 +428,7 @@ export class MapMaker {
             'Bounty': [1.2, 2.0585, -10, -50, 1, 10],
             'Brawl_Ball': [1.3, 1.495, -15, -20, 1, 10],
             'Hot_Zone': [7, 7, -300, -300, 1, 10],
+			'Takedown': [1.2, 1.9, -10, -50, 1, 10],
             'Snowtel_Thieves': [4, 4, -150, -150, 1, 10],
             'Token_Run': [4, 4, -150, -150, 1, 10],
             'Basket_Brawl': [1.3, 1.495, -20, -20, 1, 10],
@@ -1448,6 +1449,7 @@ export class MapMaker {
                     'Bounty': { img: 'Global/Objectives/Bounty.png' },
                     'Brawl_Ball': { img: '${env}/Gamemode_Specifics/Brawl_Ball.png' },
                     'Dodgebrawl': { img: 'Global/Objectives/Dodgebrawl.png' },
+					'Takedown': { img: 'Global/Objectives/Powercube.png' },
                     'Hot_Zone': { img: 'Global/Objectives/Hot_Zone.png', size: 7 },
                     'Snowtel_Thieves': { 
                         img: `Global/Objectives/${y > mapHeight/2 ? 'SnowtelThievesBlue' : 'SnowtelThievesRed'}.png`,
@@ -2592,15 +2594,14 @@ export class MapMaker {
 
         // Define the order of tiles
         const tileOrder = [
-            'Wall', 'Wall2', 'Crate', 'Barrel', 'Cactus', 'Bush', 'Fence', 'Skull', 'Rope Fence', 'BFence', 'Water', 'Unbreakable',
-            'Blue Spawn', 'Blue Respawn', 'Red Spawn', 'Red Respawn', 'Objective', 'Trio Spawn', 'Yellow Spawn', 'Box', 'Bumper', 'Bolt', 'TokenBlue', 'TokenRed', 'Boss Zone', 'Monster Zone', 'Bot_Zone', 'SubwayRun1', 'SubwayRun2', 'TreasurePad1','TreasurePad2',
-            'BossSpawn', 'KaijuBoss','HalloweenBoss1', 'HalloweenBoss2', 'HalloweenBoss3', 'HalloweenBoss4', 'HalloweenBoss5', 'OniHunt', 'HawkinsBoss1', 'HawkinsBoss2', 'HawkinsBoss3',
-            'Track', 'Base Ike Blue', 'Base Ike Red', 'Small Ike Blue', 'Small Ike Red',
-            'GodzillaCity1', 'GodzillaCity2', 'GodzillaCity3', 'GodzillaCity4', 'GodzillaExplosive', 'GodzillaSpawn', 'Escape',
-            'TNT', /*'UnbreakableBrick',*/ 'Speed Tile','Slow Tile', 'Spikes', 'Heal Pad', 'Smoke', 'IceTile', 'SnowTile', 'Rails', 'RedTrain', 'GreenTrain', 'YellowTrain',
-            'Jump R', 'Jump L', 'Jump T', 'Jump B',
-            'Jump BR', 'Jump TL', 'Jump BL', 'Jump TR',
-            'Teleporter Blue', 'Teleporter Green', 'Teleporter Red', 'Teleporter Yellow'
+            'Wall', 'Wall2', 'Crate', 'Barrel', 'Cactus', 'Bush', 'Fence', 'Skull', 'Rope Fence', 'BFence', 'Water', 'Unbreakable', // Environment tiles
+			'Blue Spawn', 'Blue Respawn', 'Red Spawn', 'Red Respawn', 'Trio Spawn', 'Yellow Spawn', // Normal Spawns
+			'BossSpawn', 'KaijuBoss','HalloweenBoss1', 'HalloweenBoss2', 'HalloweenBoss3', 'HalloweenBoss4', 'HalloweenBoss5', 'OniHunt', 'HawkinsBoss1', 'HawkinsBoss2', 'HawkinsBoss3', // Boss spawns
+            'Objective', 'Box', 'Powercube', 'Bumper', 'Bolt', 'TokenBlue', 'GodzillaCity1', 'GodzillaCity2', 'GodzillaCity3', 'GodzillaCity4', 'GodzillaExplosive', 'GodzillaSpawn', 'Escape', 'TokenRed', 'Boss Zone', 'Monster Zone', 'Bot_Zone', 'SubwayRun1', 'SubwayRun2', 'TreasurePad1','TreasurePad2', //Objectives
+            'Track', 'Base Ike Blue', 'Base Ike Red', 'Small Ike Blue', 'Small Ike Red', // Brawl Arena
+            'TNT', /*'UnbreakableBrick',*/ 'Speed Tile','Slow Tile', 'Spikes', 'Heal Pad', 'Smoke', 'IceTile', 'SnowTile', 'Rails', 'RedTrain', 'GreenTrain', 'YellowTrain', // Special Tiles
+            'Jump R', 'Jump L', 'Jump T', 'Jump B', 'Jump BR', 'Jump TL', 'Jump BL', 'Jump TR', //Jump pads
+            'Teleporter Blue', 'Teleporter Green', 'Teleporter Red', 'Teleporter Yellow' // Teleporters
         ];
 
         // Create buttons in the specified order
