@@ -471,6 +471,7 @@ export class MapMaker {
             },
             Gift_Shop: {
                 'Gem_Grab': [2.7, 2.376, -85, -70, 1, 10],
+				'Hold_The_Trophy': [1.9, 3.2, -43, -125, 1, 10],
             },
             Bandstand: {
                 'Gem_Grab': [2.4, 2.54, -56, -78, 1, 10],
@@ -1472,7 +1473,9 @@ export class MapMaker {
                         img: `Global/Objectives/${y > mapHeight/2 ? 'TokenRunRed' : 'TokenRunBlue'}.png`,
                         displayImg: 'Global/Objectives/TokenRunBlue.png'
                     },
-                    'Hold_The_Trophy': { img: 'Global/Objectives/Hold_The_Trophy.png' }
+                    'Hold_The_Trophy': { 
+                        img: environment === 'Gift_Shop' ? 'Gift_Shop/Gamemode_Specifics/Hold_The_Trophy.png' : 'Global/Objectives/Hold_The_Trophy.png' 
+                    }
                 };
                 return objectives[gamemode];
                },
