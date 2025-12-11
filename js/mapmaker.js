@@ -471,7 +471,7 @@ export class MapMaker {
             },
             Gift_Shop: {
                 'Gem_Grab': [2.7, 2.376, -85, -70, 1, 10],
-				'Hold_The_Trophy': [1.9, 3.2, -43, -125, 1, 10],
+				'Hold_The_Trophy': [1.9, 3.2, -45, -125, 1, 10],
             },
             Bandstand: {
                 'Gem_Grab': [2.4, 2.54, -56, -78, 1, 10],
