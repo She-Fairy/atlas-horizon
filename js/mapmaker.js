@@ -16,6 +16,7 @@ const FENCE_LOGIC_BY_ENVIRONMENT = {
     'Holiday': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
     'City': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
     'Retropolis': FENCE_LOGIC_TYPES.BINARY_CODE,
+    'Beach': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
     'Mortuary': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
     'Pirate_Ship': FENCE_LOGIC_TYPES.BINARY_CODE,
     'Arcade': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
@@ -307,7 +308,7 @@ export class MapMaker {
             'Cactus': [1*1.1, 1.67*1.1, -5, -51, 1, 5],
             'Water': [1, 1, 0, 0, 1, 5],
             // Base fence types
-            'Fence': [1, 1.61, 0, -40, 1, 5],
+            'Fence': [1.08, 1.71, -4, -50, 1, 5],
             'Rope Fence': [1, 1.75, 0, -50, 1, 5],
             // Simple Block Logic variations
             'Horizontal': [1.05, 1.323, -2.5, -12.5, 1, 5],
@@ -996,6 +997,7 @@ export class MapMaker {
                 'Wall': [1, 1.8, 0, -51, 1, 5],
                 'Skull': [1 * 1.1, 1.22 * 1.1, -5, -30, 1, 5],
                 'Post': [1, 1.8, 0, -50, 1, 5],
+				'Horizontal': [1.05, 1.323, -2.5, -22, 1, 5],
                 'Post_TR': [1.5, 2.47, 0, -118, 1, 5],
                 'Post_R': [1.5, 1.8, 0, -50, 1, 5],
                 'Post_T': [1, 2.47, 0, -118, 1, 5],
@@ -1056,7 +1058,7 @@ export class MapMaker {
                 'Cactus': [1.2, 1.89, -10, -59, 1, 5.5],
                 'Bush': [1.05, 1.9, -2, -58, 1, 5],
                 'Skull': [1, 1.5, 0, -22, 1, 5],
-                'Fence': [1, 1.61, 0, -40, 1, 5],
+                'Fence': [1.03, 1.71, -2, -50, 1, 5],
                 'Horizontal': [1, 1.2, 0, -15, 1, 5],
                 'Vertical': [1, 1.84, 0, -50, 1, 5],
                 'Post': [0.9, 1.8, 5, -66, 1, 5],
@@ -1284,7 +1286,7 @@ export class MapMaker {
 				'Skull': [1, 1.51, 0, -45, 1, 5],
             },
             Snowtel: {
-                'Horizontal': [1.05, 1.323, -2.5, -15, 1, 5],
+                'Horizontal': [1.05, 1.323, -2.5, -22, 1, 5],
                 'Wall': [1, 1.8, 0, -51, 1, 5],
                 'Wall2': [1, 1.8, 0, -51, 1, 5],
                 'Skull': [1*1.1, 1.22*1.1, -5, -30, 1, 5]
