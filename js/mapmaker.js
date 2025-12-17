@@ -66,6 +66,7 @@ const FENCE_LOGIC_BY_ENVIRONMENT = {
     'Stranger_Things_Lab': FENCE_LOGIC_TYPES.BINARY_CODE,
     'Stranger_Things_Lair': FENCE_LOGIC_TYPES.BINARY_CODE,
     'Stranger_Things_Forest': FENCE_LOGIC_TYPES.BINARY_CODE,
+    'Aquarium': FENCE_LOGIC_TYPES.BINARY_CODE,
 };
 
 const BORDER_FENCE_LOGIC_BY_ENVIRONMENT = {
@@ -573,6 +574,9 @@ export class MapMaker {
             },
             Stranger_Things_Lair: {
                 'Gem_Grab': [2.9, 2.376, -95, -70, 1, 10],
+			},
+            Aquarium: {
+                'Gem_Grab': [2.18, 2.42, -59, -60, 1, 10],
             },
         };
 
@@ -1403,6 +1407,22 @@ export class MapMaker {
                 'Post_T': [1, 2.47, 0, -128, 1, 5],
             },
             Aquarium: {
+                'Wall': [1, 1.8, 0, -51, 1, 5],
+                'Wall2': [1, 1.88, 0, -61, 1, 5],
+                'Crate': [1, 1.6, 0, -34, 1, 5],
+                'Barrel': [1, 1.8, 0, -55, 1, 5],
+                'Cactus': [1.35, 2.35, -19, -105, 1, 5.5],
+                'Skull': [1, 1.6, 0, -38, 1, 5],
+                '0001': [1.2, 1.1, -10, -14, 1, 5],
+                '0101': [1, 1, 0, -4, 1, 7],
+                '0011': [1, 1, 0, -4, 1, 7],
+                '0010': [1.1, 1.2, -10, -13, 1, 5],
+                '0100': [1.1, 1.2, 0, -13, 1, 5],
+                '1000': [1.2, 1.3, -10, -2, 1, 5],
+                '1001': [1, 1, 0, -4, 1, 5],
+                '1010': [1, 1.1, 0, -4, 1, 5],
+                '1100': [1, 1.1, 0, -4, 1, 5],
+                'Fence': [1, 1.1, 0, -4, 1, 5],
                 'Post': [1, 1.7, 0, -50, 1, 5],
                 'Post_TR': [1.66, 2.4, 0, -120, 1, 5],
                 'Post_R': [1.6, 1.7, 0, -50, 1, 5],
