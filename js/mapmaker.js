@@ -422,6 +422,7 @@ export class MapMaker {
             'HawkinsBoss1': [6.5, 6.5, -275, -275, 1, 10],
             'HawkinsBoss2': [6.5, 6.5, -275, -275, 1, 10],
             'HawkinsBoss3': [6.5, 6.5, -275, -275, 1, 10],
+			'Love_Bombing': [1.3, 1.75, -10, -40, 1, 10],
         };
 
         // Initialize objective data
@@ -1482,6 +1483,7 @@ export class MapMaker {
                         img: `Global/Objectives/${y > mapHeight/2 ? 'TokenRunRed' : 'TokenRunBlue'}.png`,
                         displayImg: 'Global/Objectives/TokenRunBlue.png'
                     },
+					'Love_Bombing': { img: 'Global/Objectives/Love_Bombing.png' },
                     'Hold_The_Trophy': { 
                         img: environment === 'Gift_Shop' ? 'Gift_Shop/Gamemode_Specifics/Hold_The_Trophy.png' : 'Global/Objectives/Hold_The_Trophy.png' 
                     }
