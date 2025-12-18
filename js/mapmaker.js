@@ -422,7 +422,6 @@ export class MapMaker {
             'HawkinsBoss1': [6.5, 6.5, -275, -275, 1, 10],
             'HawkinsBoss2': [6.5, 6.5, -275, -275, 1, 10],
             'HawkinsBoss3': [6.5, 6.5, -275, -275, 1, 10],
-			'Love_Bombing': [1.3, 1.75, -10, -40, 1, 10],
         };
 
         // Initialize objective data
@@ -447,6 +446,7 @@ export class MapMaker {
             'Paint_Brawl': [1.4, 2.2, -20, -85, 1, 10],
             'Hockey': [1.5, 1.695, -25, -26, 1, 10],
             'Dodgebrawl': [1.3, 1.495, -15, -20, 1, 10],
+			'Love_Bombing': [1.3, 1.75, -10, -40, 1, 10],
         };
 
         // Initialize environment data
