@@ -4231,6 +4231,25 @@ export class MapMaker {
             }
         }
 
+		if (this.gamemode === 'Spirit_Wars' && this.mapSize === this.mapSizes.regular) { 
+            // Cache siege markings image if not already loaded
+            if (!this.siegeMarkingsImage) {
+                this.siegeMarkingsImage = new Image();
+                this.siegeMarkingsImage.src = 'Resources/Global/SpiritWarsMarkings.png';
+            }
+
+            // Draw siege markings if loaded
+            if (this.siegeMarkingsImage.complete) {
+                ctx.drawImage( 
+                    this.siegeMarkingsImage, 
+                    this.canvasPadding, 
+                    this.canvasPadding, 
+                    this.mapWidth * this.tileSize, 
+                    this.mapHeight * this.tileSize 
+                ); 
+            }
+        }
+
         // Group tiles by layer
         const tilesByLayer = new Map();
         for (let layerIndex = 0; layerIndex < this.layerCount; layerIndex++) {
