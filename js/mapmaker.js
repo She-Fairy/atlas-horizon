@@ -71,6 +71,8 @@ const FENCE_LOGIC_BY_ENVIRONMENT = {
 };
 
 const BORDER_FENCE_LOGIC_BY_ENVIRONMENT = {
+    'Desert': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
+    'Desert2': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
     'Bazaar': FENCE_LOGIC_TYPES.BINARY_CODE,
     'Ice_Island': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
     'Swamp_of_Love': FENCE_LOGIC_TYPES.BINARY_CODE,
@@ -432,25 +434,26 @@ export class MapMaker {
             'Heist': [2, 2.21, -50, -115, 1, 10],
             'Bounty': [1.2, 2.0585, -10, -50, 1, 10],
             'Brawl_Ball': [1.3, 1.495, -15, -20, 1, 10],
-            'Hot_Zone': [7, 7, -300, -300, 1, 10],
-			'Takedown': [1.2, 1.9, -10, -50, 1, 10],
-            'Snowtel_Thieves': [4, 4, -150, -150, 1, 10],
-            'Token_Run': [4, 4, -150, -150, 1, 10],
-            'Basket_Brawl': [1.3, 1.495, -20, -20, 1, 10],
-            'Volley_Brawl': [1.3, 1.495, -20, -20, 1, 10],
             'Siege': {
                 upper: [2 * 1.2, 2.64 * 1.2, -50, -135, 1, 10],  // Blue Ike (upper part) - slightly smaller
                 lower: [2 * 1.2, 2.83 * 1.2, -95, -135, 1, 10]   // Red Ike (lower part) - slightly larger
             },
-            'Spirit_Wars': {
-                upper: [2 * 1.2, 2.64 * 1.2, -50, -216, 1, 10],  // Blue Ike (upper part) - slightly smaller
-                lower: [2 * 1.2, 2.83 * 1.2, -95, -240, 1, 10]   // Red Ike (lower part) - slightly larger
-            },
+            'Lone_Star': [1.2, 2.0585, -10, -50, 1, 10],
+			'Takedown': [1.2, 1.9, -10, -50, 1, 10],
+            'Snowtel_Thieves': [4, 4, -150, -150, 1, 10],
+            'Hot_Zone': [7, 7, -300, -300, 1, 10],
+            'Basket_Brawl': [1.3, 1.495, -20, -20, 1, 10],
+            'Volley_Brawl': [1.3, 1.495, -20, -20, 1, 10],
             'Hold_The_Trophy': [2.5, 2.5, -75, -75, 1, 10],
             'Bot_Zone': [1.9, 1.9, -46.5, -46.5, 0.85, 7],
             'Bot_Drop': [1.9, 1.9, -46.5, -46.5, 0.85, 7],
             'Paint_Brawl': [1.4, 2.2, -20, -85, 1, 10],
+            'Spirit_Wars': {
+                upper: [2 * 1.2, 2.64 * 1.2, -50, -216, 1, 10],  // Blue Ike (upper part) - slightly smaller
+                lower: [2 * 1.2, 2.83 * 1.2, -95, -240, 1, 10]   // Red Ike (lower part) - slightly larger
+            },
             'Hockey': [1.5, 1.695, -25, -26, 1, 10],
+            'Token_Run': [4, 4, -150, -150, 1, 10],
             'Dodgebrawl': [1.3, 1.495, -15, -20, 1, 10],
             'Love_Bombing': [1.7, 1.85, -25, -60, 1, 10],
         };
@@ -600,6 +603,16 @@ export class MapMaker {
                 'Wall': [1, 1.8, 0, -51, 1, 5],
                 'Wall2': [1*1.1, 1.65*1.1, -5, -50, 1, 5],
                 'Cactus': [1, 1.68, 0, -50, 1, 5],
+            },
+            Desert: {
+                        'BFence': [1.08, 1.71, -4, -50, 1, 5],
+            'BHorizontal': [1.05, 1.323, -2.5, -12.5, 1, 5],
+            'BVertical': [1, 1.84, 0, -50, 1, 5],
+            },
+            Desert2: {
+                        'BFence': [1.08, 1.71, -4, -50, 1, 5],
+            'BHorizontal': [1.05, 1.323, -2.5, -12.5, 1, 5],
+            'BVertical': [1, 1.84, 0, -50, 1, 5],
             },
             Oasis: {
                 'Wall2': [1, 1.8, 0, -50, 1, 5],
@@ -1474,6 +1487,7 @@ export class MapMaker {
                     'Brawl_Ball': { img: '${env}/Gamemode_Specifics/Brawl_Ball.png' },
                     'Dodgebrawl': { img: 'Global/Objectives/Dodgebrawl.png' },
                     'Love_Bombing': { img: 'Global/Objectives/Love_Bombing.png' },
+                    'Lone_Star': { img: 'Global/Objectives/Lone_Star.png' },
 					'Takedown': { img: 'Global/Objectives/Powercube.png' },
                     'Hot_Zone': { img: 'Global/Objectives/Hot_Zone.png', size: 7 },
                     'Snowtel_Thieves': { 
@@ -1537,7 +1551,7 @@ export class MapMaker {
             42: { name: 'Red Respawn', layer: this.layerCount -1, img: 'Global/Spawns/6.png', showInGamemode: ['Brawl_Ball', 'Hockey', 'Volley_Brawl', 'Paint_Brawl'], size: 1},
             43: { name: 'Base Ike Blue', layer: this.layerCount -2, img: 'Global/Arena/Base_Ike_Blue.png', showInGamemode: 'Brawl_Arena', size: 1 },
             44: { name: 'Small Ike Blue', layer: this.layerCount -2, img: 'Global/Arena/Small_Ike_Blue.png', showInGamemode: 'Brawl_Arena', size: 1 },
-            45: { name: 'BFence', img: '${env}/Fence_5v5/BFence.png', showInEnvironment: ['Tropical_Island', 'Super_City_2', 'Bazaar', 'Medieval_Manor', 'Ice_Island', 'Katana_Kingdom', 'Hockey', 'Spongebob', 'Subway_Surfers', 'Stranger_Things_Lair', 'Stranger_Things_Lab', 'Stranger_Things_Forest',], size: 1 },
+            45: { name: 'BFence', img: '${env}/Fence_5v5/BFence.png', showInEnvironment: ['Tropical_Island', 'Super_City_2', 'Bazaar', 'Medieval_Manor', 'Ice_Island', 'Katana_Kingdom', 'Hockey', 'Spongebob', 'Subway_Surfers', 'Stranger_Things_Lair', 'Stranger_Things_Lab', 'Stranger_Things_Forest', 'Desert','Desert2',], size: 1 },
             46: { name: 'Base Ike Red', layer: this.layerCount -2, img: 'Global/Arena/Base_Ike_Red.png', showInGamemode: 'Brawl_Arena', size: 1 },
             47: { name: 'Small Ike Red', layer: this.layerCount -2, img: 'Global/Arena/Small_Ike_Red.png', showInGamemode: 'Brawl_Arena', size: 1 },
             48: { name: 'Bumper', size: 1, showInGamemode: ['Brawl_Ball', 'Hockey', 'Paint_Brawl'], getImg: (gamemode) => {
@@ -4231,7 +4245,7 @@ export class MapMaker {
             }
         }
 
-		if (this.gamemode === 'Spirit_Wars' && this.mapSize === this.mapSizes.regular) { 
+        if (this.gamemode === 'Spirit_Wars' && this.mapSize === this.mapSizes.regular) { 
             // Cache siege markings image if not already loaded
             if (!this.siegeMarkingsImage) {
                 this.siegeMarkingsImage = new Image();
@@ -4612,7 +4626,7 @@ export class MapMaker {
             const centerX = midX;
             const objectiveModes = [
                 'Gem_Grab', 'Brawl_Ball', 'Bounty', 'Hot_Zone',
-                'Hold_The_Trophy', 'Basket_Brawl', 'Volley_Brawl', 'Dodgebrawl', 'Hockey', 'Bot_Drop', 'Paint_Brawl',
+                'Hold_The_Trophy', 'Basket_Brawl', 'Volley_Brawl', 'Dodgebrawl', 'Hockey', 'Bot_Drop', 'Paint_Brawl', 'Lone_Star',
             ];
             if (objectiveModes.includes(this.gamemode)) {
                 this.placeTile(centerX, centerY, 14, false); // Place objective tile
@@ -4680,7 +4694,7 @@ export class MapMaker {
                 for (let x = mapWidth - 9; x < mapWidth; x++) this.mapData[this.defaultTileLayer][y][x] = 8;
             }
 
-        } else if (this.mapSize === this.mapSizes.showdown && (this.gamemode === 'Gem_Grab' || this.gamemode === 'Bounty' || this.gamemode === 'Hot_Zone')) {
+        } else if (this.mapSize === this.mapSizes.showdown && (this.gamemode === 'Gem_Grab' || this.gamemode === 'Bounty' || this.gamemode === 'Lone_Star' || this.gamemode === 'Hot_Zone')) {
             // Gem Grab-specific setup
             const centerX = Math.floor(mapWidth / 2);
             const centerY = Math.floor(mapHeight / 2);
@@ -4746,6 +4760,10 @@ export class MapMaker {
                     this.objectiveData.Hockey[1] = 1.695;
                     this.objectiveData.Hockey[2] = -10;
                     this.objectiveData.Hockey[3] = -15; 
+                    this.objectiveData.Lone_Star[0] = 1.15;
+                    this.objectiveData.Lone_Star[1] = 2.0585;
+                    this.objectiveData.Lone_Star[2] = -10;
+                    this.objectiveData.Lone_Star[3] = -50;
                 } else {
                     this.minZoom = 0.15;
                     this.delta = 0.5;
@@ -4788,6 +4806,10 @@ export class MapMaker {
                     this.objectiveData.Hockey[1] = 0.9475;
                     this.objectiveData.Hockey[2] = 15;
                     this.objectiveData.Hockey[3] = 19;
+                    this.objectiveData.Lone_Star[0] = 0.575;
+                    this.objectiveData.Lone_Star[1] = 1.02925;
+                    this.objectiveData.Lone_Star[2] = 41.5;
+                    this.objectiveData.Lone_Star[3] = 35;
                 }
 
                 // ————————————————————————————————————————————————
