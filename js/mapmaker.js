@@ -423,6 +423,10 @@ export class MapMaker {
             'HawkinsBoss2': [6.5, 6.5, -275, -275, 1, 10],
             'HawkinsBoss3': [6.5, 6.5, -275, -275, 1, 10],
             'Amulet': [1.2, 2.0585, -10, -50, 1, 10],
+			'BrawlentineBoss1': [6.5, 6.5, -275, -275, 1, 10],
+            'BrawlentineBoss2': [6.5, 6.5, -275, -275, 1, 10],
+            'BrawlentineBoss3': [6.5, 6.5, -275, -275, 1, 10],
+            'BrawlentineBoss4': [6.5, 6.5, -275, -275, 1, 10],
         };
 
         // Initialize objective data
@@ -1463,7 +1467,7 @@ export class MapMaker {
                 return { img: gamemode === 'Showdown' || gamemode === 'Trophy_Escape' || gamemode === 'Lone_Star' || gamemode === 'Hunters' || gamemode ==='Subway_Run' || gamemode === 'Drumroll' ? 'Global/Spawns/3.png' : 'Global/Spawns/1.png' }; // Won't use the default spawns for the listed modes
             }},
             13: { name: 'Red Spawn', size: 1, layer:this.layerCount -1, getImg: (gamemode) => { // Will Block Red spawns to appear on Trophy_Escape or any blacklisted mode
-                if (gamemode === 'Trophy_Escape' || gamemode === 'Hunters' || gamemode ==='Halloween_Boss' || gamemode === 'Lone_Star' ||  gamemode ==='Hawkins_Hunt' || gamemode ==='Subway_Run' || gamemode === 'Drumroll') return null;
+                if (gamemode === 'Trophy_Escape' || gamemode === 'Hunters' || gamemode === 'Brawlentine_Boss' || gamemode ==='Halloween_Boss' || gamemode === 'Lone_Star' ||  gamemode ==='Hawkins_Hunt' || gamemode ==='Subway_Run' || gamemode === 'Drumroll') return null;
                 return { img: gamemode === 'Showdown' ? 'Global/Spawns/4.png' : 'Global/Spawns/2.png' };
             }},
             14: { name: 'Objective', placeableOnThis: [-100], size: 1, layer: this.layerCount -2, getImg: (gamemode, y, mapHeight, environment) => {
@@ -1530,7 +1534,7 @@ export class MapMaker {
             36: { name: 'Trio Spawn', size: 1, showInGamemode: ['Showdown', 'Gem_Grab', 'Wipeout'], layer:this.layerCount -1,  getImg: (gamemode) => {
                 return { img: gamemode === 'Showdown' || gamemode === 'showdown' ? 'Global/Spawns/7.png' : 'Global/Spawns/8.png' }; // Won't use the default spawns for the listed modes
             }},
-            37: { name: 'Box', img: 'Global/Objectives/Box.png', showInGamemode: ['Showdown', 'Trophy_Escape'], size: 1},
+            37: { name: 'Box', img: 'Global/Objectives/Box.png', showInGamemode: ['Showdown', 'Trophy_Escape', 'Brawlentine_Boss'], size: 1},
             38: { name: 'Boss Zone', layer: this.layerCount -2, img: 'Global/Arena/Boss_Zone.png', showInGamemode: 'Brawl_Arena', size: 1},
             39: { name: 'Monster Zone', layer: this.layerCount -2, img: 'Global/Arena/Monster_Zone.png', showInGamemode: 'Brawl_Arena', size: 1},
             40: { name: 'Track', layer: this.layerCount -2, img: 'Global/Arena/Track/Blue/Fence.png', showInGamemode: 'Brawl_Arena', size: 1},
@@ -1577,6 +1581,10 @@ export class MapMaker {
             80: { name: 'KaijuBoss', img: 'Global/Boss Spawns/KaijuBoss.png', showInGamemode: 'Super_City_Rampage', size: 1},
             81: { name: 'BossSpawn', img: 'Global/Boss Spawns/BossSpawn.png', showInGamemode: ['Boss_Fight', 'Takedown'], size: 1 },
             82: { name: 'Amulet', img: 'Global/Objectives/Amulet.png', showInGamemode: 'Spirit_Wars', size: 1},
+            83: { name: 'BrawlentineBoss1', img: 'Global/Boss Spawns/BrawlentineBoss1.png', showInGamemode: 'Brawlentine_Boss', size: 1},
+            84: { name: 'BrawlentineBoss2', img: 'Global/Boss Spawns/BrawlentineBoss2.png', showInGamemode: 'Brawlentine_Boss', size: 1},
+            85: { name: 'BrawlentineBoss3', img: 'Global/Boss Spawns/BrawlentineBoss3.png', showInGamemode: 'Brawlentine_Boss', size: 1},
+            86: { name: 'BrawlentineBoss4', img: 'Global/Boss Spawns/BrawlentineBoss4.png', showInGamemode: 'Brawlentine_Boss', size: 1},
         };
 
         Object.values(this.tileDefinitions).forEach(def => {
@@ -2627,7 +2635,7 @@ export class MapMaker {
         const tileOrder = [
             'Wall', 'Wall2', 'Crate', 'Barrel', 'Cactus', 'Bush', 'Fence', 'Skull', 'Rope Fence', 'BFence', 'Water', 'Unbreakable', // Environment tiles
 			'Blue Spawn', 'Blue Respawn', 'Red Spawn', 'Red Respawn', 'Trio Spawn', 'Yellow Spawn', // Normal Spawns
-			'BossSpawn', 'KaijuBoss','HalloweenBoss1', 'HalloweenBoss2', 'HalloweenBoss3', 'HalloweenBoss4', 'HalloweenBoss5', 'OniHunt', 'HawkinsBoss1', 'HawkinsBoss2', 'HawkinsBoss3', // Boss spawns
+			'BossSpawn', 'KaijuBoss','HalloweenBoss1', 'HalloweenBoss2', 'HalloweenBoss3', 'HalloweenBoss4', 'HalloweenBoss5', 'OniHunt', 'HawkinsBoss1', 'HawkinsBoss2', 'HawkinsBoss3', 'BrawlentineBoss1', 'BrawlentineBoss2', 'BrawlentineBoss3', 'BrawlentineBoss4', // Boss spawns
             'Objective', 'Box', 'Powercube', 'Bumper', 'Bolt', 'TokenBlue', 'GodzillaCity1', 'GodzillaCity2', 'GodzillaCity3', 'GodzillaCity4', 'GodzillaExplosive', 'GodzillaSpawn', 'Escape', 'TokenRed', 'Boss Zone', 'Monster Zone', 'Bot_Zone', 'SubwayRun1', 'SubwayRun2', 'TreasurePad1','TreasurePad2', 'Amulet', //Objectives
             'Track', 'Base Ike Blue', 'Base Ike Red', 'Small Ike Blue', 'Small Ike Red', // Brawl Arena
             'TNT', /*'UnbreakableBrick',*/ 'Speed Tile','Slow Tile', 'Spikes', 'Heal Pad', 'Smoke', 'IceTile', 'SnowTile', 'Rails', 'RedTrain', 'GreenTrain', 'YellowTrain', // Special Tiles
