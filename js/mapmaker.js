@@ -9,7 +9,6 @@ const FENCE_LOGIC_BY_ENVIRONMENT = {
     // To be filled with actual environment mappings
     // Example: 'Desert': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
     'Desert': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
-    'Desert2': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
     'Mine': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
     'Oasis': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
     'Grassy_Field': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
@@ -71,8 +70,6 @@ const FENCE_LOGIC_BY_ENVIRONMENT = {
 };
 
 const BORDER_FENCE_LOGIC_BY_ENVIRONMENT = {
-    'Desert': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
-    'Desert2': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
     'Bazaar': FENCE_LOGIC_TYPES.BINARY_CODE,
     'Ice_Island': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
     'Swamp_of_Love': FENCE_LOGIC_TYPES.BINARY_CODE,
@@ -609,16 +606,6 @@ export class MapMaker {
                 'Wall': [1, 1.8, 0, -51, 1, 5],
                 'Wall2': [1*1.1, 1.65*1.1, -5, -50, 1, 5],
                 'Cactus': [1, 1.68, 0, -50, 1, 5],
-            },
-            Desert: {
-                        'BFence': [1.08, 1.71, -4, -50, 1, 5],
-            'BHorizontal': [1.05, 1.323, -2.5, -12.5, 1, 5],
-            'BVertical': [1, 1.84, 0, -50, 1, 5],
-            },
-            Desert2: {
-                        'BFence': [1.08, 1.71, -4, -50, 1, 5],
-            'BHorizontal': [1.05, 1.323, -2.5, -12.5, 1, 5],
-            'BVertical': [1, 1.84, 0, -50, 1, 5],
             },
             Oasis: {
                 'Wall2': [1, 1.8, 0, -50, 1, 5],
@@ -1558,7 +1545,7 @@ export class MapMaker {
             42: { name: 'Red Respawn', layer: this.layerCount -1, img: 'Global/Spawns/6.png', showInGamemode: ['Brawl_Ball', 'Hockey', 'Volley_Brawl', 'Paint_Brawl'], size: 1},
             43: { name: 'Base Ike Blue', layer: this.layerCount -2, img: 'Global/Arena/Base_Ike_Blue.png', showInGamemode: 'Brawl_Arena', size: 1 },
             44: { name: 'Small Ike Blue', layer: this.layerCount -2, img: 'Global/Arena/Small_Ike_Blue.png', showInGamemode: 'Brawl_Arena', size: 1 },
-            45: { name: 'BFence', img: '${env}/Fence_5v5/BFence.png', showInEnvironment: ['Tropical_Island', 'Super_City_2', 'Bazaar', 'Medieval_Manor', 'Ice_Island', 'Katana_Kingdom', 'Hockey', 'Spongebob', 'Subway_Surfers', 'Stranger_Things_Lair', 'Stranger_Things_Lab', 'Stranger_Things_Forest', 'Desert','Desert2',], size: 1 },
+            45: { name: 'BFence', img: '${env}/Fence_5v5/BFence.png', showInEnvironment: ['Tropical_Island', 'Super_City_2', 'Bazaar', 'Medieval_Manor', 'Ice_Island', 'Katana_Kingdom', 'Hockey', 'Spongebob', 'Subway_Surfers', 'Stranger_Things_Lair', 'Stranger_Things_Lab', 'Stranger_Things_Forest', 'Swamp_of_Love',], size: 1 },
             46: { name: 'Base Ike Red', layer: this.layerCount -2, img: 'Global/Arena/Base_Ike_Red.png', showInGamemode: 'Brawl_Arena', size: 1 },
             47: { name: 'Small Ike Red', layer: this.layerCount -2, img: 'Global/Arena/Small_Ike_Red.png', showInGamemode: 'Brawl_Arena', size: 1 },
             48: { name: 'Bumper', size: 1, showInGamemode: ['Brawl_Ball', 'Hockey', 'Paint_Brawl'], getImg: (gamemode) => {
