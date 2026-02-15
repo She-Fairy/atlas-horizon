@@ -4555,7 +4555,7 @@ export class MapMaker {
                 let red = { name: 'goalRed', x: middleX - 3, y: 0, w: 7, h: 3.5, offsetX: 0, offsetY: -20 };
                 let blue = { name: 'goalBlue', x: middleX - 3, y: this.mapHeight - 5, w: 7, h: 3.5, offsetX: 0, offsetY: -10 };
 
-                if (this.environment === 'Stadium' || this.environment === 'Hockey' || this.environment === 'Coin_Factory'){
+                if (this.environment === 'Stadium' || this.environment === 'Hockey' || this.environment === 'Z_CasinoTheme' || this.environment === 'Coin_Factory'){
                     red.h = 4.5;
                     red.offsetY = -40;
                     blue.h = 4.5;
