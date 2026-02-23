@@ -488,7 +488,7 @@ export class MapMaker {
                 'Heist': [1.8 * 1.2, 3.2 * 0.9, -57, -180, 1, 10],
             },
             Gift_Shop: {
-                'Gem_Grab': [2.7, 2.376, -85, -70, 1, 10],
+                'Gem_Grab': [2.4, 2.276, -75, -60, 1, 10],
 				'Hold_The_Trophy': [1.9, 3.2, -45, -125, 1, 10],
             },
             Bandstand: {
@@ -531,10 +531,10 @@ export class MapMaker {
                 'Gem_Grab': [2.4, 2.64, -56, -85, 1, 10],
             },
             The_Hub: {
-                'Gem_Grab': [2.4, 2.4, -64, -70, 1, 10],
+                'Gem_Grab': [2.4, 2.276, -75, -60, 1, 10],
             },
             Rumble_Jungle: {
-                'Gem_Grab': [2.7, 2.376, -85, -70, 1, 10],
+                'Gem_Grab': [2.4, 2.276, -75, -60, 1, 10],
             },
             Enchanted_Woods: {
                 'Gem_Grab': [2.3, 2.3, -64, -60, 1, 10],
