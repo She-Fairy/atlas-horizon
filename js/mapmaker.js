@@ -72,6 +72,7 @@ const FENCE_LOGIC_BY_ENVIRONMENT = {
 };
 
 const BORDER_FENCE_LOGIC_BY_ENVIRONMENT = {
+	'Mortuary': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
     'Bazaar': FENCE_LOGIC_TYPES.BINARY_CODE,
     'Ice_Island': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
     'Swamp_of_Love': FENCE_LOGIC_TYPES.BINARY_CODE,
@@ -660,7 +661,8 @@ export class MapMaker {
                 'Cactus': [1*1.1, 1.42*1.1, -5, -27.5, 1, 5],
                 'Skull': [1, 1.49, 0, -20, 1, 5],
                 'Horizontal': [1, 1.67, 0, -37.5, 1, 5],
-                'Fence': [1, 1.85, 0, -55, 1, 5]
+                'Fence': [1, 1.85, 0, -55, 1, 5],
+				'BFence': [1, 1.6, 0, -28, 1, 5],
             },
             Pirate_Ship: {
                 'Cactus': [1, 1.69, 0, -42.5, 1, 5],
@@ -1607,7 +1609,7 @@ export class MapMaker {
             42: { name: 'Red Respawn', layer: this.layerCount -1, img: 'Global/Spawns/6.png', showInGamemode: ['Brawl_Ball', 'Hockey', 'Volley_Brawl', 'Paint_Brawl'], size: 1},
             43: { name: 'Base Ike Blue', layer: this.layerCount -2, img: 'Global/Arena/Base_Ike_Blue.png', showInGamemode: 'Brawl_Arena', size: 1 },
             44: { name: 'Small Ike Blue', layer: this.layerCount -2, img: 'Global/Arena/Small_Ike_Blue.png', showInGamemode: 'Brawl_Arena', size: 1 },
-            45: { name: 'BFence', img: '${env}/Fence_5v5/BFence.png', showInEnvironment: ['Tropical_Island', 'Super_City_2', 'Bazaar', 'Medieval_Manor', 'Ice_Island', 'Katana_Kingdom', 'Hockey', 'Spongebob', 'Subway_Surfers', 'Stranger_Things_Lair', 'Stranger_Things_Lab', 'Stranger_Things_Forest',], size: 1 },
+            45: { name: 'BFence', img: '${env}/Fence_5v5/BFence.png', showInEnvironment: ['Tropical_Island', 'Super_City_2', 'Bazaar', 'Medieval_Manor', 'Ice_Island', 'Katana_Kingdom', 'Hockey', 'Spongebob', 'Subway_Surfers', 'Stranger_Things_Lair', 'Stranger_Things_Lab', 'Stranger_Things_Forest', 'Mortuary',], size: 1 },
             46: { name: 'Base Ike Red', layer: this.layerCount -2, img: 'Global/Arena/Base_Ike_Red.png', showInGamemode: 'Brawl_Arena', size: 1 },
             47: { name: 'Small Ike Red', layer: this.layerCount -2, img: 'Global/Arena/Small_Ike_Red.png', showInGamemode: 'Brawl_Arena', size: 1 },
             48: { name: 'Bumper', size: 1, showInGamemode: ['Brawl_Ball', 'Hockey', 'Paint_Brawl'], getImg: (gamemode) => {
