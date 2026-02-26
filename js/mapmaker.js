@@ -9,6 +9,7 @@ const FENCE_LOGIC_BY_ENVIRONMENT = {
     // To be filled with actual environment mappings
     // Example: 'Desert': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
     'Desert': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
+    'Desert2': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
     'Mine': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
     'Oasis': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
     'Grassy_Field': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
@@ -67,14 +68,17 @@ const FENCE_LOGIC_BY_ENVIRONMENT = {
     'Stranger_Things_Lair': FENCE_LOGIC_TYPES.BINARY_CODE,
     'Stranger_Things_Forest': FENCE_LOGIC_TYPES.BINARY_CODE,
     'Aquarium': FENCE_LOGIC_TYPES.BINARY_CODE,
-	'Z_SkyTheme': FENCE_LOGIC_TYPES.BINARY_CODE,
+    'Z_SkyTheme': FENCE_LOGIC_TYPES.BINARY_CODE,
     'Z_CasinoTheme': FENCE_LOGIC_TYPES.BINARY_CODE,
+    'Z_BrawlClub': FENCE_LOGIC_TYPES.BINARY_CODE,
 };
 
 const BORDER_FENCE_LOGIC_BY_ENVIRONMENT = {
-	'Mortuary': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
+    'Desert': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
+    'Desert2': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
+    'Mortuary': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
     'Bazaar': FENCE_LOGIC_TYPES.BINARY_CODE,
-	'Circus': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
+    'Circus': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
     'Ice_Island': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
     'Swamp_of_Love': FENCE_LOGIC_TYPES.BINARY_CODE,
     'Medieval_Manor': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
@@ -402,12 +406,8 @@ export class MapMaker {
             'GodzillaExplosive': [1, 1.8, 0, -51, 1, 5],
             'GodzillaSpawn': [1.7, 1.7, -27.5, -27.5, 0.85, 7],
             'Escape': [3.5, 3.7, -172, -170, 1, 10], // Trophy Escape Portal
-            'HalloweenBoss1': [6.5, 6.5, -275, -275, 1, 10],
-            'HalloweenBoss2': [6.5, 6.5, -275, -275, 1, 10],
-            'HalloweenBoss3': [6.5, 6.5, -275, -275, 1, 10],
-            'HalloweenBoss4': [6.5, 6.5, -275, -275, 1, 10],
-            'HalloweenBoss5': [6.5, 6.5, -275, -275, 1, 10],
             'OniHunt': [6.5, 6.5, -275, -275, 1, 10],
+            'GenericBoss': [6.5, 6.5, -275, -275, 1, 10],
             'BossSpawn': [6.5, 6.5, -275, -275, 1, 10],
             'KaijuBoss': [6.5, 6.5, -275, -275, 1, 10],
             'SubwayRun1': [1, 0.9, 0, 40, 1, 5],
@@ -423,15 +423,9 @@ export class MapMaker {
             'Train_TR': [2, 2.4, -12, -155, 1, 5],
             'Train_BL': [2, 2.4, -82, -90, 1, 3],
             'Train_BR': [2, 2.4, -12, -90, 1, 5],
-            'HawkinsBoss1': [6.5, 6.5, -275, -275, 1, 10],
-            'HawkinsBoss2': [6.5, 6.5, -275, -275, 1, 10],
-            'HawkinsBoss3': [6.5, 6.5, -275, -275, 1, 10],
-            'BrawlentineBoss1': [6.5, 6.5, -275, -275, 1, 10],
-            'BrawlentineBoss2': [6.5, 6.5, -275, -275, 1, 10],
-            'BrawlentineBoss3': [6.5, 6.5, -275, -275, 1, 10],
-            'BrawlentineBoss4': [6.5, 6.5, -275, -275, 1, 10],
             'Amulet': [1.2, 2.0585, -10, -50, 1, 10],
             'Bomb': [1.4, 2.2, -20, -85, 1, 10],
+            'Box_Loaded': [1, 1.75, 0, -50, 1, 5],
         };
 
         // Initialize objective data
@@ -582,7 +576,7 @@ export class MapMaker {
                 'Gem_Grab': [2.6, 2.5, -60, -75, 1, 10],
             },
             Stranger_Things: {
-                'Gem_Grab': [2.9, 2.376, -95, -70, 1, 10],
+                'Gem_Grab': [2.9, 2.176, -95, -50, 1, 10],
             },
             Stranger_Things_Lab: {
                 'Gem_Grab': [2.9, 2.376, -95, -70, 1, 10],
@@ -602,6 +596,9 @@ export class MapMaker {
             Z_CasinoTheme: {
                 'Gem_Grab': [3, 3, -100, -99, 1, 10],
                 'Heist': [2, 2.51, -50, -125, 1, 10],
+            },
+            Z_BrawlClub: {
+                'Gem_Grab': [2.7, 2.376, -85, -60, 1, 10],
             },
             Z_CrimsonForest: {
                 'Gem_Grab': [2, 2.1, -49, -43, 1, 10],
@@ -663,7 +660,7 @@ export class MapMaker {
                 'Skull': [1, 1.49, 0, -20, 1, 5],
                 'Horizontal': [1, 1.67, 0, -37.5, 1, 5],
                 'Fence': [1, 1.85, 0, -55, 1, 5],
-				'BFence': [1, 1.6, 0, -34, 1, 5],
+                'BFence': [1, 1.6, 0, -34, 1, 5],
             },
             Pirate_Ship: {
                 'Cactus': [1, 1.69, 0, -42.5, 1, 5],
@@ -1104,7 +1101,7 @@ export class MapMaker {
                 'Post_TR': [1.5, 2.61, 0, -116.5, 1, 5],
                 'Post_R': [1.5, 1.7475, 0, -50, 1, 5],
                 'Post_T': [1, 2.61, 0, -116, 1, 5],
-				'BFence': [1, 1.5, 0, -31, 1, 5],
+                'BFence': [1, 1.5, 0, -31, 1, 5],
             },
             Coin_Factory: {
                 'Wall': [1, 1.8, 0, -53, 1, 5],
@@ -1511,6 +1508,20 @@ export class MapMaker {
                 '1100': [1, 1.8, 0, -55, 1, 5],
                 'Fence': [1, 1.8, 0, -55, 1, 5],
             },
+            Z_BrawlClub: {
+                'Wall': [1, 1.8, 0, -51, 1, 5],
+                'Skull': [1, 1.5, 0, -35, 1, 5],
+                '0001': [1, 1.6, 0, -35, 1, 5],
+                '0010': [1, 1.7, 0, -55, 1, 5],
+                '0011': [1, 1.7, 0, -55, 1, 5],
+                '0100': [1, 1.7, 0, -55, 1, 5],
+                '0101': [1, 1.7, 0, -55, 1, 5],
+                '1000': [1, 1.7, 0, -35, 1, 5],
+                '1001': [1, 1.05, 0, -35, 1, 5],
+                '1010': [1, 1.7, 0, -55, 1, 5],
+                '1100': [1, 1.7, 0, -55, 1, 5],
+                'Fence': [1, 1.7, 0, -55, 1, 5],
+            },
             Z_CrimsonForest: {
                 'Barrel': [1, 1.8, 0, -51, 1, 5],
                 'Cactus': [1, 1.8, 0, -51, 1, 5],
@@ -1531,13 +1542,15 @@ export class MapMaker {
             9: { name: 'Rope Fence', img: '${env}/Rope/Post.png', size: 1 },
             10: { name: 'Skull', img: '${env}/Tiles/Skull.png', size: 1 },
             11: { name: 'Unbreakable', img: 'Global/Unbreakable.png', size: 1 },
-             12: { name: 'Blue Spawn', size: 1, layer:this.layerCount -1,  getImg: (gamemode) => {
-                return { img: gamemode === 'Showdown' || gamemode === 'Trophy_Escape' || gamemode === 'Lone_Star' || gamemode === 'Hunters' || gamemode ==='Subway_Run' || gamemode === 'Drumroll' ? 'Global/Spawns/3.png' : 'Global/Spawns/1.png' }; // Won't use the default spawns for the listed modes
+            12: { name: 'Blue Spawn', size: 1, layer:this.layerCount -1,  getImg: (gamemode) => {
+                return { img: gamemode === 'Showdown' || gamemode === 'Loaded_SD' || gamemode === 'Trophy_Escape' || gamemode === 'Lone_Star' || gamemode === 'Hunters' || gamemode ==='Subway_Run' || gamemode === 'Drumroll' ? 'Global/Spawns/3.png' : 'Global/Spawns/1.png' }; // Won't use the default spawns for the listed modes
             }},
-            13: { name: 'Red Spawn', size: 1, layer:this.layerCount -1, getImg: (gamemode) => { // Will Block Red spawns to appear on Trophy_Escape or any blacklisted mode
-                if (gamemode === 'Trophy_Escape' || gamemode === 'Hunters' || gamemode === 'Brawlentine_Boss' || gamemode ==='Halloween_Boss' || gamemode === 'Lone_Star' ||  gamemode ==='Hawkins_Hunt' || gamemode ==='Subway_Run' || gamemode === 'Drumroll') return null;
-                return { img: gamemode === 'Showdown' ? 'Global/Spawns/4.png' : 'Global/Spawns/2.png' };
-            }},
+            13: { name: 'Red Spawn', size: 1, layer: this.layerCount - 1, getImg: (gamemode) => { if (['Trophy_Escape', 'Hunters', 'Lone_Star', 'Brawl_Bosses', 'Subway_Run', 'Drumroll'].includes(gamemode)) {
+            return null;}
+            return { img: (gamemode === 'Showdown' || gamemode === 'Loaded_SD') 
+                ? 'Global/Spawns/4.png' 
+                : 'Global/Spawns/2.png'
+            };}},
             14: { name: 'Objective', placeableOnThis: [-100], size: 1, layer: this.layerCount -2, getImg: (gamemode, y, mapHeight, environment) => {
                 const objectives = {
                     'Gem_Grab': { img: '${env}/Gamemode_Specifics/Gem_Grab.png' },
@@ -1600,20 +1613,21 @@ export class MapMaker {
             32: { name: 'Bolt', img: 'Global/Objectives/Bolt.png', placeableOnThis: [-100], size: 1, layer: this.layerCount -2, showInGamemode: 'Siege' },
             34: { name: 'TokenBlue', img: 'Global/Objectives/TokenBlue.png', size: 1, showInGamemode: 'Token_Run', placeableOnThis: [-100], layer: this.layerCount -2},
             35: { name: 'TokenRed', img: 'Global/Objectives/TokenRed.png', size: 1, showInGamemode: 'Token_Run', placeableOnThis: [-100], layer: this.layerCount -2},
-            36: { name: 'Trio Spawn', size: 1, showInGamemode: ['Showdown', 'Gem_Grab', 'Wipeout'], layer:this.layerCount -1,  getImg: (gamemode) => {
-                return { img: gamemode === 'Showdown' || gamemode === 'showdown' ? 'Global/Spawns/7.png' : 'Global/Spawns/8.png' }; // Won't use the default spawns for the listed modes
+            36: { name: 'Trio Spawn', size: 1, showInGamemode: ['Showdown', 'Loaded_SD', 'Gem_Grab', 'Wipeout'], layer: this.layerCount - 1, getImg: (gamemode) => {
+                const isShowdownMode = gamemode === 'Showdown' || gamemode === 'Loaded_SD';
+                return { img: isShowdownMode ? 'Global/Spawns/7.png' : 'Global/Spawns/8.png'};
             }},
             37: { name: 'Box', img: 'Global/Objectives/Box.png', showInGamemode: ['Showdown', 'Trophy_Escape', 'Brawlentine_Boss'], size: 1},
-            38: { name: 'Boss Zone', layer: this.layerCount -2, img: 'Global/Arena/Boss_Zone.png', showInGamemode: 'Brawl_Arena', size: 1},
-            39: { name: 'Monster Zone', layer: this.layerCount -2, img: 'Global/Arena/Monster_Zone.png', showInGamemode: 'Brawl_Arena', size: 1},
+            38: { name: 'Boss Zone', layer: this.layerCount -1, img: 'Global/Arena/Boss_Zone.png', showInGamemode: 'Brawl_Arena', size: 1},
+            39: { name: 'Monster Zone', layer: this.layerCount -1, img: 'Global/Arena/Monster_Zone.png', showInGamemode: 'Brawl_Arena', size: 1},
             40: { name: 'Track', layer: this.layerCount -2, img: 'Global/Arena/Track/Blue/Fence.png', showInGamemode: 'Brawl_Arena', size: 1},
             41: { name: 'Blue Respawn', layer: this.layerCount -1, img: 'Global/Spawns/5.png', showInGamemode: ['Brawl_Ball', 'Hockey', 'Volley_Brawl', 'Paint_Brawl'], size: 1},
             42: { name: 'Red Respawn', layer: this.layerCount -1, img: 'Global/Spawns/6.png', showInGamemode: ['Brawl_Ball', 'Hockey', 'Volley_Brawl', 'Paint_Brawl'], size: 1},
-            43: { name: 'Base Ike Blue', layer: this.layerCount -2, img: 'Global/Arena/Base_Ike_Blue.png', showInGamemode: 'Brawl_Arena', size: 1 },
-            44: { name: 'Small Ike Blue', layer: this.layerCount -2, img: 'Global/Arena/Small_Ike_Blue.png', showInGamemode: 'Brawl_Arena', size: 1 },
-            45: { name: 'BFence', img: '${env}/Fence_5v5/BFence.png', showInEnvironment: ['Tropical_Island', 'Super_City_2', 'Bazaar', 'Medieval_Manor', 'Ice_Island', 'Katana_Kingdom', 'Hockey', 'Spongebob', 'Subway_Surfers', 'Stranger_Things_Lair', 'Stranger_Things_Lab', 'Stranger_Things_Forest', 'Mortuary', 'Circus',], size: 1 },
-            46: { name: 'Base Ike Red', layer: this.layerCount -2, img: 'Global/Arena/Base_Ike_Red.png', showInGamemode: 'Brawl_Arena', size: 1 },
-            47: { name: 'Small Ike Red', layer: this.layerCount -2, img: 'Global/Arena/Small_Ike_Red.png', showInGamemode: 'Brawl_Arena', size: 1 },
+            43: { name: 'Base Ike Blue', layer: this.layerCount -1, img: 'Global/Arena/Base_Ike_Blue.png', showInGamemode: 'Brawl_Arena', size: 1 },
+            44: { name: 'Small Ike Blue', layer: this.layerCount -1, img: 'Global/Arena/Small_Ike_Blue.png', showInGamemode: 'Brawl_Arena', size: 1 },
+            45: { name: 'BFence', img: '${env}/Fence_5v5/BFence.png', showInEnvironment: ['Tropical_Island', 'Super_City_2', 'Bazaar', 'Medieval_Manor', 'Ice_Island', 'Katana_Kingdom', 'Hockey', 'Spongebob', 'Subway_Surfers', 'Stranger_Things_Lair', 'Stranger_Things_Lab', 'Stranger_Things_Forest', 'Desert','Desert2','Mortuary','Circus',], size: 1 },
+            46: { name: 'Base Ike Red', layer: this.layerCount -1, img: 'Global/Arena/Base_Ike_Red.png', showInGamemode: 'Brawl_Arena', size: 1 },
+            47: { name: 'Small Ike Red', layer: this.layerCount -1, img: 'Global/Arena/Small_Ike_Red.png', showInGamemode: 'Brawl_Arena', size: 1 },
             48: { name: 'Bumper', size: 1, showInGamemode: ['Brawl_Ball', 'Hockey', 'Paint_Brawl'], getImg: (gamemode) => {
                 return { img: gamemode === 'Hockey' ? 'Global/Bumpers/HockeyBumper.png' : this.environment === 'Deep_Sea' ? 'Global/Bumpers/DeepSeaBumper.png' : 'Global/Bumpers/Bumper.png' };
             }},
@@ -1627,12 +1641,13 @@ export class MapMaker {
             56: { name: 'GodzillaSpawn', img: 'Global/Godzilla Tiles/GodzillaSpawn.png', showInGamemode: 'Godzilla_City_Smash', placeableOnThis: [-100], size: 1, layer: this.layerCount -2},
             57: { name: 'Bot_Zone', layer: this.layerCount -2, img: 'Global/Objectives/Bot_Zone.png', showInGamemode: ['Trophy_Escape', 'Samurai_Smash'], placeableOnThis: [-100], size: 1, layer: this.layerCount -2},
             58: { name: 'Escape', layer: this.layerCount -2, img: 'Global/Objectives/Escape.png', showInGamemode: 'Trophy_Escape', size: 1},
-            60: { name: 'HalloweenBoss1', img: 'Global/Boss Spawns/HalloweenBoss1.png', showInGamemode: 'Halloween_Boss', placeableOnThis: [-100], size: 1, layer: this.layerCount -2},
-            61: { name: 'HalloweenBoss2', img: 'Global/Boss Spawns/HalloweenBoss2.png', showInGamemode: 'Halloween_Boss', placeableOnThis: [-100], size: 1, layer: this.layerCount -2},
-            62: { name: 'HalloweenBoss3', img: 'Global/Boss Spawns/HalloweenBoss3.png', showInGamemode: 'Halloween_Boss', placeableOnThis: [-100], size: 1, layer: this.layerCount -2},
-            63: { name: 'HalloweenBoss4', img: 'Global/Boss Spawns/HalloweenBoss4.png', showInGamemode: 'Halloween_Boss', placeableOnThis: [-100], size: 1, layer: this.layerCount -2},
-            64: { name: 'HalloweenBoss5', img: 'Global/Boss Spawns/HalloweenBoss5.png', showInGamemode: 'Halloween_Boss', placeableOnThis: [-100], size: 1, layer: this.layerCount -2},
-            65: { name: 'OniHunt', img: 'Global/Boss Spawns/OniHunt.png', showInGamemode: ['Halloween_Boss', 'Oni_Hunt',], size: 1},
+            59: { name: 'Bomb', img: 'Global/Objectives/Bomb.png', showInGamemode: 'Safe_Blast', placeableOnThis: [-100], size: 1, layer: this.layerCount -2},
+            60: { name: 'Amulet', img: 'Global/Objectives/Amulet.png', showInGamemode: 'Spirit_Wars', placeableOnThis: [-100], size: 1, layer: this.layerCount -2},
+            61: { name: 'BossSpawn', img: 'Global/Boss Spawns/BossSpawn.png', showInGamemode: ['Boss_Fight', 'Takedown'], placeableOnThis: [-100], size: 1, layer: this.layerCount -2},
+            62: { name: 'KaijuBoss', img: 'Global/Boss Spawns/KaijuBoss.png', showInGamemode: 'Super_City_Rampage', placeableOnThis: [-100], size: 1, layer: this.layerCount -2},
+    		63: { name: 'Yellow Spawn', img: 'Global/Spawns/9.png', showInGamemode: ['Gem_Grab','Wipeout'], size: 1 },
+    		64: { name: 'GenericBoss', img: 'Global/Boss Spawns/GenericBoss.png', showInGamemode: 'Brawl_Bosses', placeableOnThis: [-100], layer: this.layerCount -2, size: 1 },
+            65: { name: 'OniHunt', img: 'Global/Boss Spawns/OniHunt.png', showInGamemode: 'Brawl_Bosses', placeableOnThis: [-100], layer: this.layerCount -2, size: 1},
             66: { name: 'SubwayRun1', img: 'Global/Objectives/SubwayRun1.png', showInGamemode: 'Subway_Run', size: 2 },
             67: { name: 'SubwayRun2', img: 'Global/Objectives/SubwayRun2.png', showInGamemode: 'Subway_Run', size: 2 },
             68: { name: 'Rails', layer: 1, img: 'Global/Special_Tiles/Rails/Fence.png', placeableOnThis: [73, 74, 75], size: 1},
@@ -1643,18 +1658,7 @@ export class MapMaker {
             73: { name: 'RedTrain', img: 'Global/Special_Tiles/RedTrain/Train_Fence.png', placeableOn: [68], size: 1},
             74: { name: 'YellowTrain', img: 'Global/Special_Tiles/YellowTrain/Train_Fence.png', placeableOn: [68], size: 1},
             75: { name: 'GreenTrain', img: 'Global/Special_Tiles/GreenTrain/Train_Fence.png', placeableOn: [68], size: 1},
-		    76: { name: 'Yellow Spawn', img: 'Global/Spawns/9.png', showInGamemode: ['Gem_Grab', 'Wipeout'], size: 1 },
-            77: { name: 'HawkinsBoss1', img: 'Global/Boss Spawns/HawkinsBoss1.png', showInGamemode: 'Hawkins_Hunt', placeableOnThis: [-100], size: 1, layer: this.layerCount -2},
-            78: { name: 'HawkinsBoss2', img: 'Global/Boss Spawns/HawkinsBoss2.png', showInGamemode: 'Hawkins_Hunt', placeableOnThis: [-100], size: 1, layer: this.layerCount -2},
-            79: { name: 'HawkinsBoss3', img: 'Global/Boss Spawns/HawkinsBoss3.png', showInGamemode: 'Hawkins_Hunt', placeableOnThis: [-100], size: 1, layer: this.layerCount -2},
-            80: { name: 'KaijuBoss', img: 'Global/Boss Spawns/KaijuBoss.png', showInGamemode: 'Super_City_Rampage', placeableOnThis: [-100], size: 1, layer: this.layerCount -2},
-            81: { name: 'BossSpawn', img: 'Global/Boss Spawns/BossSpawn.png', showInGamemode: ['Boss_Fight', 'Takedown'], placeableOnThis: [-100], size: 1, layer: this.layerCount -2},
-            82: { name: 'Amulet', img: 'Global/Objectives/Amulet.png', showInGamemode: 'Spirit_Wars', placeableOnThis: [-100], size: 1, layer: this.layerCount -2},
-            83: { name: 'BrawlentineBoss1', img: 'Global/Boss Spawns/BrawlentineBoss1.png', showInGamemode: 'Brawlentine_Boss', placeableOnThis: [-100], size: 1, layer: this.layerCount -2},
-            84: { name: 'BrawlentineBoss2', img: 'Global/Boss Spawns/BrawlentineBoss2.png', showInGamemode: 'Brawlentine_Boss', placeableOnThis: [-100], size: 1, layer: this.layerCount -2},
-            85: { name: 'BrawlentineBoss3', img: 'Global/Boss Spawns/BrawlentineBoss3.png', showInGamemode: 'Brawlentine_Boss', placeableOnThis: [-100], size: 1, layer: this.layerCount -2},
-            86: { name: 'BrawlentineBoss4', img: 'Global/Boss Spawns/BrawlentineBoss4.png', showInGamemode: 'Brawlentine_Boss', placeableOnThis: [-100], size: 1, layer: this.layerCount -2},
-            87: { name: 'Bomb', img: 'Global/Objectives/Bomb.png', showInGamemode: 'Safe_Blast', placeableOnThis: [-100], size: 1, layer: this.layerCount -2},
+            76: { name: 'Box_Loaded', img: 'Global/Objectives/Box_Loaded.png', showInGamemode: 'Loaded_SD', size: 1},
         };
 
         Object.values(this.tileDefinitions).forEach(def => {
@@ -2705,8 +2709,8 @@ export class MapMaker {
         const tileOrder = [
             'Wall', 'Wall2', 'Crate', 'Barrel', 'Cactus', 'Bush', 'Fence', 'Skull', 'Rope Fence', 'BFence', 'Water', 'Unbreakable', // Environment tiles
 			'Blue Spawn', 'Blue Respawn', 'Red Spawn', 'Red Respawn', 'Trio Spawn', 'Yellow Spawn', // Normal Spawns
-			'BossSpawn', 'KaijuBoss','HalloweenBoss1', 'HalloweenBoss2', 'HalloweenBoss3', 'HalloweenBoss4', 'HalloweenBoss5', 'OniHunt', 'HawkinsBoss1', 'HawkinsBoss2', 'HawkinsBoss3', 'BrawlentineBoss1', 'BrawlentineBoss2', 'BrawlentineBoss3', 'BrawlentineBoss4', // Boss spawns
-            'Objective', 'Box', 'Powercube', 'Bumper', 'Bolt', 'TokenBlue', 'GodzillaCity1', 'GodzillaCity2', 'GodzillaCity3', 'GodzillaCity4', 'GodzillaExplosive', 'GodzillaSpawn', 'Escape', 'TokenRed', 'Boss Zone', 'Monster Zone', 'Bot_Zone', 'SubwayRun1', 'SubwayRun2', 'TreasurePad1','TreasurePad2', 'Amulet', 'Bomb', // Objectives
+			'BossSpawn', 'KaijuBoss','GenericBoss', 'OniHunt', // Boss spawns
+            'Objective', 'Box', 'Box_Loaded', 'Powercube', 'Bumper', 'Bolt', 'TokenBlue', 'GodzillaCity1', 'GodzillaCity2', 'GodzillaCity3', 'GodzillaCity4', 'GodzillaExplosive', 'GodzillaSpawn', 'Escape', 'TokenRed', 'Boss Zone', 'Monster Zone', 'Bot_Zone', 'SubwayRun1', 'SubwayRun2', 'TreasurePad1','TreasurePad2', 'Amulet', 'Bomb', // Objectives
             'Track', 'Base Ike Blue', 'Base Ike Red', 'Small Ike Blue', 'Small Ike Red', // Brawl Arena
             'TNT', /*'UnbreakableBrick',*/ 'Speed Tile','Slow Tile', 'Spikes', 'Heal Pad', 'Smoke', 'IceTile', 'SnowTile', 'Rails', 'RedTrain', 'GreenTrain', 'YellowTrain', // Special Tiles
             'Jump R', 'Jump L', 'Jump T', 'Jump B', 'Jump BR', 'Jump TL', 'Jump BL', 'Jump TR', //Jump pads
