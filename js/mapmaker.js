@@ -490,6 +490,9 @@ export class MapMaker {
             Snowtel: {
                 'Gem_Grab': [2.4, 2.64, -56, -85, 1, 10],
             },
+			Scrapyard: {
+                'Gem_Grab': [2.4, 2.64, -56, -85, 1, 10],
+            },
             Starr_Force: {
                 'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
             },
