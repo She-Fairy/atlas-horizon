@@ -559,7 +559,7 @@ export class MapMaker {
                 'Gem_Grab': [2.6, 2.5, -60, -75, 1, 10],
             },
             Hockey: {
-                'Gem_Grab': [2, 2.24, -50, -60, 1, 10],
+                'Gem_Grab': [2.41, 2.6, -52, -95, 1, 10],
             },
             Escape_Room: {
                 'Gem_Grab': [2.7, 2.376, -85, -70, 1, 10],
