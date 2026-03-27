@@ -1674,7 +1674,7 @@ export class MapMaker {
                 const isShowdownMode = gamemode === 'Showdown' || gamemode === 'Loaded_SD';
                 return { img: isShowdownMode ? 'Global/Spawns/7.png' : 'Global/Spawns/8.png'};
             }},
-            37: { name: 'Box', img: 'Global/Objectives/Box.png', showInGamemode: ['Showdown', 'Trophy_Escape', 'Brawlentine_Boss'], size: 1},
+            37: { name: 'Box', img: 'Global/Objectives/Box.png', showInGamemode: ['Showdown', 'Trophy_Escape', 'Brawl_Bosses'], size: 1},
             38: { name: 'Boss Zone', layer: this.layerCount -1, img: 'Global/Arena/Boss_Zone.png', showInGamemode: 'Brawl_Arena', size: 1},
             39: { name: 'Monster Zone', layer: this.layerCount -1, img: 'Global/Arena/Monster_Zone.png', showInGamemode: 'Brawl_Arena', size: 1},
             40: { name: 'Track', layer: this.layerCount -2, img: 'Global/Arena/Track/Blue/Fence.png', showInGamemode: 'Brawl_Arena', size: 1},
