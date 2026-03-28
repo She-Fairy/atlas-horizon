@@ -434,8 +434,8 @@ export class MapMaker {
             'Bounty': [1.2, 2.0585, -10, -50, 1, 10],
             'Brawl_Ball': [1.3, 1.495, -15, -20, 1, 10],
             'Siege': {
-                upper: [2 * 1.2, 2.64 * 1.2, -50, -135, 1, 10],  // Blue Ike (upper part) - slightly smaller
-                lower: [2 * 1.2, 2.83 * 1.2, -95, -135, 1, 10]   // Red Ike (lower part) - slightly larger
+                upper: [2 * 1.2, 2.64 * 1.2, -47, -192, 1, 10],  // Blue Ike (upper part) - slightly smaller
+                lower: [2 * 1.2, 2.83 * 1.2, -93, -214, 1, 10]   // Red Ike (lower part) - slightly larger
             },
             'Lone_Star': [1.2, 2.0585, -10, -50, 1, 10],
 			'Takedown': [1.2, 1.9, -10, -50, 1, 10],
@@ -448,8 +448,8 @@ export class MapMaker {
             'Bot_Drop': [1.9, 1.9, -46.5, -46.5, 0.85, 7],
             'Paint_Brawl': [1.4, 2.2, -20, -85, 1, 10],
             'Spirit_Wars': {
-                upper: [2 * 1.2, 2.64 * 1.2, -50, -216, 1, 10],  // Blue Ike (upper part) - slightly smaller
-                lower: [2 * 1.2, 2.83 * 1.2, -95, -240, 1, 10]   // Red Ike (lower part) - slightly larger
+                upper: [2 * 1.2, 2.64 * 1.2, -47, -192, 1, 10],  // Blue Ike (upper part) - slightly smaller
+                lower: [2 * 1.2, 2.83 * 1.2, -93, -214, 1, 10]   // Red Ike (lower part) - slightly larger
             },
             'Hockey': [1.5, 1.695, -25, -26, 1, 10],
             'Token_Run': [4, 4, -150, -150, 1, 10],
