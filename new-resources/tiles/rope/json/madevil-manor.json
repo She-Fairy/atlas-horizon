@@ -1,0 +1,44 @@
+{"frames": {
+
+"right.png":
+{
+	"frame": {"x":0,"y":256,"w":200,"h":266},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":200,"h":266},
+	"sourceSize": {"w":200,"h":266}
+},
+"single.png":
+{
+	"frame": {"x":0,"y":0,"w":100,"h":206},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":206},
+	"sourceSize": {"w":100,"h":206}
+},
+"top-right.png":
+{
+	"frame": {"x":0,"y":522,"w":200,"h":340},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":200,"h":340},
+	"sourceSize": {"w":200,"h":340}
+},
+"top.png":
+{
+	"frame": {"x":100,"y":0,"w":100,"h":256},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":256},
+	"sourceSize": {"w":100,"h":256}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "madevil-manor.png",
+	"format": "RGBA8888",
+	"size": {"w":200,"h":862},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:bd7334d4639a0a7f505988306036181a:b8eb1f51c1c67e2ed8376d6876012e12:edc2cf2e6bd8fbf3e3d1db165fe2f69a$"
+}
+}

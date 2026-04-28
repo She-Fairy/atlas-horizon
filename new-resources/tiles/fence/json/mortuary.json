@@ -1,0 +1,36 @@
+{"frames": {
+
+"hor.png":
+{
+	"frame": {"x":0,"y":0,"w":100,"h":167},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":167},
+	"sourceSize": {"w":100,"h":167}
+},
+"single.png":
+{
+	"frame": {"x":100,"y":0,"w":100,"h":185},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":185},
+	"sourceSize": {"w":100,"h":185}
+},
+"ver.png":
+{
+	"frame": {"x":0,"y":185,"w":458,"h":843},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":458,"h":843},
+	"sourceSize": {"w":458,"h":843}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "mortuary.png",
+	"format": "RGBA8888",
+	"size": {"w":458,"h":1028},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:0190e4bd65160cf2f7b07f536e9a0ac8:1776fd50f16c4193e42e4893dcc79916:33ad440f72312d05f4e07816d36fcb1a$"
+}
+}

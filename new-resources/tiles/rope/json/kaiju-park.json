@@ -1,0 +1,44 @@
+{"frames": {
+
+"right.png":
+{
+	"frame": {"x":0,"y":0,"w":100,"h":121},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":121},
+	"sourceSize": {"w":100,"h":121}
+},
+"single.png":
+{
+	"frame": {"x":100,"y":0,"w":100,"h":180},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":180},
+	"sourceSize": {"w":100,"h":180}
+},
+"top-right.png":
+{
+	"frame": {"x":200,"y":0,"w":458,"h":772},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":458,"h":772},
+	"sourceSize": {"w":458,"h":772}
+},
+"top.png":
+{
+	"frame": {"x":0,"y":772,"w":458,"h":1130},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":458,"h":1130},
+	"sourceSize": {"w":458,"h":1130}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "kaiju-park.png",
+	"format": "RGBA8888",
+	"size": {"w":658,"h":1902},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:bbfa000f0cb88b6266f55797c07d62a9:28161a5add22c12c275c3a7eb5eac1b7:35d6b5fe6c8a9f44b4c81701a633b95b$"
+}
+}

@@ -1,0 +1,36 @@
+{"frames": {
+
+"hor.png":
+{
+	"frame": {"x":0,"y":0,"w":100,"h":158},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":158},
+	"sourceSize": {"w":100,"h":158}
+},
+"single.png":
+{
+	"frame": {"x":0,"y":158,"w":100,"h":158},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":158},
+	"sourceSize": {"w":100,"h":158}
+},
+"ver.png":
+{
+	"frame": {"x":0,"y":316,"w":90,"h":157},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":90,"h":157},
+	"sourceSize": {"w":90,"h":157}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "katana-kingdom.png",
+	"format": "RGBA8888",
+	"size": {"w":100,"h":473},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:bd64981fbf24bf58f2b9e0516c6c30eb:4b3c721887fc8c40b47f76deb0185ea9:b79c7b0e7cf4ab5e58987b9601aa8a88$"
+}
+}

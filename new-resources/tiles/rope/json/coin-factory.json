@@ -1,0 +1,44 @@
+{"frames": {
+
+"right.png":
+{
+	"frame": {"x":0,"y":213,"w":200,"h":257},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":200,"h":257},
+	"sourceSize": {"w":200,"h":257}
+},
+"single.png":
+{
+	"frame": {"x":0,"y":0,"w":100,"h":193},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":193},
+	"sourceSize": {"w":100,"h":193}
+},
+"top-right.png":
+{
+	"frame": {"x":0,"y":470,"w":200,"h":283},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":200,"h":283},
+	"sourceSize": {"w":200,"h":283}
+},
+"top.png":
+{
+	"frame": {"x":100,"y":0,"w":100,"h":213},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":213},
+	"sourceSize": {"w":100,"h":213}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "coin-factory.png",
+	"format": "RGBA8888",
+	"size": {"w":200,"h":753},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:0f5c86836104b8a49f48b3b89600b85c:b3b71e25af91437a4bcd60c920c284a0:f2919589149a7fa533f6b662b07f5ead$"
+}
+}

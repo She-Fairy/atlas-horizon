@@ -1,0 +1,44 @@
+{"frames": {
+
+"right.png":
+{
+	"frame": {"x":0,"y":0,"w":100,"h":121},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":121},
+	"sourceSize": {"w":100,"h":121}
+},
+"single.png":
+{
+	"frame": {"x":100,"y":0,"w":100,"h":180},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":180},
+	"sourceSize": {"w":100,"h":180}
+},
+"top-right.png":
+{
+	"frame": {"x":0,"y":180,"w":495,"h":828},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":495,"h":828},
+	"sourceSize": {"w":495,"h":828}
+},
+"top.png":
+{
+	"frame": {"x":0,"y":1008,"w":330,"h":815},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":330,"h":815},
+	"sourceSize": {"w":330,"h":815}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "desert.png",
+	"format": "RGBA8888",
+	"size": {"w":495,"h":1823},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:4b7ebbc2fb5696a4ea2450b828567d3d:644bdedb9b8910ce93607746b5b22de1:9079d49d04c46c8a17182f4b724d619f$"
+}
+}

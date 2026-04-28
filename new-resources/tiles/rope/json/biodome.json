@@ -1,0 +1,44 @@
+{"frames": {
+
+"right.png":
+{
+	"frame": {"x":0,"y":0,"w":100,"h":126},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":126},
+	"sourceSize": {"w":100,"h":126}
+},
+"single.png":
+{
+	"frame": {"x":0,"y":126,"w":100,"h":237},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":237},
+	"sourceSize": {"w":100,"h":237}
+},
+"top-right.png":
+{
+	"frame": {"x":0,"y":363,"w":100,"h":157},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":157},
+	"sourceSize": {"w":100,"h":157}
+},
+"top.png":
+{
+	"frame": {"x":0,"y":520,"w":100,"h":296},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":296},
+	"sourceSize": {"w":100,"h":296}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "biodome.png",
+	"format": "RGBA8888",
+	"size": {"w":100,"h":816},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:ab29f5911702f8b82a12792b7599ad6d:9c2a9cfadebea5bab9bacf6064fffb9f:9369db65072a768c999cc16698e9e1e0$"
+}
+}

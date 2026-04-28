@@ -1,0 +1,44 @@
+{"frames": {
+
+"right.png":
+{
+	"frame": {"x":0,"y":218,"w":200,"h":293},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":200,"h":293},
+	"sourceSize": {"w":200,"h":293}
+},
+"single.png":
+{
+	"frame": {"x":0,"y":0,"w":100,"h":200},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":200},
+	"sourceSize": {"w":100,"h":200}
+},
+"top-right.png":
+{
+	"frame": {"x":0,"y":511,"w":200,"h":320},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":200,"h":320},
+	"sourceSize": {"w":200,"h":320}
+},
+"top.png":
+{
+	"frame": {"x":100,"y":0,"w":100,"h":218},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":218},
+	"sourceSize": {"w":100,"h":218}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "tropical-island.png",
+	"format": "RGBA8888",
+	"size": {"w":200,"h":831},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:a51d1c9dc4c1d03af3b0bc22a74bf93a:c365b24b51eca2a5e163a54a1fc6f645:06c05f315d0061e3392ceb19a5116f33$"
+}
+}

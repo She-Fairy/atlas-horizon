@@ -1,0 +1,44 @@
+{"frames": {
+
+"right.png":
+{
+	"frame": {"x":0,"y":215,"w":200,"h":252},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":200,"h":252},
+	"sourceSize": {"w":200,"h":252}
+},
+"single.png":
+{
+	"frame": {"x":0,"y":0,"w":100,"h":195},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":195},
+	"sourceSize": {"w":100,"h":195}
+},
+"top-right.png":
+{
+	"frame": {"x":0,"y":467,"w":200,"h":277},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":200,"h":277},
+	"sourceSize": {"w":200,"h":277}
+},
+"top.png":
+{
+	"frame": {"x":100,"y":0,"w":100,"h":215},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":215},
+	"sourceSize": {"w":100,"h":215}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "stunt-show-lair.png",
+	"format": "RGBA8888",
+	"size": {"w":200,"h":744},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:b8e68313d773b5f096d598a6d5a8a09d:e6e196ad94ad6225d3e290d3330344ca:1615a184359ddef402cbc7c2db9b2a46$"
+}
+}

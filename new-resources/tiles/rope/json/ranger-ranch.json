@@ -1,0 +1,44 @@
+{"frames": {
+
+"right.png":
+{
+	"frame": {"x":0,"y":0,"w":100,"h":110},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":110},
+	"sourceSize": {"w":100,"h":110}
+},
+"single.png":
+{
+	"frame": {"x":100,"y":0,"w":100,"h":165},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":165},
+	"sourceSize": {"w":100,"h":165}
+},
+"top-right.png":
+{
+	"frame": {"x":0,"y":165,"w":495,"h":769},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":495,"h":769},
+	"sourceSize": {"w":495,"h":769}
+},
+"top.png":
+{
+	"frame": {"x":0,"y":934,"w":330,"h":767},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":330,"h":767},
+	"sourceSize": {"w":330,"h":767}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "ranger-ranch.png",
+	"format": "RGBA8888",
+	"size": {"w":495,"h":1701},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:953724c6a1a5193a5d9996e4e732c7db:e0c066a7b5c868fe7f7d17e6bf25670d:e246f954f34a2e4989fd0c933085e85f$"
+}
+}

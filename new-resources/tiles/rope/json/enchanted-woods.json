@@ -1,0 +1,44 @@
+{"frames": {
+
+"right.png":
+{
+	"frame": {"x":0,"y":258,"w":200,"h":247},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":200,"h":247},
+	"sourceSize": {"w":200,"h":247}
+},
+"single.png":
+{
+	"frame": {"x":0,"y":0,"w":100,"h":200},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":200},
+	"sourceSize": {"w":100,"h":200}
+},
+"top-right.png":
+{
+	"frame": {"x":0,"y":505,"w":200,"h":319},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":200,"h":319},
+	"sourceSize": {"w":200,"h":319}
+},
+"top.png":
+{
+	"frame": {"x":100,"y":0,"w":100,"h":258},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":258},
+	"sourceSize": {"w":100,"h":258}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "enchanted-woods.png",
+	"format": "RGBA8888",
+	"size": {"w":200,"h":824},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:fb38870da899ff18fd5d8fa20227339e:6a225192ad7adde477806f608c483400:23bc0a213683e4e93e10f9ec1eeb5d0e$"
+}
+}

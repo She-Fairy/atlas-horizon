@@ -237,6 +237,7 @@ export class MapMaker {
         this.defaultTileLayer = 2;
 
         this.tileImages = {};
+        this.atlasCache = {};
         
         // Map size configurations
         this.mapSizes = {
@@ -304,8 +305,9 @@ export class MapMaker {
         this.showGuides = false; 
 
         // Environment and background
-        this.bgDark = new Image();
-        this.bgLight = new Image();
+        this.tileRegistry = null;
+        this.environmentPalettes = {};
+        this.defaultBackgroundPalette = { colorA: '#ec9d6f', colorB: '#f9a675' };
 
         // Initialize tile data
         this.tileData = {
@@ -1810,7 +1812,7 @@ export class MapMaker {
         if (!this.tileImagePaths) this.tileImagePaths = {};
 
         this.waterTileFilenames.forEach(filename => {
-            const imagePath = `Resources/${this.environment}/Water/${filename}`;
+            const imagePath = `new-resources/tiles/water/png/${this.normalizeRegistrySlug(this.environment)}.png`;
             const cacheKey = `${this.environment}_water_${filename}`;
 
             // Skip if already loaded with the same path
@@ -1823,7 +1825,7 @@ export class MapMaker {
 
             img.onerror = () => {
                 console.error(`Failed to load water image: ${imagePath}`);
-                const fallbackPath = `Resources/${this.environment}/Water/00000000.png`;
+                const fallbackPath = `new-resources/tiles/water/png/desert.png`;
                 img.src = fallbackPath;
                 this.tileImagePaths[cacheKey] = fallbackPath;
             };
@@ -1841,8 +1843,8 @@ export class MapMaker {
         if (!this.tileImagePaths) this.tileImagePaths = {};
 
         const tileTypes = [
-            { key: "ice",  path: "Resources/Global/Special_Tiles/IceTile"  },
-            { key: "snow", path: "Resources/Global/Special_Tiles/SnowTile" },
+            { key: "ice",  path: "new-resources/tiles/global/special-tiles/ice-tile"  },
+            { key: "snow", path: "new-resources/tiles/global/special-tiles/snow-tile" },
         ];
 
         tileTypes.forEach(type => {
@@ -1910,9 +1912,10 @@ export class MapMaker {
         if (!this.tileImagePaths) this.tileImagePaths = {};
 
         const key = `${name}${environment}`;
-        const fallbackKey = `${name}`;
-        const primaryPath = `Resources/Global/Goals/${name}${environment}.png`;
-        const fallbackPath = `Resources/Global/Goals/${name}.png`;
+        const primaryPath = this.resolveGoalAssetPath(name, environment);
+        const fallbackPath = this.resolveGoalAssetPath(name, 'Desert');
+        const fallbackKey = `${name}Desert`;
+        if (!primaryPath || !fallbackPath) return null;
 
         // If already loaded with the correct path, return
         if (this.goalImageCache[key] && this.tileImagePaths[key] === primaryPath) {
@@ -1944,8 +1947,25 @@ export class MapMaker {
         });
     }
 
+    resolveGoalAssetPath(name, environment) {
+        const env = this.normalizeRegistrySlug(environment || this.environment);
+        const goalKeyByName = {
+            goalBlue: 'goal.blue',
+            goalRed: 'goal.red',
+            goal5v5Blue: 'goal.5v5.blue',
+            goal5v5Red: 'goal.5v5.red'
+        };
+        const goalKey = goalKeyByName[name];
+        if (!goalKey) return null;
+        const byEnv = this.getRegistryAssetPath(`${goalKey}.${env}`);
+        if (byEnv) return byEnv;
+        return this.getRegistryAssetPath(`${goalKey}.desert`);
+    }
+
     async initialize() {
         try {
+            await this.loadTileRegistry();
+            await this.loadEnvironmentPalettes();
             await this.loadEnvironmentBackgrounds();
             await this.loadTileImages();
             if (this.headless || this.existingMap) return;
@@ -1955,31 +1975,164 @@ export class MapMaker {
         }
     }
 
+    normalizeRegistrySlug(value) {
+        return String(value || '')
+            .trim()
+            .toLowerCase()
+            .replace(/_/g, '-');
+    }
+
+    async loadTileRegistry() {
+        try {
+            const response = await fetch('tile-registry.json', { cache: 'no-store' });
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            this.tileRegistry = await response.json();
+        } catch (error) {
+            console.warn('Failed to load tile-registry.json; falling back to legacy tile loading.', error);
+            this.tileRegistry = null;
+        }
+    }
+
+    async loadEnvironmentPalettes() {
+        try {
+            const response = await fetch('environments.json', { cache: 'no-store' });
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const data = await response.json();
+            this.environmentPalettes = data?.environments || {};
+        } catch (error) {
+            console.warn('Failed to load environments.json; using default background palette.', error);
+            this.environmentPalettes = {};
+        }
+    }
+
+    getCurrentBackgroundPalette() {
+        const envSlug = this.normalizeRegistrySlug(this.environment);
+        return this.environmentPalettes[envSlug] || this.defaultBackgroundPalette;
+    }
+
+    async getAtlas(atlasKey, jsonPath, imagePath) {
+        const cached = this.atlasCache[atlasKey];
+        if (cached) return cached;
+        try {
+            const response = await fetch(jsonPath, { cache: 'no-store' });
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const atlas = await response.json();
+            const image = new Image();
+            const ready = new Promise((resolve) => {
+                image.onload = () => resolve(true);
+                image.onerror = () => resolve(false);
+            });
+            image.src = imagePath;
+            await ready;
+            this.atlasCache[atlasKey] = { atlas, image };
+            return this.atlasCache[atlasKey];
+        } catch {
+            return null;
+        }
+    }
+
+    drawAtlasFrame(ctx, atlasEntry, frameName, drawX, drawY, width, height, opacity = 1) {
+        if (!atlasEntry?.atlas?.frames || !atlasEntry?.image?.complete) return false;
+        const frame = atlasEntry.atlas.frames[frameName];
+        if (!frame?.frame) return false;
+        const { x, y, w, h } = frame.frame;
+        ctx.globalAlpha = opacity;
+        ctx.drawImage(atlasEntry.image, x, y, w, h, drawX, drawY, width, height);
+        ctx.globalAlpha = 1;
+        return true;
+    }
+
     async loadEnvironmentBackgrounds() {
-        return new Promise((resolve) => {
-            let loadedCount = 0;
-            const onLoad = () => {
-                loadedCount++;
-                if (loadedCount === 2) {
-                    this.draw();
-                    resolve();
-                }
-            };
+        this.draw();
+        return Promise.resolve();
+    }
 
-            this.bgDark.onload = onLoad;
-            this.bgLight.onload = onLoad;
+    resolveRegistryTileDefById(tileId) {
+        if (!this.tileRegistry?.tiles) return null;
+        return this.tileRegistry.tiles.find(tile => tile.id === tileId) || null;
+    }
 
-            this.bgDark.src = `Resources/${this.environment}/BGDark.png`;
-            this.bgLight.src = `Resources/${this.environment}/BGLight.png`;
+    resolveRegistryTileImage(tileDef, envSlug) {
+        if (!tileDef) return null;
+        const envOverride = tileDef.environmentOverrides?.[envSlug];
+        if (envOverride && Object.prototype.hasOwnProperty.call(envOverride, 'image')) {
+            return envOverride.image;
+        }
+        return tileDef.defaultImage || null;
+    }
 
-            // Handle errors by falling back to Desert environment
-            this.bgDark.onerror = () => {
-                this.bgDark.src = 'Resources/Desert/BGDark.png';
-            };
-            this.bgLight.onerror = () => {
-                this.bgLight.src = 'Resources/Desert/BGLight.png';
-            };
-        });
+    resolveImagePathForTileDef(tileId, def) {
+        const envSlug = this.normalizeRegistrySlug(this.environment);
+        const registryDef = this.resolveRegistryTileDefById(tileId);
+        const registryPath = this.resolveRegistryTileImage(registryDef, envSlug);
+        if (registryPath) return `new-resources/${registryPath.replace(/^\/+/, '')}`;
+        if (def?.img) return this.mapResourcePathToRegistryPath(def.img.replace('${env}', this.environment));
+        return null;
+    }
+
+    getRegistryAssetPath(assetKey) {
+        const path = this.tileRegistry?.assets?.[assetKey];
+        return path ? `new-resources/${String(path).replace(/^\/+/, '')}` : null;
+    }
+
+    mapResourcePathToRegistryPath(resourcePath) {
+        if (!resourcePath) return null;
+        const normalized = String(resourcePath)
+            .replace(/^Resources\//i, '')
+            .replace(/\\/g, '/')
+            .toLowerCase();
+
+        const explicitMap = {
+            'global/markings/basketmarkings.png': 'tiles/global/markings/basket-brawl.png',
+            'global/markings/baskets.png': 'tiles/global/markings/baskets.png',
+            'global/markings/siegemarkings.png': 'tiles/global/markings/siege.png',
+            'global/markings/spiritwarsmarkings.png': 'tiles/global/markings/spirit-wars.png',
+            'global/jumplanding.png': 'tiles/global/markings/jump-landing.png',
+            'global/special_tiles/smoke.png': 'tiles/global/special-tiles/special-tiles/smoke.png',
+            'global/special_tiles/healpad.png': 'tiles/global/special-tiles/special-tiles/heal-pad.png',
+            'global/special_tiles/slowtile.png': 'tiles/global/special-tiles/special-tiles/slow-tile.png',
+            'global/special_tiles/speedtile.png': 'tiles/global/special-tiles/special-tiles/speed-tile.png',
+            'global/special_tiles/spikes.png': 'tiles/global/special-tiles/special-tiles/spikes.png',
+            'global/tnt.png': 'tiles/global/special-tiles/special-tiles/tnt.png',
+            'global/unbreakable.png': 'tiles/global/special-tiles/special-tiles/unbreakable.png',
+            'global/jumpads/r.png': 'tiles/global/jump-pads/right.png',
+            'global/jumpads/l.png': 'tiles/global/jump-pads/left.png',
+            'global/jumpads/t.png': 'tiles/global/jump-pads/top.png',
+            'global/jumpads/b.png': 'tiles/global/jump-pads/bottom.png',
+            'global/jumpads/br.png': 'tiles/global/jump-pads/bottom-right.png',
+            'global/jumpads/tl.png': 'tiles/global/jump-pads/top-left.png',
+            'global/jumpads/bl.png': 'tiles/global/jump-pads/bottom-left.png',
+            'global/jumpads/tr.png': 'tiles/global/jump-pads/top-right.png',
+            'global/teleporters/blue.png': 'tiles/global/teleporters/blue.png',
+            'global/teleporters/green.png': 'tiles/global/teleporters/green.png',
+            'global/teleporters/red.png': 'tiles/global/teleporters/red.png',
+            'global/teleporters/yellow.png': 'tiles/global/teleporters/yellow.png',
+            'global/spawns/1.png': 'tiles/global/spawns/1.png',
+            'global/spawns/2.png': 'tiles/global/spawns/2.png',
+            'global/spawns/3.png': 'tiles/global/spawns/3.png',
+            'global/spawns/4.png': 'tiles/global/spawns/4.png',
+            'global/spawns/5.png': 'tiles/global/spawns/5.png',
+            'global/spawns/6.png': 'tiles/global/spawns/6.png',
+            'global/spawns/9.png': 'tiles/global/spawns/9.png',
+            'global/objectives/bolt.png': 'tiles/global/objectives/bolt.png',
+            'global/objectives/tokenblue.png': 'tiles/global/objectives/token-blue.png',
+            'global/objectives/tokenred.png': 'tiles/global/objectives/token-red.png',
+            'global/objectives/box.png': 'tiles/global/objectives/box.png',
+            'global/objectives/bot_zone.png': 'tiles/global/objectives/bot-zone.png',
+            'global/objectives/hold_the_trophy.png': 'tiles/global/objectives/hold-the-trophy.png',
+            'global/objectives/dodgebrawl.png': 'tiles/global/objectives/dodge-brawl.png',
+            'global/objectives/love_bombing.png': 'tiles/global/objectives/love-bombing.png'
+        };
+
+        const registryMapped = this.tileRegistry?.assets?.[`resource.${normalized}`];
+        if (registryMapped) {
+            return `new-resources/${String(registryMapped).replace(/^\/+/, '')}`;
+        }
+
+        if (explicitMap[normalized]) {
+            return `new-resources/${explicitMap[normalized]}`;
+        }
+        return null;
     }
 
     async loadTileImages() {
@@ -2013,9 +2166,14 @@ export class MapMaker {
                         onLoad();
                         return;
                     }
-                    imgPath = `Resources/${imgData.img.replace('${env}', this.environment)}`;
-                } else if (def.img) {
-                    imgPath = `Resources/${def.img.replace('${env}', this.environment)}`;
+                    imgPath = this.mapResourcePathToRegistryPath(imgData.img.replace('${env}', this.environment));
+                } else {
+                    imgPath = this.resolveImagePathForTileDef(Number(id), def);
+                }
+
+                if (!imgPath) {
+                    onLoad();
+                    return;
                 }
     
                 // Check if the same image was already loaded
@@ -2027,14 +2185,7 @@ export class MapMaker {
                 const img = new Image();
                 img.onload = onLoad;
                 img.onerror = () => {
-                    // Try fallback to 'Desert' environment if current fails and uses '${env}'
-                    if (this.environment !== 'Desert' && imgPath.includes(this.environment)) {
-                        const fallbackPath = imgPath.replace(this.environment, 'Desert');
-                        img.src = fallbackPath;
-                        this.tileImagePaths[id] = fallbackPath;
-                    } else {
-                        onLoad();
-                    }
+                    onLoad();
                 };
     
                 img.src = imgPath;
@@ -2794,17 +2945,12 @@ export class MapMaker {
             if (def.img || def.getImg) {
                 const img = document.createElement('img');
                 if (def.img) {
-                    img.src = `Resources/${def.img.replace('${env}', this.environment)}`;
+                    img.src = this.resolveImagePathForTileDef(Number(id), def) || '';
                 } else if (def.getImg) {
                     const imgData = def.getImg(this.gamemode, 0, this.mapHeight, this.environment);
                     if (imgData) {
                         const imgPath = imgData.displayImg || imgData.img;
-                        img.src = `Resources/${imgPath.replace('${env}', this.environment)}`;
-                        img.onerror = () => {
-                            if (this.environment !== 'Desert' && imgPath.includes('${env}')) {
-                                img.src = `Resources/${imgPath.replace('${env}', 'Desert')}`;
-                            }
-                        };
+                        img.src = this.mapResourcePathToRegistryPath(imgPath.replace('${env}', this.environment)) || '';
                     } else {
                         // Skip this tile if it's not valid for current gamemode
                         return;
@@ -2829,26 +2975,7 @@ export class MapMaker {
     }
 
     loadEnvironmentBackgrounds() {
-        const bgDarkPromise = new Promise(resolve => {
-            this.bgDark.onload = resolve;
-            this.bgDark.src = `Resources/${this.environment}/BGDark.png`;
-            this.bgDark.onerror = () => {
-                this.bgDark.src = 'Resources/Desert/BGDark.png';
-            };
-        });
-
-        const bgLightPromise = new Promise(resolve => {
-            this.bgLight.onload = resolve;
-            this.bgLight.src = `Resources/${this.environment}/BGLight.png`;
-            this.bgLight.onerror = () => {
-                this.bgLight.src = 'Resources/Desert/BGLight.png';
-            };
-        });
-
-        // Wait for both backgrounds to load then draw
-        Promise.all([bgDarkPromise, bgLightPromise]).then(() => {
-            this.draw();
-        });
+        this.draw();
     }
 
     setCanvas(newCanvas) {
@@ -2866,23 +2993,26 @@ export class MapMaker {
         let img;
         // === Water, Ice and Snow tiles ===
         if (tileId === 8 || tileId === 69 || tileId === 70) {
-            // Determinar tipo e caminhos de arquivo
-            let tileType, basePath, cachePrefix;
+            let tileType, atlasKey, atlasJsonPath, atlasImagePath;
 
             if (tileId === 8) {
                 tileType = "Water";
-                basePath = `Resources/${this.environment}/Water`;
-                cachePrefix = `${this.environment}/water_`;
+                const env = this.normalizeRegistrySlug(this.environment);
+                atlasKey = `water:${env}`;
+                atlasJsonPath = `new-resources/tiles/water/json/${env}.json`;
+                atlasImagePath = `new-resources/tiles/water/png/${env}.png`;
             } 
             else if (tileId === 69) {
                 tileType = "IceTile";
-                basePath = `Resources/Global/Special_Tiles/IceTile`;
-                cachePrefix = `global/icetile_`;
+                atlasKey = `global:ice-tile`;
+                atlasJsonPath = `new-resources/tiles/global/special-tiles/ice-tile/ice-tile.json`;
+                atlasImagePath = `new-resources/tiles/global/special-tiles/ice-tile/ice-tile.png`;
             } 
             else if (tileId === 70) {
                 tileType = "SnowTile";
-                basePath = `Resources/Global/Special_Tiles/SnowTile`;
-                cachePrefix = `global/snowtile_`;
+                atlasKey = `global:snow-tile`;
+                atlasJsonPath = `new-resources/tiles/global/special-tiles/snow-tile/snow-tile.json`;
+                atlasImagePath = `new-resources/tiles/global/special-tiles/snow-tile/snow-tile.png`;
             }
 
             // Initialize the 8-bit code array
@@ -2937,32 +3067,9 @@ export class MapMaker {
 
             // Convert code to file name
             const imageName = code.join('') + '.png';
-            const cacheKey = `${cachePrefix}${imageName}`;
-            
-            // Search on cache
-            let img = this.tileImages[cacheKey];
-            
-            // If don't exist, do
-            if (!img) {
-                const imagePath = `${basePath}/${imageName}`;
-                img = new Image();
-                img.src = imagePath;
-                
-                // Error treatment + fallback image
-                img.onerror = () => {
-                    console.error(`Failed to load ${tileType} image: ${imagePath}`);
-                    img.src = `${basePath}/00000000.png`;
-                };
-                
-                // Keep on cache
-                this.tileImages[cacheKey] = img;
-            }
-            
-            // If the image dont load, generate later
-            if (!img.complete || img.naturalWidth === 0) {
-                img.onload = () => {
-                    this.drawTile(this.ctx, tileId, x, y);
-                };
+            const atlas = this.atlasCache[atlasKey];
+            if (!atlas) {
+                this.getAtlas(atlasKey, atlasJsonPath, atlasImagePath).then(() => this.draw());
                 return;
             }
 
@@ -2981,55 +3088,61 @@ export class MapMaker {
             const drawX = x * tileSize + (tileSize * offsetX / 100) + this.canvasPadding;
             const drawY = y * tileSize + (tileSize * offsetY / 100) + this.canvasPadding;
 
-            // Apply opacity and draw
-            ctx.globalAlpha = opacity;
-            ctx.drawImage(img, drawX, drawY, width, height);
-            ctx.globalAlpha = 1.0;
+            this.drawAtlasFrame(ctx, atlas, imageName, drawX, drawY, width, height, opacity);
 
             return;
 
         } else if (tileId === 7 || tileId === 9) { // Fence or Rope Fence
             const isFence = tileId === 7;
             const imageName = this.fenceLogicHandler.getFenceImageName(x, y, this.mapData[this.defaultTileLayer], this.environment, isFence);
-            
-            // For rope fence, map the image name to the corresponding Post variation
-            const ropeMapping = {
-                'T': 'Post_T',
-                'R': 'Post_R',
-                'TR': 'Post_TR',
-                'Fence': 'Post'
-            };
-            
-            const finalImageName = isFence ? imageName : (ropeMapping[imageName] || 'Post');
-            const imagePath = `Resources/${this.environment}/${isFence ? 'Fence' : 'Rope'}/${finalImageName}.png`;
-            
-            img = this.tileImages[imagePath];
-            
-            if (!img) {
-                img = new Image();
-                img.onload = () => this.draw();
-                img.src = imagePath;
-                img.onerror = () => {
-                    console.error(`Failed to load ${isFence ? 'fence' : 'rope'} image: ${imagePath}`);
-                    // Load fallback image
-                    img.src = `Resources/${this.environment}/${isFence ? 'Fence' : 'Rope'}/Fence.png`;
-                };
-                this.tileImages[imagePath] = img;
-            }
-            
-            if (!img.complete || img.naturalWidth === 0) {
-                // Wait for image to load before drawing
-                img.onload = () => {
-                    this.drawTile(this.ctx, tileId, x, y); // Or whatever your method is to redraw that tile
-                };
+            const env = this.normalizeRegistrySlug(this.environment);
+            const atlasPrefix = isFence ? 'fence' : 'rope';
+            const atlas = this.atlasCache[`${atlasPrefix}:${env}`];
+            if (!atlas) {
+                this.getAtlas(
+                    `${atlasPrefix}:${env}`,
+                    `new-resources/tiles/${atlasPrefix}/json/${env}.json`,
+                    `new-resources/tiles/${atlasPrefix}/png/${env}.png`
+                ).then(() => this.draw());
                 return;
             }
+
+            const frameMap = isFence
+                ? { Fence: 'single.png', Horizontal: 'hor.png', Vertical: 'ver.png' }
+                : { Fence: 'single.png', T: 'top.png', R: 'right.png', TR: 'top-right.png' };
+            const frameName = frameMap[imageName] || 'single.png';
+
+            const dimensions = this.environmentTileData[this.environment]?.[isFence ? imageName : ({
+                T: 'Post_T', R: 'Post_R', TR: 'Post_TR', Fence: 'Post'
+            }[imageName] || 'Post')] ||
+                this.tileData[isFence ? imageName : ({
+                    T: 'Post_T', R: 'Post_R', TR: 'Post_TR', Fence: 'Post'
+                }[imageName] || 'Post')] ||
+                this.environmentTileData[this.environment]?.[isFence ? 'Fence' : 'Rope Fence'] ||
+                this.tileData[isFence ? 'Fence' : 'Rope Fence'] ||
+                [1, 1, 0, 0, 1, 5];
+
+            const [scaleX, scaleY, offsetX, offsetY, opacity] = dimensions;
+            const width = this.tileSize * scaleX;
+            const height = this.tileSize * scaleY;
+            const drawX = x * this.tileSize + (this.tileSize * offsetX / 100) + this.canvasPadding;
+            const drawY = y * this.tileSize + (this.tileSize * offsetY / 100) + this.canvasPadding;
+            this.drawAtlasFrame(ctx, atlas, frameName, drawX, drawY, width, height, opacity);
+            return;
 
         } else if (tileId === 40) {
             const imageName = this.fenceLogicHandler.getFenceImageName(x, y, this.mapData[this.defaultTileLayer], 'Brawl_Arena');
 
-            const pathColor = red ? 'Red' : 'Blue';
-            const imagePath = `Resources/Global/Arena/Track/${pathColor}/${imageName}.png`;
+            const pathColor = red ? 'red' : 'blue';
+            const railNameMap = {
+                Fence: 'single',
+                Ver: 'vertical',
+                TL: 'top-left',
+                TR: 'top-right',
+                BL: 'bottom-left',
+                BR: 'bottom-right'
+            };
+            const imagePath = `new-resources/tiles/global/arena/track/${pathColor}/${railNameMap[imageName] || 'single'}.png`;
 
 
             
@@ -3041,8 +3154,7 @@ export class MapMaker {
                 img.src = imagePath;
                 img.onerror = () => {
                     console.error(`Failed to load track image: ${imagePath}`);
-                    // Load fallback image
-                    img.src = `Resources/Global/Arena/Track/Blue/Fence.png`;
+                    img.src = `new-resources/tiles/global/arena/track/blue/single.png`;
                 };
                 this.tileImages[imagePath] = img;
             }
@@ -3065,7 +3177,7 @@ export class MapMaker {
 
             const imageName = this.fenceLogicHandler.getFenceImageName(x, y, this.mapData[this.defaultTileLayer], this.environment, false, true);
             
-            const imagePath = `Resources/${this.environment}/Fence_5v5/${imageName}.png`;
+            const imagePath = `new-resources/tiles/fence-5v5/linked/${this.normalizeRegistrySlug(this.environment)}/${imageName}.png`;
             
             img = this.tileImages[imagePath];
             
@@ -3075,8 +3187,7 @@ export class MapMaker {
                 img.src = imagePath;
                 img.onerror = () => {
                     console.error(`Failed to load border fence image: ${imagePath}`);
-                    // Load fallback image
-                    img.src = `Resources/${this.environment}/Fence_5v5/BFence.png`;
+                    img.src = `new-resources/tiles/fence-5v5/linked/${this.normalizeRegistrySlug(this.environment)}/BFence.png`;
                 };
                 this.tileImages[imagePath] = img;
             }
@@ -3090,8 +3201,15 @@ export class MapMaker {
             }
         } else if (tileId === 68) {
             const imageName = this.fenceLogicHandler.getFenceImageName(x, y, this.mapData[1], 'Rails');
-            
-            const imagePath = `Resources/Global/Special_Tiles/Rails/${imageName}.png`;
+            const railNameMap = {
+                Fence: 'single',
+                Ver: 'vertical',
+                TL: 'top-left',
+                TR: 'top-right',
+                BL: 'bottom-left',
+                BR: 'bottom-right'
+            };
+            const imagePath = `new-resources/tiles/global/special-tiles/trains/rails/${railNameMap[imageName] || 'single'}.png`;
             
             img = this.tileImages[imagePath];
             
@@ -3101,8 +3219,7 @@ export class MapMaker {
                 img.src = imagePath;
                 img.onerror = () => {
                     console.error(`Failed to load border fence image: ${imagePath}`);
-                    // Load fallback image
-                    img.src = `Resources/Global/Special_Tiles/Rails/Fence.png`;
+                    img.src = `new-resources/tiles/global/special-tiles/trains/rails/single.png`;
                 };
                 this.tileImages[imagePath] = img;
             }
@@ -3116,8 +3233,16 @@ export class MapMaker {
             }
         } else if ([73, 74, 75].some(a => a === tileId)) {
             const imageName = this.fenceLogicHandler.getFenceImageName(x, y, this.mapData[1], 'Train');
-
-            const imagePath = `Resources/Global/Special_Tiles/${tileId === 73 ? 'RedTrain' : tileId === 74 ? 'YellowTrain' : 'GreenTrain'}/Train_${imageName}.png`;
+            const trainFolder = tileId === 73 ? 'red-train' : tileId === 74 ? 'yellow-train' : 'green-train';
+            const trainNameMap = {
+                Fence: 'single',
+                Ver: 'bottom-top',
+                TL: 'bottom-top',
+                TR: 'bottom-top',
+                BL: 'bottom-left',
+                BR: 'bottom-right'
+            };
+            const imagePath = `new-resources/tiles/global/special-tiles/trains/${trainFolder}/${trainNameMap[imageName] || 'single'}.png`;
 
             img = this.tileImages[imagePath];
             
@@ -3127,8 +3252,7 @@ export class MapMaker {
                 img.src = imagePath;
                 img.onerror = () => {
                     console.error(`Failed to load border fence image: ${imagePath}`);
-                    // Load fallback image
-                    img.src = `Resources/Global/Special_Tiles/${tileId === 73 ? 'RedTrain' : tileId === 74 ? 'YellowTrain' : 'GreenTrain'}/Train_Fence.png`;
+                    img.src = `new-resources/tiles/global/special-tiles/trains/${trainFolder}/single.png`;
                 };
                 this.tileImages[imagePath] = img;
             }
@@ -3146,7 +3270,8 @@ export class MapMaker {
             if (def && def.getImg) {
                 const imgData = def.getImg(this.gamemode, y, this.mapHeight, this.environment);
                 if (imgData && imgData.img) {
-                    const imgPath = `Resources/${imgData.img.replace('${env}', this.environment)}`;
+                    const imgPath = this.mapResourcePathToRegistryPath(imgData.img.replace('${env}', this.environment));
+                    if (!imgPath) return;
                     // Use a unique cache key that includes position for position-dependent tiles
                     const cacheKey = `${tileId}_${imgPath}`;
                     img = this.tileImages[cacheKey];
@@ -3277,7 +3402,7 @@ export class MapMaker {
         if (ly > mapHeight - 2) ly = mapHeight - 2;
 
         // Draw the landing image at (lx, ly), size 2x2 tiles
-        const imgPath = 'Resources/Global/JumpLanding.png';
+        const imgPath = 'new-resources/tiles/global/markings/jump-landing.png';
         let img = mapMaker?.tileImages?.[imgPath];
         if (!img) {
             img = new window.Image();
@@ -3326,18 +3451,14 @@ export class MapMaker {
 
                 
                 if (!skipBackground) {
-                    const isDark = (x + y) % 2 === 0;
-                    const bgImg = isDark ? this.bgDark : this.bgLight;
-                    
-                    if (bgImg.complete) {
-                        this.ctx.drawImage(
-                            bgImg,
-                            x * this.tileSize + this.canvasPadding,
-                            y * this.tileSize + this.canvasPadding,
-                            this.tileSize,
-                            this.tileSize
-                        );
-                    }
+                    const { colorA, colorB } = this.getCurrentBackgroundPalette();
+                    this.ctx.fillStyle = (x + y) % 2 === 0 ? colorA : colorB;
+                    this.ctx.fillRect(
+                        x * this.tileSize + this.canvasPadding,
+                        y * this.tileSize + this.canvasPadding,
+                        this.tileSize,
+                        this.tileSize
+                    );
                 }
             }
         }
@@ -3346,11 +3467,11 @@ export class MapMaker {
             // Cache basket images if not already loaded
             if (!this.basketMarkingsImage) {
                 this.basketMarkingsImage = new Image();
-                this.basketMarkingsImage.src = 'Resources/Global/BasketMarkings.png';
+                this.basketMarkingsImage.src = this.getRegistryAssetPath('marking.basket-brawl') || '';
             }
             if (!this.basketsImage) {
                 this.basketsImage = new Image();
-                this.basketsImage.src = 'Resources/Global/Baskets.png';
+                this.basketsImage.src = this.getRegistryAssetPath('marking.baskets') || '';
             }
 
             // Draw basket markings if loaded
@@ -3369,7 +3490,7 @@ export class MapMaker {
             // Cache basket images if not already loaded
             if (!this.siegeMarkingsImage) {
                 this.siegeMarkingsImage = new Image();
-                this.siegeMarkingsImage.src = 'Resources/Global/SiegeMarkings.png';
+                this.siegeMarkingsImage.src = this.getRegistryAssetPath('marking.siege') || '';
             }
 
             if (this.siegeMarkingsImage.complete) {
@@ -3387,7 +3508,7 @@ export class MapMaker {
             // Cache basket images if not already loaded
             if (!this.siegeMarkingsImage) {
                 this.siegeMarkingsImage = new Image();
-                this.siegeMarkingsImage.src = 'Resources/Global/SpiritWarsMarkings.png';
+                this.siegeMarkingsImage.src = this.getRegistryAssetPath('marking.spirit-wars') || '';
             }
 
             if (this.siegeMarkingsImage.complete) {
@@ -4302,8 +4423,7 @@ export class MapMaker {
         // Draw background
         for (let y = 0; y < this.mapHeight; y++) {
             for (let x = 0; x < this.mapWidth; x++) {
-                const isDark = (x + y) % 2 === 0;
-                const bgImg = isDark ? this.bgDark : this.bgLight;
+                const { colorA, colorB } = this.getCurrentBackgroundPalette();
 
                 // Skip Brawl Ball corners in regular size
                 if (
@@ -4317,15 +4437,13 @@ export class MapMaker {
                     if ((atTop || atBottom) && (atLeft || atRight)) continue;
                 }
 
-                if (bgImg?.complete) {
-                    ctx.drawImage(
-                        bgImg,
-                        x * tileSize + padding,
-                        y * tileSize + padding,
-                        tileSize,
-                        tileSize
-                    );
-                }
+                ctx.fillStyle = (x + y) % 2 === 0 ? colorA : colorB;
+                ctx.fillRect(
+                    x * tileSize + padding,
+                    y * tileSize + padding,
+                    tileSize,
+                    tileSize
+                );
             }
         }
 
@@ -4333,11 +4451,11 @@ export class MapMaker {
             // Cache basket images if not already loaded
             if (!this.basketMarkingsImage) {
                 this.basketMarkingsImage = new Image();
-                this.basketMarkingsImage.src = 'Resources/Global/BasketMarkings.png';
+                this.basketMarkingsImage.src = this.getRegistryAssetPath('marking.basket-brawl') || '';
             }
             if (!this.basketsImage) {
                 this.basketsImage = new Image();
-                this.basketsImage.src = 'Resources/Global/Baskets.png';
+                this.basketsImage.src = this.getRegistryAssetPath('marking.baskets') || '';
             }
 
             // Draw basket markings if loaded
@@ -4356,7 +4474,7 @@ export class MapMaker {
             // Cache siege markings image if not already loaded
             if (!this.siegeMarkingsImage) {
                 this.siegeMarkingsImage = new Image();
-                this.siegeMarkingsImage.src = 'Resources/Global/SiegeMarkings.png';
+                this.siegeMarkingsImage.src = this.getRegistryAssetPath('marking.siege') || '';
             }
 
             // Draw siege markings if loaded
@@ -4375,7 +4493,7 @@ export class MapMaker {
             // Cache siege markings image if not already loaded
             if (!this.siegeMarkingsImage) {
                 this.siegeMarkingsImage = new Image();
-                this.siegeMarkingsImage.src = 'Resources/Global/SpiritWarsMarkings.png';
+                this.siegeMarkingsImage.src = this.getRegistryAssetPath('marking.spirit-wars') || '';
             }
 
             // Draw siege markings if loaded
@@ -4559,8 +4677,12 @@ export class MapMaker {
     loadGoalImage(name, environment) {
         return new Promise((resolve) => {
             const img = new Image();
-            const fallback = `Resources/Global/Goals/${name}.png`;
-            const envPath = `Resources/Global/Goals/${name}${environment}.png`;
+            const envPath = this.resolveGoalAssetPath(name, environment);
+            const fallback = this.resolveGoalAssetPath(name, 'Desert');
+            if (!envPath || !fallback) {
+                resolve(null);
+                return;
+            }
 
             img.onload = () => resolve(img);
             img.onerror = () => {

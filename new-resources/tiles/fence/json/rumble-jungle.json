@@ -1,0 +1,92 @@
+{"frames": {
+
+"0001.png":
+{
+	"frame": {"x":0,"y":0,"w":100,"h":133},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":133},
+	"sourceSize": {"w":100,"h":133}
+},
+"0010.png":
+{
+	"frame": {"x":0,"y":133,"w":100,"h":152},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":152},
+	"sourceSize": {"w":100,"h":152}
+},
+"0011.png":
+{
+	"frame": {"x":0,"y":285,"w":100,"h":100},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":100},
+	"sourceSize": {"w":100,"h":100}
+},
+"0100.png":
+{
+	"frame": {"x":0,"y":385,"w":100,"h":152},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":152},
+	"sourceSize": {"w":100,"h":152}
+},
+"0101.png":
+{
+	"frame": {"x":0,"y":537,"w":100,"h":100},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":100},
+	"sourceSize": {"w":100,"h":100}
+},
+"1000.png":
+{
+	"frame": {"x":0,"y":637,"w":100,"h":130},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":130},
+	"sourceSize": {"w":100,"h":130}
+},
+"1001.png":
+{
+	"frame": {"x":0,"y":767,"w":100,"h":87},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":87},
+	"sourceSize": {"w":100,"h":87}
+},
+"1010.png":
+{
+	"frame": {"x":0,"y":854,"w":100,"h":130},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":130},
+	"sourceSize": {"w":100,"h":130}
+},
+"1100.png":
+{
+	"frame": {"x":0,"y":984,"w":100,"h":130},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":130},
+	"sourceSize": {"w":100,"h":130}
+},
+"single.png":
+{
+	"frame": {"x":0,"y":1114,"w":100,"h":145},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":145},
+	"sourceSize": {"w":100,"h":145}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "rumble-jungle.png",
+	"format": "RGBA8888",
+	"size": {"w":100,"h":1259},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:7ed2a714853304faa9b29903dd969cf8:e8bbbae11cd4c8a32f586311d90c06fa:2f30fe4c3579a77cb56da72b6a7e2f7b$"
+}
+}

@@ -1,0 +1,36 @@
+{"frames": {
+
+"hor.png":
+{
+	"frame": {"x":0,"y":0,"w":72,"h":111},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":72,"h":111},
+	"sourceSize": {"w":72,"h":111}
+},
+"single.png":
+{
+	"frame": {"x":72,"y":0,"w":100,"h":180},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":180},
+	"sourceSize": {"w":100,"h":180}
+},
+"ver.png":
+{
+	"frame": {"x":0,"y":180,"w":458,"h":843},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":458,"h":843},
+	"sourceSize": {"w":458,"h":843}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "castle-courtyard.png",
+	"format": "RGBA8888",
+	"size": {"w":458,"h":1023},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:5c8e3c36ffcdb2e1ae8fed8c9ad226ab:a72bc4327bc25673ecd8c3bf66cab38b:337bb6d1953880b7766012dc18e0b07c$"
+}
+}

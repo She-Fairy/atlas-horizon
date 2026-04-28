@@ -1,0 +1,44 @@
+{"frames": {
+
+"right.png":
+{
+	"frame": {"x":0,"y":0,"w":159,"h":148},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":159,"h":148},
+	"sourceSize": {"w":159,"h":148}
+},
+"single.png":
+{
+	"frame": {"x":0,"y":148,"w":100,"h":148},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":148},
+	"sourceSize": {"w":100,"h":148}
+},
+"top-right.png":
+{
+	"frame": {"x":0,"y":296,"w":253,"h":350},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":253,"h":350},
+	"sourceSize": {"w":253,"h":350}
+},
+"top.png":
+{
+	"frame": {"x":0,"y":646,"w":159,"h":350},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":159,"h":350},
+	"sourceSize": {"w":159,"h":350}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "stranger-things.png",
+	"format": "RGBA8888",
+	"size": {"w":253,"h":996},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:83efe6bd85babb990a5ea3703e420f7f:61820cd96786f8aabb38054aa5d89347:22fa2d0c87eb613315bbfd524154c4fb$"
+}
+}

@@ -1,0 +1,44 @@
+{"frames": {
+
+"right.png":
+{
+	"frame": {"x":0,"y":0,"w":108,"h":118},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":108,"h":118},
+	"sourceSize": {"w":108,"h":118}
+},
+"single.png":
+{
+	"frame": {"x":108,"y":0,"w":72,"h":119},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":72,"h":119},
+	"sourceSize": {"w":72,"h":119}
+},
+"top-right.png":
+{
+	"frame": {"x":0,"y":119,"w":108,"h":159},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":108,"h":159},
+	"sourceSize": {"w":108,"h":159}
+},
+"top.png":
+{
+	"frame": {"x":108,"y":119,"w":72,"h":160},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":72,"h":160},
+	"sourceSize": {"w":72,"h":160}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "pirate-ship.png",
+	"format": "RGBA8888",
+	"size": {"w":180,"h":279},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:35a963c18f37ce09369564368cf1ba4c:2a9c9fcf911235fb6b6a96fced5c0f13:734b5638685422467400c1f84455e903$"
+}
+}

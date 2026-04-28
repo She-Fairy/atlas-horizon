@@ -1,0 +1,10945 @@
+{
+  "_comment": [
+    "Atlas Horizon tile registry.",
+    "",
+    "TOP-LEVEL SECTIONS",
+    "  environments  – slug → display name for every supported environment.",
+    "  gamemodes     – slug → display name for every supported gamemode.",
+    "  tiles         – array of tile definitions (see TILE FIELDS below).",
+    "",
+    "TILE FIELDS",
+    "  id              – Numeric tile ID stored in saved map data. Never change after first use.",
+    "  key             – Unique string identifier (e.g. 'wall-1').",
+    "  name            – Human-readable display name.",
+    "  category        – Palette grouping.",
+    "  size            – 1 for 1×1, 2 for 2×2 (origin at top-left).",
+    "  wall            – true = treated as a solid wall for validation.",
+    "  zIndex          – Visual layering (higher = drawn on top).",
+    "  fallbackColor   – CSS colour used when no image is available.",
+    "",
+    "  showInGamemode  – null = always visible in palette.",
+    "                    string[] = only when map gamemode slug is listed.",
+    "  showInEnvironment – null = always visible.",
+    "                    string[] = only when map environment slug is listed.",
+    "",
+    "  defaultImage    – Global image path used when no env override matches.",
+    "                    null = tile always needs an env override.",
+    "",
+    "  defaultWidth    – Render width in cell units.  null = auto (naturalWidth / 100).",
+    "  defaultHeight   – Render height in cell units. null = auto (naturalHeight / 100).",
+    "  defaultOffsetX  – X offset in cells.  null = auto (centred within size).",
+    "  defaultOffsetY  – Y offset in cells.  null = auto (bottom-aligned).",
+    "  defaultOpacity  – Image opacity 0–1.",
+    "",
+    "  environmentOverrides – env-slug → override object.",
+    "    Only include entries where an image EXISTS for that environment.",
+    "    An absent entry means 'no specific image; use defaultImage or cross-env fallback'.",
+    "    Override object fields (all optional except 'image'):",
+    "      image   – path string or null (explicit no-image for this env).",
+    "      width, height, offsetX, offsetY – override auto-compute for this env only.",
+    "      opacity – overrides defaultOpacity.",
+    "",
+    "  mirrorPair – id of the complementary tile for mirror-mode swapping (optional)."
+  ],
+  "environments": {
+    "desert": "Desert",
+    "wasteland": "Wasteland",
+    "mine": "Mine",
+    "beach": "Beach",
+    "grassy-field": "Grassy Field",
+    "holiday": "Holiday",
+    "city": "City",
+    "retropolis": "Retropolis",
+    "mortuary": "Mortuary",
+    "pirate-ship": "Pirate Ship",
+    "arcade": "Arcade",
+    "stadium": "Stadium",
+    "bazaar": "Bazaar",
+    "super-city": "Super City",
+    "gift-shop": "Gift Shop",
+    "bandstand": "Bandstand",
+    "snowtel": "Snowtel",
+    "scrapyard": "Scrapyard",
+    "starr-force": "Starr Force",
+    "wild-west": "Wild West",
+    "water-park": "Water Park",
+    "castle-courtyard": "Castle Courtyard",
+    "brawlywood": "Brawlywood",
+    "fighting-game": "Fighting Game",
+    "biodome": "Biodome",
+    "stunt-show": "Stunt Show",
+    "deep-sea": "Deep Sea",
+    "robot-factory": "Robot Factory",
+    "ghost-station": "Ghost Station",
+    "candyland": "Candyland",
+    "the-hub": "The Hub",
+    "rooftop": "Rooftop",
+    "rumble-jungle": "Rumble Jungle",
+    "enchanted-woods": "Enchanted Woods",
+    "ranger-ranch": "Ranger Ranch",
+    "bizarre-circus": "Bizarre Circus",
+    "coin-factory": "Coin Factory",
+    "starr-toon": "Starr Toon",
+    "ice-island": "Ice Island",
+    "swamp-of-love": "Swamp of Love",
+    "madevil-manor": "MadEvil Manor",
+    "kaiju-park": "Kaiju Park",
+    "bikini-bottom": "Bikini Bottom",
+    "oddities-shop": "Oddities Shop",
+    "skatepark": "Skatepark",
+    "ice-rink": "Ice Rink",
+    "pyramid-quest": "Pyramid Quest",
+    "katana-kingdom": "Katana Kingdom",
+    "tropical-island": "Tropical Island",
+    "subway-surfers": "Subway Surfers",
+    "stranger-things": "Stranger Things",
+    "stranger-things-forest": "Stranger Things Forest",
+    "stranger-things-lair": "Stranger Things Lair",
+    "stranger-things-lab": "Stranger Things Lab",
+    "aquarium": "Aquarium"
+  },
+  "gamemodes": {
+    "gem-grab": "Gem Grab",
+    "brawl-ball": "Brawl Ball",
+    "showdown": "Showdown",
+    "heist": "Heist",
+    "bounty": "Bounty",
+    "siege": "Siege",
+    "hot-zone": "Hot Zone",
+    "knockout": "Knockout",
+    "payload": "Payload",
+    "basket-brawl": "Basket Brawl",
+    "wipeout": "Wipeout",
+    "duels": "Duels",
+    "hunters": "Hunters",
+    "big-game": "Big Game",
+    "robo-rumble": "Robo Rumble",
+    "boss-fight": "Boss Fight",
+    "trophy-thieves": "Trophy Thieves"
+  },
+  "tiles": [
+    {
+      "id": 1,
+      "key": "wall-1",
+      "name": "Wall",
+      "category": "Walls",
+      "size": 1,
+      "wall": true,
+      "zIndex": 5,
+      "fallbackColor": "#5a6878",
+      "showInGamemode": null,
+      "showInEnvironment": null,
+      "defaultImage": null,
+      "defaultWidth": null,
+      "defaultHeight": null,
+      "defaultOffsetX": null,
+      "defaultOffsetY": null,
+      "defaultOpacity": 1,
+      "environmentOverrides": {
+        "wasteland": {
+          "image": "/tiles/wall-1/desert.png"
+        },
+        "beach": {
+          "image": "tiles/wall-1/desert.png"
+        },
+        "grassy-field": {
+          "image": "tiles/wall-1/desert.png"
+        },
+        "stadium": {
+          "image": "tiles/wall-1/arcade.png"
+        },
+        "aquarium": {
+          "image": "tiles/wall-1/aquarium.png"
+        },
+        "arcade": {
+          "image": "tiles/wall-1/arcade.png"
+        },
+        "bandstand": {
+          "image": "tiles/wall-1/bandstand.png"
+        },
+        "bazaar": {
+          "image": "tiles/wall-1/bazaar.png"
+        },
+        "bikini-bottom": {
+          "image": "tiles/wall-1/bikini-bottom.png"
+        },
+        "biodome": {
+          "image": "tiles/wall-1/biodome.png"
+        },
+        "bizarre-circus": {
+          "image": "tiles/wall-1/bizarre-circus.png"
+        },
+        "brawlywood": {
+          "image": "tiles/wall-1/brawlywood.png"
+        },
+        "candyland": {
+          "image": "tiles/wall-1/candyland.png"
+        },
+        "castle-courtyard": {
+          "image": "tiles/wall-1/castle-courtyard.png"
+        },
+        "city": {
+          "image": "tiles/wall-1/city.png"
+        },
+        "coin-factory": {
+          "image": "tiles/wall-1/coin-factory.png"
+        },
+        "deep-sea": {
+          "image": "tiles/wall-1/deep-sea.png"
+        },
+        "desert": {
+          "image": "tiles/wall-1/desert.png"
+        },
+        "enchanted-woods": {
+          "image": "tiles/wall-1/enchanted-woods.png"
+        },
+        "fighting-game": {
+          "image": "tiles/wall-1/fighting-game.png"
+        },
+        "ghost-station": {
+          "image": "tiles/wall-1/ghost-station.png"
+        },
+        "gift-shop": {
+          "image": "tiles/wall-1/gift-shop.png"
+        },
+        "holiday": {
+          "image": "tiles/wall-1/holiday.png"
+        },
+        "ice-island": {
+          "image": "tiles/wall-1/ice-island.png"
+        },
+        "ice-rink": {
+          "image": "tiles/wall-1/ice-rink.png"
+        },
+        "kaiju-park": {
+          "image": "tiles/wall-1/kaiju-park.png"
+        },
+        "katana-kingdom": {
+          "image": "tiles/wall-1/katana-kingdom.png"
+        },
+        "madevil-manor": {
+          "image": "tiles/wall-1/madevil-manor.png"
+        },
+        "mine": {
+          "image": "tiles/wall-1/mine.png"
+        },
+        "mortuary": {
+          "image": "tiles/wall-1/mortuary.png"
+        },
+        "oddities-shop": {
+          "image": "tiles/wall-1/oddities-shop.png"
+        },
+        "pirate-ship": {
+          "image": "tiles/wall-1/pirate-ship.png"
+        },
+        "pyramid-quest": {
+          "image": "tiles/wall-1/pyramid-quest.png"
+        },
+        "ranger-ranch": {
+          "image": "tiles/wall-1/ranger-ranch.png"
+        },
+        "retropolis": {
+          "image": "tiles/wall-1/retropolis.png"
+        },
+        "robot-factory": {
+          "image": "tiles/wall-1/robot-factory.png"
+        },
+        "rooftop": {
+          "image": "tiles/wall-1/rooftop.png"
+        },
+        "rumble-jungle": {
+          "image": "tiles/wall-1/rumble-jungle.png"
+        },
+        "scrapyard": {
+          "image": "tiles/wall-1/scrapyard.png"
+        },
+        "skatepark": {
+          "image": "tiles/wall-1/skatepark.png"
+        },
+        "snowtel": {
+          "image": "tiles/wall-1/snowtel.png"
+        },
+        "starr-force": {
+          "image": "tiles/wall-1/starr-force.png"
+        },
+        "starr-toon": {
+          "image": "tiles/wall-1/starr-toon.png"
+        },
+        "stranger-things-forest": {
+          "image": "tiles/wall-1/stranger-things-forest.png"
+        },
+        "stranger-things-lab": {
+          "image": "tiles/wall-1/stranger-things-lab.png"
+        },
+        "stranger-things-lair": {
+          "image": "tiles/wall-1/stranger-things-lair.png"
+        },
+        "stranger-things": {
+          "image": "tiles/wall-1/stranger-things.png"
+        },
+        "stunt-show": {
+          "image": "tiles/wall-1/stunt-show.png"
+        },
+        "subway-surfers": {
+          "image": "tiles/wall-1/subway-surfers.png"
+        },
+        "super-city": {
+          "image": "tiles/wall-1/super-city.png"
+        },
+        "swamp-of-love": {
+          "image": "tiles/wall-1/swamp-of-love.png"
+        },
+        "the-hub": {
+          "image": "tiles/wall-1/the-hub.png"
+        },
+        "tropical-island": {
+          "image": "tiles/wall-1/tropical-island.png"
+        },
+        "water-park": {
+          "image": "tiles/wall-1/water-park.png"
+        },
+        "wild-west": {
+          "image": "tiles/wall-1/wild-west.png"
+        }
+      }
+    },
+    {
+      "id": 2,
+      "key": "wall-2",
+      "name": "Secondary Wall",
+      "category": "Walls",
+      "size": 1,
+      "wall": true,
+      "zIndex": 5,
+      "fallbackColor": "#404d5e",
+      "showInGamemode": null,
+      "showInEnvironment": null,
+      "defaultImage": null,
+      "defaultWidth": null,
+      "defaultHeight": null,
+      "defaultOffsetX": null,
+      "defaultOffsetY": null,
+      "defaultOpacity": 1,
+      "environmentOverrides": {
+        "wasteland": {
+          "image": "tiles/wall-2/desert.png"
+        },
+        "grassy-field": {
+          "image": "tiles/wall-2/desert.png"
+        },
+        "city": {
+          "image": "tiles/wall-2/desert.png"
+        },
+        "stadium": {
+          "image": "tiles/wall-2/retropolis.png"
+        },
+        "ranger-ranch": {
+          "image": "tiles/wall-2/desert.png"
+        },
+        "aquarium": {
+          "image": "tiles/wall-2/aquarium.png"
+        },
+        "arcade": {
+          "image": "tiles/wall-2/arcade.png"
+        },
+        "bandstand": {
+          "image": "tiles/wall-2/bandstand.png"
+        },
+        "bazaar": {
+          "image": "tiles/wall-2/bazaar.png"
+        },
+        "beach": {
+          "image": "tiles/wall-2/beach.png"
+        },
+        "bikini-bottom": {
+          "image": "tiles/wall-2/bikini-bottom.png"
+        },
+        "biodome": {
+          "image": "tiles/wall-2/biodome.png"
+        },
+        "bizarre-circus": {
+          "image": "tiles/wall-2/bizarre-circus.png"
+        },
+        "brawlywood": {
+          "image": "tiles/wall-2/brawlywood.png"
+        },
+        "candyland": {
+          "image": "tiles/wall-2/candyland.png"
+        },
+        "castle-courtyard": {
+          "image": "tiles/wall-2/castle-courtyard.png"
+        },
+        "coin-factory": {
+          "image": "tiles/wall-2/coin-factory.png"
+        },
+        "deep-sea": {
+          "image": "tiles/wall-2/deep-sea.png"
+        },
+        "desert": {
+          "image": "tiles/wall-2/desert.png"
+        },
+        "enchanted-woods": {
+          "image": "tiles/wall-2/enchanted-woods.png"
+        },
+        "fighting-game": {
+          "image": "tiles/wall-2/fighting-game.png"
+        },
+        "ghost-station": {
+          "image": "tiles/wall-2/ghost-station.png"
+        },
+        "gift-shop": {
+          "image": "tiles/wall-2/gift-shop.png"
+        },
+        "holiday": {
+          "image": "tiles/wall-2/holiday.png"
+        },
+        "ice-island": {
+          "image": "tiles/wall-2/ice-island.png"
+        },
+        "ice-rink": {
+          "image": "tiles/wall-2/ice-rink.png"
+        },
+        "kaiju-park": {
+          "image": "tiles/wall-2/kaiju-park.png"
+        },
+        "katana-kingdom": {
+          "image": "tiles/wall-2/katana-kingdom.png"
+        },
+        "madevil-manor": {
+          "image": "tiles/wall-2/madevil-manor.png"
+        },
+        "mine": {
+          "image": "tiles/wall-2/mine.png"
+        },
+        "mortuary": {
+          "image": "tiles/wall-2/mortuary.png"
+        },
+        "oddities-shop": {
+          "image": "tiles/wall-2/oddities-shop.png"
+        },
+        "pirate-ship": {
+          "image": "tiles/wall-2/pirate-ship.png"
+        },
+        "pyramid-quest": {
+          "image": "tiles/wall-2/pyramid-quest.png"
+        },
+        "retropolis": {
+          "image": "tiles/wall-2/retropolis.png"
+        },
+        "robot-factory": {
+          "image": "tiles/wall-2/robot-factory.png"
+        },
+        "rooftop": {
+          "image": "tiles/wall-2/rooftop.png"
+        },
+        "rumble-jungle": {
+          "image": "tiles/wall-2/rumble-jungle.png"
+        },
+        "scrapyard": {
+          "image": "tiles/wall-2/scrapyard.png"
+        },
+        "skatepark": {
+          "image": "tiles/wall-2/skatepark.png"
+        },
+        "snowtel": {
+          "image": "tiles/wall-2/snowtel.png"
+        },
+        "starr-force": {
+          "image": "tiles/wall-2/starr-force.png"
+        },
+        "starr-toon": {
+          "image": "tiles/wall-2/starr-toon.png"
+        },
+        "stranger-things-forest": {
+          "image": "tiles/wall-2/stranger-things-forest.png"
+        },
+        "stranger-things-lab": {
+          "image": "tiles/wall-2/stranger-things-lab.png"
+        },
+        "stranger-things-lair": {
+          "image": "tiles/wall-2/stranger-things-lair.png"
+        },
+        "stranger-things": {
+          "image": "tiles/wall-2/stranger-things.png"
+        },
+        "stunt-show": {
+          "image": "tiles/wall-2/stunt-show.png"
+        },
+        "subway-surfers": {
+          "image": "tiles/wall-2/subway-surfers.png"
+        },
+        "super-city": {
+          "image": "tiles/wall-2/super-city.png"
+        },
+        "swamp-of-love": {
+          "image": "tiles/wall-2/swamp-of-love.png"
+        },
+        "the-hub": {
+          "image": "tiles/wall-2/the-hub.png"
+        },
+        "tropical-island": {
+          "image": "tiles/wall-2/tropical-island.png"
+        },
+        "water-park": {
+          "image": "tiles/wall-2/water-park.png"
+        },
+        "wild-west": {
+          "image": "tiles/wall-2/wild-west.png"
+        }
+      }
+    },
+    {
+      "id": 3,
+      "key": "crate",
+      "name": "Crate",
+      "category": "Objects",
+      "size": 1,
+      "wall": true,
+      "zIndex": 5,
+      "fallbackColor": "#c9933a",
+      "showInGamemode": null,
+      "showInEnvironment": null,
+      "defaultImage": null,
+      "defaultWidth": null,
+      "defaultHeight": null,
+      "defaultOffsetX": null,
+      "defaultOffsetY": null,
+      "defaultOpacity": 1,
+      "environmentOverrides": {
+        "wasteland": {
+          "image": "tiles/crate/desert.png"
+        },
+        "mine": {
+          "image": "tiles/crate/desert.png"
+        },
+        "grassy-field": {
+          "image": "tiles/crate/desert.png"
+        },
+        "city": {
+          "image": "tiles/crate/desert.png"
+        },
+        "mortuary": {
+          "image": "tiles/crate/enchanted-woods.png"
+        },
+        "pirate-ship": {
+          "image": "tiles/crate/desert.png"
+        },
+        "arcade": {
+          "image": "tiles/crate/desert.png"
+        },
+        "bandstand": {
+          "image": "tiles/crate/desert.png"
+        },
+        "snowtel": {
+          "image": "tiles/crate/desert.png"
+        },
+        "scrapyard": {
+          "image": "tiles/crate/desert.png"
+        },
+        "wild-west": {
+          "image": "tiles/crate/desert.png"
+        },
+        "water-park": {
+          "image": "tiles/crate/desert.png"
+        },
+        "fighting-game": {
+          "image": "tiles/crate/desert.png"
+        },
+        "biodome": {
+          "image": "tiles/crate/desert.png"
+        },
+        "deep-sea": {
+          "image": "tiles/crate/castle-courtyard.png"
+        },
+        "ghost-station": {
+          "image": "tiles/crate/enchanted-woods.png"
+        },
+        "rumble-jungle": {
+          "image": "tiles/crate/desert.png"
+        },
+        "swamp-of-love": {
+          "image": "tiles/crate/enchanted-woods.png"
+        },
+        "tropical-island": {
+          "image": "tiles/crate/desert.png"
+        },
+        "aquarium": {
+          "image": "tiles/crate/aquarium.png"
+        },
+        "bazaar": {
+          "image": "tiles/crate/bazaar.png"
+        },
+        "bikini-bottom": {
+          "image": "tiles/crate/bikini-bottom.png"
+        },
+        "bizarre-circus": {
+          "image": "tiles/crate/bizarre-circus.png"
+        },
+        "brawlywood": {
+          "image": "tiles/crate/brawlywood.png"
+        },
+        "candyland": {
+          "image": "tiles/crate/candyland.png"
+        },
+        "castle-courtyard": {
+          "image": "tiles/crate/castle-courtyard.png"
+        },
+        "coin-factory": {
+          "image": "tiles/crate/coin-factory.png"
+        },
+        "desert": {
+          "image": "tiles/crate/desert.png"
+        },
+        "enchanted-woods": {
+          "image": "tiles/crate/enchanted-woods.png"
+        },
+        "gift-shop": {
+          "image": "tiles/crate/gift-shop.png"
+        },
+        "holiday": {
+          "image": "tiles/crate/holiday.png"
+        },
+        "ice-island": {
+          "image": "tiles/crate/ice-island.png"
+        },
+        "ice-rink": {
+          "image": "tiles/crate/ice-rink.png"
+        },
+        "kaiju-park": {
+          "image": "tiles/crate/kaiju-park.png"
+        },
+        "katana-kingdom": {
+          "image": "tiles/crate/katana-kingdom.png"
+        },
+        "madevil-manor": {
+          "image": "tiles/crate/madevil-manor.png"
+        },
+        "oddities-shop": {
+          "image": "tiles/crate/oddities-shop.png"
+        },
+        "pyramid-quest": {
+          "image": "tiles/crate/pyramid-quest.png"
+        },
+        "ranger-ranch": {
+          "image": "tiles/crate/ranger-ranch.png"
+        },
+        "retropolis": {
+          "image": "tiles/crate/retropolis.png"
+        },
+        "robot-factory": {
+          "image": "tiles/crate/robot-factory.png"
+        },
+        "rooftop": {
+          "image": "tiles/crate/rooftop.png"
+        },
+        "skatepark": {
+          "image": "tiles/crate/skatepark.png"
+        },
+        "stadium": {
+          "image": "tiles/crate/stadium.png"
+        },
+        "starr-force": {
+          "image": "tiles/crate/starr-force.png"
+        },
+        "starr-toon": {
+          "image": "tiles/crate/starr-toon.png"
+        },
+        "stranger-things-forest": {
+          "image": "tiles/crate/stranger-things-forest.png"
+        },
+        "stranger-things-lab": {
+          "image": "tiles/crate/stranger-things-lab.png"
+        },
+        "stranger-things-lair": {
+          "image": "tiles/crate/stranger-things-lair.png"
+        },
+        "stranger-things": {
+          "image": "tiles/crate/stranger-things.png"
+        },
+        "stunt-show": {
+          "image": "tiles/crate/stunt-show.png"
+        },
+        "subway-surfers": {
+          "image": "tiles/crate/subway-surfers.png"
+        },
+        "super-city": {
+          "image": "tiles/crate/super-city.png"
+        },
+        "the-hub": {
+          "image": "tiles/crate/the-hub.png"
+        }
+      }
+    },
+    {
+      "id": 4,
+      "key": "barrel",
+      "name": "Barrel",
+      "category": "Objects",
+      "size": 1,
+      "wall": true,
+      "zIndex": 5,
+      "fallbackColor": "#8a5a2a",
+      "showInGamemode": null,
+      "showInEnvironment": null,
+      "defaultImage": null,
+      "defaultWidth": null,
+      "defaultHeight": null,
+      "defaultOffsetX": null,
+      "defaultOffsetY": null,
+      "defaultOpacity": 1,
+      "environmentOverrides": {
+        "wasteland": {
+          "image": "tiles/barrel/desert.png"
+        },
+        "mine": {
+          "image": "tiles/barrel/desert.png"
+        },
+        "grassy-field": {
+          "image": "tiles/barrel/desert.png"
+        },
+        "city": {
+          "image": "tiles/barrel/desert.png"
+        },
+        "mortuary": {
+          "image": "tiles/barrel/bandstand.png"
+        },
+        "pirate-ship": {
+          "image": "tiles/barrel/desert.png"
+        },
+        "stadium": {
+          "image": "tiles/barrel/retropolis.png"
+        },
+        "gift-shop": {
+          "image": "tiles/barrel/desert.png"
+        },
+        "snowtel": {
+          "image": "tiles/barrel/bandstand.png"
+        },
+        "scrapyard": {
+          "image": "tiles/barrel/retropolis.png"
+        },
+        "wild-west": {
+          "image": "tiles/barrel/desert.png"
+        },
+        "castle-courtyard": {
+          "image": "tiles/barrel/bandstand.png"
+        },
+        "ghost-station": {
+          "image": "tiles/barrel/bandstand.png"
+        },
+        "rumble-jungle": {
+          "image": "tiles/barrel/desert.png"
+        },
+        "enchanted-woods": {
+          "image": "tiles/barrel/bandstand.png"
+        },
+        "swamp-of-love": {
+          "image": "tiles/barrel/bandstand.png"
+        },
+        "tropical-island": {
+          "image": "tiles/barrel/desert.png"
+        },
+        "aquarium": {
+          "image": "tiles/barrel/aquarium.png"
+        },
+        "arcade": {
+          "image": "tiles/barrel/arcade.png"
+        },
+        "bandstand": {
+          "image": "tiles/barrel/bandstand.png"
+        },
+        "bazaar": {
+          "image": "tiles/barrel/bazaar.png"
+        },
+        "biodome": {
+          "image": "tiles/barrel/biodome.png"
+        },
+        "brawlywood": {
+          "image": "tiles/barrel/brawlywood.png"
+        },
+        "candyland": {
+          "image": "tiles/barrel/candyland.png"
+        },
+        "circus": {
+          "image": "tiles/barrel/circus.png"
+        },
+        "coin-factory": {
+          "image": "tiles/barrel/coin-factory.png"
+        },
+        "deep-sea": {
+          "image": "tiles/barrel/deep-sea.png"
+        },
+        "desert": {
+          "image": "tiles/barrel/desert.png"
+        },
+        "escape-room": {
+          "image": "tiles/barrel/escape-room.png"
+        },
+        "fighting-game": {
+          "image": "tiles/barrel/fighting-game.png"
+        },
+        "holiday": {
+          "image": "tiles/barrel/holiday.png"
+        },
+        "ice-island": {
+          "image": "tiles/barrel/ice-island.png"
+        },
+        "ice-rink": {
+          "image": "tiles/barrel/ice-rink.png"
+        },
+        "katana-kingdom": {
+          "image": "tiles/barrel/katana-kingdom.png"
+        },
+        "medieval-manor": {
+          "image": "tiles/barrel/medieval-manor.png"
+        },
+        "oddities-shop": {
+          "image": "tiles/barrel/oddities-shop.png"
+        },
+        "ranger-ranch": {
+          "image": "tiles/barrel/ranger-ranch.png"
+        },
+        "retropolis": {
+          "image": "tiles/barrel/retropolis.png"
+        },
+        "robot-factory": {
+          "image": "tiles/barrel/robot-factory.png"
+        },
+        "rooftop": {
+          "image": "tiles/barrel/rooftop.png"
+        },
+        "skatepark": {
+          "image": "tiles/barrel/skatepark.png"
+        },
+        "spongebob": {
+          "image": "tiles/barrel/spongebob.png"
+        },
+        "starr-force": {
+          "image": "tiles/barrel/starr-force.png"
+        },
+        "starr-toon": {
+          "image": "tiles/barrel/starr-toon.png"
+        },
+        "stranger-things-forest": {
+          "image": "tiles/barrel/stranger-things-forest.png"
+        },
+        "stranger-things-lab": {
+          "image": "tiles/barrel/stranger-things-lab.png"
+        },
+        "stranger-things-lair": {
+          "image": "tiles/barrel/stranger-things-lair.png"
+        },
+        "stranger-things": {
+          "image": "tiles/barrel/stranger-things.png"
+        },
+        "stunt-show": {
+          "image": "tiles/barrel/stunt-show.png"
+        },
+        "subway-surfers": {
+          "image": "tiles/barrel/subway-surfers.png"
+        },
+        "super-city-2": {
+          "image": "tiles/barrel/super-city-2.png"
+        },
+        "super-city": {
+          "image": "tiles/barrel/super-city.png"
+        },
+        "the-hub": {
+          "image": "tiles/barrel/the-hub.png"
+        },
+        "water-park": {
+          "image": "tiles/barrel/water-park.png"
+        }
+      }
+    },
+    {
+      "id": 5,
+      "key": "cactus",
+      "name": "Cactus",
+      "category": "Cover",
+      "size": 1,
+      "wall": false,
+      "zIndex": 4,
+      "fallbackColor": "#3aa86a",
+      "showInGamemode": null,
+      "showInEnvironment": null,
+      "defaultImage": null,
+      "defaultWidth": null,
+      "defaultHeight": null,
+      "defaultOffsetX": null,
+      "defaultOffsetY": null,
+      "defaultOpacity": 1,
+      "environmentOverrides": {
+        "wasteland": {
+          "image": "tiles/cactus/desert.png"
+        },
+        "grassy-field": {
+          "image": "tiles/cactus/desert.png"
+        },
+        "retropolis": {
+          "image": "tiles/cactus/city.png"
+        },
+        "stadium": {
+          "image": "tiles/cactus/city.png"
+        },
+        "bandstand": {
+          "image": "tiles/cactus/desert.png"
+        },
+        "wild-west": {
+          "image": "tiles/cactus/desert.png"
+        },
+        "aquarium": {
+          "image": "tiles/cactus/aquarium.png"
+        },
+        "arcade": {
+          "image": "tiles/cactus/arcade.png"
+        },
+        "bazaar": {
+          "image": "tiles/cactus/bazaar.png"
+        },
+        "bikini-bottom": {
+          "image": "tiles/cactus/bikini-bottom.png"
+        },
+        "biodome": {
+          "image": "tiles/cactus/biodome.png"
+        },
+        "bizarre-circus": {
+          "image": "tiles/cactus/bizarre-circus.png"
+        },
+        "brawlywood": {
+          "image": "tiles/cactus/brawlywood.png"
+        },
+        "candyland": {
+          "image": "tiles/cactus/candyland.png"
+        },
+        "castle-courtyard": {
+          "image": "tiles/cactus/castle-courtyard.png"
+        },
+        "city": {
+          "image": "tiles/cactus/city.png"
+        },
+        "coin-factory": {
+          "image": "tiles/cactus/coin-factory.png"
+        },
+        "deep-sea": {
+          "image": "tiles/cactus/deep-sea.png"
+        },
+        "desert": {
+          "image": "tiles/cactus/desert.png"
+        },
+        "enchanted-woods": {
+          "image": "tiles/cactus/enchanted-woods.png"
+        },
+        "fighting-game": {
+          "image": "tiles/cactus/fighting-game.png"
+        },
+        "ghost-station": {
+          "image": "tiles/cactus/ghost-station.png"
+        },
+        "gift-shop": {
+          "image": "tiles/cactus/gift-shop.png"
+        },
+        "holiday": {
+          "image": "tiles/cactus/holiday.png"
+        },
+        "ice-island": {
+          "image": "tiles/cactus/ice-island.png"
+        },
+        "ice-rink": {
+          "image": "tiles/cactus/ice-rink.png"
+        },
+        "kaiju-park": {
+          "image": "tiles/cactus/kaiju-park.png"
+        },
+        "katana-kingdom": {
+          "image": "tiles/cactus/katana-kingdom.png"
+        },
+        "madevil-manor": {
+          "image": "tiles/cactus/madevil-manor.png"
+        },
+        "mine": {
+          "image": "tiles/cactus/mine.png"
+        },
+        "mortuary": {
+          "image": "tiles/cactus/mortuary.png"
+        },
+        "oddities-shop": {
+          "image": "tiles/cactus/oddities-shop.png"
+        },
+        "pirate-ship": {
+          "image": "tiles/cactus/pirate-ship.png"
+        },
+        "pyramid-quest": {
+          "image": "tiles/cactus/pyramid-quest.png"
+        },
+        "ranger-ranch": {
+          "image": "tiles/cactus/ranger-ranch.png"
+        },
+        "robot-factory": {
+          "image": "tiles/cactus/robot-factory.png"
+        },
+        "rooftop": {
+          "image": "tiles/cactus/rooftop.png"
+        },
+        "rumble-jungle": {
+          "image": "tiles/cactus/rumble-jungle.png"
+        },
+        "scrapyard": {
+          "image": "tiles/cactus/scrapyard.png"
+        },
+        "skatepark": {
+          "image": "tiles/cactus/skatepark.png"
+        },
+        "snowtel": {
+          "image": "tiles/cactus/snowtel.png"
+        },
+        "starr-force": {
+          "image": "tiles/cactus/starr-force.png"
+        },
+        "starr-toon": {
+          "image": "tiles/cactus/starr-toon.png"
+        },
+        "stranger-things-forest": {
+          "image": "tiles/cactus/stranger-things-forest.png"
+        },
+        "stranger-things-lab": {
+          "image": "tiles/cactus/stranger-things-lab.png"
+        },
+        "stranger-things-lair": {
+          "image": "tiles/cactus/stranger-things-lair.png"
+        },
+        "stranger-things": {
+          "image": "tiles/cactus/stranger-things.png"
+        },
+        "stunt-show": {
+          "image": "tiles/cactus/stunt-show.png"
+        },
+        "subway-surfers": {
+          "image": "tiles/cactus/subway-surfers.png"
+        },
+        "super-city": {
+          "image": "tiles/cactus/super-city.png"
+        },
+        "swamp-of-love": {
+          "image": "tiles/cactus/swamp-of-love.png"
+        },
+        "the-hub": {
+          "image": "tiles/cactus/the-hub.png"
+        },
+        "tropical-island": {
+          "image": "tiles/cactus/tropical-island.png"
+        },
+        "water-park": {
+          "image": "tiles/cactus/water-park.png"
+        }
+      }
+    },
+    {
+      "id": 6,
+      "key": "bush-1",
+      "name": "Bush",
+      "category": "Cover",
+      "size": 1,
+      "wall": false,
+      "zIndex": 4,
+      "fallbackColor": "#2f8a4a",
+      "showInGamemode": null,
+      "showInEnvironment": null,
+      "defaultImage": null,
+      "defaultWidth": null,
+      "defaultHeight": null,
+      "defaultOffsetX": null,
+      "defaultOffsetY": null,
+      "defaultOpacity": 1,
+      "environmentOverrides": {
+        "wasteland": {
+          "image": "tiles/bush-1/desert.png"
+        },
+        "grassy-field": {
+          "image": "tiles/bush-1/desert.png"
+        },
+        "city": {
+          "image": "tiles/bush-1/desert.png"
+        },
+        "retropolis": {
+          "image": "tiles/bush-1/bizarre-circus.png"
+        },
+        "arcade": {
+          "image": "tiles/bush-1/desert.png"
+        },
+        "stadium": {
+          "image": "tiles/bush-1/desert.png"
+        },
+        "bazaar": {
+          "image": "tiles/bush-1/bandstand.png"
+        },
+        "snowtel": {
+          "image": "tiles/bush-1/holiday.png"
+        },
+        "scrapyard": {
+          "image": "tiles/bush-1/bizarre-circus.png"
+        },
+        "starr-force": {
+          "image": "tiles/bush-1/biodome.png"
+        },
+        "wild-west": {
+          "image": "tiles/bush-1/coin-factory.png"
+        },
+        "water-park": {
+          "image": "tiles/bush-1/bandstand.png"
+        },
+        "brawlywood": {
+          "image": "tiles/bush-1/desert.png"
+        },
+        "stunt-show": {
+          "image": "tiles/bush-1/bizarre-circus.png"
+        },
+        "deep-sea": {
+          "image": "tiles/bush-1/biodome.png"
+        },
+        "robot-factory": {
+          "image": "tiles/bush-1/coin-factory.png"
+        },
+        "the-hub": {
+          "image": "tiles/bush-1/bizarre-circus.png"
+        },
+        "rooftop": {
+          "image": "tiles/bush-1/desert.png"
+        },
+        "rumble-jungle": {
+          "image": "tiles/bush-1/castle-courtyard.png"
+        },
+        "ranger-ranch": {
+          "image": "tiles/bush-1/coin-factory.png"
+        },
+        "ice-island": {
+          "image": "tiles/bush-1/holiday.png"
+        },
+        "swamp-of-love": {
+          "image": "tiles/bush-1/pirate-ship.png"
+        },
+        "skatepark": {
+          "image": "tiles/bush-1/coin-factory.png"
+        },
+        "tropical-island": {
+          "image": "tiles/bush-1/desert.png"
+        },
+        "aquarium": {
+          "image": "tiles/bush-1/aquarium.png"
+        },
+        "bandstand": {
+          "image": "tiles/bush-1/bandstand.png"
+        },
+        "bikini-bottom": {
+          "image": "tiles/bush-1/bikini-bottom.png"
+        },
+        "biodome": {
+          "image": "tiles/bush-1/biodome.png"
+        },
+        "bizarre-circus": {
+          "image": "tiles/bush-1/bizarre-circus.png"
+        },
+        "candyland": {
+          "image": "tiles/bush-1/candyland.png"
+        },
+        "castle-courtyard": {
+          "image": "tiles/bush-1/castle-courtyard.png"
+        },
+        "coin-factory": {
+          "image": "tiles/bush-1/coin-factory.png"
+        },
+        "desert": {
+          "image": "tiles/bush-1/desert.png"
+        },
+        "enchanted-woods": {
+          "image": "tiles/bush-1/enchanted-woods.png"
+        },
+        "fighting-game": {
+          "image": "tiles/bush-1/fighting-game.png"
+        },
+        "ghost-station": {
+          "image": "tiles/bush-1/ghost-station.png"
+        },
+        "gift-shop": {
+          "image": "tiles/bush-1/gift-shop.png"
+        },
+        "holiday": {
+          "image": "tiles/bush-1/holiday.png"
+        },
+        "ice-rink": {
+          "image": "tiles/bush-1/ice-rink.png"
+        },
+        "kaiju-park": {
+          "image": "tiles/bush-1/kaiju-park.png"
+        },
+        "katana-kingdom": {
+          "image": "tiles/bush-1/katana-kingdom.png"
+        },
+        "madevil-manor": {
+          "image": "tiles/bush-1/madevil-manor.png"
+        },
+        "mine": {
+          "image": "tiles/bush-1/mine.png"
+        },
+        "mortuary": {
+          "image": "tiles/bush-1/mortuary.png"
+        },
+        "oddities-shop": {
+          "image": "tiles/bush-1/oddities-shop.png"
+        },
+        "pirate-ship": {
+          "image": "tiles/bush-1/pirate-ship.png"
+        },
+        "pyramid-quest": {
+          "image": "tiles/bush-1/pyramid-quest.png"
+        },
+        "starr-toon": {
+          "image": "tiles/bush-1/starr-toon.png"
+        },
+        "stranger-things-forest": {
+          "image": "tiles/bush-1/stranger-things-forest.png"
+        },
+        "stranger-things-lab": {
+          "image": "tiles/bush-1/stranger-things-lab.png"
+        },
+        "stranger-things-lair": {
+          "image": "tiles/bush-1/stranger-things-lair.png"
+        },
+        "stranger-things": {
+          "image": "tiles/bush-1/stranger-things.png"
+        },
+        "subway-surfers": {
+          "image": "tiles/bush-1/subway-surfers.png"
+        },
+        "super-city": {
+          "image": "tiles/bush-1/super-city.png"
+        }
+      }
+    },
+    {
+      "id": 7,
+      "key": "bush-2",
+      "name": "Bush 2",
+      "category": "Cover",
+      "size": 1,
+      "wall": false,
+      "zIndex": 4,
+      "fallbackColor": "#1f6c36",
+      "fallbackTileKey": "bush-1",
+      "showInGamemode": null,
+      "showInEnvironment": null,
+      "defaultImage": null,
+      "defaultWidth": null,
+      "defaultHeight": null,
+      "defaultOffsetX": null,
+      "defaultOffsetY": null,
+      "defaultOpacity": 1,
+      "environmentOverrides": {
+        "wasteland": {
+          "image": "tiles/bush-2/desert.png"
+        },
+        "starr-force": {
+          "image": "tiles/bush-2/biodome.png"
+        },
+        "deep-sea": {
+          "image": "tiles/bush-2/biodome.png"
+        },
+        "biodome": {
+          "image": "tiles/bush-2/biodome.png"
+        },
+        "desert": {
+          "image": "tiles/bush-2/desert.png"
+        },
+        "scrapyard": {
+          "image": "tiles/bush-2/scrapyard.png"
+        }
+      }
+    },
+    {
+      "id": 8,
+      "key": "fence",
+      "name": "Fence",
+      "category": "Cover",
+      "size": 1,
+      "wall": false,
+      "zIndex": 4,
+      "fallbackColor": "#a8a06a",
+      "showInGamemode": null,
+      "showInEnvironment": null,
+      "defaultImage": null,
+      "defaultWidth": null,
+      "defaultHeight": null,
+      "defaultOffsetX": null,
+      "defaultOffsetY": null,
+      "defaultOpacity": 1,
+      "environmentOverrides": {
+        "desert": {
+          "logic": "block"
+        },
+        "wasteland": {
+          "logic": "block",
+          "image": "tiles/fence/block/desert"
+        },
+        "mine": {
+          "logic": "block",
+          "image": "tiles/fence/block/desert"
+        },
+        "beach": {
+          "logic": "block",
+          "image": "tiles/fence/block/desert"
+        },
+        "grassy-field": {
+          "logic": "block",
+          "image": "tiles/fence/block/desert"
+        },
+        "holiday": {
+          "logic": "block",
+          "image": "tiles/fence/block/desert"
+        },
+        "city": {
+          "logic": "block"
+        },
+        "retropolis": {
+          "logic": "linked"
+        },
+        "mortuary": {
+          "logic": "block"
+        },
+        "pirate-ship": {
+          "logic": "linked"
+        },
+        "arcade": {
+          "logic": "block"
+        },
+        "stadium": {
+          "logic": "block",
+          "image": "tiles/fence/block/arcade"
+        },
+        "bazaar": {
+          "logic": "linked"
+        },
+        "super-city": {
+          "logic": "linked"
+        },
+        "gift-shop": {
+          "logic": "linked"
+        },
+        "bandstand": {
+          "logic": "linked"
+        },
+        "snowtel": {
+          "logic": "block"
+        },
+        "scrapyard": {
+          "logic": "linked"
+        },
+        "starr-force": {
+          "logic": "linked"
+        },
+        "wild-west": {
+          "logic": "block",
+          "image": "tiles/fence/block/desert"
+        },
+        "water-park": {
+          "logic": "six-piece"
+        },
+        "castle-courtyard": {
+          "logic": "block"
+        },
+        "brawlywood": {
+          "logic": "four-piece"
+        },
+        "fighting-game": {
+          "logic": "linked"
+        },
+        "biodome": {
+          "logic": "linked"
+        },
+        "stunt-show": {
+          "logic": "linked"
+        },
+        "deep-sea": {
+          "logic": "linked"
+        },
+        "robot-factory": {
+          "logic": "linked"
+        },
+        "ghost-station": {
+          "logic": "linked"
+        },
+        "candyland": {
+          "logic": "linked"
+        },
+        "the-hub": {
+          "logic": "linked"
+        },
+        "rooftop": {
+          "logic": "block"
+        },
+        "rumble-jungle": {
+          "logic": "linked"
+        },
+        "enchanted-woods": {
+          "logic": "linked"
+        },
+        "ranger-ranch": {
+          "logic": "block",
+          "image": "tiles/fence/block/desert"
+        },
+        "bizarre-circus": {
+          "logic": "linked"
+        },
+        "coin-factory": {
+          "logic": "linked",
+          "image": "tiles/fence/linked/robot-factory"
+        },
+        "starr-toon": {
+          "logic": "linked"
+        },
+        "ice-island": {
+          "logic": "block"
+        },
+        "swamp-of-love": {
+          "logic": "block"
+        },
+        "madevil-manor": {
+          "logic": "block"
+        },
+        "kaiju-park": {
+          "logic": "linked"
+        },
+        "bikini-bottom": {
+          "logic": "block"
+        },
+        "oddities-shop": {
+          "logic": "linked"
+        },
+        "skatepark": {
+          "logic": "linked"
+        },
+        "ice-rink": {
+          "logic": "four-piece"
+        },
+        "pyramid-quest": {
+          "logic": "linked"
+        },
+        "katana-kingdom": {
+          "logic": "linked"
+        },
+        "tropical-island": {
+          "logic": "block"
+        },
+        "subway-surfers": {
+          "logic": "linked"
+        },
+        "stranger-things": {
+          "logic": "linked"
+        },
+        "stranger-things-forest": {
+          "logic": "linked"
+        },
+        "stranger-things-lair": {
+          "logic": "linked"
+        },
+        "stranger-things-lab": {
+          "logic": "linked"
+        },
+        "aquarium": {
+          "logic": "linked"
+        }
+      }
+    },
+    {
+      "id": 9,
+      "key": "skull",
+      "name": "Skull",
+      "category": "Cover",
+      "size": 1,
+      "wall": false,
+      "zIndex": 4,
+      "fallbackColor": "#b94c4c",
+      "showInGamemode": null,
+      "showInEnvironment": null,
+      "defaultImage": null,
+      "defaultWidth": null,
+      "defaultHeight": null,
+      "defaultOffsetX": null,
+      "defaultOffsetY": null,
+      "defaultOpacity": 1,
+      "environmentOverrides": {
+        "wasteland": {
+          "image": "tiles/skull/desert.png"
+        },
+        "mine": {
+          "image": "tiles/skull/desert.png"
+        },
+        "beach": {
+          "image": "tiles/skull/bandstand.png"
+        },
+        "grassy-field": {
+          "image": "tiles/skull/desert.png"
+        },
+        "city": {
+          "image": "tiles/skull/desert.png"
+        },
+        "retropolis": {
+          "image": "tiles/skull/arcade.png"
+        },
+        "stadium": {
+          "image": "tiles/skull/arcade.png"
+        },
+        "bazaar": {
+          "image": "tiles/skull/bandstand.png"
+        },
+        "snowtel": {
+          "image": "tiles/skull/ice-island.png"
+        },
+        "scrapyard": {
+          "image": "tiles/skull/arcade.png"
+        },
+        "brawlywood": {
+          "image": "tiles/skull/arcade.png"
+        },
+        "oddities-shop": {
+          "image": "tiles/skull/madevil-manor.png"
+        },
+        "tropical-island": {
+          "image": "tiles/skull/rumble-jungle.png"
+        },
+        "aquarium": {
+          "image": "tiles/skull/aquarium.png"
+        },
+        "arcade": {
+          "image": "tiles/skull/arcade.png"
+        },
+        "bandstand": {
+          "image": "tiles/skull/bandstand.png"
+        },
+        "bikini-bottom": {
+          "image": "tiles/skull/bikini-bottom.png"
+        },
+        "biodome": {
+          "image": "tiles/skull/biodome.png"
+        },
+        "bizarre-circus": {
+          "image": "tiles/skull/bizarre-circus.png"
+        },
+        "candyland": {
+          "image": "tiles/skull/candyland.png"
+        },
+        "castle-courtyard": {
+          "image": "tiles/skull/castle-courtyard.png"
+        },
+        "coin-factory": {
+          "image": "tiles/skull/coin-factory.png"
+        },
+        "deep-sea": {
+          "image": "tiles/skull/deep-sea.png"
+        },
+        "desert": {
+          "image": "tiles/skull/desert.png"
+        },
+        "enchanted-woods": {
+          "image": "tiles/skull/enchanted-woods.png"
+        },
+        "fighting-game": {
+          "image": "tiles/skull/fighting-game.png"
+        },
+        "ghost-station": {
+          "image": "tiles/skull/ghost-station.png"
+        },
+        "gift-shop": {
+          "image": "tiles/skull/gift-shop.png"
+        },
+        "holiday": {
+          "image": "tiles/skull/holiday.png"
+        },
+        "ice-island": {
+          "image": "tiles/skull/ice-island.png"
+        },
+        "ice-rink": {
+          "image": "tiles/skull/ice-rink.png"
+        },
+        "kaiju-park": {
+          "image": "tiles/skull/kaiju-park.png"
+        },
+        "katana-kingdom": {
+          "image": "tiles/skull/katana-kingdom.png"
+        },
+        "madevil-manor": {
+          "image": "tiles/skull/madevil-manor.png"
+        },
+        "mortuary": {
+          "image": "tiles/skull/mortuary.png"
+        },
+        "pirate-ship": {
+          "image": "tiles/skull/pirate-ship.png"
+        },
+        "pyramid-quest": {
+          "image": "tiles/skull/pyramid-quest.png"
+        },
+        "ranger-ranch": {
+          "image": "tiles/skull/ranger-ranch.png"
+        },
+        "robot-factory": {
+          "image": "tiles/skull/robot-factory.png"
+        },
+        "rooftop": {
+          "image": "tiles/skull/rooftop.png"
+        },
+        "rumble-jungle": {
+          "image": "tiles/skull/rumble-jungle.png"
+        },
+        "skatepark": {
+          "image": "tiles/skull/skatepark.png"
+        },
+        "starr-force": {
+          "image": "tiles/skull/starr-force.png"
+        },
+        "starr-toon": {
+          "image": "tiles/skull/starr-toon.png"
+        },
+        "stranger-things-forest": {
+          "image": "tiles/skull/stranger-things-forest.png"
+        },
+        "stranger-things-lab": {
+          "image": "tiles/skull/stranger-things-lab.png"
+        },
+        "stranger-things-lair": {
+          "image": "tiles/skull/stranger-things-lair.png"
+        },
+        "stranger-things": {
+          "image": "tiles/skull/stranger-things.png"
+        },
+        "stunt-show": {
+          "image": "tiles/skull/stunt-show.png"
+        },
+        "subway-surfers": {
+          "image": "tiles/skull/subway-surfers.png"
+        },
+        "super-city": {
+          "image": "tiles/skull/super-city.png"
+        },
+        "swamp-of-love": {
+          "image": "tiles/skull/swamp-of-love.png"
+        },
+        "the-hub": {
+          "image": "tiles/skull/the-hub.png"
+        },
+        "water-park": {
+          "image": "tiles/skull/water-park.png"
+        },
+        "wild-west": {
+          "image": "tiles/skull/wild-west.png"
+        }
+      }
+    },
+    {
+      "id": 10,
+      "key": "rope",
+      "name": "Rope Fence",
+      "category": "Cover",
+      "size": 1,
+      "wall": false,
+      "zIndex": 2,
+      "fallbackColor": "#a07a3c",
+      "showInGamemode": null,
+      "showInEnvironment": null,
+      "defaultImage": null,
+      "defaultWidth": null,
+      "defaultHeight": null,
+      "defaultOffsetX": null,
+      "defaultOffsetY": null,
+      "defaultOpacity": 1,
+      "environmentOverrides": {
+        "wasteland": {
+          "image": "tiles/rope/desert"
+        },
+        "mine": {
+          "image": "tiles/rope/city"
+        },
+        "beach": {
+          "image": "tiles/rope/desert"
+        },
+        "grassy-field": {
+          "image": "tiles/rope/desert"
+        },
+        "holiday": {
+          "image": "tiles/rope/city"
+        },
+        "arcade": {
+          "image": "tiles/rope/desert"
+        },
+        "stadium": {
+          "image": "tiles/rope/city"
+        },
+        "bazaar": {
+          "image": "tiles/rope/desert"
+        },
+        "gift-shop": {
+          "image": "tiles/rope/bandstand"
+        },
+        "scrapyard": {
+          "image": "tiles/rope/aquarium"
+        },
+        "starr-force": {
+          "image": "tiles/rope/aquarium"
+        },
+        "wild-west": {
+          "image": "tiles/rope/desert"
+        },
+        "castle-courtyard": {
+          "image": "tiles/rope/desert"
+        },
+        "brawlywood": {
+          "image": "tiles/rope/mortuary"
+        },
+        "robot-factory": {
+          "image": "tiles/rope/aquarium"
+        },
+        "rooftop": {
+          "image": "tiles/rope/city"
+        }
+      }
+    },
+    {
+      "id": 11,
+      "key": "water",
+      "name": "Water",
+      "category": "Terrain",
+      "size": 1,
+      "wall": false,
+      "zIndex": 1,
+      "fallbackColor": "#2a72c4",
+      "showInGamemode": null,
+      "showInEnvironment": null,
+      "defaultImage": null,
+      "defaultWidth": null,
+      "defaultHeight": null,
+      "defaultOffsetX": null,
+      "defaultOffsetY": null,
+      "defaultOpacity": 1,
+      "environmentOverrides": {
+        "wasteland": {
+          "image": "tiles/water/desert"
+        },
+        "mine": {
+          "image": "tiles/water/desert"
+        },
+        "beach": {
+          "image": "tiles/water/desert"
+        },
+        "grassy-field": {
+          "image": "tiles/water/desert"
+        },
+        "holiday": {
+          "image": "tiles/water/desert"
+        },
+        "city": {
+          "image": "tiles/water/desert"
+        },
+        "retropolis": {
+          "image": "tiles/water/desert"
+        },
+        "mortuary": {
+          "image": "tiles/water/aquarium"
+        },
+        "arcade": {
+          "image": "tiles/water/desert"
+        },
+        "stadium": {
+          "image": "tiles/water/desert"
+        },
+        "bazaar": {
+          "image": "tiles/water/desert"
+        },
+        "super-city": {
+          "image": "tiles/water/desert"
+        },
+        "gift-shop": {
+          "image": "tiles/water/desert"
+        },
+        "bandstand": {
+          "image": "tiles/water/desert"
+        },
+        "snowtel": {
+          "image": "tiles/water/desert"
+        },
+        "scrapyard": {
+          "image": "tiles/water/aquarium"
+        },
+        "starr-force": {
+          "image": "tiles/water/biodome"
+        },
+        "wild-west": {
+          "image": "tiles/water/desert"
+        },
+        "water-park": {
+          "image": "tiles/water/desert"
+        },
+        "castle-courtyard": {
+          "image": "tiles/water/desert"
+        },
+        "brawlywood": {
+          "image": "tiles/water/desert"
+        },
+        "stunt-show": {
+          "image": "tiles/water/desert"
+        },
+        "robot-factory": {
+          "image": "tiles/water/coin-factory"
+        },
+        "ghost-station": {
+          "image": "tiles/water/aquarium"
+        },
+        "the-hub": {
+          "image": "tiles/water/desert"
+        },
+        "rooftop": {
+          "image": "tiles/water/desert"
+        },
+        "rumble-jungle": {
+          "image": "tiles/water/desert"
+        },
+        "ranger-ranch": {
+          "image": "tiles/water/desert"
+        },
+        "bizarre-circus": {
+          "image": "tiles/water/desert"
+        },
+        "ice-island": {
+          "image": "tiles/water/desert"
+        },
+        "swamp-of-love": {
+          "image": "tiles/water/aquarium"
+        },
+        "katana-kingdom": {
+          "image": "tiles/water/aquarium"
+        },
+        "tropical-island": {
+          "image": "tiles/water/desert"
+        },
+        "subway-surfers": {
+          "image": "tiles/water/desert"
+        },
+        "stranger-things-lair": {
+          "image": "tiles/water/stranger-things"
+        }
+      }
+    },
+    {
+      "id": 12,
+      "key": "unbreakable",
+      "name": "Unbreakable",
+      "category": "Walls",
+      "size": 1,
+      "wall": true,
+      "zIndex": 5,
+      "fallbackColor": "#2e3744",
+      "showInGamemode": null,
+      "showInEnvironment": null,
+      "defaultImage": "/tiles/global/special-tiles/special-tiles/unbreakable.png",
+      "defaultWidth": null,
+      "defaultHeight": null,
+      "defaultOffsetX": null,
+      "defaultOffsetY": null,
+      "defaultOpacity": 1,
+      "environmentOverrides": {}
+    },
+    {
+      "id": 20,
+      "key": "spawn-1",
+      "name": "Spawn 1",
+      "category": "Spawns",
+      "size": 1,
+      "wall": false,
+      "zIndex": 2,
+      "fallbackColor": "#3a7ee8",
+      "showInGamemode": null,
+      "showInEnvironment": null,
+      "defaultImage": "/tiles/global/spawns/1.png",
+      "defaultWidth": null,
+      "defaultHeight": null,
+      "defaultOffsetX": null,
+      "defaultOffsetY": null,
+      "defaultOpacity": 1,
+      "environmentOverrides": {}
+    },
+    {
+      "id": 21,
+      "key": "spawn-2",
+      "name": "Spawn 2",
+      "category": "Spawns",
+      "size": 1,
+      "wall": false,
+      "zIndex": 2,
+      "fallbackColor": "#e84c3a",
+      "showInGamemode": null,
+      "showInEnvironment": null,
+      "defaultImage": "/tiles/global/spawns/2.png",
+      "defaultWidth": null,
+      "defaultHeight": null,
+      "defaultOffsetX": null,
+      "defaultOffsetY": null,
+      "defaultOpacity": 1,
+      "environmentOverrides": {}
+    },
+    {
+      "id": 22,
+      "key": "spawn-3",
+      "name": "Spawn 3",
+      "category": "Spawns",
+      "size": 1,
+      "wall": false,
+      "zIndex": 2,
+      "fallbackColor": "#e8c547",
+      "showInGamemode": null,
+      "showInEnvironment": null,
+      "defaultImage": "/tiles/global/spawns/3.png",
+      "defaultWidth": null,
+      "defaultHeight": null,
+      "defaultOffsetX": null,
+      "defaultOffsetY": null,
+      "defaultOpacity": 1,
+      "environmentOverrides": {}
+    },
+    {
+      "id": 23,
+      "key": "spawn-4",
+      "name": "Spawn 4",
+      "category": "Spawns",
+      "size": 1,
+      "wall": false,
+      "zIndex": 2,
+      "fallbackColor": "#52e88a",
+      "showInGamemode": null,
+      "showInEnvironment": null,
+      "defaultImage": "/tiles/global/spawns/4.png",
+      "defaultWidth": null,
+      "defaultHeight": null,
+      "defaultOffsetX": null,
+      "defaultOffsetY": null,
+      "defaultOpacity": 1,
+      "environmentOverrides": {}
+    },
+    {
+      "id": 24,
+      "key": "objective",
+      "name": "Objective",
+      "category": "Spawns",
+      "size": 1,
+      "wall": false,
+      "zIndex": 3,
+      "fallbackColor": "#3ad9c6",
+      "showInGamemode": null,
+      "showInEnvironment": null,
+      "defaultImage": "/tiles/global/objectives/gem.png",
+      "defaultWidth": null,
+      "defaultHeight": null,
+      "defaultOffsetX": null,
+      "defaultOffsetY": null,
+      "defaultOpacity": 1,
+      "environmentOverrides": {}
+    },
+    {
+      "id": 30,
+      "key": "tnt",
+      "name": "TNT",
+      "category": "Special",
+      "size": 1,
+      "wall": false,
+      "zIndex": 3,
+      "fallbackColor": "#e25a2a",
+      "showInGamemode": null,
+      "showInEnvironment": null,
+      "defaultImage": "/tiles/global/special-tiles/special-tiles/tnt.png",
+      "defaultWidth": null,
+      "defaultHeight": null,
+      "defaultOffsetX": null,
+      "defaultOffsetY": null,
+      "defaultOpacity": 1,
+      "environmentOverrides": {}
+    },
+    {
+      "id": 31,
+      "key": "speed-tile",
+      "name": "Speed Tile",
+      "category": "Special",
+      "size": 1,
+      "wall": false,
+      "zIndex": 2,
+      "fallbackColor": "#47c7e8",
+      "showInGamemode": null,
+      "showInEnvironment": null,
+      "defaultImage": "/tiles/global/special-tiles/special-tiles/speed-tile.png",
+      "defaultWidth": null,
+      "defaultHeight": null,
+      "defaultOffsetX": null,
+      "defaultOffsetY": null,
+      "defaultOpacity": 1,
+      "environmentOverrides": {}
+    },
+    {
+      "id": 32,
+      "key": "slow-tile",
+      "name": "Slow Tile",
+      "category": "Special",
+      "size": 1,
+      "wall": false,
+      "zIndex": 2,
+      "fallbackColor": "#6a7ce8",
+      "showInGamemode": null,
+      "showInEnvironment": null,
+      "defaultImage": "/tiles/global/special-tiles/special-tiles/slow-tile.png",
+      "defaultWidth": null,
+      "defaultHeight": null,
+      "defaultOffsetX": null,
+      "defaultOffsetY": null,
+      "defaultOpacity": 1,
+      "environmentOverrides": {}
+    },
+    {
+      "id": 33,
+      "key": "spikes",
+      "name": "Spikes",
+      "category": "Special",
+      "size": 1,
+      "wall": false,
+      "zIndex": 2,
+      "fallbackColor": "#9b9b9b",
+      "showInGamemode": null,
+      "showInEnvironment": null,
+      "defaultImage": "/tiles/global/special-tiles/special-tiles/spikes.png",
+      "defaultWidth": null,
+      "defaultHeight": null,
+      "defaultOffsetX": null,
+      "defaultOffsetY": null,
+      "defaultOpacity": 1,
+      "environmentOverrides": {}
+    },
+    {
+      "id": 34,
+      "key": "heal-pad",
+      "name": "Heal Pad",
+      "category": "Special",
+      "size": 2,
+      "wall": false,
+      "zIndex": 2,
+      "fallbackColor": "#52e88a",
+      "showInGamemode": null,
+      "showInEnvironment": null,
+      "defaultImage": "/tiles/global/special-tiles/special-tiles/heal-pad.png",
+      "defaultWidth": null,
+      "defaultHeight": null,
+      "defaultOffsetX": null,
+      "defaultOffsetY": null,
+      "defaultOpacity": 1,
+      "environmentOverrides": {}
+    },
+    {
+      "id": 35,
+      "key": "smoke",
+      "name": "Smoke",
+      "category": "Special",
+      "size": 1,
+      "wall": false,
+      "zIndex": 3,
+      "fallbackColor": "#3b3b3b",
+      "showInGamemode": null,
+      "showInEnvironment": null,
+      "defaultImage": "/tiles/global/special-tiles/special-tiles/smoke.png",
+      "defaultWidth": null,
+      "defaultHeight": null,
+      "defaultOffsetX": null,
+      "defaultOffsetY": null,
+      "defaultOpacity": 1,
+      "environmentOverrides": {}
+    },
+    {
+      "id": 36,
+      "key": "ice-tile",
+      "name": "Ice Tile",
+      "category": "Special",
+      "size": 1,
+      "wall": false,
+      "zIndex": 1,
+      "fallbackColor": "#7fc8e6",
+      "showInGamemode": null,
+      "showInEnvironment": null,
+      "defaultImage": "/tiles/global/special-tiles/ice-tile/00000000.png",
+      "defaultWidth": null,
+      "defaultHeight": null,
+      "defaultOffsetX": null,
+      "defaultOffsetY": null,
+      "defaultOpacity": 1,
+      "environmentOverrides": {}
+    },
+    {
+      "id": 37,
+      "key": "snow-tile",
+      "name": "Snow Tile",
+      "category": "Special",
+      "size": 1,
+      "wall": false,
+      "zIndex": 1,
+      "fallbackColor": "#d0e8f5",
+      "showInGamemode": null,
+      "showInEnvironment": null,
+      "defaultImage": "/tiles/global/special-tiles/snow-tile/00000000.png",
+      "defaultWidth": null,
+      "defaultHeight": null,
+      "defaultOffsetX": null,
+      "defaultOffsetY": null,
+      "defaultOpacity": 1,
+      "environmentOverrides": {}
+    },
+    {
+      "id": 40,
+      "key": "rail",
+      "name": "Rail",
+      "category": "Special",
+      "size": 1,
+      "wall": false,
+      "zIndex": 2,
+      "fallbackColor": "#6b6f78",
+      "showInGamemode": null,
+      "showInEnvironment": null,
+      "defaultImage": "/tiles/global/special-tiles/trains/rails/single.png",
+      "defaultWidth": null,
+      "defaultHeight": null,
+      "defaultOffsetX": null,
+      "defaultOffsetY": null,
+      "defaultOpacity": 1,
+      "environmentOverrides": {}
+    },
+    {
+      "id": 41,
+      "key": "red-train",
+      "name": "Red Train",
+      "category": "Special",
+      "size": 1,
+      "wall": false,
+      "zIndex": 3,
+      "fallbackColor": "#c84040",
+      "showInGamemode": null,
+      "showInEnvironment": null,
+      "defaultImage": "/tiles/global/special-tiles/trains/red-train/single.png",
+      "defaultWidth": null,
+      "defaultHeight": null,
+      "defaultOffsetX": null,
+      "defaultOffsetY": null,
+      "defaultOpacity": 1,
+      "environmentOverrides": {}
+    },
+    {
+      "id": 42,
+      "key": "yellow-train",
+      "name": "Yellow Train",
+      "category": "Special",
+      "size": 1,
+      "wall": false,
+      "zIndex": 3,
+      "fallbackColor": "#c8b440",
+      "showInGamemode": null,
+      "showInEnvironment": null,
+      "defaultImage": "/tiles/global/special-tiles/trains/yellow-train/single.png",
+      "defaultWidth": null,
+      "defaultHeight": null,
+      "defaultOffsetX": null,
+      "defaultOffsetY": null,
+      "defaultOpacity": 1,
+      "environmentOverrides": {}
+    },
+    {
+      "id": 43,
+      "key": "green-train",
+      "name": "Green Train",
+      "category": "Special",
+      "size": 1,
+      "wall": false,
+      "zIndex": 3,
+      "fallbackColor": "#40c870",
+      "showInGamemode": null,
+      "showInEnvironment": null,
+      "defaultImage": "/tiles/global/special-tiles/trains/green-train/single.png",
+      "defaultWidth": null,
+      "defaultHeight": null,
+      "defaultOffsetX": null,
+      "defaultOffsetY": null,
+      "defaultOpacity": 1,
+      "environmentOverrides": {}
+    },
+    {
+      "id": 50,
+      "key": "jumppad-right",
+      "name": "Jump Pad →",
+      "category": "Jump Pads",
+      "size": 2,
+      "wall": false,
+      "zIndex": 2,
+      "fallbackColor": "#ffe14a",
+      "showInGamemode": null,
+      "showInEnvironment": null,
+      "defaultImage": "/tiles/global/jump-pads/right.png",
+      "defaultWidth": null,
+      "defaultHeight": null,
+      "defaultOffsetX": null,
+      "defaultOffsetY": null,
+      "defaultOpacity": 1,
+      "environmentOverrides": {}
+    },
+    {
+      "id": 51,
+      "key": "jumppad-left",
+      "name": "Jump Pad ←",
+      "category": "Jump Pads",
+      "size": 2,
+      "wall": false,
+      "zIndex": 2,
+      "fallbackColor": "#ffe14a",
+      "showInGamemode": null,
+      "showInEnvironment": null,
+      "defaultImage": "/tiles/global/jump-pads/left.png",
+      "defaultWidth": null,
+      "defaultHeight": null,
+      "defaultOffsetX": null,
+      "defaultOffsetY": null,
+      "defaultOpacity": 1,
+      "environmentOverrides": {}
+    },
+    {
+      "id": 52,
+      "key": "jumppad-top",
+      "name": "Jump Pad ↑",
+      "category": "Jump Pads",
+      "size": 2,
+      "wall": false,
+      "zIndex": 2,
+      "fallbackColor": "#ffe14a",
+      "showInGamemode": null,
+      "showInEnvironment": null,
+      "defaultImage": "/tiles/global/jump-pads/top.png",
+      "defaultWidth": null,
+      "defaultHeight": null,
+      "defaultOffsetX": null,
+      "defaultOffsetY": null,
+      "defaultOpacity": 1,
+      "environmentOverrides": {}
+    },
+    {
+      "id": 53,
+      "key": "jumppad-bottom",
+      "name": "Jump Pad ↓",
+      "category": "Jump Pads",
+      "size": 2,
+      "wall": false,
+      "zIndex": 2,
+      "fallbackColor": "#ffe14a",
+      "showInGamemode": null,
+      "showInEnvironment": null,
+      "defaultImage": "/tiles/global/jump-pads/bottom.png",
+      "defaultWidth": null,
+      "defaultHeight": null,
+      "defaultOffsetX": null,
+      "defaultOffsetY": null,
+      "defaultOpacity": 1,
+      "environmentOverrides": {}
+    },
+    {
+      "id": 54,
+      "key": "jumppad-bottom-right",
+      "name": "Jump Pad ↘",
+      "category": "Jump Pads",
+      "size": 2,
+      "wall": false,
+      "zIndex": 2,
+      "fallbackColor": "#ffe14a",
+      "showInGamemode": null,
+      "showInEnvironment": null,
+      "defaultImage": "/tiles/global/jump-pads/bottom-right.png",
+      "defaultWidth": null,
+      "defaultHeight": null,
+      "defaultOffsetX": null,
+      "defaultOffsetY": null,
+      "defaultOpacity": 1,
+      "environmentOverrides": {}
+    },
+    {
+      "id": 55,
+      "key": "jumppad-top-left",
+      "name": "Jump Pad ↖",
+      "category": "Jump Pads",
+      "size": 2,
+      "wall": false,
+      "zIndex": 2,
+      "fallbackColor": "#ffe14a",
+      "showInGamemode": null,
+      "showInEnvironment": null,
+      "defaultImage": "/tiles/global/jump-pads/top-left.png",
+      "defaultWidth": null,
+      "defaultHeight": null,
+      "defaultOffsetX": null,
+      "defaultOffsetY": null,
+      "defaultOpacity": 1,
+      "environmentOverrides": {}
+    },
+    {
+      "id": 56,
+      "key": "jumppad-bottom-left",
+      "name": "Jump Pad ↙",
+      "category": "Jump Pads",
+      "size": 2,
+      "wall": false,
+      "zIndex": 2,
+      "fallbackColor": "#ffe14a",
+      "showInGamemode": null,
+      "showInEnvironment": null,
+      "defaultImage": "/tiles/global/jump-pads/bottom-left.png",
+      "defaultWidth": null,
+      "defaultHeight": null,
+      "defaultOffsetX": null,
+      "defaultOffsetY": null,
+      "defaultOpacity": 1,
+      "environmentOverrides": {}
+    },
+    {
+      "id": 57,
+      "key": "jumppad-top-right",
+      "name": "Jump Pad ↗",
+      "category": "Jump Pads",
+      "size": 2,
+      "wall": false,
+      "zIndex": 2,
+      "fallbackColor": "#ffe14a",
+      "showInGamemode": null,
+      "showInEnvironment": null,
+      "defaultImage": "/tiles/global/jump-pads/top-right.png",
+      "defaultWidth": null,
+      "defaultHeight": null,
+      "defaultOffsetX": null,
+      "defaultOffsetY": null,
+      "defaultOpacity": 1,
+      "environmentOverrides": {}
+    },
+    {
+      "id": 60,
+      "key": "teleporter-blue",
+      "name": "Teleporter (Blue)",
+      "category": "Teleporters",
+      "size": 2,
+      "wall": false,
+      "zIndex": 3,
+      "fallbackColor": "#3a7ee8",
+      "showInGamemode": null,
+      "showInEnvironment": null,
+      "defaultImage": "/tiles/global/teleporters/blue.png",
+      "defaultWidth": null,
+      "defaultHeight": null,
+      "defaultOffsetX": null,
+      "defaultOffsetY": null,
+      "defaultOpacity": 1,
+      "environmentOverrides": {}
+    },
+    {
+      "id": 61,
+      "key": "teleporter-green",
+      "name": "Teleporter (Green)",
+      "category": "Teleporters",
+      "size": 2,
+      "wall": false,
+      "zIndex": 3,
+      "fallbackColor": "#3ae87a",
+      "showInGamemode": null,
+      "showInEnvironment": null,
+      "defaultImage": "/tiles/global/teleporters/green.png",
+      "defaultWidth": null,
+      "defaultHeight": null,
+      "defaultOffsetX": null,
+      "defaultOffsetY": null,
+      "defaultOpacity": 1,
+      "environmentOverrides": {}
+    },
+    {
+      "id": 62,
+      "key": "teleporter-red",
+      "name": "Teleporter (Red)",
+      "category": "Teleporters",
+      "size": 2,
+      "wall": false,
+      "zIndex": 3,
+      "fallbackColor": "#e84c3a",
+      "showInGamemode": null,
+      "showInEnvironment": null,
+      "defaultImage": "/tiles/global/teleporters/red.png",
+      "defaultWidth": null,
+      "defaultHeight": null,
+      "defaultOffsetX": null,
+      "defaultOffsetY": null,
+      "defaultOpacity": 1,
+      "environmentOverrides": {}
+    },
+    {
+      "id": 63,
+      "key": "teleporter-yellow",
+      "name": "Teleporter (Yellow)",
+      "category": "Teleporters",
+      "size": 2,
+      "wall": false,
+      "zIndex": 3,
+      "fallbackColor": "#e8c547",
+      "showInGamemode": null,
+      "showInEnvironment": null,
+      "defaultImage": "/tiles/global/teleporters/yellow.png",
+      "defaultWidth": null,
+      "defaultHeight": null,
+      "defaultOffsetX": null,
+      "defaultOffsetY": null,
+      "defaultOpacity": 1,
+      "environmentOverrides": {}
+    }
+  ],
+  "legacyTileData": {
+    "1000": [
+      0.7194244604316548,
+      1.3165467625899283,
+      15,
+      -30,
+      1,
+      5
+    ],
+    "1001": [
+      0.7194244604316548,
+      1.0359712230215827,
+      15,
+      -30,
+      1,
+      5
+    ],
+    "1010": [
+      0.8474576271186441,
+      2.1,
+      16,
+      -80,
+      1,
+      5
+    ],
+    "1100": [
+      0.8695652173913044,
+      2.3,
+      0,
+      -100,
+      1,
+      5
+    ],
+    "Wall": [
+      1,
+      1.75,
+      0,
+      -50,
+      1,
+      5
+    ],
+    "Bush": [
+      1,
+      1.8,
+      0,
+      -51,
+      1,
+      5
+    ],
+    "Wall2": [
+      1,
+      1.75,
+      0,
+      -50,
+      1,
+      5
+    ],
+    "Crate": [
+      1,
+      1.8,
+      0,
+      -51,
+      1,
+      5
+    ],
+    "Barrel": [
+      1,
+      1.69,
+      0,
+      -42.5,
+      1,
+      5
+    ],
+    "Cactus": [
+      1.1,
+      1.837,
+      -5,
+      -51,
+      1,
+      5
+    ],
+    "Water": [
+      1,
+      1,
+      0,
+      0,
+      1,
+      5
+    ],
+    "Fence": [
+      1.08,
+      1.71,
+      -4,
+      -50,
+      1,
+      5
+    ],
+    "Rope Fence": [
+      1,
+      1.75,
+      0,
+      -50,
+      1,
+      5
+    ],
+    "Horizontal": [
+      1.05,
+      1.323,
+      -2.5,
+      -12.5,
+      1,
+      5
+    ],
+    "Vertical": [
+      1,
+      1.84,
+      0,
+      -50,
+      1,
+      5
+    ],
+    "0001": [
+      0.7194244604316548,
+      1,
+      15,
+      -28,
+      1,
+      5
+    ],
+    "0010": [
+      1,
+      1.85,
+      0,
+      -55,
+      1,
+      5
+    ],
+    "0011": [
+      0.8333333333333334,
+      1.85,
+      17,
+      -55,
+      1,
+      5
+    ],
+    "0100": [
+      1,
+      1.85,
+      0,
+      -55,
+      1,
+      5
+    ],
+    "0101": [
+      0.8771929824561404,
+      1.85,
+      0,
+      -55,
+      1,
+      5
+    ],
+    "0110": [
+      1,
+      1.75,
+      0,
+      -50,
+      1,
+      5
+    ],
+    "TL": [
+      1,
+      1.75,
+      0,
+      -50,
+      1,
+      5
+    ],
+    "TR": [
+      1,
+      1.75,
+      0,
+      -50,
+      1,
+      5
+    ],
+    "BL": [
+      1,
+      1.75,
+      0,
+      -50,
+      1,
+      5
+    ],
+    "BR": [
+      1,
+      1.75,
+      0,
+      -50,
+      1,
+      5
+    ],
+    "Ver": [
+      1,
+      1.75,
+      0,
+      -50,
+      1,
+      5
+    ],
+    "T": [
+      1,
+      1.75,
+      0,
+      -50,
+      1,
+      5
+    ],
+    "R": [
+      1,
+      1.75,
+      0,
+      -50,
+      1,
+      5
+    ],
+    "Post": [
+      1,
+      1.8,
+      0,
+      -50,
+      1,
+      5
+    ],
+    "Post_TR": [
+      1.5,
+      2.47,
+      0,
+      -116.75,
+      1,
+      5
+    ],
+    "Post_R": [
+      1.5,
+      1.8,
+      0,
+      -50,
+      1,
+      5
+    ],
+    "Post_T": [
+      1,
+      2.47,
+      0,
+      -116.75,
+      1,
+      5
+    ],
+    "B0001": [
+      1,
+      1.6,
+      0,
+      -55,
+      1,
+      5
+    ],
+    "B0010": [
+      1,
+      1.8,
+      0,
+      -55,
+      1,
+      5
+    ],
+    "B0011": [
+      1,
+      1.5,
+      0,
+      -55,
+      1,
+      5
+    ],
+    "B0100": [
+      1,
+      1.8,
+      0,
+      -55,
+      1,
+      5
+    ],
+    "B0101": [
+      1,
+      1.5,
+      0,
+      -55,
+      1,
+      5
+    ],
+    "B1000": [
+      1,
+      1.8,
+      0,
+      -55,
+      1,
+      5
+    ],
+    "B1001": [
+      1,
+      1.05,
+      0,
+      -55,
+      1,
+      5
+    ],
+    "B1010": [
+      1,
+      2,
+      0,
+      -75,
+      1,
+      5
+    ],
+    "B1100": [
+      1,
+      2,
+      0,
+      -75,
+      1,
+      5
+    ],
+    "BFence": [
+      1,
+      1.8,
+      0,
+      -55,
+      1,
+      5
+    ],
+    "Skull": [
+      1,
+      1.08,
+      0,
+      0,
+      1,
+      5
+    ],
+    "TNT": [
+      1,
+      1.75,
+      0,
+      -50,
+      1,
+      5
+    ],
+    "Unbreakable": [
+      1,
+      1.75,
+      0,
+      -50,
+      1,
+      5
+    ],
+    "Blue Spawn": [
+      1.7,
+      1.7,
+      -35,
+      -35,
+      0.85,
+      7
+    ],
+    "Red Spawn": [
+      1.7,
+      1.7,
+      -35,
+      -35,
+      0.85,
+      7
+    ],
+    "Blue Respawn": [
+      1.7,
+      1.7,
+      -35,
+      -35,
+      0.85,
+      7
+    ],
+    "Red Respawn": [
+      1.7,
+      1.7,
+      -35,
+      -35,
+      0.85,
+      7
+    ],
+    "Trio Spawn": [
+      1.7,
+      1.7,
+      -35,
+      -35,
+      0.85,
+      7
+    ],
+    "Yellow Spawn": [
+      1.7,
+      1.7,
+      -35,
+      -35,
+      0.85,
+      7
+    ],
+    "Objective": [
+      2,
+      2.21,
+      -50,
+      -115,
+      1,
+      10
+    ],
+    "Smoke": [
+      1.4,
+      1.54,
+      -15,
+      -35,
+      1,
+      5
+    ],
+    "Heal Pad": [
+      1,
+      1.12,
+      0,
+      0,
+      1,
+      5
+    ],
+    "Slow Tile": [
+      1,
+      1.11,
+      0,
+      0,
+      1,
+      5
+    ],
+    "Speed Tile": [
+      1,
+      1.11,
+      0,
+      0,
+      1,
+      5
+    ],
+    "Spikes": [
+      1,
+      1.5,
+      0,
+      -33,
+      1,
+      5
+    ],
+    "Bumper": [
+      1,
+      1.8,
+      0,
+      -50,
+      1,
+      5
+    ],
+    "Jump R": [
+      1,
+      1.12,
+      0,
+      0,
+      1,
+      5
+    ],
+    "Jump L": [
+      1,
+      1.12,
+      0,
+      0,
+      1,
+      5
+    ],
+    "Jump T": [
+      1,
+      1.12,
+      0,
+      0,
+      1,
+      5
+    ],
+    "Jump B": [
+      1,
+      1.12,
+      0,
+      0,
+      1,
+      5
+    ],
+    "Jump BR": [
+      1,
+      1.12,
+      0,
+      0,
+      1,
+      5
+    ],
+    "Jump TL": [
+      1,
+      1.12,
+      0,
+      0,
+      1,
+      5
+    ],
+    "Jump BL": [
+      1,
+      1.12,
+      0,
+      0,
+      1,
+      5
+    ],
+    "Jump TR": [
+      1,
+      1.12,
+      0,
+      0,
+      1,
+      5
+    ],
+    "Teleporter Blue": [
+      1,
+      1,
+      0,
+      0,
+      1,
+      5
+    ],
+    "Teleporter Green": [
+      1,
+      1,
+      0,
+      0,
+      1,
+      5
+    ],
+    "Teleporter Red": [
+      1,
+      1,
+      0,
+      0,
+      1,
+      5
+    ],
+    "Teleporter Yellow": [
+      1,
+      1,
+      0,
+      0,
+      1,
+      5
+    ],
+    "Bolt": [
+      1,
+      1.18,
+      0,
+      0,
+      1,
+      5
+    ],
+    "TokenBlue": [
+      1.7,
+      1.7,
+      -35,
+      -35,
+      1,
+      7
+    ],
+    "TokenRed": [
+      1.7,
+      1.7,
+      -35,
+      -35,
+      1,
+      7
+    ],
+    "Box": [
+      1,
+      1.75,
+      0,
+      -50,
+      1,
+      5
+    ],
+    "Bot_Zone": [
+      1.9,
+      1.9,
+      -46.5,
+      -46.5,
+      0.85,
+      7
+    ],
+    "Boss Zone": [
+      7,
+      7,
+      -300,
+      -300,
+      1,
+      10
+    ],
+    "Monster Zone": [
+      7,
+      7,
+      -300,
+      -300,
+      1,
+      10
+    ],
+    "Track": [
+      1,
+      1,
+      0,
+      0,
+      1,
+      2
+    ],
+    "Base Ike Blue": [
+      4.8,
+      6,
+      -190,
+      -270,
+      1,
+      10
+    ],
+    "Small Ike Blue": [
+      3,
+      3.82,
+      -100,
+      -145,
+      1,
+      10
+    ],
+    "Base Ike Red": [
+      4.8,
+      6,
+      -190,
+      -270,
+      1,
+      10
+    ],
+    "Small Ike Red": [
+      3,
+      3.4825,
+      -100,
+      -110,
+      1,
+      10
+    ],
+    "GodzillaCity1": [
+      1,
+      1.6,
+      0,
+      -45,
+      1,
+      5
+    ],
+    "GodzillaCity2": [
+      1,
+      1.75,
+      0,
+      -53,
+      1,
+      5
+    ],
+    "GodzillaCity3": [
+      1,
+      1.9,
+      0,
+      -75,
+      1,
+      5
+    ],
+    "GodzillaCity4": [
+      1,
+      2.1,
+      0,
+      -95,
+      1,
+      5
+    ],
+    "GodzillaExplosive": [
+      1,
+      1.8,
+      0,
+      -51,
+      1,
+      5
+    ],
+    "GodzillaSpawn": [
+      1.7,
+      1.7,
+      -27.5,
+      -27.5,
+      0.85,
+      7
+    ],
+    "Escape": [
+      3.5,
+      3.7,
+      -172,
+      -170,
+      1,
+      10
+    ],
+    "OniHunt": [
+      5,
+      5,
+      -200,
+      -225,
+      1,
+      10
+    ],
+    "GenericBoss": [
+      5,
+      5,
+      -200,
+      -225,
+      1,
+      10
+    ],
+    "BossSpawn": [
+      5,
+      5,
+      -200,
+      -225,
+      1,
+      10
+    ],
+    "KaijuBoss": [
+      5,
+      5,
+      -200,
+      -225,
+      1,
+      10
+    ],
+    "SubwayRun1": [
+      1,
+      0.9,
+      0,
+      40,
+      1,
+      5
+    ],
+    "SubwayRun2": [
+      0.85,
+      1,
+      15,
+      0,
+      1,
+      5
+    ],
+    "Rails": [
+      1,
+      1,
+      0,
+      0,
+      1,
+      2
+    ],
+    "IceTile": [
+      1,
+      1,
+      0,
+      0,
+      1,
+      5
+    ],
+    "SnowTile": [
+      1,
+      1,
+      0,
+      0,
+      1,
+      5
+    ],
+    "TreasurePad1": [
+      2.1,
+      2.21,
+      -53,
+      -53,
+      1,
+      7
+    ],
+    "TreasurePad2": [
+      2.1,
+      2.21,
+      -53,
+      -53,
+      1,
+      7
+    ],
+    "Train_Fence": [
+      1.85,
+      1.7,
+      -44,
+      -90,
+      1,
+      5
+    ],
+    "Train_Ver": [
+      1.3,
+      2.5,
+      -15,
+      -140,
+      1,
+      5
+    ],
+    "Train_TL": [
+      2,
+      2.4,
+      -82,
+      -155,
+      1,
+      3
+    ],
+    "Train_TR": [
+      2,
+      2.4,
+      -12,
+      -155,
+      1,
+      5
+    ],
+    "Train_BL": [
+      2,
+      2.4,
+      -82,
+      -90,
+      1,
+      3
+    ],
+    "Train_BR": [
+      2,
+      2.4,
+      -12,
+      -90,
+      1,
+      5
+    ],
+    "Amulet": [
+      1.2,
+      2.0585,
+      -10,
+      -50,
+      1,
+      10
+    ],
+    "Bomb": [
+      1.4,
+      2.2,
+      -20,
+      -85,
+      1,
+      10
+    ],
+    "Box_Loaded": [
+      1,
+      1.75,
+      0,
+      -50,
+      1,
+      5
+    ]
+  },
+  "legacyObjectiveData": {
+    "Gem_Grab": [
+      2,
+      2,
+      -50,
+      -50,
+      1,
+      10
+    ],
+    "Heist": [
+      2,
+      2.21,
+      -50,
+      -115,
+      1,
+      10
+    ],
+    "Bounty": [
+      1.2,
+      2.0585,
+      -10,
+      -50,
+      1,
+      10
+    ],
+    "Brawl_Ball": [
+      1.3,
+      1.495,
+      -15,
+      -20,
+      1,
+      10
+    ],
+    "Siege": {
+      "upper": [
+        2.4,
+        3.168,
+        -47,
+        -192,
+        1,
+        10
+      ],
+      "lower": [
+        2.4,
+        3.396,
+        -93,
+        -214,
+        1,
+        10
+      ]
+    },
+    "Lone_Star": [
+      1.2,
+      2.0585,
+      -10,
+      -50,
+      1,
+      10
+    ],
+    "Takedown": [
+      1.2,
+      1.9,
+      -10,
+      -50,
+      1,
+      10
+    ],
+    "Snowtel_Thieves": [
+      4,
+      4,
+      -150,
+      -150,
+      1,
+      10
+    ],
+    "Hot_Zone": [
+      7,
+      7,
+      -300,
+      -300,
+      1,
+      10
+    ],
+    "Basket_Brawl": [
+      1.3,
+      1.495,
+      -20,
+      -20,
+      1,
+      10
+    ],
+    "Volley_Brawl": [
+      1.3,
+      1.495,
+      -20,
+      -20,
+      1,
+      10
+    ],
+    "Hold_The_Trophy": [
+      2.5,
+      2.5,
+      -75,
+      -75,
+      1,
+      10
+    ],
+    "Bot_Zone": [
+      1.9,
+      1.9,
+      -46.5,
+      -46.5,
+      0.85,
+      7
+    ],
+    "Bot_Drop": [
+      1.9,
+      1.9,
+      -46.5,
+      -46.5,
+      0.85,
+      7
+    ],
+    "Paint_Brawl": [
+      1.4,
+      2.2,
+      -20,
+      -85,
+      1,
+      10
+    ],
+    "Spirit_Wars": {
+      "upper": [
+        2.4,
+        3.168,
+        -47,
+        -192,
+        1,
+        10
+      ],
+      "lower": [
+        2.4,
+        3.396,
+        -93,
+        -214,
+        1,
+        10
+      ]
+    },
+    "Hockey": [
+      1.5,
+      1.695,
+      -25,
+      -26,
+      1,
+      10
+    ],
+    "Token_Run": [
+      4,
+      4,
+      -150,
+      -150,
+      1,
+      10
+    ],
+    "Dodgebrawl": [
+      1.3,
+      1.495,
+      -15,
+      -20,
+      1,
+      10
+    ],
+    "Safe_Blast": [
+      2,
+      2.21,
+      -50,
+      -115,
+      1,
+      10
+    ],
+    "Love_Bombing": [
+      1.7,
+      1.85,
+      -25,
+      -60,
+      1,
+      10
+    ]
+  },
+  "legacyEnvironmentObjectiveData": {
+    "City": {
+      "Gem_Grab": [
+        2.4,
+        2.64,
+        -56,
+        -85,
+        1,
+        10
+      ]
+    },
+    "Mortuary": {
+      "Volley_Brawl": [
+        1.7,
+        1.7,
+        -36,
+        -30,
+        1,
+        10
+      ]
+    },
+    "Retropolis": {
+      "Gem_Grab": [
+        2.4,
+        2.64,
+        -56,
+        -85,
+        1,
+        10
+      ]
+    },
+    "Pirate_Ship": {
+      "Gem_Grab": [
+        2.13,
+        2.5,
+        -56,
+        -65,
+        1,
+        10
+      ]
+    },
+    "Arcade": {
+      "Gem_Grab": [
+        2.4,
+        2.64,
+        -56,
+        -85,
+        1,
+        10
+      ]
+    },
+    "Bazaar": {
+      "Gem_Grab": [
+        2.4,
+        2.64,
+        -56,
+        -85,
+        1,
+        10
+      ]
+    },
+    "Super_City": {
+      "Gem_Grab": [
+        2.3,
+        2.4,
+        -69,
+        -60,
+        1,
+        10
+      ],
+      "Heist": [
+        2.16,
+        2.8800000000000003,
+        -57,
+        -180,
+        1,
+        10
+      ]
+    },
+    "Gift_Shop": {
+      "Gem_Grab": [
+        2.4,
+        2.276,
+        -69,
+        -60,
+        1,
+        10
+      ],
+      "Hold_The_Trophy": [
+        1.9,
+        3.2,
+        -45,
+        -125,
+        1,
+        10
+      ]
+    },
+    "Bandstand": {
+      "Gem_Grab": [
+        2.4,
+        2.64,
+        -56,
+        -85,
+        1,
+        10
+      ]
+    },
+    "Snowtel": {
+      "Gem_Grab": [
+        2.4,
+        2.64,
+        -56,
+        -85,
+        1,
+        10
+      ]
+    },
+    "Scrapyard": {
+      "Gem_Grab": [
+        2.4,
+        2.64,
+        -56,
+        -85,
+        1,
+        10
+      ]
+    },
+    "Starr_Force": {
+      "Gem_Grab": [
+        2,
+        2.24,
+        -50,
+        -60,
+        1,
+        10
+      ]
+    },
+    "Water_Park": {
+      "Gem_Grab": [
+        2.4,
+        2.64,
+        -56,
+        -85,
+        1,
+        10
+      ]
+    },
+    "Castle_Courtyard": {
+      "Gem_Grab": [
+        2.4,
+        2.64,
+        -56,
+        -85,
+        1,
+        10
+      ]
+    },
+    "Brawlywood": {
+      "Gem_Grab": [
+        2.4,
+        2.64,
+        -56,
+        -85,
+        1,
+        10
+      ]
+    },
+    "Fighting_Game": {
+      "Gem_Grab": [
+        2.42,
+        2.54,
+        -54,
+        -76,
+        1,
+        10
+      ],
+      "Heist": [
+        1.8,
+        3.204,
+        -37.5,
+        -175,
+        1,
+        10
+      ]
+    },
+    "Biodome": {
+      "Gem_Grab": [
+        2.4,
+        2.5,
+        -65,
+        -78,
+        1,
+        10
+      ]
+    },
+    "Stunt_Show": {
+      "Gem_Grab": [
+        2.18,
+        2.42,
+        -59,
+        -60,
+        1,
+        10
+      ]
+    },
+    "Deep_Sea": {
+      "Gem_Grab": [
+        2.18,
+        2.42,
+        -59,
+        -60,
+        1,
+        10
+      ],
+      "Heist": [
+        2.4,
+        3.204,
+        -75,
+        -190,
+        1,
+        10
+      ],
+      "Paint_Brawl": [
+        1.7,
+        2.5,
+        -30,
+        -75,
+        1,
+        10
+      ]
+    },
+    "Ghost_Station": {
+      "Gem_Grab": [
+        2.7,
+        2.376,
+        -85,
+        -70,
+        1,
+        10
+      ]
+    },
+    "Candyland": {
+      "Gem_Grab": [
+        2.4,
+        2.64,
+        -56,
+        -85,
+        1,
+        10
+      ]
+    },
+    "The_Hub": {
+      "Gem_Grab": [
+        2.4,
+        2.276,
+        -69,
+        -60,
+        1,
+        10
+      ]
+    },
+    "Rumble_Jungle": {
+      "Gem_Grab": [
+        2.4,
+        2.276,
+        -69,
+        -60,
+        1,
+        10
+      ]
+    },
+    "Enchanted_Woods": {
+      "Gem_Grab": [
+        2.3,
+        2.3,
+        -64,
+        -60,
+        1,
+        10
+      ]
+    },
+    "Circus": {
+      "Gem_Grab": [
+        2,
+        2.4,
+        -48,
+        -50,
+        1,
+        10
+      ]
+    },
+    "Coin_Factory": {
+      "Gem_Grab": [
+        2.18,
+        2.42,
+        -59,
+        -60,
+        1,
+        10
+      ]
+    },
+    "Starr_Toon": {
+      "Gem_Grab": [
+        2.18,
+        2.42,
+        -59,
+        -60,
+        1,
+        10
+      ]
+    },
+    "Swamp_of_Love": {
+      "Gem_Grab": [
+        2.5,
+        2.64,
+        -58,
+        -95,
+        1,
+        10
+      ]
+    },
+    "Medieval_Manor": {
+      "Gem_Grab": [
+        2.7,
+        2.376,
+        -85,
+        -70,
+        1,
+        10
+      ]
+    },
+    "Super_City_2": {
+      "Gem_Grab": [
+        2.7,
+        2,
+        -85,
+        -38,
+        1,
+        10
+      ]
+    },
+    "Spongebob": {
+      "Gem_Grab": [
+        2.6,
+        2.5,
+        -60,
+        -75,
+        1,
+        10
+      ]
+    },
+    "Hockey": {
+      "Gem_Grab": [
+        2.41,
+        2.6,
+        -52,
+        -95,
+        1,
+        10
+      ]
+    },
+    "Escape_Room": {
+      "Gem_Grab": [
+        2.7,
+        2.376,
+        -85,
+        -70,
+        1,
+        10
+      ]
+    },
+    "Oddities_Shop": {
+      "Gem_Grab": [
+        2.7,
+        2.376,
+        -85,
+        -70,
+        1,
+        10
+      ]
+    },
+    "Skating_Bowl": {
+      "Gem_Grab": [
+        2.18,
+        2.42,
+        -59,
+        -60,
+        1,
+        10
+      ]
+    },
+    "Katana_Kingdom": {
+      "Gem_Grab": [
+        2.4,
+        2.54,
+        -40,
+        -70,
+        1,
+        10
+      ],
+      "Heist": [
+        2.16,
+        2.8800000000000003,
+        -57,
+        -185,
+        1,
+        10
+      ]
+    },
+    "Subway_Surfers": {
+      "Gem_Grab": [
+        2.6,
+        2.5,
+        -60,
+        -75,
+        1,
+        10
+      ]
+    },
+    "Stranger_Things": {
+      "Gem_Grab": [
+        2.9,
+        2.176,
+        -95,
+        -50,
+        1,
+        10
+      ]
+    },
+    "Stranger_Things_Lab": {
+      "Gem_Grab": [
+        2.9,
+        2.376,
+        -95,
+        -70,
+        1,
+        10
+      ]
+    },
+    "Stranger_Things_Forest": {
+      "Gem_Grab": [
+        2.9,
+        2.376,
+        -95,
+        -70,
+        1,
+        10
+      ]
+    },
+    "Stranger_Things_Lair": {
+      "Gem_Grab": [
+        2.9,
+        2.376,
+        -95,
+        -70,
+        1,
+        10
+      ]
+    },
+    "Aquarium": {
+      "Gem_Grab": [
+        2.18,
+        2.42,
+        -59,
+        -60,
+        1,
+        10
+      ]
+    },
+    "Z_SkyTheme": {
+      "Gem_Grab": [
+        2.2,
+        2.5,
+        -64,
+        -95,
+        1,
+        10
+      ]
+    },
+    "Z_CasinoTheme": {
+      "Gem_Grab": [
+        3,
+        3,
+        -100,
+        -99,
+        1,
+        10
+      ],
+      "Heist": [
+        2,
+        2.51,
+        -50,
+        -125,
+        1,
+        10
+      ]
+    },
+    "Z_BrawlClub": {
+      "Gem_Grab": [
+        2.7,
+        2.376,
+        -85,
+        -60,
+        1,
+        10
+      ]
+    },
+    "Z_JurassicTheme": {
+      "Gem_Grab": [
+        2.3,
+        2.276,
+        -59,
+        -60,
+        1,
+        10
+      ],
+      "Brawl_Ball": [
+        1.3,
+        1.595,
+        -15,
+        -30,
+        1,
+        10
+      ]
+    },
+    "Z_UnderwaterTheme": {
+      "Gem_Grab": [
+        2,
+        2.2,
+        -59,
+        -75,
+        1,
+        10
+      ]
+    },
+    "Z_CrimsonForest": {
+      "Gem_Grab": [
+        2,
+        2.1,
+        -49,
+        -43,
+        1,
+        10
+      ]
+    }
+  },
+  "legacyEnvironmentTileData": {
+    "Mine": {
+      "Wall": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Wall2": [
+        1.1,
+        1.815,
+        -5,
+        -50,
+        1,
+        5
+      ],
+      "Cactus": [
+        1,
+        1.68,
+        0,
+        -50,
+        1,
+        5
+      ]
+    },
+    "Desert": {
+      "BFence": [
+        1.08,
+        1.71,
+        -4,
+        -50,
+        1,
+        5
+      ],
+      "BHorizontal": [
+        1.05,
+        1.323,
+        -2.5,
+        -12.5,
+        1,
+        5
+      ],
+      "BVertical": [
+        1,
+        1.84,
+        0,
+        -50,
+        1,
+        5
+      ]
+    },
+    "Desert2": {
+      "BFence": [
+        1.08,
+        1.71,
+        -4,
+        -50,
+        1,
+        5
+      ],
+      "BHorizontal": [
+        1.05,
+        1.323,
+        -2.5,
+        -12.5,
+        1,
+        5
+      ],
+      "BVertical": [
+        1,
+        1.84,
+        0,
+        -50,
+        1,
+        5
+      ]
+    },
+    "Oasis": {
+      "Wall2": [
+        1,
+        1.8,
+        0,
+        -50,
+        1,
+        5
+      ],
+      "Skull": [
+        1.1,
+        1.7490000000000003,
+        -5,
+        -42.5,
+        1,
+        5
+      ]
+    },
+    "Holiday": {
+      "Wall": [
+        1.05,
+        1.8165,
+        -2.5,
+        -55,
+        1,
+        5
+      ],
+      "Wall2": [
+        1.1,
+        1.804,
+        -5,
+        -50,
+        1,
+        5
+      ],
+      "Barrel": [
+        1,
+        1.83,
+        0,
+        -52,
+        1,
+        5
+      ],
+      "Skull": [
+        1.1,
+        1.342,
+        -5,
+        -5,
+        1,
+        5
+      ]
+    },
+    "City": {
+      "Horizontal": [
+        1.05,
+        1.323,
+        -2.5,
+        -15,
+        1,
+        5
+      ],
+      "Cactus": [
+        1,
+        2.2,
+        0,
+        -82.5,
+        1,
+        5
+      ],
+      "Wall": [
+        1,
+        1.76,
+        0,
+        -50,
+        1,
+        5
+      ]
+    },
+    "Retropolis": {
+      "1000": [
+        0.7194244604316548,
+        1.4388489208633095,
+        15,
+        -30,
+        1,
+        5
+      ],
+      "1001": [
+        0.7194244604316548,
+        1.0359712230215827,
+        15,
+        -30,
+        1,
+        5
+      ],
+      "1010": [
+        1.03,
+        1.85,
+        0,
+        -60,
+        1,
+        5
+      ],
+      "1100": [
+        1.01,
+        1.85,
+        0,
+        -60,
+        1,
+        5
+      ],
+      "Wall2": [
+        1,
+        1.79,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Barrel": [
+        1,
+        1.81,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Cactus": [
+        1,
+        2.2,
+        0,
+        -82.5,
+        1,
+        5
+      ],
+      "Skull": [
+        1,
+        1.51,
+        0,
+        -45,
+        1,
+        5
+      ],
+      "Fence": [
+        1,
+        1.7,
+        0,
+        -45,
+        1,
+        5
+      ],
+      "0001": [
+        0.7194244604316548,
+        1,
+        15,
+        -28,
+        1,
+        5
+      ],
+      "0010": [
+        1,
+        1.7,
+        0,
+        -45,
+        1,
+        5
+      ],
+      "0011": [
+        1.03,
+        1.7,
+        0,
+        -45,
+        1,
+        5
+      ],
+      "0100": [
+        1,
+        1.7,
+        0,
+        -45,
+        1,
+        5
+      ],
+      "0101": [
+        1.01,
+        1.7,
+        0,
+        -45,
+        1,
+        5
+      ],
+      "0110": [
+        1,
+        1.75,
+        0,
+        -50,
+        1,
+        5
+      ]
+    },
+    "Mortuary": {
+      "Wall": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Wall2": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Cactus": [
+        1.1,
+        1.562,
+        -5,
+        -27.5,
+        1,
+        5
+      ],
+      "Skull": [
+        1,
+        1.49,
+        0,
+        -20,
+        1,
+        5
+      ],
+      "Horizontal": [
+        1,
+        1.67,
+        0,
+        -37.5,
+        1,
+        5
+      ],
+      "Fence": [
+        1,
+        1.85,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "BFence": [
+        1,
+        1.6,
+        0,
+        -34,
+        1,
+        5
+      ]
+    },
+    "Pirate_Ship": {
+      "1000": [
+        0.7,
+        2,
+        14,
+        -65,
+        1,
+        5
+      ],
+      "1001": [
+        0.725,
+        1,
+        13,
+        -51,
+        1,
+        5
+      ],
+      "1010": [
+        0.9,
+        2,
+        11,
+        -70,
+        1,
+        5
+      ],
+      "1100": [
+        0.84,
+        2,
+        0,
+        -69,
+        1,
+        5
+      ],
+      "Cactus": [
+        1,
+        1.69,
+        0,
+        -42.5,
+        1,
+        5
+      ],
+      "Skull": [
+        1,
+        1.4,
+        0,
+        -10,
+        1,
+        5
+      ],
+      "0001": [
+        0.7,
+        1,
+        14,
+        -51,
+        1,
+        5
+      ],
+      "0010": [
+        1,
+        1.85,
+        0,
+        -53,
+        1,
+        5
+      ],
+      "0011": [
+        0.9,
+        1.58,
+        11,
+        -53,
+        1,
+        5
+      ],
+      "0100": [
+        1,
+        1.85,
+        0,
+        -53,
+        1,
+        5
+      ],
+      "0101": [
+        0.84,
+        1.58,
+        0,
+        -53,
+        1,
+        5
+      ],
+      "Fence": [
+        1,
+        1.85,
+        0,
+        -53,
+        1,
+        5
+      ]
+    },
+    "Arcade": {
+      "Wall": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "Barrel": [
+        1,
+        1.91,
+        0,
+        -61,
+        1,
+        5
+      ],
+      "Cactus": [
+        1,
+        1.71,
+        0,
+        -48,
+        1,
+        5
+      ],
+      "Skull": [
+        1,
+        1.51,
+        0,
+        -45,
+        1,
+        5
+      ],
+      "Fence": [
+        1.27,
+        1.85,
+        -15,
+        -60,
+        1,
+        5
+      ],
+      "Horizontal": [
+        1.08,
+        1.54,
+        -5,
+        -30,
+        1,
+        5
+      ],
+      "Vertical": [
+        1,
+        1.71,
+        -3,
+        -42,
+        1,
+        5
+      ]
+    },
+    "Stadium": {
+      "Cactus": [
+        1,
+        2.2,
+        0,
+        -82.5,
+        1,
+        5
+      ],
+      "Fence": [
+        1.27,
+        1.85,
+        -15,
+        -60,
+        1,
+        5
+      ],
+      "Horizontal": [
+        1.08,
+        1.54,
+        -5,
+        -30,
+        1,
+        5
+      ],
+      "Vertical": [
+        1,
+        1.71,
+        -3,
+        -42,
+        1,
+        5
+      ],
+      "Wall": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Wall2": [
+        1,
+        1.79,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Barrel": [
+        1,
+        1.81,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Skull": [
+        1,
+        1.51,
+        0,
+        -45,
+        1,
+        5
+      ]
+    },
+    "Bazaar": {
+      "Wall": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Wall2": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Fence": [
+        1,
+        1.85,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "Crate": [
+        1.1,
+        1.793,
+        -5,
+        -50,
+        1,
+        5
+      ],
+      "Cactus": [
+        1.15,
+        1.8,
+        -9,
+        -48,
+        1,
+        5.5
+      ],
+      "Skull": [
+        1.1,
+        1.7490000000000003,
+        -5,
+        -42.5,
+        1,
+        5
+      ],
+      "B0001": [
+        0.7194244604316548,
+        1,
+        15,
+        -28,
+        1,
+        5
+      ],
+      "B0010": [
+        1,
+        1.85,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "B0011": [
+        0.8333333333333334,
+        1.85,
+        17,
+        -55,
+        1,
+        5
+      ],
+      "B0100": [
+        1,
+        1.85,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "B0101": [
+        0.8771929824561404,
+        1.85,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "B0110": [
+        1,
+        1.75,
+        0,
+        -50,
+        1,
+        5
+      ],
+      "B1000": [
+        0.7194244604316548,
+        1.3165467625899283,
+        15,
+        -30,
+        1,
+        5
+      ],
+      "B1001": [
+        0.7194244604316548,
+        1.0359712230215827,
+        15,
+        -30,
+        1,
+        5
+      ],
+      "B1010": [
+        0.8474576271186441,
+        2.1,
+        16,
+        -80,
+        1,
+        5
+      ],
+      "B1100": [
+        0.8695652173913044,
+        2.1,
+        0,
+        -80,
+        1,
+        5
+      ],
+      "BFence": [
+        1,
+        1.9,
+        0,
+        -56.01,
+        1,
+        5
+      ]
+    },
+    "Super_City": {
+      "1000": [
+        0.7194244604316548,
+        1.7,
+        15,
+        -30,
+        1,
+        5
+      ],
+      "1001": [
+        0.7194244604316548,
+        1.4,
+        15,
+        -50,
+        1,
+        5
+      ],
+      "1010": [
+        0.8403361344537815,
+        2,
+        16,
+        -70,
+        1,
+        5
+      ],
+      "1100": [
+        0.8695652173913044,
+        2,
+        0,
+        -70,
+        1,
+        5
+      ],
+      "Barrel": [
+        1,
+        1.81,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Bush": [
+        1.1,
+        1.81,
+        -6,
+        -53,
+        1,
+        5
+      ],
+      "Skull": [
+        1,
+        1.3,
+        0,
+        -3,
+        1,
+        5
+      ],
+      "0001": [
+        0.7194244604316548,
+        1,
+        15,
+        -28,
+        1,
+        5
+      ],
+      "0010": [
+        1,
+        1.85,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0011": [
+        0.819672131147541,
+        1.774,
+        17,
+        -47,
+        1,
+        5
+      ],
+      "0100": [
+        1,
+        1.85,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0101": [
+        0.8695652173913044,
+        1.785,
+        0,
+        -47,
+        1,
+        5
+      ],
+      "Fence": [
+        1,
+        1.85,
+        0,
+        -55,
+        1,
+        5
+      ]
+    },
+    "Gift_Shop": {
+      "1000": [
+        0.7,
+        1.8,
+        14,
+        -65,
+        1,
+        5
+      ],
+      "1001": [
+        0.725,
+        1,
+        13,
+        -51,
+        1,
+        5
+      ],
+      "1010": [
+        0.9,
+        2,
+        11,
+        -70,
+        1,
+        5
+      ],
+      "1100": [
+        0.84,
+        2,
+        0,
+        -69,
+        1,
+        5
+      ],
+      "Wall": [
+        1,
+        1.75,
+        0,
+        -47,
+        1,
+        5
+      ],
+      "Wall2": [
+        1,
+        1.65,
+        0,
+        -35,
+        1,
+        5
+      ],
+      "Cactus": [
+        1,
+        1.69,
+        0,
+        -42.5,
+        1,
+        5
+      ],
+      "Skull": [
+        1,
+        2.1,
+        0,
+        -80,
+        1,
+        5
+      ],
+      "0001": [
+        0.7,
+        1,
+        14,
+        -51,
+        1,
+        5
+      ],
+      "0010": [
+        1,
+        1.85,
+        0,
+        -53,
+        1,
+        5
+      ],
+      "0011": [
+        0.9,
+        1.58,
+        11,
+        -53,
+        1,
+        5
+      ],
+      "0100": [
+        1,
+        1.85,
+        0,
+        -53,
+        1,
+        5
+      ],
+      "0101": [
+        0.84,
+        1.58,
+        0,
+        -53,
+        1,
+        5
+      ],
+      "Fence": [
+        1,
+        1.85,
+        0,
+        -53,
+        1,
+        5
+      ]
+    },
+    "Bandstand": {
+      "1000": [
+        0.7194244604316548,
+        1.3165467625899283,
+        15,
+        -30,
+        1,
+        5
+      ],
+      "1001": [
+        0.7194244604316548,
+        1.0359712230215827,
+        15,
+        -30,
+        1,
+        5
+      ],
+      "1010": [
+        0.85,
+        2.3,
+        16,
+        -100,
+        1,
+        5
+      ],
+      "1100": [
+        0.8695652173913044,
+        2.3,
+        0,
+        -100,
+        1,
+        5
+      ],
+      "Wall": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Wall2": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Skull": [
+        1.1,
+        1.7490000000000003,
+        -5,
+        -42.5,
+        1,
+        5
+      ],
+      "0001": [
+        0.7194244604316548,
+        1,
+        15,
+        -28,
+        1,
+        5
+      ],
+      "0010": [
+        1,
+        1.85,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0011": [
+        0.85,
+        1.85,
+        15,
+        -55,
+        1,
+        5
+      ],
+      "0100": [
+        1,
+        1.85,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0101": [
+        0.8771929824561404,
+        1.85,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0110": [
+        1,
+        1.75,
+        0,
+        -50,
+        1,
+        5
+      ],
+      "Fence": [
+        1,
+        1.85,
+        0,
+        -55,
+        1,
+        5
+      ]
+    },
+    "Snowtel": {
+      "Horizontal": [
+        1.05,
+        1.323,
+        -2.5,
+        -15,
+        1,
+        5
+      ],
+      "Wall": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Wall2": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Skull": [
+        1.1,
+        1.342,
+        -5,
+        -30,
+        1,
+        5
+      ]
+    },
+    "Scrapyard": {
+      "1000": [
+        1.2,
+        1.3,
+        -10,
+        -12,
+        1,
+        5
+      ],
+      "1001": [
+        1,
+        1,
+        0,
+        -10,
+        1,
+        5
+      ],
+      "1010": [
+        1,
+        1.3,
+        0,
+        -10,
+        1,
+        5
+      ],
+      "1100": [
+        1,
+        1.3,
+        0,
+        -10,
+        1,
+        5
+      ],
+      "Cactus": [
+        1,
+        1.79,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Barrel": [
+        1,
+        1.81,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Skull": [
+        1,
+        1.51,
+        0,
+        -45,
+        1,
+        5
+      ],
+      "0010": [
+        1.1,
+        1.4,
+        -10,
+        -20,
+        1,
+        5
+      ],
+      "0011": [
+        1,
+        1,
+        0,
+        -10,
+        1,
+        5
+      ],
+      "0100": [
+        1.1,
+        1.4,
+        0,
+        -20,
+        1,
+        5
+      ],
+      "0101": [
+        1,
+        1,
+        0,
+        -10,
+        1,
+        5
+      ],
+      "0001": [
+        1.2,
+        1.1,
+        -10,
+        -20,
+        1,
+        5
+      ],
+      "Fence": [
+        1,
+        1.3,
+        0,
+        -10,
+        1,
+        5
+      ],
+      "Post": [
+        1,
+        1.7,
+        0,
+        -50,
+        1,
+        5
+      ],
+      "Post_TR": [
+        1.66,
+        2.4,
+        0,
+        -120,
+        1,
+        5
+      ],
+      "Post_R": [
+        1.6,
+        1.7,
+        0,
+        -50,
+        1,
+        5
+      ],
+      "Post_T": [
+        1,
+        2.4,
+        0,
+        -120,
+        1,
+        5
+      ]
+    },
+    "Starr_Force": {
+      "1000": [
+        1,
+        2.1,
+        0,
+        -75,
+        1,
+        5
+      ],
+      "1001": [
+        1,
+        1.83,
+        0,
+        -73,
+        1,
+        5
+      ],
+      "1010": [
+        1,
+        2.1,
+        0,
+        -79,
+        1,
+        5
+      ],
+      "1100": [
+        1,
+        2.1,
+        0,
+        -79,
+        1,
+        5
+      ],
+      "Wall": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Wall2": [
+        1,
+        1.88,
+        0,
+        -61,
+        1,
+        5
+      ],
+      "Crate": [
+        1,
+        1.5,
+        0,
+        -26,
+        1,
+        5
+      ],
+      "Cactus": [
+        1,
+        1.7,
+        0,
+        -42,
+        1,
+        5
+      ],
+      "Barrel": [
+        1,
+        1.81,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Skull": [
+        1.1,
+        1.7,
+        -5,
+        -51,
+        1,
+        5
+      ],
+      "0001": [
+        1,
+        1.6,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0010": [
+        1,
+        1.8,
+        0,
+        -50,
+        1,
+        5
+      ],
+      "0011": [
+        1,
+        1.8,
+        0,
+        -50,
+        1,
+        5
+      ],
+      "0100": [
+        1,
+        1.8,
+        0,
+        -50,
+        1,
+        5
+      ],
+      "0101": [
+        1,
+        1.8,
+        0,
+        -50,
+        1,
+        5
+      ],
+      "Fence": [
+        1,
+        1.8,
+        0,
+        -50,
+        1,
+        5
+      ],
+      "Post": [
+        1,
+        1.7,
+        0,
+        -50,
+        1,
+        5
+      ],
+      "Post_TR": [
+        1.66,
+        2.4,
+        0,
+        -120,
+        1,
+        5
+      ],
+      "Post_R": [
+        1.6,
+        1.7,
+        0,
+        -50,
+        1,
+        5
+      ],
+      "Post_T": [
+        1,
+        2.4,
+        0,
+        -120,
+        1,
+        5
+      ]
+    },
+    "Wild_West": {
+      "Wall": [
+        1.1,
+        1.793,
+        -5,
+        -50,
+        1,
+        5
+      ],
+      "Wall2": [
+        1.1,
+        1.793,
+        -5,
+        -50,
+        1,
+        5
+      ],
+      "Skull": [
+        1.1,
+        1.342,
+        -5,
+        -5,
+        1,
+        5
+      ]
+    },
+    "Water_Park": {
+      "1000": [
+        0.8,
+        1.8,
+        10,
+        -80,
+        1,
+        5
+      ],
+      "1001": [
+        0.8,
+        1.8,
+        10,
+        -80,
+        1,
+        5
+      ],
+      "1010": [
+        0.9,
+        2.04,
+        10,
+        -89,
+        1,
+        5
+      ],
+      "1100": [
+        0.9,
+        2.04,
+        0,
+        -89,
+        1,
+        5
+      ],
+      "Wall": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Wall2": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Crate": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Barrel": [
+        1,
+        1.81,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Cactus": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Skull": [
+        1,
+        1.7,
+        0,
+        -41,
+        1,
+        5
+      ],
+      "0001": [
+        0.8,
+        1.6,
+        10,
+        -45,
+        1,
+        5
+      ],
+      "0010": [
+        0.9,
+        1.6,
+        10,
+        -45,
+        1,
+        5
+      ],
+      "0011": [
+        0.9,
+        1.6,
+        10,
+        -45,
+        1,
+        5
+      ],
+      "0100": [
+        0.9,
+        1.6,
+        0,
+        -45,
+        1,
+        5
+      ],
+      "0101": [
+        0.9,
+        1.6,
+        0,
+        -45,
+        1,
+        5
+      ],
+      "Fence": [
+        1,
+        1.6,
+        0,
+        -45,
+        1,
+        5
+      ],
+      "Post": [
+        1,
+        1.7,
+        0,
+        -40,
+        1,
+        5
+      ],
+      "Post_R": [
+        1.5,
+        1.7,
+        0,
+        -40,
+        1,
+        5
+      ],
+      "Post_T": [
+        1,
+        2.47,
+        0,
+        -116.75,
+        1,
+        5
+      ],
+      "Post_TR": [
+        1.45,
+        2.5,
+        0,
+        -115.75,
+        1,
+        5
+      ]
+    },
+    "Castle_Courtyard": {
+      "Bush": [
+        1,
+        1.75,
+        0,
+        -50,
+        1,
+        5
+      ],
+      "Cactus": [
+        1,
+        1.64,
+        0,
+        -45,
+        1,
+        5
+      ],
+      "Skull": [
+        1,
+        1.28,
+        0,
+        -25,
+        1,
+        5
+      ],
+      "Crate": [
+        1,
+        1.75,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "Fence": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "Horizontal": [
+        1,
+        1.54,
+        0,
+        -40,
+        1,
+        5
+      ],
+      "Vertical": [
+        1,
+        1.75,
+        0,
+        -50,
+        1,
+        5
+      ]
+    },
+    "Brawlywood": {
+      "1000": [
+        0.6,
+        1.7,
+        22,
+        -51,
+        1,
+        5
+      ],
+      "1001": [
+        0.6,
+        1.7,
+        22,
+        -51,
+        1,
+        5
+      ],
+      "1010": [
+        1,
+        1.9,
+        0,
+        -62,
+        1,
+        5
+      ],
+      "1100": [
+        1,
+        1.9,
+        0,
+        -62,
+        1,
+        5
+      ],
+      "Wall": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Wall2": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Crate": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Barrel": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Cactus": [
+        1,
+        2.1,
+        0,
+        -70,
+        1,
+        5
+      ],
+      "Skull": [
+        1,
+        1.51,
+        0,
+        -45,
+        1,
+        5
+      ],
+      "0001": [
+        0.6,
+        1.7,
+        22,
+        -51,
+        1,
+        5
+      ],
+      "0010": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "0011": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "0100": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "0101": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Fence": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ]
+    },
+    "Fighting_Game": {
+      "1000": [
+        0.7194244604316548,
+        1.3165467625899283,
+        15,
+        -30,
+        1,
+        5
+      ],
+      "1001": [
+        0.7194244604316548,
+        1.0359712230215827,
+        15,
+        -30,
+        1,
+        5
+      ],
+      "1010": [
+        0.875,
+        2.0995,
+        15.25,
+        -87.5,
+        1,
+        5
+      ],
+      "1100": [
+        0.875,
+        2.0995,
+        0,
+        -87.5,
+        1,
+        5
+      ],
+      "Cactus": [
+        1.18,
+        1.85,
+        -9,
+        -60,
+        1,
+        5.5
+      ],
+      "Bush": [
+        1,
+        1.75,
+        0,
+        -50,
+        1,
+        5
+      ],
+      "Skull": [
+        1,
+        1.7,
+        0,
+        -49,
+        1,
+        5
+      ],
+      "Barrel": [
+        1,
+        1.75,
+        0,
+        -50,
+        1,
+        5
+      ],
+      "Post": [
+        0.6,
+        1.698,
+        20,
+        -50,
+        1,
+        5
+      ],
+      "Post_TR": [
+        1.15,
+        2.1505,
+        20,
+        -95,
+        1,
+        5
+      ],
+      "Post_R": [
+        1.15,
+        1.702,
+        20,
+        -50,
+        1,
+        5
+      ],
+      "Post_T": [
+        0.6,
+        2.148,
+        20,
+        -95,
+        1,
+        5
+      ],
+      "Fence": [
+        1,
+        1.7,
+        0,
+        -47.5,
+        1,
+        5
+      ],
+      "0001": [
+        0.7194244604316548,
+        1,
+        15,
+        -28,
+        1,
+        5
+      ],
+      "0010": [
+        1,
+        1.7,
+        0,
+        -47.5,
+        1,
+        5
+      ],
+      "0011": [
+        0.875,
+        1.7,
+        15.25,
+        -48,
+        1,
+        5
+      ],
+      "0100": [
+        1,
+        1.7,
+        0,
+        -47.5,
+        1,
+        5
+      ],
+      "0101": [
+        0.875,
+        1.7,
+        0,
+        -48,
+        1,
+        5
+      ],
+      "0110": [
+        1,
+        1.75,
+        0,
+        -50,
+        1,
+        5
+      ]
+    },
+    "Biodome": {
+      "1000": [
+        0.9,
+        1.8,
+        6,
+        -55,
+        1,
+        5
+      ],
+      "1001": [
+        1,
+        1.3,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "1010": [
+        1,
+        1.79,
+        2.4,
+        -55,
+        1,
+        5
+      ],
+      "1100": [
+        0.96,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "Barrel": [
+        1,
+        1.81,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Cactus": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Skull": [
+        1,
+        1.5,
+        0,
+        -25,
+        1,
+        5
+      ],
+      "0001": [
+        1,
+        1.6,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0010": [
+        1,
+        1.8,
+        0,
+        -56,
+        1,
+        5
+      ],
+      "0100": [
+        1,
+        1.8,
+        0,
+        -56,
+        1,
+        5
+      ],
+      "0011": [
+        1,
+        1.5,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0101": [
+        1,
+        1.5,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "Fence": [
+        1,
+        1.8,
+        0,
+        -56,
+        1,
+        5
+      ],
+      "Post": [
+        0.77,
+        1.8,
+        13,
+        -65,
+        1,
+        5
+      ],
+      "Post_R": [
+        1.5,
+        1.8,
+        13,
+        -65,
+        1,
+        5
+      ],
+      "Post_T": [
+        0.77,
+        2.3,
+        13,
+        -115.6,
+        1,
+        5
+      ],
+      "Post_TR": [
+        1.5,
+        2.3,
+        13,
+        -115.6,
+        1,
+        5
+      ]
+    },
+    "Stunt_Show": {
+      "1000": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "1001": [
+        1,
+        1.05,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "1010": [
+        1,
+        2,
+        0,
+        -75,
+        1,
+        5
+      ],
+      "1100": [
+        1,
+        2,
+        0,
+        -75,
+        1,
+        5
+      ],
+      "Wall": [
+        1,
+        1.8,
+        0,
+        -50,
+        1,
+        5
+      ],
+      "Wall2": [
+        1,
+        1.8,
+        0,
+        -50,
+        1,
+        5
+      ],
+      "Crate": [
+        1,
+        1.6,
+        0,
+        -35,
+        1,
+        5
+      ],
+      "Barrel": [
+        1,
+        1.7,
+        0,
+        -38,
+        1,
+        5
+      ],
+      "Cactus": [
+        1,
+        1.8,
+        0,
+        -50,
+        1,
+        5
+      ],
+      "Skull": [
+        1,
+        1.5,
+        0,
+        -30,
+        1,
+        5
+      ],
+      "0001": [
+        1,
+        1.6,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0010": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0011": [
+        1,
+        1.5,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0100": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0101": [
+        1,
+        1.5,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "Fence": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "Post": [
+        1,
+        1.8,
+        0,
+        -50,
+        1,
+        5
+      ],
+      "Post_R": [
+        1.5,
+        1.8,
+        0,
+        -50,
+        1,
+        5
+      ],
+      "Post_T": [
+        1,
+        2.1,
+        0,
+        -75.6,
+        1,
+        5
+      ],
+      "Post_TR": [
+        1.5,
+        2.1,
+        0,
+        -75.6,
+        1,
+        5
+      ]
+    },
+    "Deep_Sea": {
+      "1000": [
+        1.2,
+        1.3,
+        -10,
+        -2,
+        1,
+        5
+      ],
+      "1001": [
+        1,
+        1,
+        0,
+        -4,
+        1,
+        5
+      ],
+      "1010": [
+        1,
+        1.1,
+        0,
+        -4,
+        1,
+        5
+      ],
+      "1100": [
+        1,
+        1.1,
+        0,
+        -4,
+        1,
+        5
+      ],
+      "Cactus": [
+        1,
+        1.95,
+        0,
+        -66,
+        1,
+        5
+      ],
+      "Barrel": [
+        1,
+        1.81,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "0001": [
+        1.2,
+        1.1,
+        -10,
+        -14,
+        1,
+        5
+      ],
+      "0101": [
+        1,
+        1,
+        0,
+        -4,
+        1,
+        7
+      ],
+      "0011": [
+        1,
+        1,
+        0,
+        -4,
+        1,
+        7
+      ],
+      "0010": [
+        1.1,
+        1.2,
+        -10,
+        -13,
+        1,
+        5
+      ],
+      "0100": [
+        1.1,
+        1.2,
+        0,
+        -13,
+        1,
+        5
+      ],
+      "Fence": [
+        1,
+        1.1,
+        0,
+        -4,
+        1,
+        5
+      ],
+      "Post": [
+        0.9,
+        1.8,
+        2,
+        -58,
+        1,
+        5
+      ],
+      "Post_TR": [
+        1.6,
+        2.45,
+        3,
+        -127.75,
+        1,
+        5
+      ],
+      "Post_R": [
+        1.5,
+        1.8,
+        4,
+        -58,
+        1,
+        5
+      ],
+      "Post_T": [
+        0.9,
+        2.5,
+        5,
+        -127.75,
+        1,
+        5
+      ]
+    },
+    "Robot_Factory": {
+      "1000": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "1001": [
+        1,
+        1,
+        0,
+        -53,
+        1,
+        5
+      ],
+      "1010": [
+        1,
+        2,
+        0,
+        -75,
+        1,
+        5
+      ],
+      "1100": [
+        1,
+        2,
+        0,
+        -75,
+        1,
+        5
+      ],
+      "Wall": [
+        1,
+        1.8,
+        0,
+        -53,
+        1,
+        5
+      ],
+      "Wall2": [
+        1,
+        1.8,
+        0,
+        -53,
+        1,
+        5
+      ],
+      "Crate": [
+        1,
+        1.8,
+        0,
+        -53,
+        1,
+        5
+      ],
+      "Barrel": [
+        1,
+        1.81,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Cactus": [
+        1,
+        1.81,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Skull": [
+        1,
+        1.4,
+        0,
+        -23,
+        1,
+        5
+      ],
+      "0001": [
+        1,
+        1.6,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0010": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0011": [
+        1,
+        1.5,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0100": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0101": [
+        1,
+        1.5,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "Fence": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "Post": [
+        1,
+        1.7,
+        0,
+        -50,
+        1,
+        5
+      ],
+      "Post_TR": [
+        1.66,
+        2.4,
+        0,
+        -120,
+        1,
+        5
+      ],
+      "Post_R": [
+        1.6,
+        1.7,
+        0,
+        -50,
+        1,
+        5
+      ],
+      "Post_T": [
+        1,
+        2.4,
+        0,
+        -120,
+        1,
+        5
+      ]
+    },
+    "Ghost_Station": {
+      "1000": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "1001": [
+        1,
+        1.05,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "1010": [
+        1,
+        1.7,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "1100": [
+        1,
+        1.7,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "Cactus": [
+        1,
+        1.7,
+        0,
+        -42,
+        1,
+        5
+      ],
+      "Bush": [
+        1,
+        1.75,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Skull": [
+        1,
+        1.5,
+        0,
+        -41,
+        1,
+        5
+      ],
+      "0001": [
+        1,
+        1.6,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0010": [
+        1,
+        1.7,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0011": [
+        1,
+        1.7,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0100": [
+        1,
+        1.7,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0101": [
+        1,
+        1.7,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "Fence": [
+        1,
+        1.7,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "Post": [
+        0.9,
+        1.8,
+        5,
+        -70,
+        1,
+        5
+      ],
+      "Post_TR": [
+        1.5,
+        2.3,
+        8,
+        -120,
+        1,
+        5
+      ],
+      "Post_R": [
+        1.5,
+        1.8,
+        6,
+        -70,
+        1,
+        5
+      ],
+      "Post_T": [
+        0.9,
+        2.3,
+        5,
+        -120,
+        1,
+        5
+      ]
+    },
+    "Candyland": {
+      "1000": [
+        1,
+        1.3,
+        0,
+        -12,
+        1,
+        5
+      ],
+      "1001": [
+        1,
+        1,
+        0,
+        -12,
+        1,
+        5
+      ],
+      "1010": [
+        1,
+        1.3,
+        0,
+        -12,
+        1,
+        5
+      ],
+      "1100": [
+        1,
+        1.3,
+        0,
+        -12,
+        1,
+        5
+      ],
+      "Wall": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Wall2": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Crate": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Barrel": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Cactus": [
+        1.1,
+        2.1,
+        -4,
+        -70,
+        1,
+        5.5
+      ],
+      "Bush": [
+        1,
+        1.75,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Skull": [
+        1,
+        1.51,
+        0,
+        -15,
+        1,
+        5
+      ],
+      "0001": [
+        1,
+        1,
+        0,
+        -12,
+        1,
+        5
+      ],
+      "0011": [
+        1,
+        1,
+        0,
+        -12,
+        1,
+        5
+      ],
+      "0101": [
+        1,
+        1,
+        0,
+        -12,
+        1,
+        5
+      ],
+      "0010": [
+        1,
+        1.3,
+        0,
+        -12,
+        1,
+        5
+      ],
+      "0100": [
+        1,
+        1.3,
+        0,
+        -12,
+        1,
+        5
+      ],
+      "Fence": [
+        1,
+        1.3,
+        0,
+        -12,
+        1,
+        5
+      ],
+      "Post": [
+        1.1,
+        1.8,
+        -5,
+        -50,
+        1,
+        5
+      ],
+      "Post_TR": [
+        1.5,
+        2.47,
+        -5,
+        -116.75,
+        1,
+        5
+      ],
+      "Post_R": [
+        1.5,
+        1.8,
+        -6,
+        -50,
+        1,
+        5
+      ],
+      "Post_T": [
+        1.1,
+        2.47,
+        -5,
+        -116.75,
+        1,
+        5
+      ]
+    },
+    "The_Hub": {
+      "1000": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "1001": [
+        1,
+        1.05,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "1010": [
+        1,
+        2.3,
+        0,
+        -105,
+        1,
+        5
+      ],
+      "1100": [
+        1,
+        2.3,
+        0,
+        -105,
+        1,
+        5
+      ],
+      "Wall": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Wall2": [
+        1,
+        1.88,
+        0,
+        -58.5,
+        1,
+        5
+      ],
+      "Crate": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Barrel": [
+        1,
+        1.82,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Cactus": [
+        1,
+        1.82,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Skull": [
+        1,
+        1.3,
+        0,
+        -15,
+        1,
+        5
+      ],
+      "0001": [
+        1,
+        1.6,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0010": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0011": [
+        1,
+        1.5,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0100": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0101": [
+        1,
+        1.5,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "Fence": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "Post": [
+        0.9,
+        1.8,
+        5,
+        -70,
+        1,
+        5
+      ],
+      "Post_TR": [
+        1.5,
+        2.3,
+        8,
+        -120,
+        1,
+        5
+      ],
+      "Post_R": [
+        1.5,
+        1.8,
+        6,
+        -70,
+        1,
+        5
+      ],
+      "Post_T": [
+        0.9,
+        2.3,
+        5,
+        -120,
+        1,
+        5
+      ]
+    },
+    "Rooftop": {
+      "Wall": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Wall2": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Crate": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Barrel": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Cactus": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Skull": [
+        1,
+        1.8,
+        0,
+        -58,
+        1,
+        5
+      ],
+      "Horizontal": [
+        1,
+        1.54,
+        0,
+        -40,
+        1,
+        5
+      ]
+    },
+    "Rumble_Jungle": {
+      "1000": [
+        1,
+        1.6,
+        0,
+        -23,
+        1,
+        5
+      ],
+      "1001": [
+        1.2,
+        1.1,
+        -11,
+        -33,
+        1,
+        5
+      ],
+      "1010": [
+        1,
+        1.6,
+        0,
+        -24,
+        1,
+        5
+      ],
+      "1100": [
+        1,
+        1.6,
+        0,
+        -24,
+        1,
+        5
+      ],
+      "Cactus": [
+        1.1,
+        1.837,
+        -5,
+        -45,
+        1,
+        5.5
+      ],
+      "Bush": [
+        1,
+        1.75,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Skull": [
+        1.1,
+        1.7490000000000003,
+        -5,
+        -42.5,
+        1,
+        5
+      ],
+      "0001": [
+        1.2,
+        1.3,
+        -10,
+        -48,
+        1,
+        5
+      ],
+      "0010": [
+        1,
+        1.86,
+        0,
+        -50,
+        1,
+        5
+      ],
+      "0011": [
+        1,
+        1.055,
+        0,
+        -24,
+        1,
+        5
+      ],
+      "0100": [
+        1,
+        1.86,
+        0,
+        -50,
+        1,
+        5
+      ],
+      "0101": [
+        1,
+        1.055,
+        0,
+        -24,
+        1,
+        5
+      ],
+      "Fence": [
+        1,
+        1.8,
+        0,
+        -44,
+        1,
+        5
+      ],
+      "Post": [
+        1,
+        2,
+        0,
+        -75,
+        1,
+        5
+      ],
+      "Post_TR": [
+        1.36518771331058,
+        2.18,
+        0,
+        -92.5,
+        1,
+        5
+      ],
+      "Post_R": [
+        1.36518771331058,
+        2,
+        0,
+        -75,
+        1,
+        5
+      ],
+      "Post_T": [
+        1,
+        2.18,
+        0,
+        -92.5,
+        1,
+        5
+      ]
+    },
+    "Enchanted_Woods": {
+      "1000": [
+        0.9,
+        1.8,
+        6,
+        -55,
+        1,
+        5
+      ],
+      "1001": [
+        1,
+        1.3,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "1010": [
+        1,
+        1.9,
+        0,
+        -70,
+        1,
+        5
+      ],
+      "1100": [
+        1,
+        1.9,
+        0,
+        -70,
+        1,
+        5
+      ],
+      "Wall": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Wall2": [
+        1,
+        2,
+        0,
+        -69,
+        1,
+        5
+      ],
+      "Cactus": [
+        1,
+        1.68,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Skull": [
+        1,
+        1.4,
+        0,
+        -10,
+        1,
+        5
+      ],
+      "0001": [
+        1,
+        1.6,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0010": [
+        1,
+        1.8,
+        0,
+        -56,
+        1,
+        5
+      ],
+      "0011": [
+        1,
+        1.5,
+        0,
+        -50,
+        1,
+        5
+      ],
+      "0100": [
+        1,
+        1.8,
+        0,
+        -56,
+        1,
+        5
+      ],
+      "0101": [
+        1,
+        1.5,
+        0,
+        -50,
+        1,
+        5
+      ],
+      "Fence": [
+        1,
+        1.8,
+        0,
+        -56,
+        1,
+        5
+      ],
+      "Post": [
+        1,
+        1.8,
+        0,
+        -50,
+        1,
+        5
+      ],
+      "Post_TR": [
+        1.5,
+        2.4,
+        4,
+        -109,
+        1,
+        5
+      ],
+      "Post_R": [
+        1.5,
+        1.8,
+        0,
+        -50,
+        1,
+        5
+      ],
+      "Post_T": [
+        1,
+        2.4,
+        0,
+        -108,
+        1,
+        5
+      ]
+    },
+    "Ranger_Ranch": {
+      "Wall": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Skull": [
+        1,
+        1.81,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Post": [
+        1,
+        1.8,
+        0,
+        -50,
+        1,
+        5
+      ],
+      "Post_TR": [
+        1.5,
+        2.47,
+        0,
+        -118,
+        1,
+        5
+      ],
+      "Post_R": [
+        1.5,
+        1.8,
+        0,
+        -50,
+        1,
+        5
+      ],
+      "Post_T": [
+        1,
+        2.47,
+        0,
+        -118,
+        1,
+        5
+      ]
+    },
+    "Circus": {
+      "1000": [
+        1,
+        1.8,
+        0,
+        -41,
+        1,
+        5
+      ],
+      "1001": [
+        1,
+        1.4,
+        0,
+        -41,
+        1,
+        5
+      ],
+      "1010": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "1100": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "Cactus": [
+        1,
+        2.3,
+        0,
+        -83,
+        1,
+        5
+      ],
+      "Skull": [
+        1.1,
+        2.1,
+        0,
+        -80,
+        1,
+        5
+      ],
+      "0001": [
+        1,
+        1.6,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0010": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0011": [
+        1,
+        1.45,
+        0,
+        -50,
+        1,
+        5
+      ],
+      "0100": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0101": [
+        1,
+        1.45,
+        0,
+        -50,
+        1,
+        5
+      ],
+      "Fence": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "Post": [
+        1,
+        1.75,
+        0,
+        -50,
+        1,
+        5
+      ],
+      "Post_TR": [
+        1.5,
+        2.61,
+        0,
+        -116.5,
+        1,
+        5
+      ],
+      "Post_R": [
+        1.5,
+        1.7475,
+        0,
+        -50,
+        1,
+        5
+      ],
+      "Post_T": [
+        1,
+        2.61,
+        0,
+        -116,
+        1,
+        5
+      ],
+      "BFence": [
+        1,
+        1.5,
+        0,
+        -31,
+        1,
+        5
+      ]
+    },
+    "Coin_Factory": {
+      "1000": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "1001": [
+        1,
+        1,
+        0,
+        -53,
+        1,
+        5
+      ],
+      "1010": [
+        1,
+        2,
+        0,
+        -75,
+        1,
+        5
+      ],
+      "1100": [
+        1,
+        2,
+        0,
+        -75,
+        1,
+        5
+      ],
+      "Wall": [
+        1.05,
+        1.8,
+        0,
+        -53,
+        1,
+        5
+      ],
+      "Wall2": [
+        1.05,
+        1.8,
+        0,
+        -53,
+        1,
+        5
+      ],
+      "Crate": [
+        1.1,
+        1.9,
+        -7,
+        -63,
+        1,
+        5
+      ],
+      "Cactus": [
+        1.02,
+        1.88,
+        -2,
+        -57,
+        1,
+        5
+      ],
+      "Skull": [
+        1,
+        1.6,
+        0,
+        -31,
+        1,
+        5
+      ],
+      "0001": [
+        1,
+        1.6,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0010": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0011": [
+        1,
+        1.5,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0100": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0101": [
+        1,
+        1.5,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "Fence": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "Post": [
+        1,
+        1.75,
+        0,
+        -50,
+        1,
+        5
+      ],
+      "Post_R": [
+        1.5,
+        1.7475,
+        0,
+        -50,
+        1,
+        5
+      ],
+      "Post_T": [
+        1,
+        1.95,
+        0,
+        -68.5,
+        1,
+        5
+      ],
+      "Post_TR": [
+        1.5,
+        1.95,
+        0,
+        -68.5,
+        1,
+        5
+      ]
+    },
+    "Starr_Toon": {
+      "1000": [
+        1,
+        1.85,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "1001": [
+        1,
+        1.85,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "1010": [
+        1,
+        1.85,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "1100": [
+        1,
+        1.85,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "Wall": [
+        1,
+        1.8,
+        0,
+        -48,
+        1,
+        5
+      ],
+      "Wall2": [
+        1,
+        1.8,
+        0,
+        -48,
+        1,
+        5
+      ],
+      "Crate": [
+        1,
+        1.8,
+        0,
+        -48,
+        1,
+        5
+      ],
+      "Barrel": [
+        1,
+        1.8,
+        0,
+        -48,
+        1,
+        5
+      ],
+      "Cactus": [
+        1,
+        1.4,
+        0,
+        -19,
+        1,
+        5
+      ],
+      "Bush": [
+        1,
+        1.75,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Skull": [
+        1,
+        1.9,
+        0,
+        -56,
+        1,
+        5
+      ],
+      "0001": [
+        1,
+        1.85,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0010": [
+        1,
+        1.85,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0011": [
+        1,
+        1.85,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0100": [
+        1,
+        1.85,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0101": [
+        1,
+        1.85,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0110": [
+        1,
+        1.75,
+        0,
+        -50,
+        1,
+        5
+      ],
+      "Fence": [
+        1,
+        1.35,
+        0,
+        -6,
+        1,
+        5
+      ]
+    },
+    "Ice_Island": {
+      "Wall": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Skull": [
+        1.1,
+        1.342,
+        -5,
+        -30,
+        1,
+        5
+      ],
+      "Post": [
+        1,
+        1.8,
+        0,
+        -50,
+        1,
+        5
+      ],
+      "Horizontal": [
+        1.05,
+        1.323,
+        -2.5,
+        -22,
+        1,
+        5
+      ],
+      "Post_TR": [
+        1.5,
+        2.47,
+        0,
+        -118,
+        1,
+        5
+      ],
+      "Post_R": [
+        1.5,
+        1.8,
+        0,
+        -50,
+        1,
+        5
+      ],
+      "Post_T": [
+        1,
+        2.47,
+        0,
+        -118,
+        1,
+        5
+      ]
+    },
+    "Swamp_of_Love": {
+      "Horizontal": [
+        1.05,
+        1.323,
+        -2.5,
+        -25,
+        1,
+        5
+      ],
+      "Cactus": [
+        1.2,
+        1.6320000000000001,
+        -10,
+        -40,
+        1,
+        5
+      ]
+    },
+    "Medieval_Manor": {
+      "1000": [
+        1.25,
+        1.7,
+        -12,
+        -52,
+        1,
+        5
+      ],
+      "1001": [
+        1.25,
+        1.7,
+        -12,
+        -52,
+        1,
+        5
+      ],
+      "1010": [
+        1,
+        1.5,
+        0,
+        -30,
+        1,
+        5
+      ],
+      "1100": [
+        1,
+        1.5,
+        0,
+        -30,
+        1,
+        5
+      ],
+      "Cactus": [
+        1.1,
+        1.6,
+        -5,
+        -36,
+        1,
+        5
+      ],
+      "0001": [
+        1.25,
+        1.7,
+        -12,
+        -52,
+        1,
+        5
+      ],
+      "0010": [
+        1,
+        1.5,
+        0,
+        -30,
+        1,
+        5
+      ],
+      "0011": [
+        1,
+        1.5,
+        0,
+        -30,
+        1,
+        5
+      ],
+      "0100": [
+        1,
+        1.5,
+        0,
+        -30,
+        1,
+        5
+      ],
+      "0101": [
+        1,
+        1.5,
+        0,
+        -30,
+        1,
+        5
+      ],
+      "Fence": [
+        1,
+        1.5,
+        0,
+        -30,
+        1,
+        5
+      ],
+      "BFence": [
+        1,
+        1.6,
+        0,
+        -28,
+        1,
+        5
+      ],
+      "Post": [
+        1,
+        2.2,
+        0,
+        -83,
+        1,
+        5
+      ],
+      "Post_R": [
+        1.55,
+        2.2,
+        0,
+        -83,
+        1,
+        5
+      ],
+      "Post_T": [
+        1,
+        2.75,
+        0,
+        -137,
+        1,
+        5
+      ],
+      "Post_TR": [
+        1.54,
+        2.75,
+        0,
+        -137,
+        1,
+        5
+      ]
+    },
+    "Super_City_2": {
+      "1000": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "1001": [
+        1,
+        1.05,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "1010": [
+        1,
+        2,
+        0,
+        -75,
+        1,
+        5
+      ],
+      "1100": [
+        1,
+        2,
+        0,
+        -75,
+        1,
+        5
+      ],
+      "Wall": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Wall2": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Crate": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Barrel": [
+        1,
+        1.82,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Skull": [
+        1,
+        1.81,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "0001": [
+        1,
+        1.6,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0010": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0011": [
+        1,
+        1.5,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0100": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0101": [
+        1,
+        1.5,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "Fence": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "B0001": [
+        1,
+        1.6,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "B0010": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "B0011": [
+        1,
+        1.5,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "B0100": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "B0101": [
+        1,
+        1.5,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "B1000": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "B1001": [
+        1,
+        1.05,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "B1010": [
+        1,
+        2,
+        0,
+        -75,
+        1,
+        5
+      ],
+      "B1100": [
+        1,
+        2,
+        0,
+        -75,
+        1,
+        5
+      ],
+      "BFence": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "Post": [
+        1,
+        1.8,
+        0,
+        -50,
+        1,
+        5
+      ],
+      "Post_TR": [
+        1.5,
+        2.4,
+        0,
+        -112,
+        1,
+        5
+      ],
+      "Post_R": [
+        1.5,
+        1.8,
+        0,
+        -50,
+        1,
+        5
+      ],
+      "Post_T": [
+        1,
+        2.4,
+        0,
+        -112,
+        1,
+        5
+      ]
+    },
+    "Spongebob": {
+      "Wall2": [
+        1,
+        1.8,
+        0,
+        -49,
+        1,
+        5
+      ],
+      "Crate": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Barrel": [
+        1,
+        1.7,
+        0,
+        -49,
+        1,
+        5
+      ],
+      "Cactus": [
+        1.2,
+        1.89,
+        -10,
+        -59,
+        1,
+        5.5
+      ],
+      "Bush": [
+        1.05,
+        1.9,
+        -2,
+        -58,
+        1,
+        5
+      ],
+      "Skull": [
+        1,
+        1.5,
+        0,
+        -22,
+        1,
+        5
+      ],
+      "Fence": [
+        1.03,
+        1.71,
+        -2,
+        -50,
+        1,
+        5
+      ],
+      "Horizontal": [
+        1,
+        1.2,
+        0,
+        -15,
+        1,
+        5
+      ],
+      "Vertical": [
+        1,
+        1.84,
+        0,
+        -50,
+        1,
+        5
+      ],
+      "Post": [
+        0.9,
+        1.8,
+        5,
+        -66,
+        1,
+        5
+      ],
+      "Post_TR": [
+        1.4,
+        2.65,
+        5,
+        -150.5,
+        1,
+        5
+      ],
+      "Post_R": [
+        1.4,
+        1.8,
+        5,
+        -66,
+        1,
+        5
+      ],
+      "Post_T": [
+        0.9,
+        2.65,
+        5,
+        -150.5,
+        1,
+        5
+      ]
+    },
+    "Oddities_Shop": {
+      "1000": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "1001": [
+        1,
+        1.05,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "1010": [
+        1,
+        2,
+        0,
+        -75,
+        1,
+        5
+      ],
+      "1100": [
+        1,
+        2,
+        0,
+        -75,
+        1,
+        5
+      ],
+      "Wall": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Wall2": [
+        1,
+        1.88,
+        0,
+        -58.5,
+        1,
+        5
+      ],
+      "Fence": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "Crate": [
+        1,
+        1.63,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "Cactus": [
+        1,
+        1.62,
+        0,
+        -50,
+        1,
+        5
+      ],
+      "0001": [
+        1,
+        1.6,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0010": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0011": [
+        1,
+        1.5,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0100": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0101": [
+        1,
+        1.5,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "Post": [
+        1,
+        1.75,
+        0,
+        -50,
+        1,
+        5
+      ],
+      "Post_TR": [
+        1.5,
+        2.565,
+        0,
+        -132.5,
+        1,
+        5
+      ],
+      "Post_R": [
+        1.5,
+        1.7475,
+        0,
+        -50,
+        1,
+        5
+      ],
+      "Post_T": [
+        1,
+        2.61,
+        0,
+        -130,
+        1,
+        5
+      ]
+    },
+    "Skating_Bowl": {
+      "1000": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "1001": [
+        1,
+        1.05,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "1010": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "1100": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "Wall": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Wall2": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Crate": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Barrel": [
+        1.2,
+        1.8,
+        -10,
+        -51,
+        1,
+        5.5
+      ],
+      "Cactus": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Skull": [
+        1,
+        1.4,
+        0,
+        -20,
+        1,
+        5
+      ],
+      "0001": [
+        1,
+        1.6,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0010": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0011": [
+        1,
+        1.5,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0100": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0101": [
+        1,
+        1.5,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "Fence": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "Post": [
+        1,
+        1.8,
+        0,
+        -58,
+        1,
+        5
+      ],
+      "Post_TR": [
+        1.4,
+        2.1,
+        0,
+        -85,
+        1,
+        5
+      ],
+      "Post_R": [
+        1.4,
+        1.7,
+        -2,
+        -52,
+        1,
+        5
+      ],
+      "Post_T": [
+        1,
+        2.1,
+        0,
+        -88,
+        1,
+        5
+      ]
+    },
+    "Hockey": {
+      "1000": [
+        0.6,
+        1.7,
+        22,
+        -51,
+        1,
+        5
+      ],
+      "1001": [
+        0.6,
+        1.7,
+        22,
+        -51,
+        1,
+        5
+      ],
+      "1010": [
+        0.9,
+        1.85,
+        10,
+        -62,
+        1,
+        5
+      ],
+      "1100": [
+        0.9,
+        1.85,
+        0,
+        -62,
+        1,
+        5
+      ],
+      "Wall2": [
+        1,
+        1.8,
+        0,
+        -49,
+        1,
+        5
+      ],
+      "Crate": [
+        1,
+        1.8,
+        0,
+        -50,
+        1,
+        5
+      ],
+      "Barrel": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Cactus": [
+        1,
+        1.75,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "Skull": [
+        1,
+        1.65,
+        0,
+        -47,
+        1,
+        5
+      ],
+      "0001": [
+        0.6,
+        1.7,
+        22,
+        -51,
+        1,
+        5
+      ],
+      "0010": [
+        1,
+        1.7,
+        0,
+        -47,
+        1,
+        5
+      ],
+      "0100": [
+        1,
+        1.7,
+        0,
+        -47,
+        1,
+        5
+      ],
+      "0011": [
+        0.9,
+        1.8,
+        10,
+        -42,
+        1,
+        5
+      ],
+      "0101": [
+        0.9,
+        1.8,
+        0,
+        -42,
+        1,
+        5
+      ],
+      "Fence": [
+        1,
+        1.7,
+        0,
+        -47,
+        1,
+        5
+      ],
+      "B0001": [
+        1,
+        1.3,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "B0010": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "B0011": [
+        1,
+        1.5,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "B0100": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "B0101": [
+        1,
+        1.5,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "B1000": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "B1001": [
+        1,
+        1.05,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "B1010": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "B1100": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "BFence": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ]
+    },
+    "Escape_Room": {
+      "1000": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "1001": [
+        1,
+        1.05,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "1010": [
+        1,
+        2,
+        0,
+        -75,
+        1,
+        5
+      ],
+      "1100": [
+        1,
+        2,
+        0,
+        -75,
+        1,
+        5
+      ],
+      "Crate": [
+        1,
+        1.8,
+        0,
+        -61,
+        1,
+        5
+      ],
+      "Barrel": [
+        1,
+        1.7,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Cactus": [
+        1,
+        1.75,
+        0,
+        -53,
+        1,
+        5
+      ],
+      "Skull": [
+        1.1,
+        1.7,
+        -5,
+        -48.5,
+        1,
+        5
+      ],
+      "0001": [
+        1,
+        1.6,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0010": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0011": [
+        1,
+        1.5,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0100": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0101": [
+        1,
+        1.5,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "Fence": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ]
+    },
+    "Katana_Kingdom": {
+      "1000": [
+        1,
+        1.75,
+        0,
+        -48,
+        1,
+        5
+      ],
+      "1001": [
+        1,
+        1.75,
+        0,
+        -48,
+        1,
+        5
+      ],
+      "1010": [
+        1.1,
+        1.5,
+        -5,
+        -40,
+        1,
+        5
+      ],
+      "1100": [
+        1.1,
+        1.5,
+        -5,
+        -40,
+        1,
+        5
+      ],
+      "Wall": [
+        1,
+        1.8,
+        0,
+        -50,
+        1,
+        5
+      ],
+      "Wall2": [
+        1,
+        1.8,
+        0,
+        -50,
+        1,
+        5
+      ],
+      "Crate": [
+        1,
+        1.65,
+        0,
+        -34,
+        1,
+        5
+      ],
+      "Barrel": [
+        1,
+        1.75,
+        0,
+        -50,
+        1,
+        5
+      ],
+      "Cactus": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Skull": [
+        1,
+        1.4,
+        0,
+        -15,
+        1,
+        5
+      ],
+      "0001": [
+        1,
+        1.75,
+        0,
+        -48,
+        1,
+        5
+      ],
+      "0010": [
+        1.1,
+        1.5,
+        -5,
+        -40,
+        1,
+        5
+      ],
+      "0011": [
+        1.1,
+        1.5,
+        -5,
+        -40,
+        1,
+        5
+      ],
+      "0100": [
+        1.1,
+        1.5,
+        -5,
+        -40,
+        1,
+        5
+      ],
+      "0101": [
+        1.1,
+        1.5,
+        -5,
+        -40,
+        1,
+        5
+      ],
+      "Fence": [
+        1.1,
+        1.5,
+        -5,
+        -40,
+        1,
+        5
+      ],
+      "Post": [
+        1,
+        1.8,
+        0,
+        -50,
+        1,
+        5
+      ],
+      "Post_TR": [
+        1.5,
+        2.47,
+        0,
+        -118.75,
+        1,
+        5
+      ],
+      "Post_R": [
+        1.5,
+        1.8,
+        0,
+        -50,
+        1,
+        5
+      ],
+      "Post_T": [
+        1,
+        2.47,
+        0,
+        -118.75,
+        1,
+        5
+      ]
+    },
+    "Tropical_Island": {
+      "Cactus": [
+        1.8,
+        2.45,
+        -40,
+        -100,
+        1,
+        5.5
+      ],
+      "Skull": [
+        1.1,
+        1.7490000000000003,
+        -5,
+        -42.5,
+        1,
+        5
+      ],
+      "Post": [
+        1,
+        2,
+        0,
+        -75,
+        1,
+        5
+      ],
+      "Post_TR": [
+        1.36518771331058,
+        2.18,
+        0,
+        -92.5,
+        1,
+        5
+      ],
+      "Post_R": [
+        1.36518771331058,
+        2,
+        0,
+        -75,
+        1,
+        5
+      ],
+      "Post_T": [
+        1,
+        2.18,
+        0,
+        -92.5,
+        1,
+        5
+      ],
+      "Horizontal": [
+        1,
+        1.26,
+        0,
+        -10,
+        1,
+        5
+      ]
+    },
+    "Subway_Surfers": {
+      "1000": [
+        0.76,
+        1.5,
+        10,
+        -30,
+        1,
+        5
+      ],
+      "1001": [
+        0.65,
+        1.1,
+        16,
+        -30,
+        1,
+        5
+      ],
+      "1010": [
+        0.84,
+        1.7,
+        17,
+        -55,
+        1,
+        5
+      ],
+      "1100": [
+        0.82,
+        1.7,
+        -1,
+        -55,
+        1,
+        5
+      ],
+      "Barrel": [
+        1,
+        1.8,
+        0,
+        -46,
+        1,
+        5
+      ],
+      "Cactus": [
+        0.93,
+        1.5,
+        4,
+        -43,
+        1,
+        5
+      ],
+      "Bush": [
+        1,
+        1.75,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Skull": [
+        1.1,
+        1.75,
+        -3,
+        -43,
+        1,
+        5
+      ],
+      "0001": [
+        0.76,
+        1.2,
+        10,
+        -30,
+        1,
+        5
+      ],
+      "0010": [
+        1,
+        1.7,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0011": [
+        0.82,
+        1.7,
+        17,
+        -55,
+        1,
+        5
+      ],
+      "0100": [
+        1,
+        1.7,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0101": [
+        0.82,
+        1.7,
+        -1,
+        -55,
+        1,
+        5
+      ],
+      "0110": [
+        1,
+        1.75,
+        0,
+        -50,
+        1,
+        5
+      ],
+      "Fence": [
+        1,
+        1.7,
+        0,
+        -55,
+        1,
+        5
+      ]
+    },
+    "Stranger_Things": {
+      "1000": [
+        1,
+        1.7,
+        0,
+        -44,
+        1,
+        5
+      ],
+      "1001": [
+        1,
+        1.05,
+        0,
+        -44,
+        1,
+        5
+      ],
+      "1010": [
+        1,
+        1.7,
+        0,
+        -44,
+        1,
+        5
+      ],
+      "1100": [
+        1,
+        1.7,
+        0,
+        -44,
+        1,
+        5
+      ],
+      "Wall": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Wall2": [
+        1,
+        1.9,
+        0,
+        -63,
+        1,
+        5
+      ],
+      "Crate": [
+        1,
+        1.7,
+        0,
+        -31,
+        1,
+        5
+      ],
+      "Barrel": [
+        1,
+        1.85,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Cactus": [
+        1,
+        1.95,
+        0,
+        -71,
+        1,
+        5
+      ],
+      "Skull": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "0001": [
+        1,
+        1.5,
+        0,
+        -44,
+        1,
+        5
+      ],
+      "0010": [
+        1,
+        1.7,
+        0,
+        -44,
+        1,
+        5
+      ],
+      "0011": [
+        1,
+        1.4,
+        0,
+        -44,
+        1,
+        5
+      ],
+      "0100": [
+        1,
+        1.7,
+        0,
+        -44,
+        1,
+        5
+      ],
+      "0101": [
+        1,
+        1.4,
+        0,
+        -44,
+        1,
+        5
+      ],
+      "Fence": [
+        1,
+        1.7,
+        0,
+        -44,
+        1,
+        5
+      ],
+      "Post": [
+        1,
+        1.7,
+        0,
+        -50,
+        1,
+        5
+      ],
+      "Post_TR": [
+        1.6,
+        2.47,
+        0,
+        -128,
+        1,
+        5
+      ],
+      "Post_R": [
+        1.6,
+        1.7,
+        0,
+        -50,
+        1,
+        5
+      ],
+      "Post_T": [
+        1,
+        2.47,
+        0,
+        -128,
+        1,
+        5
+      ]
+    },
+    "Stranger_Things_Lair": {
+      "1000": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "1001": [
+        1,
+        1.05,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "1010": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "1100": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "Wall": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Wall2": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Crate": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Barrel": [
+        1,
+        1.85,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Cactus": [
+        1,
+        1.95,
+        0,
+        -71,
+        1,
+        5
+      ],
+      "Skull": [
+        1,
+        1.5,
+        0,
+        -22,
+        1,
+        5
+      ],
+      "0001": [
+        1,
+        1.6,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0010": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0011": [
+        1,
+        1.5,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0100": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0101": [
+        1,
+        1.5,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "Fence": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "B0001": [
+        1,
+        1.6,
+        0,
+        -38,
+        1,
+        5
+      ],
+      "B0010": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "B0011": [
+        1,
+        1.5,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "B0100": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "B0101": [
+        1,
+        1.5,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "B1000": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "B1001": [
+        1,
+        1,
+        0,
+        -25,
+        1,
+        5
+      ],
+      "B1010": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "B1100": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "BFence": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ]
+    },
+    "Stranger_Things_Forest": {
+      "1000": [
+        1,
+        1.6,
+        0,
+        -23,
+        1,
+        5
+      ],
+      "1001": [
+        1.2,
+        1.1,
+        -11,
+        -33,
+        1,
+        5
+      ],
+      "1010": [
+        1,
+        1.6,
+        0,
+        -24,
+        1,
+        5
+      ],
+      "1100": [
+        1,
+        1.6,
+        0,
+        -24,
+        1,
+        5
+      ],
+      "Wall": [
+        1,
+        1.8,
+        0,
+        -50,
+        1,
+        5
+      ],
+      "Wall2": [
+        1,
+        1.8,
+        0,
+        -50,
+        1,
+        5
+      ],
+      "Barrel": [
+        1,
+        1.8,
+        0,
+        -50,
+        1,
+        5
+      ],
+      "Cactus": [
+        1,
+        1.85,
+        0,
+        -48,
+        1,
+        5
+      ],
+      "Skull": [
+        1,
+        1.7,
+        0,
+        -35,
+        1,
+        5
+      ],
+      "0001": [
+        1.2,
+        1.3,
+        -10,
+        -48,
+        1,
+        5
+      ],
+      "0010": [
+        1,
+        1.86,
+        0,
+        -50,
+        1,
+        5
+      ],
+      "0011": [
+        1,
+        1.055,
+        0,
+        -24,
+        1,
+        5
+      ],
+      "0100": [
+        1,
+        1.86,
+        0,
+        -50,
+        1,
+        5
+      ],
+      "0101": [
+        1,
+        1.055,
+        0,
+        -24,
+        1,
+        5
+      ],
+      "Fence": [
+        1,
+        1.8,
+        0,
+        -44,
+        1,
+        5
+      ],
+      "B0001": [
+        1,
+        1.6,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "B0010": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "B0011": [
+        1,
+        1.5,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "B0100": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "B0101": [
+        1,
+        1.5,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "B1000": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "B1001": [
+        1,
+        1,
+        0,
+        -45,
+        1,
+        5
+      ],
+      "B1010": [
+        1,
+        2,
+        0,
+        -75,
+        1,
+        5
+      ],
+      "B1100": [
+        1,
+        2,
+        0,
+        -75,
+        1,
+        5
+      ],
+      "BFence": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ]
+    },
+    "Stranger_Things_Lab": {
+      "1000": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "1001": [
+        1,
+        1.05,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "1010": [
+        1,
+        2,
+        0,
+        -75,
+        1,
+        5
+      ],
+      "1100": [
+        1,
+        2,
+        0,
+        -75,
+        1,
+        5
+      ],
+      "Wall": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Wall2": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Crate": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Barrel": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Cactus": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Skull": [
+        1,
+        1.7,
+        0,
+        -41,
+        1,
+        5
+      ],
+      "0001": [
+        1,
+        1.6,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0010": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0011": [
+        1,
+        1.5,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0100": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0101": [
+        1,
+        1.5,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "Fence": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "Post": [
+        1,
+        1.7,
+        0,
+        -50,
+        1,
+        5
+      ],
+      "Post_TR": [
+        1.6,
+        2.47,
+        0,
+        -128,
+        1,
+        5
+      ],
+      "Post_R": [
+        1.6,
+        1.7,
+        0,
+        -50,
+        1,
+        5
+      ],
+      "Post_T": [
+        1,
+        2.47,
+        0,
+        -128,
+        1,
+        5
+      ]
+    },
+    "Aquarium": {
+      "1000": [
+        1.2,
+        1.3,
+        -10,
+        -2,
+        1,
+        5
+      ],
+      "1001": [
+        1,
+        1,
+        0,
+        -4,
+        1,
+        5
+      ],
+      "1010": [
+        1,
+        1.1,
+        0,
+        -4,
+        1,
+        5
+      ],
+      "1100": [
+        1,
+        1.1,
+        0,
+        -4,
+        1,
+        5
+      ],
+      "Wall": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Wall2": [
+        1,
+        1.88,
+        0,
+        -61,
+        1,
+        5
+      ],
+      "Crate": [
+        1,
+        1.6,
+        0,
+        -34,
+        1,
+        5
+      ],
+      "Barrel": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "Cactus": [
+        1.35,
+        2.35,
+        -19,
+        -105,
+        1,
+        5.5
+      ],
+      "Skull": [
+        1,
+        1.6,
+        0,
+        -38,
+        1,
+        5
+      ],
+      "0001": [
+        1.2,
+        1.1,
+        -10,
+        -14,
+        1,
+        5
+      ],
+      "0101": [
+        1,
+        1,
+        0,
+        -4,
+        1,
+        7
+      ],
+      "0011": [
+        1,
+        1,
+        0,
+        -4,
+        1,
+        7
+      ],
+      "0010": [
+        1.1,
+        1.2,
+        -10,
+        -13,
+        1,
+        5
+      ],
+      "0100": [
+        1.1,
+        1.2,
+        0,
+        -13,
+        1,
+        5
+      ],
+      "Fence": [
+        1,
+        1.1,
+        0,
+        -4,
+        1,
+        5
+      ],
+      "Post": [
+        1,
+        1.7,
+        0,
+        -50,
+        1,
+        5
+      ],
+      "Post_TR": [
+        1.66,
+        2.4,
+        0,
+        -120,
+        1,
+        5
+      ],
+      "Post_R": [
+        1.6,
+        1.7,
+        0,
+        -50,
+        1,
+        5
+      ],
+      "Post_T": [
+        1,
+        2.4,
+        0,
+        -120,
+        1,
+        5
+      ]
+    },
+    "Z_SkyTheme": {
+      "1000": [
+        1,
+        1.6,
+        0,
+        -29,
+        1,
+        5
+      ],
+      "1001": [
+        1,
+        1.1,
+        0,
+        -29,
+        1,
+        5
+      ],
+      "1010": [
+        1,
+        1.55,
+        0,
+        -29,
+        1,
+        5
+      ],
+      "1100": [
+        1,
+        1.55,
+        0,
+        -29,
+        1,
+        5
+      ],
+      "Wall": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Wall2": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Cactus": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Skull": [
+        1,
+        1.5,
+        0,
+        -38,
+        1,
+        5
+      ],
+      "0010": [
+        1,
+        1.5,
+        0,
+        -23,
+        1,
+        5
+      ],
+      "Fence": [
+        1,
+        1.55,
+        0,
+        -29,
+        1,
+        5
+      ],
+      "0100": [
+        1,
+        1.5,
+        0,
+        -23,
+        1,
+        5
+      ],
+      "0001": [
+        1.05,
+        1.3,
+        -2,
+        -49,
+        1,
+        5
+      ],
+      "0011": [
+        1,
+        0.95,
+        0,
+        -23,
+        1,
+        7
+      ],
+      "0101": [
+        1,
+        0.95,
+        0,
+        -23,
+        1,
+        7
+      ]
+    },
+    "Z_CasinoTheme": {
+      "1000": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "1001": [
+        1,
+        1.05,
+        0,
+        -57,
+        1,
+        5
+      ],
+      "1010": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "1100": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "Wall": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Wall2": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Barrel": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Cactus": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Skull": [
+        1,
+        1.3,
+        0,
+        -15,
+        1,
+        5
+      ],
+      "0001": [
+        1,
+        1,
+        0,
+        -53,
+        1,
+        5
+      ],
+      "0010": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0011": [
+        1,
+        1,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0100": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0101": [
+        1,
+        1,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "Fence": [
+        1,
+        1.8,
+        0,
+        -55,
+        1,
+        5
+      ]
+    },
+    "Z_BrawlClub": {
+      "1000": [
+        0.7194244604316548,
+        1.4388489208633095,
+        15,
+        -30,
+        1,
+        5
+      ],
+      "1001": [
+        0.7194244604316548,
+        1.0359712230215827,
+        15,
+        -30,
+        1,
+        5
+      ],
+      "1010": [
+        1.03,
+        1.85,
+        0,
+        -60,
+        1,
+        5
+      ],
+      "1100": [
+        1.01,
+        1.85,
+        0,
+        -60,
+        1,
+        5
+      ],
+      "Wall": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Crate": [
+        1,
+        1.5,
+        0,
+        -29,
+        1,
+        5
+      ],
+      "Barrel": [
+        1,
+        1.9,
+        0,
+        -59,
+        1,
+        5
+      ],
+      "Cactus": [
+        1.35,
+        2.35,
+        -19,
+        -100,
+        1,
+        5.5
+      ],
+      "Skull": [
+        1.1,
+        1.5,
+        -5,
+        -29,
+        1,
+        5
+      ],
+      "Fence": [
+        1,
+        1.7,
+        0,
+        -45,
+        1,
+        5
+      ],
+      "0001": [
+        0.7194244604316548,
+        1,
+        15,
+        -28,
+        1,
+        5
+      ],
+      "0010": [
+        1,
+        1.7,
+        0,
+        -45,
+        1,
+        5
+      ],
+      "0011": [
+        1.03,
+        1.7,
+        0,
+        -45,
+        1,
+        5
+      ],
+      "0100": [
+        1,
+        1.7,
+        0,
+        -45,
+        1,
+        5
+      ],
+      "0101": [
+        1.01,
+        1.7,
+        0,
+        -45,
+        1,
+        5
+      ],
+      "0110": [
+        1,
+        1.75,
+        0,
+        -50,
+        1,
+        5
+      ]
+    },
+    "Z_JurassicTheme": {
+      "1000": [
+        0.7194244604316548,
+        1.3165467625899283,
+        15,
+        -30,
+        1,
+        5
+      ],
+      "1001": [
+        0.7194244604316548,
+        1.0359712230215827,
+        15,
+        -30,
+        1,
+        5
+      ],
+      "1010": [
+        0.8474576271186441,
+        2.1,
+        16,
+        -80,
+        1,
+        5
+      ],
+      "1100": [
+        0.87,
+        2.1,
+        0,
+        -80,
+        1,
+        5
+      ],
+      "Wall": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Wall2": [
+        1,
+        1.83,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Crate": [
+        1,
+        1.65,
+        0,
+        -39,
+        1,
+        5
+      ],
+      "Barrel": [
+        0.93,
+        1.88,
+        3,
+        -51,
+        1,
+        5
+      ],
+      "Cactus": [
+        1.15,
+        1.88,
+        -8,
+        -65,
+        1,
+        5
+      ],
+      "Skull": [
+        1,
+        1.4,
+        0,
+        -15,
+        1,
+        5
+      ],
+      "0001": [
+        0.7194244604316548,
+        1,
+        15,
+        -28,
+        1,
+        5
+      ],
+      "0010": [
+        1,
+        1.85,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0011": [
+        0.8771929824561404,
+        1.85,
+        16,
+        -55,
+        1,
+        5
+      ],
+      "0100": [
+        1,
+        1.85,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0101": [
+        0.8771929824561404,
+        1.85,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "0110": [
+        1,
+        1.75,
+        0,
+        -50,
+        1,
+        5
+      ],
+      "Fence": [
+        1,
+        1.85,
+        0,
+        -55,
+        1,
+        5
+      ],
+      "Post": [
+        0.85,
+        1.8,
+        7,
+        -62,
+        1,
+        5
+      ],
+      "Post_R": [
+        1.5,
+        1.8,
+        7,
+        -62,
+        1,
+        5
+      ],
+      "Post_T": [
+        0.85,
+        1.97,
+        7,
+        -80,
+        1,
+        5
+      ],
+      "Post_TR": [
+        1.5,
+        1.97,
+        7,
+        -80,
+        1,
+        5
+      ]
+    },
+    "Z_UnderwaterTheme": {
+      "1000": [
+        1,
+        1.7,
+        0,
+        -60,
+        1,
+        5
+      ],
+      "1001": [
+        1,
+        1.5,
+        0,
+        -48,
+        1,
+        5
+      ],
+      "1010": [
+        1,
+        1.7,
+        0,
+        -60,
+        1,
+        5
+      ],
+      "1100": [
+        1,
+        1.7,
+        0,
+        -60,
+        1,
+        5
+      ],
+      "Wall": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Wall2": [
+        1.1,
+        1.815,
+        -5,
+        -50,
+        1,
+        5
+      ],
+      "Barrel": [
+        1.1,
+        1.85,
+        -5,
+        -51,
+        1,
+        5
+      ],
+      "Cactus": [
+        1.15,
+        1.8,
+        -7,
+        -51,
+        1,
+        5
+      ],
+      "Skull": [
+        1,
+        1.5,
+        0,
+        -15,
+        1,
+        5
+      ],
+      "0001": [
+        1,
+        1.7,
+        0,
+        -60,
+        1,
+        5
+      ],
+      "0010": [
+        1,
+        1.7,
+        0,
+        -60,
+        1,
+        5
+      ],
+      "0011": [
+        1,
+        1.7,
+        0,
+        -60,
+        1,
+        5
+      ],
+      "0100": [
+        1,
+        1.7,
+        0,
+        -60,
+        1,
+        5
+      ],
+      "0101": [
+        1,
+        1.7,
+        0,
+        -60,
+        1,
+        5
+      ],
+      "Fence": [
+        1,
+        1.7,
+        0,
+        -60,
+        1,
+        5
+      ],
+      "Post": [
+        0.9,
+        1.8,
+        5,
+        -70,
+        1,
+        5
+      ],
+      "Post_TR": [
+        1.3,
+        2.3,
+        4,
+        -120,
+        1,
+        5
+      ],
+      "Post_R": [
+        1.3,
+        1.81,
+        4,
+        -70,
+        1,
+        5
+      ],
+      "Post_T": [
+        0.9,
+        2.3,
+        5,
+        -120,
+        1,
+        5
+      ]
+    },
+    "Z_CrimsonForest": {
+      "Barrel": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ],
+      "Cactus": [
+        1,
+        1.8,
+        0,
+        -51,
+        1,
+        5
+      ]
+    }
+  },
+  "assets": {
+    "marking.basket-brawl": "tiles/global/markings/basket-brawl.png",
+    "marking.baskets": "tiles/global/markings/baskets.png",
+    "marking.siege": "tiles/global/markings/siege.png",
+    "marking.spirit-wars": "tiles/global/markings/spirit-wars.png",
+    "marking.jump-landing": "tiles/global/markings/jump-landing.png",
+    "goal.blue.desert": "tiles/global/goals/blue/desert.png",
+    "goal.blue.stadium": "tiles/global/goals/blue/stadium.png",
+    "goal.blue.stunt-show": "tiles/global/goals/blue/stunt-show.png",
+    "goal.red.desert": "tiles/global/goals/red/desert.png",
+    "goal.red.stadium": "tiles/global/goals/red/stadium.png",
+    "goal.red.stunt-show": "tiles/global/goals/red/stunt-show.png",
+    "goal.5v5.blue.desert": "tiles/global/goals/5v5/blue/desert.png",
+    "goal.5v5.red.desert": "tiles/global/goals/5v5/red/desert.png",
+    "resource.global/jumplanding.png": "tiles/global/markings/jump-landing.png",
+    "resource.global/markings/basketmarkings.png": "tiles/global/markings/basket-brawl.png",
+    "resource.global/markings/baskets.png": "tiles/global/markings/baskets.png",
+    "resource.global/markings/siegemarkings.png": "tiles/global/markings/siege.png",
+    "resource.global/markings/spiritwarsmarkings.png": "tiles/global/markings/spirit-wars.png",
+    "resource.global/jumpads/r.png": "tiles/global/jump-pads/right.png",
+    "resource.global/jumpads/l.png": "tiles/global/jump-pads/left.png",
+    "resource.global/jumpads/t.png": "tiles/global/jump-pads/top.png",
+    "resource.global/jumpads/b.png": "tiles/global/jump-pads/bottom.png",
+    "resource.global/jumpads/br.png": "tiles/global/jump-pads/bottom-right.png",
+    "resource.global/jumpads/tl.png": "tiles/global/jump-pads/top-left.png",
+    "resource.global/jumpads/bl.png": "tiles/global/jump-pads/bottom-left.png",
+    "resource.global/jumpads/tr.png": "tiles/global/jump-pads/top-right.png"
+  }
+}

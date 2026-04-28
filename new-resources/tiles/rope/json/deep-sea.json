@@ -1,0 +1,44 @@
+{"frames": {
+
+"right.png":
+{
+	"frame": {"x":0,"y":263,"w":200,"h":219},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":200,"h":219},
+	"sourceSize": {"w":200,"h":219}
+},
+"single.png":
+{
+	"frame": {"x":0,"y":0,"w":100,"h":181},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":181},
+	"sourceSize": {"w":100,"h":181}
+},
+"top-right.png":
+{
+	"frame": {"x":0,"y":482,"w":200,"h":318},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":200,"h":318},
+	"sourceSize": {"w":200,"h":318}
+},
+"top.png":
+{
+	"frame": {"x":100,"y":0,"w":100,"h":263},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":263},
+	"sourceSize": {"w":100,"h":263}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "deep-sea.png",
+	"format": "RGBA8888",
+	"size": {"w":200,"h":800},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:a52ebeb2b963b98c627e2b252782fb33:4fd4c79a74f61c7f7a5a5a35b993a23e:9002e862ad117529bb86201c5b07b18c$"
+}
+}

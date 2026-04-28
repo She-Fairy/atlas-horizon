@@ -1,0 +1,92 @@
+{"frames": {
+
+"0001.png":
+{
+	"frame": {"x":0,"y":0,"w":100,"h":187},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":187},
+	"sourceSize": {"w":100,"h":187}
+},
+"0010.png":
+{
+	"frame": {"x":0,"y":187,"w":100,"h":166},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":166},
+	"sourceSize": {"w":100,"h":166}
+},
+"0011.png":
+{
+	"frame": {"x":0,"y":353,"w":100,"h":166},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":166},
+	"sourceSize": {"w":100,"h":166}
+},
+"0100.png":
+{
+	"frame": {"x":0,"y":519,"w":100,"h":169},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":169},
+	"sourceSize": {"w":100,"h":169}
+},
+"0101.png":
+{
+	"frame": {"x":0,"y":688,"w":100,"h":169},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":169},
+	"sourceSize": {"w":100,"h":169}
+},
+"1000.png":
+{
+	"frame": {"x":0,"y":857,"w":100,"h":237},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":237},
+	"sourceSize": {"w":100,"h":237}
+},
+"1001.png":
+{
+	"frame": {"x":0,"y":1094,"w":100,"h":237},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":237},
+	"sourceSize": {"w":100,"h":237}
+},
+"1010.png":
+{
+	"frame": {"x":0,"y":1331,"w":100,"h":213},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":213},
+	"sourceSize": {"w":100,"h":213}
+},
+"1100.png":
+{
+	"frame": {"x":0,"y":1544,"w":100,"h":210},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":210},
+	"sourceSize": {"w":100,"h":210}
+},
+"single.png":
+{
+	"frame": {"x":0,"y":1754,"w":100,"h":149},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":149},
+	"sourceSize": {"w":100,"h":149}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "water-park.png",
+	"format": "RGBA8888",
+	"size": {"w":100,"h":1903},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:a0b52ea78664900d607947453cce51ec:fb9b5e5727fa3332e8f8a5bfb9813e08:b3a9f86abba885222df7e7fac1efb305$"
+}
+}

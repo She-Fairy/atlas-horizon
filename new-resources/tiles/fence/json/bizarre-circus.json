@@ -1,0 +1,92 @@
+{"frames": {
+
+"0001.png":
+{
+	"frame": {"x":0,"y":0,"w":100,"h":180},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":180},
+	"sourceSize": {"w":100,"h":180}
+},
+"0010.png":
+{
+	"frame": {"x":0,"y":180,"w":100,"h":164},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":164},
+	"sourceSize": {"w":100,"h":164}
+},
+"0011.png":
+{
+	"frame": {"x":0,"y":344,"w":100,"h":145},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":145},
+	"sourceSize": {"w":100,"h":145}
+},
+"0100.png":
+{
+	"frame": {"x":0,"y":489,"w":100,"h":164},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":164},
+	"sourceSize": {"w":100,"h":164}
+},
+"0101.png":
+{
+	"frame": {"x":0,"y":653,"w":100,"h":145},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":145},
+	"sourceSize": {"w":100,"h":145}
+},
+"1000.png":
+{
+	"frame": {"x":0,"y":798,"w":100,"h":165},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":165},
+	"sourceSize": {"w":100,"h":165}
+},
+"1001.png":
+{
+	"frame": {"x":0,"y":963,"w":100,"h":145},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":145},
+	"sourceSize": {"w":100,"h":145}
+},
+"1010.png":
+{
+	"frame": {"x":0,"y":1108,"w":100,"h":180},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":180},
+	"sourceSize": {"w":100,"h":180}
+},
+"1100.png":
+{
+	"frame": {"x":0,"y":1288,"w":100,"h":180},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":180},
+	"sourceSize": {"w":100,"h":180}
+},
+"single.png":
+{
+	"frame": {"x":0,"y":1468,"w":100,"h":180},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":180},
+	"sourceSize": {"w":100,"h":180}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "bizarre-circus.png",
+	"format": "RGBA8888",
+	"size": {"w":100,"h":1648},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:8ad876b1cbb5d62c3caf08580f21b88f:cdd881e3806ceeaf0d34e4ccaec9a74a:c150e229308f270603d9e77c63b771e9$"
+}
+}

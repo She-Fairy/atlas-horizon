@@ -1,0 +1,44 @@
+{"frames": {
+
+"right.png":
+{
+	"frame": {"x":0,"y":0,"w":100,"h":121},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":121},
+	"sourceSize": {"w":100,"h":121}
+},
+"single.png":
+{
+	"frame": {"x":100,"y":0,"w":100,"h":180},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":180},
+	"sourceSize": {"w":100,"h":180}
+},
+"top-right.png":
+{
+	"frame": {"x":0,"y":180,"w":495,"h":828},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":495,"h":828},
+	"sourceSize": {"w":495,"h":828}
+},
+"top.png":
+{
+	"frame": {"x":0,"y":1008,"w":330,"h":815},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":330,"h":815},
+	"sourceSize": {"w":330,"h":815}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "pyramid-quest.png",
+	"format": "RGBA8888",
+	"size": {"w":495,"h":1823},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:5889243f1105cd12ab0f258647b2d175:d756626f3332e17db21e9b15c860a3ca:b3b00010971737bff31b82a8cf689b7a$"
+}
+}

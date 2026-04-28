@@ -1,0 +1,92 @@
+{"frames": {
+
+"0001.png":
+{
+	"frame": {"x":0,"y":0,"w":100,"h":160},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":160},
+	"sourceSize": {"w":100,"h":160}
+},
+"0010.png":
+{
+	"frame": {"x":0,"y":160,"w":100,"h":180},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":180},
+	"sourceSize": {"w":100,"h":180}
+},
+"0011.png":
+{
+	"frame": {"x":0,"y":340,"w":100,"h":150},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":150},
+	"sourceSize": {"w":100,"h":150}
+},
+"0100.png":
+{
+	"frame": {"x":0,"y":490,"w":100,"h":180},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":180},
+	"sourceSize": {"w":100,"h":180}
+},
+"0101.png":
+{
+	"frame": {"x":0,"y":670,"w":100,"h":150},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":150},
+	"sourceSize": {"w":100,"h":150}
+},
+"1000.png":
+{
+	"frame": {"x":0,"y":820,"w":100,"h":180},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":180},
+	"sourceSize": {"w":100,"h":180}
+},
+"1001.png":
+{
+	"frame": {"x":0,"y":1000,"w":100,"h":111},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":111},
+	"sourceSize": {"w":100,"h":111}
+},
+"1010.png":
+{
+	"frame": {"x":0,"y":1111,"w":100,"h":180},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":180},
+	"sourceSize": {"w":100,"h":180}
+},
+"1100.png":
+{
+	"frame": {"x":0,"y":1291,"w":100,"h":180},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":180},
+	"sourceSize": {"w":100,"h":180}
+},
+"single.png":
+{
+	"frame": {"x":0,"y":1471,"w":100,"h":180},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":180},
+	"sourceSize": {"w":100,"h":180}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "stranger-things-lair.png",
+	"format": "RGBA8888",
+	"size": {"w":100,"h":1651},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:c0f290672fd021314e62d11c2138f9c6:f36640e56076bde4134496389ba121f7:9f9ac1ba5461a8515826e224015f4823$"
+}
+}

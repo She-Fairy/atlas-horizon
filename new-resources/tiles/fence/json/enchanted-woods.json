@@ -1,0 +1,92 @@
+{"frames": {
+
+"0001.png":
+{
+	"frame": {"x":0,"y":0,"w":100,"h":177},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":177},
+	"sourceSize": {"w":100,"h":177}
+},
+"0010.png":
+{
+	"frame": {"x":0,"y":177,"w":100,"h":181},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":181},
+	"sourceSize": {"w":100,"h":181}
+},
+"0011.png":
+{
+	"frame": {"x":0,"y":358,"w":100,"h":150},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":150},
+	"sourceSize": {"w":100,"h":150}
+},
+"0100.png":
+{
+	"frame": {"x":0,"y":508,"w":100,"h":181},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":181},
+	"sourceSize": {"w":100,"h":181}
+},
+"0101.png":
+{
+	"frame": {"x":0,"y":689,"w":100,"h":150},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":150},
+	"sourceSize": {"w":100,"h":150}
+},
+"1000.png":
+{
+	"frame": {"x":0,"y":839,"w":100,"h":205},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":205},
+	"sourceSize": {"w":100,"h":205}
+},
+"1001.png":
+{
+	"frame": {"x":0,"y":1044,"w":100,"h":145},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":145},
+	"sourceSize": {"w":100,"h":145}
+},
+"1010.png":
+{
+	"frame": {"x":0,"y":1189,"w":100,"h":205},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":205},
+	"sourceSize": {"w":100,"h":205}
+},
+"1100.png":
+{
+	"frame": {"x":0,"y":1394,"w":100,"h":205},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":205},
+	"sourceSize": {"w":100,"h":205}
+},
+"single.png":
+{
+	"frame": {"x":0,"y":1599,"w":100,"h":190},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":190},
+	"sourceSize": {"w":100,"h":190}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "enchanted-woods.png",
+	"format": "RGBA8888",
+	"size": {"w":100,"h":1789},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:2646ff50931beb44f71ae7c569dd3b81:7c19a83357e2d2bc1cec666009a321ea:23bc0a213683e4e93e10f9ec1eeb5d0e$"
+}
+}

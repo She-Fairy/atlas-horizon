@@ -1,0 +1,92 @@
+{"frames": {
+
+"0001.png":
+{
+	"frame": {"x":0,"y":0,"w":100,"h":190},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":190},
+	"sourceSize": {"w":100,"h":190}
+},
+"0010.png":
+{
+	"frame": {"x":0,"y":190,"w":100,"h":190},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":190},
+	"sourceSize": {"w":100,"h":190}
+},
+"0011.png":
+{
+	"frame": {"x":0,"y":380,"w":100,"h":190},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":190},
+	"sourceSize": {"w":100,"h":190}
+},
+"0100.png":
+{
+	"frame": {"x":0,"y":570,"w":100,"h":190},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":190},
+	"sourceSize": {"w":100,"h":190}
+},
+"0101.png":
+{
+	"frame": {"x":0,"y":760,"w":100,"h":190},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":190},
+	"sourceSize": {"w":100,"h":190}
+},
+"1000.png":
+{
+	"frame": {"x":0,"y":950,"w":100,"h":190},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":190},
+	"sourceSize": {"w":100,"h":190}
+},
+"1001.png":
+{
+	"frame": {"x":0,"y":1140,"w":100,"h":190},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":190},
+	"sourceSize": {"w":100,"h":190}
+},
+"1010.png":
+{
+	"frame": {"x":0,"y":1330,"w":100,"h":190},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":190},
+	"sourceSize": {"w":100,"h":190}
+},
+"1100.png":
+{
+	"frame": {"x":0,"y":1520,"w":100,"h":190},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":190},
+	"sourceSize": {"w":100,"h":190}
+},
+"single.png":
+{
+	"frame": {"x":0,"y":1710,"w":100,"h":140},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":140},
+	"sourceSize": {"w":100,"h":140}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "starr-toon.png",
+	"format": "RGBA8888",
+	"size": {"w":100,"h":1850},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:956fdcfd2cdec7ced0b5483d73cace14:217849fd740e0fdc50743d19a1ec7a5b:736db7883c687774ecc30d6ebe7d6fe1$"
+}
+}

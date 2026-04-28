@@ -1,0 +1,44 @@
+{"frames": {
+
+"right.png":
+{
+	"frame": {"x":0,"y":0,"w":100,"h":148},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":148},
+	"sourceSize": {"w":100,"h":148}
+},
+"single.png":
+{
+	"frame": {"x":0,"y":148,"w":100,"h":283},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":283},
+	"sourceSize": {"w":100,"h":283}
+},
+"top-right.png":
+{
+	"frame": {"x":0,"y":431,"w":100,"h":187},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":187},
+	"sourceSize": {"w":100,"h":187}
+},
+"top.png":
+{
+	"frame": {"x":0,"y":618,"w":100,"h":358},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":358},
+	"sourceSize": {"w":100,"h":358}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "fighting-game.png",
+	"format": "RGBA8888",
+	"size": {"w":100,"h":976},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:8395709c29d5dac4720624dcc9040504:b28b925758d5e4f681884310fbe4585d:5f86e2aa5f535c59f4c78dfead5e1e8b$"
+}
+}

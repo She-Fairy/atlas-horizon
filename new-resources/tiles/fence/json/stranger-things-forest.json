@@ -1,0 +1,92 @@
+{"frames": {
+
+"0001.png":
+{
+	"frame": {"x":0,"y":0,"w":100,"h":87},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":87},
+	"sourceSize": {"w":100,"h":87}
+},
+"0010.png":
+{
+	"frame": {"x":0,"y":87,"w":100,"h":152},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":152},
+	"sourceSize": {"w":100,"h":152}
+},
+"0011.png":
+{
+	"frame": {"x":0,"y":239,"w":100,"h":100},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":100},
+	"sourceSize": {"w":100,"h":100}
+},
+"0100.png":
+{
+	"frame": {"x":0,"y":339,"w":100,"h":152},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":152},
+	"sourceSize": {"w":100,"h":152}
+},
+"0101.png":
+{
+	"frame": {"x":0,"y":491,"w":100,"h":100},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":100},
+	"sourceSize": {"w":100,"h":100}
+},
+"1000.png":
+{
+	"frame": {"x":0,"y":591,"w":100,"h":130},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":130},
+	"sourceSize": {"w":100,"h":130}
+},
+"1001.png":
+{
+	"frame": {"x":0,"y":721,"w":100,"h":87},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":87},
+	"sourceSize": {"w":100,"h":87}
+},
+"1010.png":
+{
+	"frame": {"x":0,"y":808,"w":100,"h":130},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":130},
+	"sourceSize": {"w":100,"h":130}
+},
+"1100.png":
+{
+	"frame": {"x":0,"y":938,"w":100,"h":130},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":130},
+	"sourceSize": {"w":100,"h":130}
+},
+"single.png":
+{
+	"frame": {"x":0,"y":1068,"w":100,"h":145},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":145},
+	"sourceSize": {"w":100,"h":145}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "stranger-things-forest.png",
+	"format": "RGBA8888",
+	"size": {"w":100,"h":1213},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:3fa676334247c89c136659034e8154d8:416c3c8dc9b4883a84a5ff813e269053:ff445bd86f1c24447b6829add2b39f53$"
+}
+}

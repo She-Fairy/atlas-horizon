@@ -1,0 +1,44 @@
+{"frames": {
+
+"right.png":
+{
+	"frame": {"x":0,"y":0,"w":100,"h":121},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":121},
+	"sourceSize": {"w":100,"h":121}
+},
+"single.png":
+{
+	"frame": {"x":100,"y":0,"w":100,"h":180},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":180},
+	"sourceSize": {"w":100,"h":180}
+},
+"top-right.png":
+{
+	"frame": {"x":0,"y":180,"w":495,"h":828},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":495,"h":828},
+	"sourceSize": {"w":495,"h":828}
+},
+"top.png":
+{
+	"frame": {"x":0,"y":1008,"w":330,"h":815},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":330,"h":815},
+	"sourceSize": {"w":330,"h":815}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "brawlywood.png",
+	"format": "RGBA8888",
+	"size": {"w":495,"h":1823},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:0a6aa94fb6342f70d0c9270703782d26:e07ee566635199ad0e8c732fd5359913:cb64066a782b16277b0d46603b311244$"
+}
+}

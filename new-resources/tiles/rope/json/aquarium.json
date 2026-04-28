@@ -1,0 +1,44 @@
+{"frames": {
+
+"right.png":
+{
+	"frame": {"x":0,"y":0,"w":100,"h":93},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":93},
+	"sourceSize": {"w":100,"h":93}
+},
+"single.png":
+{
+	"frame": {"x":0,"y":93,"w":100,"h":148},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":148},
+	"sourceSize": {"w":100,"h":148}
+},
+"top-right.png":
+{
+	"frame": {"x":0,"y":241,"w":105,"h":130},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":105,"h":130},
+	"sourceSize": {"w":105,"h":130}
+},
+"top.png":
+{
+	"frame": {"x":0,"y":371,"w":100,"h":210},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":210},
+	"sourceSize": {"w":100,"h":210}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "aquarium.png",
+	"format": "RGBA8888",
+	"size": {"w":105,"h":581},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:364f612afb33a5c5c174e8b9b5c01d84:1bf6994ad0a67d95e310facbdda37446:38f3c5bcb1556f4307ba85f49812b7c5$"
+}
+}

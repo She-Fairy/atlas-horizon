@@ -1,0 +1,92 @@
+{"frames": {
+
+"0001.png":
+{
+	"frame": {"x":0,"y":0,"w":100,"h":92},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":92},
+	"sourceSize": {"w":100,"h":92}
+},
+"0010.png":
+{
+	"frame": {"x":100,"y":0,"w":100,"h":117},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":117},
+	"sourceSize": {"w":100,"h":117}
+},
+"0011.png":
+{
+	"frame": {"x":200,"y":0,"w":100,"h":100},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":100},
+	"sourceSize": {"w":100,"h":100}
+},
+"0100.png":
+{
+	"frame": {"x":300,"y":0,"w":100,"h":117},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":117},
+	"sourceSize": {"w":100,"h":117}
+},
+"0101.png":
+{
+	"frame": {"x":400,"y":0,"w":100,"h":100},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":100},
+	"sourceSize": {"w":100,"h":100}
+},
+"1000.png":
+{
+	"frame": {"x":0,"y":117,"w":100,"h":126},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":126},
+	"sourceSize": {"w":100,"h":126}
+},
+"1001.png":
+{
+	"frame": {"x":100,"y":117,"w":100,"h":95},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":95},
+	"sourceSize": {"w":100,"h":95}
+},
+"1010.png":
+{
+	"frame": {"x":200,"y":117,"w":100,"h":131},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":131},
+	"sourceSize": {"w":100,"h":131}
+},
+"1100.png":
+{
+	"frame": {"x":300,"y":117,"w":100,"h":131},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":131},
+	"sourceSize": {"w":100,"h":131}
+},
+"single.png":
+{
+	"frame": {"x":400,"y":117,"w":100,"h":131},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":131},
+	"sourceSize": {"w":100,"h":131}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "scrapyard.png",
+	"format": "RGBA8888",
+	"size": {"w":500,"h":248},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:d573d63b1c30d7440a1b45cbae91aa3b:75e8ba3ebecdcedaed1e4297f101f3f2:746fd6bd470021dbdde87b6db222fe1b$"
+}
+}

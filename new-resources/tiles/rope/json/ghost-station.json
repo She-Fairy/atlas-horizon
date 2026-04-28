@@ -1,0 +1,44 @@
+{"frames": {
+
+"right.png":
+{
+	"frame": {"x":0,"y":0,"w":100,"h":129},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":129},
+	"sourceSize": {"w":100,"h":129}
+},
+"single.png":
+{
+	"frame": {"x":0,"y":129,"w":100,"h":225},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":225},
+	"sourceSize": {"w":100,"h":225}
+},
+"top-right.png":
+{
+	"frame": {"x":0,"y":354,"w":100,"h":165},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":165},
+	"sourceSize": {"w":100,"h":165}
+},
+"top.png":
+{
+	"frame": {"x":0,"y":519,"w":100,"h":284},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":284},
+	"sourceSize": {"w":100,"h":284}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "ghost-station.png",
+	"format": "RGBA8888",
+	"size": {"w":100,"h":803},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:f249050cf6812b5841569fbe3ea44885:0e9f501ab265f9387cd5fc56d3fdeeb9:d2ee85444501d7816ae0fddb66c74b3c$"
+}
+}

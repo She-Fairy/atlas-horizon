@@ -1,0 +1,92 @@
+{"frames": {
+
+"0001.png":
+{
+	"frame": {"x":0,"y":0,"w":100,"h":194},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":194},
+	"sourceSize": {"w":100,"h":194}
+},
+"0010.png":
+{
+	"frame": {"x":0,"y":194,"w":100,"h":170},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":170},
+	"sourceSize": {"w":100,"h":170}
+},
+"0011.png":
+{
+	"frame": {"x":0,"y":364,"w":100,"h":150},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":150},
+	"sourceSize": {"w":100,"h":150}
+},
+"0100.png":
+{
+	"frame": {"x":0,"y":514,"w":100,"h":170},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":170},
+	"sourceSize": {"w":100,"h":170}
+},
+"0101.png":
+{
+	"frame": {"x":0,"y":684,"w":100,"h":150},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":150},
+	"sourceSize": {"w":100,"h":150}
+},
+"1000.png":
+{
+	"frame": {"x":0,"y":834,"w":100,"h":200},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":200},
+	"sourceSize": {"w":100,"h":200}
+},
+"1001.png":
+{
+	"frame": {"x":0,"y":1034,"w":100,"h":111},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":111},
+	"sourceSize": {"w":100,"h":111}
+},
+"1010.png":
+{
+	"frame": {"x":0,"y":1145,"w":100,"h":200},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":200},
+	"sourceSize": {"w":100,"h":200}
+},
+"1100.png":
+{
+	"frame": {"x":0,"y":1345,"w":100,"h":200},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":200},
+	"sourceSize": {"w":100,"h":200}
+},
+"single.png":
+{
+	"frame": {"x":0,"y":1545,"w":100,"h":170},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":170},
+	"sourceSize": {"w":100,"h":170}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "stunt-show.png",
+	"format": "RGBA8888",
+	"size": {"w":100,"h":1715},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:02142609737a4b84d51f59d898d70e3a:d3689babb1e14b43fcf589a2d1667dda:6a762790957bf9ca0d57398bd53cd1ae$"
+}
+}

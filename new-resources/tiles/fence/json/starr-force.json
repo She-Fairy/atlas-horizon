@@ -1,0 +1,92 @@
+{"frames": {
+
+"0001.png":
+{
+	"frame": {"x":0,"y":0,"w":100,"h":171},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":171},
+	"sourceSize": {"w":100,"h":171}
+},
+"0010.png":
+{
+	"frame": {"x":0,"y":171,"w":100,"h":144},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":144},
+	"sourceSize": {"w":100,"h":144}
+},
+"0011.png":
+{
+	"frame": {"x":0,"y":315,"w":100,"h":165},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":165},
+	"sourceSize": {"w":100,"h":165}
+},
+"0100.png":
+{
+	"frame": {"x":0,"y":480,"w":100,"h":144},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":144},
+	"sourceSize": {"w":100,"h":144}
+},
+"0101.png":
+{
+	"frame": {"x":0,"y":624,"w":100,"h":165},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":165},
+	"sourceSize": {"w":100,"h":165}
+},
+"1000.png":
+{
+	"frame": {"x":0,"y":789,"w":100,"h":189},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":189},
+	"sourceSize": {"w":100,"h":189}
+},
+"1001.png":
+{
+	"frame": {"x":0,"y":978,"w":100,"h":160},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":160},
+	"sourceSize": {"w":100,"h":160}
+},
+"1010.png":
+{
+	"frame": {"x":0,"y":1138,"w":100,"h":191},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":191},
+	"sourceSize": {"w":100,"h":191}
+},
+"1100.png":
+{
+	"frame": {"x":0,"y":1329,"w":100,"h":191},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":191},
+	"sourceSize": {"w":100,"h":191}
+},
+"single.png":
+{
+	"frame": {"x":0,"y":1520,"w":100,"h":165},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":165},
+	"sourceSize": {"w":100,"h":165}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "starr-force.png",
+	"format": "RGBA8888",
+	"size": {"w":100,"h":1685},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:3ffdd08dd3ab432e7749c22318e844e1:34cc97a9726f611b0b610cad5dc6cb64:6c9a7e009fc87d95f578a07e4edc586f$"
+}
+}

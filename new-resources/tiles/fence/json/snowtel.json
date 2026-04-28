@@ -1,0 +1,36 @@
+{"frames": {
+
+"hor.png":
+{
+	"frame": {"x":0,"y":0,"w":100,"h":145},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":145},
+	"sourceSize": {"w":100,"h":145}
+},
+"single.png":
+{
+	"frame": {"x":100,"y":0,"w":100,"h":165},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":165},
+	"sourceSize": {"w":100,"h":165}
+},
+"ver.png":
+{
+	"frame": {"x":0,"y":165,"w":458,"h":843},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":458,"h":843},
+	"sourceSize": {"w":458,"h":843}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "snowtel.png",
+	"format": "RGBA8888",
+	"size": {"w":458,"h":1008},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:2911216e3ab5494e0f3a43865ed64dd3:fdc3f5323174f0fdb9d6c1b8fb418e8d:e5d6f6920a6b104e83247a04bbfcc0e6$"
+}
+}

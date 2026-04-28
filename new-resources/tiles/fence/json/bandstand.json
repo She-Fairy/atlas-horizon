@@ -1,0 +1,92 @@
+{"frames": {
+
+"0001.png":
+{
+	"frame": {"x":0,"y":0,"w":100,"h":144},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":144},
+	"sourceSize": {"w":100,"h":144}
+},
+"0010.png":
+{
+	"frame": {"x":0,"y":144,"w":100,"h":185},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":185},
+	"sourceSize": {"w":100,"h":185}
+},
+"0011.png":
+{
+	"frame": {"x":0,"y":329,"w":100,"h":217},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":217},
+	"sourceSize": {"w":100,"h":217}
+},
+"0100.png":
+{
+	"frame": {"x":0,"y":546,"w":100,"h":185},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":185},
+	"sourceSize": {"w":100,"h":185}
+},
+"0101.png":
+{
+	"frame": {"x":0,"y":731,"w":100,"h":217},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":217},
+	"sourceSize": {"w":100,"h":217}
+},
+"1000.png":
+{
+	"frame": {"x":0,"y":948,"w":100,"h":185},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":185},
+	"sourceSize": {"w":100,"h":185}
+},
+"1001.png":
+{
+	"frame": {"x":0,"y":1133,"w":100,"h":144},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":144},
+	"sourceSize": {"w":100,"h":144}
+},
+"1010.png":
+{
+	"frame": {"x":0,"y":1277,"w":100,"h":270},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":270},
+	"sourceSize": {"w":100,"h":270}
+},
+"1100.png":
+{
+	"frame": {"x":0,"y":1547,"w":100,"h":270},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":270},
+	"sourceSize": {"w":100,"h":270}
+},
+"single.png":
+{
+	"frame": {"x":0,"y":1817,"w":100,"h":185},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":185},
+	"sourceSize": {"w":100,"h":185}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "bandstand.png",
+	"format": "RGBA8888",
+	"size": {"w":100,"h":2002},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:db28a074cfa9c90da7705f7b7a127a24:15e81696a58ff8d41a0e766031a2ffb0:694c37c429ef00abab2ed71364396f5a$"
+}
+}
