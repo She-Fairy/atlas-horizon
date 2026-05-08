@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Auth Callback</title>
+  </head>
+  <body>
+    <p>Processing sign-in... redirecting shortly.</p>
+
+    <!-- Load runtime config then run exchange in a module using a local supabase-client -->
+    <script src="../../js/config.js"></script>
+    <script type="module">
+      import { supabase } from './supabase-client.js';
+
+      function getAppRootUrl() {
+        const callbackPath = '/auth/callback';
+        const { origin, pathname } = window.location;
+        const callbackAt = pathname.indexOf(callbackPath);
+        const rootPath = callbackAt >= 0 ? pathname.slice(0, callbackAt + 1) : '/';
+        return `${origin}${rootPath}`;
+      }
+
+      function installAuthNetworkLogger() {
+        if (!window.fetch || window.__atlasAuthFetchLoggerInstalled) return;
+        window.__atlasAuthFetchLoggerInstalled = true;
+        const originalFetch = window.fetch.bind(window);
+        window.fetch = async (...args) => {
+          const request = args[0];
+          const url = typeof request === 'string' ? request : request?.url || '';
+          const isAuthRequest = url.includes('/auth/v1/callback') || url.includes('/auth/v1/token');
+          try {
+            const response = await originalFetch(...args);
+            if (isAuthRequest) {
+              const body = await response.clone().text().catch((e) => `<<unable to read body: ${e?.message || e}>>`);
+              console.log('AUTH NETWORK URL:', url);
+              console.log('AUTH NETWORK STATUS:', response.status);
+              console.log('AUTH NETWORK BODY:', body);
+            }
+            return response;
+          } catch (error) {
+            if (isAuthRequest) {
+              console.error('AUTH NETWORK FAILED:', url, error);
+            }
+            throw error;
+          }
+        };
+      }
+
+      function getAuthStorageSnapshot() {
+        if (!window.localStorage) return [];
+        return Object.keys(window.localStorage)
+          .filter((key) => /supabase|sb-|code-verifier|atlas/i.test(key))
+          .map((key) => ({
+            key,
+            hasValue: !!window.localStorage.getItem(key),
+            length: (window.localStorage.getItem(key) || '').length
+          }));
+      }
+
+      (async function () {
+        const appRootUrl = getAppRootUrl();
+        let shouldRedirect = false;
+        try {
+          installAuthNetworkLogger();
+          console.log('CALLBACK URL:', window.location.href);
+          console.log('CALLBACK APP ROOT:', appRootUrl);
+          console.log('CALLBACK ORIGIN:', window.location.origin);
+          console.log('CALLBACK AUTH STORAGE KEY:', window.SUPABASE_AUTH_STORAGE_KEY || 'atlas-horizon-supabase-auth');
+          console.log('CALLBACK OAUTH START ORIGIN:', localStorage.getItem('atlas_oauth_start_origin'));
+          console.log('CALLBACK OAUTH REDIRECT TO:', localStorage.getItem('atlas_oauth_redirect_to'));
+          console.log('CALLBACK OAUTH STARTED AT:', localStorage.getItem('atlas_oauth_started_at'));
+          console.log('CALLBACK STORAGE BEFORE EXCHANGE:', getAuthStorageSnapshot());
+
+          if (!window.SUPABASE_URL || !window.SUPABASE_ANON_KEY) {
+            console.error('Missing Supabase config (SUPABASE_URL / SUPABASE_ANON_KEY)');
+            return;
+          }
+
+          if (!supabase || !supabase.auth || typeof supabase.auth.exchangeCodeForSession !== 'function') {
+            console.error('supabase.auth.exchangeCodeForSession not available');
+            return;
+          }
+
+          const params = new URLSearchParams(window.location.search);
+          if (params.get('error')) {
+            console.error('CALLBACK URL ERROR:', {
+              error: params.get('error'),
+              error_code: params.get('error_code'),
+              error_description: params.get('error_description')
+            });
+            return;
+          }
+          if (!params.get('code')) {
+            console.error('CALLBACK MISSING CODE:', window.location.href);
+            return;
+          }
+
+          try {
+            const code = params.get('code');
+            const { data, error } =
+            await supabase.auth.exchangeCodeForSession(code);
+            console.log('EXCHANGE DATA:', data);
+            console.log('EXCHANGE ERROR:', error);
+            console.log('CALLBACK STORAGE AFTER EXCHANGE:', getAuthStorageSnapshot());
+            const sessionRes = await supabase.auth.getSession();
+            console.log('SESSION AFTER EXCHANGE:', sessionRes);
+
+            if (error) return;
+            if (!sessionRes?.data?.session) {
+              console.error('NO SESSION AFTER EXCHANGE');
+              return;
+            }
+            shouldRedirect = true;
+          } catch (err) {
+            console.error('CALLBACK CRASH:', err);
+            return;
+          }
+        } finally {
+          if (shouldRedirect) {
+            window.location.replace(appRootUrl);
+          } else {
+            document.body.innerHTML = '<p>Sign-in failed. Open the browser console for auth exchange details.</p>';
+          }
+        }
+      })();
+    </script>
+  </body>
+</html>

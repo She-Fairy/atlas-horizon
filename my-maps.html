@@ -7,14 +7,10 @@
     <link rel="icon" href="./Resources/Additional/Icons/AtlasLogo.ico" type="image/x-icon">
     <link rel="stylesheet" href="./css/style.css">
     <link rel="stylesheet" href="./css/my-maps.css"> 
+    <script src="./js/confirm-dialog.js" defer></script>
     <base href="https://she-fairy.github.io/atlas-horizon/">
 </head>
 <body>
-    <script>
-        if (localStorage.getItem('user') === null) {
-            window.location.href = "https://discord.com/oauth2/authorize?client_id=1293658198393487420&response_type=code&redirect_uri=https%3A%2F%2Fshe-fairy.github.io%2Fatlas-horizon%2Fauth%2Fdiscord%2Fcallback.html&scope=identify";
-        }
-    </script>
     <nav>
         <div class="logo">
             <img src="./Resources/Additional/Icons/AtlasLogo.png" alt="Atlas Horizon Logo" class="logo-img">
@@ -194,23 +190,53 @@
     </div>
 
         <script>
-            const avatar = document.getElementById('avatar');
-            avatar.src = localStorage.getItem('avatar');
-            avatar.addEventListener('click', () => {
-                if (confirm('Do you want to log out of this account?')){
-                    localStorage.clear();
-                    window.location.href = './index.html';
-                }
-            })
+                (async function(){
+                    const avatar = document.getElementById('avatar');
+                    try {
+                        const user = (window.authInit && authInit.getCurrentUser) ? await authInit.getCurrentUser() : (window.supabaseService ? await supabaseService.getCurrentUser() : null);
+                        if (user && avatar) {
+                            avatar.src = user.user_metadata?.avatar_url || localStorage.getItem('avatar') || '';
+                            avatar.style.display = 'block';
+                        } else if (avatar) {
+                            avatar.style.display = 'none';
+                        }
+                    } catch (e) {
+                        if (avatar) avatar.style.display = 'none';
+                    }
+
+                    if (avatar) {
+                        avatar.addEventListener('click', async () => {
+                            if (await window.atlasConfirm({
+                                title: 'Log out?',
+                                message: 'Do you want to log out of this account?',
+                                confirmLabel: 'Log out'
+                            })){
+                                try { if (window.authInit && authInit.signOut) await authInit.signOut(); else if (window.supabaseService && supabaseService.signOut) await supabaseService.signOut(); } catch(e){ console.warn('signOut failed', e); }
+                                window.location.href = './index.html';
+                            }
+                        });
+                    }
+                })();
         </script>
 
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-    
-    <!-- Application Scripts -->
-    <script src="./js/firebase-service.js"></script>
+    <!-- Supabase config + client + centralized auth initializer -->
+    <script src="./js/config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/umd/supabase.min.js"></script>
+    <script src="./js/supabase-service.js"></script>
+    <script src="./js/auth-init.js"></script>
+    <script>
+        // If not signed in, trigger Supabase Discord OAuth for this page.
+        (async function(){
+            try {
+                const user = (window.authInit && authInit.getCurrentUser) ? await authInit.getCurrentUser() : (window.supabaseService ? await supabaseService.getCurrentUser() : null);
+                if (!user) {
+                    try { await authInit.signIn(); } catch (e) { console.warn('authInit.signIn failed', e); }
+                }
+            } catch (e) {
+                console.warn('Auth check failed', e);
+            }
+        })();
+    </script>
     <script type="module" src="./js/map-renderer.js"></script>
     <script type="module" src="./js/my-maps.js"></script>
 </body>

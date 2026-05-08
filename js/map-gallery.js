@@ -9,45 +9,145 @@ let currentMapIndex = {}; // {userId: index} - tracks which map index we're on f
 let allUserIds = []; // List of all user IDs
 let displayedUsers = new Set(); // Track which users we've already displayed
 
+const MAP_SIZES = {
+    regular: { width: 21, height: 33 },
+    showdown: { width: 60, height: 60 },
+    arena: { width: 59, height: 59 },
+    siege: { width: 27, height: 39 },
+    volley: { width: 21, height: 25 },
+    basket: { width: 21, height: 17 }
+};
+
+function isSupabaseReady() {
+    return !!(
+        window.supabaseService &&
+        (typeof window.supabaseService.isInitialized !== 'function' || window.supabaseService.isInitialized())
+    );
+}
+
+function guessSizeLabel(width, height) {
+    for (const [label, size] of Object.entries(MAP_SIZES)) {
+        if (size.width === width && size.height === height) return label;
+    }
+    return 'regular';
+}
+
 async function loadAllMaps() {
     try {
-        // Get all users
-        const users = await Firebase.readDataOnce('users');
-        if (!users) return;
+        if (isSupabaseReady()) {
+            // Fetch all maps from Supabase
+            const rows = await window.supabaseService.listMaps();
+            if (!rows || !rows.length) return;
 
-        allUserIds = Object.keys(users);
-        
-        // Load maps for each user
-        const mapPromises = allUserIds.map(async (userId) => {
-            const [maps, username] = await Promise.all([
-                Firebase.readDataOnce(`users/${userId}/maps`),
-                Firebase.readDataOnce(`users/${userId}/username`)
-            ]);
-            if (!maps) return { userId, maps: [], username: username || 'Unknown' };
-            
-            // Convert to array and sort by mapId (timestamp) descending
-            const mapsArray = Object.keys(maps).map(mapId => ({
-                mapId,
-                userId,
-                username: username || 'Unknown',
-                ...maps[mapId]
-            })).sort((a, b) => Number(b.mapId) - Number(a.mapId));
-            
-            return { userId, maps: mapsArray, username: username || 'Unknown' };
-        });
-
-        const results = await Promise.all(mapPromises);
-        
-        // Store maps by user
-        for (const result of results) {
-            if (result.maps.length > 0) {
-                allUsersMaps[result.userId] = result.maps;
-                currentMapIndex[result.userId] = 0; // Start with most recent (index 0)
+            // Group rows by user_id
+            for (const row of rows) {
+                const userId = row.user_id;
+                if (!allUsersMaps[userId]) allUsersMaps[userId] = [];
+                // Build minimal map object; tiles (mapData) will be fetched when generating previews
+                allUsersMaps[userId].push({
+                    mapId: row.id,
+                    userId,
+                    username: null, // filled below from profiles
+                    name: row.name,
+                    width: row.width,
+                    height: row.height,
+                    gamemode: row.gamemode,
+                    environment: row.environment,
+                    size: guessSizeLabel(row.width, row.height),
+                    mapData: null
+                });
             }
-        }
 
-        // Apply filters and display
-        applyFilters();
+            // Helper: resolve a usable display name from a profile row (many possible schemas)
+            function resolveProfileName(profile, fallbackId) {
+                if (!profile) return fallbackId ? (String(fallbackId).slice(0, 8) + '...') : 'Unknown';
+                // Prefer Discord-related fields if present
+                const discordCandidates = [
+                    profile.discord_username,
+                    profile.discord_tag,
+                    profile.discord_name,
+                    profile.discord?.username,
+                    profile.discord?.tag,
+                    profile.discord_id // sometimes stored as a combined string
+                ];
+                for (const d of discordCandidates) {
+                    if (d) return d;
+                }
+                return (
+                    profile.username ||
+                    profile.full_name ||
+                    profile.name ||
+                    profile.display_name ||
+                    profile.id ||
+                    (fallbackId ? (String(fallbackId).slice(0, 8) + '...') : 'Unknown')
+                );
+            }
+
+            // Fetch usernames from profiles table (best-effort)
+            for (const userId of Object.keys(allUsersMaps)) {
+                let username = 'Unknown';
+                try {
+                    const profile = await window.supabaseService.fetchProfileById(userId);
+                    username = resolveProfileName(profile, userId);
+                } catch (e) {
+                    username = resolveProfileName(null, userId);
+                }
+                allUsersMaps[userId].forEach(m => m.username = username);
+            }
+
+            // Pre-fetch tiles for each map up to an initial cap (to limit network)
+            const cap = 100; // protect from fetching extremely large numbers
+            let fetched = 0;
+            for (const userId of Object.keys(allUsersMaps)) {
+                for (const map of allUsersMaps[userId]) {
+                    if (fetched >= cap) break;
+                    try {
+                        const tiles = await window.supabaseService.fetchMapTiles(map.mapId);
+                        // reconstruct layered mapData
+                        const width = map.width || 21;
+                        const height = map.height || 33;
+                        let maxLayer = 0;
+                        for (const t of tiles) if (typeof t.layer === 'number' && t.layer > maxLayer) maxLayer = t.layer;
+                        const layers = Math.max(5, maxLayer + 1);
+                        const layered = Array.from({ length: layers }, () => Array.from({ length: height }, () => Array(width).fill(0)));
+                        for (const t of tiles) {
+                            const layer = t.layer || 0;
+                            const x = t.x;
+                            const y = t.y;
+                            let tileId = 0;
+                            try { tileId = t.data && t.data.tile_id ? Number(t.data.tile_id) : 0; } catch(e) { tileId = 0; }
+                            if (!tileId) {
+                                const parsed = parseInt(t.tile_type, 10);
+                                tileId = isNaN(parsed) ? 0 : parsed;
+                            }
+                            if (typeof x === 'number' && typeof y === 'number') {
+                                if (layer < layered.length && y >= 0 && y < height && x >= 0 && x < width) {
+                                    layered[layer][y][x] = tileId;
+                                }
+                            }
+                        }
+                        map.mapData = layered;
+                        map.size = guessSizeLabel(map.width, map.height);
+                    } catch (e) {
+                        console.warn('Failed to fetch tiles for map', map.mapId, e);
+                    }
+                    fetched++;
+                }
+                if (fetched >= cap) break;
+            }
+
+            // Sort maps per user by created_at or id if available
+            for (const userId of Object.keys(allUsersMaps)) {
+                allUsersMaps[userId].sort((a, b) => {
+                    // attempt to compare by created_at if present on row
+                    return 0; // keep DB order for now
+                });
+                currentMapIndex[userId] = 0;
+            }
+
+            applyFilters();
+            return;
+        }
     } catch (error) {
         console.error('Error loading maps:', error);
     }
@@ -348,9 +448,9 @@ window.addEventListener('load', () => {
     }
     
     // Load maps from all users
-    if (typeof Firebase !== 'undefined') {
+    if (isSupabaseReady()) {
         loadAllMaps();
     } else {
-        console.warn('Firebase not available');
+        console.warn('No database client available');
     }
 });

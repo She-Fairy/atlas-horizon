@@ -67,6 +67,16 @@
     font-size: 1rem;
 }
 
+.action-button.danger {
+    background-color: var(--danger-color, #c62828);
+    color: white;
+}
+
+.map-actions button,
+.map-actions a {
+    border: none;
+}
+
 .action-button:first-child {
     background-color: var(--primary-color);
     color: white;

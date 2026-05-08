@@ -11,12 +11,13 @@ This site is not affiliated with or endorsed by Supercell. Brawl Stars and all r
 
 ## Setup
 1. Clone the repository
-2. Set up Firebase configuration
+2. Set up Supabase configuration
+- Postgres DB with RLS via Supabase
 3. Open `index.html` in your browser
 
 ## Technologies Used
 - HTML5
 - CSS3
 - JavaScript
-- Firebase Realtime Database
 - Discord OAuth2
+ (Authentication handled entirely via Supabase Auth)

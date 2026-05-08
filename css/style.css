@@ -125,6 +125,205 @@ nav {
     background-color: var(--secondary-color);
 }
 
+.atlas-confirm-open {
+    overflow: hidden;
+}
+
+.atlas-confirm-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 5000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.25rem;
+    background: rgba(15, 23, 42, 0.72);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.18s ease;
+}
+
+.atlas-confirm-overlay.is-visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.atlas-confirm-dialog {
+    display: grid;
+    grid-template-columns: 44px 1fr;
+    gap: 1rem;
+    width: min(420px, 100%);
+    padding: 1.25rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--surface-color);
+    color: var(--text-color);
+    box-shadow: 0 22px 60px rgba(0, 0, 0, 0.38);
+    transform: translateY(8px) scale(0.98);
+    transition: transform 0.18s ease;
+}
+
+.atlas-confirm-overlay.is-visible .atlas-confirm-dialog {
+    transform: translateY(0) scale(1);
+}
+
+.atlas-confirm-mark {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border: 1px solid rgba(var(--primary-color-rgb), 0.45);
+    border-radius: 8px;
+    background: rgba(var(--primary-color-rgb), 0.14);
+    color: var(--primary-color);
+    font-size: 1.4rem;
+    font-weight: 700;
+}
+
+.atlas-confirm-dialog[data-variant="danger"] .atlas-confirm-mark {
+    border-color: rgba(248, 113, 113, 0.5);
+    background: rgba(248, 113, 113, 0.14);
+    color: #f87171;
+}
+
+.atlas-confirm-dialog[data-variant="success"] .atlas-confirm-mark {
+    border-color: rgba(74, 222, 128, 0.45);
+    background: rgba(74, 222, 128, 0.12);
+    color: #4ade80;
+}
+
+.atlas-confirm-copy h2 {
+    margin: 0 0 0.45rem;
+    color: var(--primary-color);
+    font-size: 1.25rem;
+    line-height: 1.2;
+    font-weight: 600;
+    letter-spacing: 0;
+}
+
+.atlas-confirm-dialog[data-variant="danger"] .atlas-confirm-copy h2 {
+    color: #f87171;
+}
+
+.atlas-confirm-dialog[data-variant="success"] .atlas-confirm-copy h2 {
+    color: #4ade80;
+}
+
+.atlas-confirm-copy p {
+    margin: 0;
+    color: var(--text-color-secondary);
+    font-size: 0.95rem;
+    line-height: 1.45;
+    letter-spacing: 0;
+}
+
+.atlas-confirm-input {
+    width: 100%;
+    margin-top: 1rem;
+    padding: 0.65rem 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background: var(--background-color);
+    color: var(--text-color);
+    font: inherit;
+    letter-spacing: 0;
+    transition: border-color 0.2s, background-color 0.2s;
+}
+
+.atlas-confirm-input:hover,
+.atlas-confirm-input:focus {
+    border-color: var(--primary-color);
+    outline: none;
+}
+
+.atlas-confirm-dialog[data-mode="confirm"] .atlas-confirm-input,
+.atlas-confirm-dialog[data-mode="alert"] .atlas-confirm-input,
+.atlas-confirm-dialog[data-mode="alert"] .atlas-confirm-cancel {
+    display: none;
+}
+
+.atlas-confirm-actions {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    margin-top: 0.25rem;
+}
+
+.atlas-confirm-btn {
+    min-width: 92px;
+    min-height: 38px;
+    padding: 0.55rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background: var(--surface-color);
+    color: var(--text-color);
+    cursor: pointer;
+    font: inherit;
+    transition: background-color 0.2s, border-color 0.2s, color 0.2s, transform 0.1s;
+}
+
+.atlas-confirm-btn:hover,
+.atlas-confirm-btn:focus-visible {
+    border-color: var(--primary-color);
+    background: var(--surface-color-hover);
+    outline: none;
+}
+
+.atlas-confirm-btn:active {
+    transform: translateY(1px);
+}
+
+.atlas-confirm-accept {
+    border-color: var(--primary-color);
+    background: var(--primary-color);
+    color: #fff;
+}
+
+.atlas-confirm-accept:hover,
+.atlas-confirm-accept:focus-visible {
+    border-color: var(--secondary-color);
+    background: var(--secondary-color);
+}
+
+.atlas-confirm-dialog[data-variant="danger"] .atlas-confirm-accept {
+    border-color: #ef4444;
+    background: #ef4444;
+}
+
+.atlas-confirm-dialog[data-variant="danger"] .atlas-confirm-accept:hover,
+.atlas-confirm-dialog[data-variant="danger"] .atlas-confirm-accept:focus-visible {
+    border-color: #dc2626;
+    background: #dc2626;
+}
+
+.atlas-confirm-dialog[data-variant="success"] .atlas-confirm-accept {
+    border-color: #16a34a;
+    background: #16a34a;
+}
+
+.atlas-confirm-dialog[data-variant="success"] .atlas-confirm-accept:hover,
+.atlas-confirm-dialog[data-variant="success"] .atlas-confirm-accept:focus-visible {
+    border-color: #15803d;
+    background: #15803d;
+}
+
+@media (max-width: 520px) {
+    .atlas-confirm-dialog {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+
+    .atlas-confirm-actions {
+        flex-direction: column-reverse;
+    }
+
+    .atlas-confirm-btn {
+        width: 100%;
+    }
+}
+
 .home-container {
     max-width: 1200px;
     margin: 4rem auto;
