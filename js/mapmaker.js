@@ -4345,7 +4345,26 @@ export class MapMaker {
                         throw e;
                     }
 
-                    const created = await window.supabaseService.createMap(meta);
+                    const { data: created, error } =
+                    await window.supabase.rpc('create_map_with_limit', {
+                        p_name: meta.name,
+                        p_width: this.mapWidth,
+                        p_height: this.mapHeight,
+                        p_gamemode: meta.gamemode,
+                        p_environment: meta.environment
+                    });
+
+                    if (error) {
+                    if (error.message.includes('MONTHLY_MAP_LIMIT_REACHED')) {
+                        await window.atlasAlert({
+                        title: 'Limit reached',
+                        message: 'You can only create 50 maps per month.',
+                        variant: 'danger'
+                        });
+                        return;
+                    }
+                    throw error;
+                    }
                     // created may be a single object; defensively handle array or null
                     let createdRec = created;
                     if (Array.isArray(createdRec)) createdRec = createdRec[0];
@@ -4387,7 +4406,7 @@ export class MapMaker {
                 });
                 return;
             } catch (e) {
-                console.error('Failed to save map to Supabase', e);
+                console.error('Failed to save map', e);
                 await window.atlasAlert({
                     title: 'Save failed',
                     message: 'Failed to save map.',
