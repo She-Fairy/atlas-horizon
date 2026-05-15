@@ -29,15 +29,15 @@ class FenceLogicTester {
         // Reset map to correct size
         this.mapMaker.mapHeight = height;
         this.mapMaker.mapWidth = width;
-        this.mapMaker.mapData = Array(height).fill().map(() => Array(width).fill(0));
+        this.mapMaker.mapData = Array(height).fill().map(() => Array(width).fill('.'));
         
         // Place fences according to pattern
         for (let y = 0; y < height; y++) {
             for (let x = 0; x < width; x++) {
                 if (pattern[y][x] === 'F') {
-                    this.mapMaker.mapData[y][x] = 7; // Fence tile ID
+                    this.mapMaker.mapData[y][x] = 'N'; // Fence tile ID
                 } else if (pattern[y][x] === 'R') {
-                    this.mapMaker.mapData[y][x] = 9; // Rope fence tile ID
+                    this.mapMaker.mapData[y][x] = 'a'; // Rope fence tile ID
                 }
             }
         }
@@ -52,9 +52,9 @@ class FenceLogicTester {
         for (let y = 0; y < pattern.length; y++) {
             for (let x = 0; x < pattern[0].length; x++) {
                 if (pattern[y][x] === 'F' || pattern[y][x] === 'R') {
-                    const tileId = pattern[y][x] === 'F' ? 7 : 9;
+                    const tileId = pattern[y][x] === 'F' ? 'N' : 'a';
                     const imageName = this.mapMaker.fenceLogicHandler.getFenceImageName(
-                        x, y, this.mapMaker.mapData, environment, tileId === 7
+                        x, y, this.mapMaker.mapData, environment, tileId === 'N'
                     );
                     results.push({
                         x, y, 

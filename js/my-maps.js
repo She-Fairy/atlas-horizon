@@ -79,17 +79,12 @@ async function postMapsByUser() {
                     let maxLayer = 0;
                     for (const t of tiles) if (typeof t.layer === 'number' && t.layer > maxLayer) maxLayer = t.layer;
                     const layers = Math.max(5, maxLayer + 1);
-                    const layered = Array.from({ length: layers }, () => Array.from({ length: height }, () => Array(width).fill(0)));
+                    const layered = Array.from({ length: layers }, () => Array.from({ length: height }, () => Array(width).fill('.')));
                     for (const t of tiles) {
                         const layer = t.layer || 0;
                         const x = t.x;
                         const y = t.y;
-                        let tileId = 0;
-                        try { tileId = t.data && t.data.tile_id ? Number(t.data.tile_id) : 0; } catch(e) { tileId = 0; }
-                        if (!tileId) {
-                            const parsed = parseInt(t.tile_type, 10);
-                            tileId = isNaN(parsed) ? 0 : parsed;
-                        }
+                        const tileId = t.data && t.data.tile_id ? String(t.data.tile_id) : '.';
                         if (typeof x === 'number' && typeof y === 'number') {
                             if (layer < layered.length && y >= 0 && y < height && x >= 0 && x < width) {
                                 layered[layer][y][x] = tileId;
@@ -177,14 +172,26 @@ function applyFilters() {
         // Tile filter - check if map contains the specified tile
         if (tileFilter) {
             const tileIdMap = {
-                'wall': 1,
-                'bush': 2,
-                'water': 10,
-                'rope': 9,
-                'crate': 4
+                wall: ['M', 'X'],
+                bush: ['F'],
+                water: ['W'],
+                jumpads: ['H', 'G', 'K', 'L', 'P', 'Z', 'O', 'U'],
+                tnt: ['tnt'],
+                unbreakable: ['I'],
+                teleporters: ['c', 'd', 'e', 'f'],
+                rope: ['a'],
+                spikes: ['v'],
+                speedtile: ['w'],
+                slowtile: ['z'],
+                smoke: ['x'],
+                healpad: ['y'],
+                bumpers: ['o'],
+                icetile: ['ice-tile'],
+                snowtile: ['snow-tile'],
+                rails: ['rails']
             };
-            const targetTileId = tileIdMap[tileFilter];
-            if (targetTileId) {
+            const targetTileIds = tileIdMap[tileFilter];
+            if (targetTileIds) {
                 let found = false;
                 if (map.mapData) {
                     for (let layer = 0; layer < map.mapData.length; layer++) {
@@ -192,7 +199,7 @@ function applyFilters() {
                         for (let y = 0; y < map.mapData[layer].length; y++) {
                             if (!map.mapData[layer][y]) continue;
                             for (let x = 0; x < map.mapData[layer][y].length; x++) {
-                                if (map.mapData[layer][y][x] === targetTileId) {
+                                if (targetTileIds.includes(map.mapData[layer][y][x])) {
                                     found = true;
                                     break;
                                 }

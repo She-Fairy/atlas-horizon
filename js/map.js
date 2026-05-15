@@ -214,19 +214,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             for (const t of tiles) if (typeof t.layer === 'number' && t.layer > maxLayer) maxLayer = t.layer;
             const layers = Math.max(5, maxLayer + 1);
 
-            const layered = Array.from({ length: layers }, () => Array.from({ length: height }, () => Array(width).fill(0)));
+            const layered = Array.from({ length: layers }, () => Array.from({ length: height }, () => Array(width).fill('.')));
 
             for (const t of tiles) {
                 const layer = t.layer || 0;
                 const x = t.x;
                 const y = t.y;
-                // prefer numeric id in data.tile_id, fallback to parse tile_type
-                let tileId = 0;
-                try { tileId = t.data && t.data.tile_id ? Number(t.data.tile_id) : 0; } catch(e) { tileId = 0; }
-                if (!tileId) {
-                    const parsed = parseInt(t.tile_type, 10);
-                    tileId = isNaN(parsed) ? 0 : parsed;
-                }
+                // Saved maps store string tile IDs in data.tile_id.
+                const tileId = t.data && t.data.tile_id ? String(t.data.tile_id) : '.';
                 if (typeof x === 'number' && typeof y === 'number') {
                     if (layer < layered.length && y >= 0 && y < height && x >= 0 && x < width) {
                         layered[layer][y][x] = tileId;

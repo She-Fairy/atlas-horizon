@@ -45,8 +45,10 @@
         <div class="nav-links">
             <a href="./index.html">Home</a>
             <a href="./mapmaker.html" class="active">Map Maker</a>
-            <a href="./map-gallery.html">Map Gallery</a>
-            <a href="./my-maps.html">My Maps</a>
+            <!-- <a href="./map-gallery.html">Map Gallery</a>
+            <a href="./my-maps.html">My Maps</a> -->
+            <input type="file" id="jsonFileInput" accept=".json,application/json" hidden>
+            <a type="text" id="mapLoadBtn" style="cursor:pointer">Open Map From File</a>
             <input class="avatar" type="image" id="avatar" alt="Avatar">
         </div>
     </nav>
@@ -452,7 +454,7 @@
     </script>
 
     <!-- Supabase config + client + centralized auth initializer -->
-    <script src="./js/config.js"></script>
+    <!-- <script src="./js/config.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/umd/supabase.min.js"></script>
     <script src="./js/supabase-service.js"></script>
     <script src="./js/auth-init.js"></script>
@@ -467,7 +469,7 @@
                 console.warn('Auth check failed', e);
             }
         })();
-    </script>
+    </script> -->
     <script type="module" src="./js/mapmaker.js"></script>
 </body>
 </html>

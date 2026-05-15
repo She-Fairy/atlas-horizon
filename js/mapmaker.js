@@ -5,6 +5,24 @@ const FENCE_LOGIC_TYPES = {
     FOUR_PIECE: 4       // Logic 4: Single, T, TR, R
 };
 
+const EMPTY_TILE = '.';
+const OCCUPIED_TILE_RIGHT = -1;
+const OCCUPIED_TILE_BOTTOM = -2;
+const OCCUPIED_TILE_BOTTOM_RIGHT = -3;
+const OCCUPIED_TILES = new Set([OCCUPIED_TILE_RIGHT, OCCUPIED_TILE_BOTTOM, OCCUPIED_TILE_BOTTOM_RIGHT]);
+
+function isEmptyTile(value) {
+    return value === EMPTY_TILE;
+}
+
+function isOccupiedMarker(value) {
+    return OCCUPIED_TILES.has(value);
+}
+
+function isRenderableTile(value) {
+    return !isEmptyTile(value) && !isOccupiedMarker(value);
+}
+
 const FENCE_LOGIC_BY_ENVIRONMENT = {
     // To be filled with actual environment mappings
     // Example: 'Desert': FENCE_LOGIC_TYPES.SIMPLE_BLOCK,
@@ -146,10 +164,10 @@ class FenceLogicHandler {
         const isSameType = (x, y) => {
             if (x < 0 || x >= width || y < 0 || y >= height) return false;
             const tileId = mapData[y][x];
-            if (environment === 'Brawl_Arena') return tileId === 40 || tileId === 43 || tileId === 44;
-            if (environment === 'Rails' || environment === 'Train') return tileId === 68;
-            if (isBorder) return tileId === 45;
-            return isFence ? (tileId === 7) : (tileId === 9); // Assuming 7 is fence and 9 is rope
+            if (environment === 'Brawl_Arena') return tileId === 'track' || tileId === 'base-ike-blue' || tileId === 'small-ike-blue';
+            if (environment === 'Rails' || environment === 'Train') return tileId === 'rails';
+            if (isBorder) return tileId === 'E';
+            return isFence ? (tileId === 'N') : (tileId === 'a');
         };
 
         return {
@@ -296,7 +314,7 @@ export class MapMaker {
         });
 
         
-        this.selectedTile = { id: 1, name: 'Wall', color: '#666666' };
+        this.selectedTile = { id: 'M', name: 'Wall', color: '#666666' };
         this.selectedTiles = [];
         this.isErasing = false;
         this.isDragging = false;
@@ -1618,28 +1636,28 @@ export class MapMaker {
 
         // Initialize tile definitions
         this.tileDefinitions = {
-            0: { name: 'Empty' },
-            1: { name: 'Wall', img: '${env}/Tiles/Wall.png', size: 1 },
-            2: { name: 'Bush', img: '${env}/Tiles/Bush.png', size: 1 },
-            3: { name: 'Wall2', img: '${env}/Tiles/Wall2.png', size: 1 },
-            4: { name: 'Crate', img: '${env}/Tiles/Crate.png', size: 1 },
-            5: { name: 'Barrel', img: '${env}/Tiles/Barrel.png', size: 1 },
-            6: { name: 'Cactus', img: '${env}/Tiles/Cactus.png', size: 1 },
-            7: { name: 'Fence', img: '${env}/Fence/Fence.png', size: 1 },
-            8: { name: 'Water', img: '${env}/Water/00000000.png', size: 1 },
-            9: { name: 'Rope Fence', img: '${env}/Rope/Post.png', size: 1 },
-            10: { name: 'Skull', img: '${env}/Tiles/Skull.png', size: 1 },
-            11: { name: 'Unbreakable', img: 'Global/Unbreakable.png', size: 1 },
-            12: { name: 'Blue Spawn', size: 1, layer:this.layerCount -1,  getImg: (gamemode) => {
+            '.': { name: 'Empty' },
+            'M': { name: 'Wall', img: '${env}/Tiles/Wall.png', size: 1 },
+            'F': { name: 'Bush', img: '${env}/Tiles/Bush.png', size: 1 },
+            'X': { name: 'Wall2', img: '${env}/Tiles/Wall2.png', size: 1 },
+            'Y': { name: 'Crate', img: '${env}/Tiles/Crate.png', size: 1 },
+            'C': { name: 'Barrel', img: '${env}/Tiles/Barrel.png', size: 1 },
+            'T': { name: 'Cactus', img: '${env}/Tiles/Cactus.png', size: 1 },
+            'N': { name: 'Fence', img: '${env}/Fence/Fence.png', size: 1 },
+            'W': { name: 'Water', img: '${env}/Water/00000000.png', size: 1 },
+            'a': { name: 'Rope Fence', img: '${env}/Rope/Post.png', size: 1 },
+            'B': { name: 'Skull', img: '${env}/Tiles/Skull.png', size: 1 },
+            'I': { name: 'Unbreakable', img: 'Global/Unbreakable.png', size: 1 },
+            '1': { name: 'Blue Spawn', size: 1, layer:this.layerCount -1,  getImg: (gamemode) => {
                 return { img: gamemode === 'Showdown' || gamemode === 'Loaded_SD' || gamemode === 'Trophy_Escape' || gamemode === 'Lone_Star' || gamemode === 'Hunters' || gamemode ==='Subway_Run' || gamemode === 'Drumroll' ? 'Global/Spawns/3.png' : 'Global/Spawns/1.png' }; // Won't use the default spawns for the listed modes
             }},
-            13: { name: 'Red Spawn', size: 1, layer: this.layerCount - 1, getImg: (gamemode) => { if (['Trophy_Escape', 'Hunters', 'Lone_Star', 'Brawl_Bosses', 'Subway_Run', 'Drumroll'].includes(gamemode)) {
+            '2': { name: 'Red Spawn', size: 1, layer: this.layerCount - 1, getImg: (gamemode) => { if (['Trophy_Escape', 'Hunters', 'Lone_Star', 'Brawl_Bosses', 'Subway_Run', 'Drumroll'].includes(gamemode)) {
             return null;}
             return { img: (gamemode === 'Showdown' || gamemode === 'Loaded_SD') 
                 ? 'Global/Spawns/4.png' 
                 : 'Global/Spawns/2.png'
             };}},
-            14: { name: 'Objective', placeableOnThis: [-100], size: 1, layer: this.layerCount -2, getImg: (gamemode, y, mapHeight, environment) => {
+            '8': { name: 'Objective', placeableOnThis: [-100], size: 1, layer: this.layerCount -2, getImg: (gamemode, y, mapHeight, environment) => {
                 const objectives = {
                     'Gem_Grab': { img: '${env}/Gamemode_Specifics/Gem_Grab.png' },
                     'Heist': { img: '${env}/Gamemode_Specifics/Heist.png' },
@@ -1681,72 +1699,72 @@ export class MapMaker {
                 return objectives[gamemode];
                },
             },
-            15: { name: 'Smoke', img: 'Global/Special_Tiles/Smoke.png', size: 1 },
-            16: { name: 'Heal Pad', img: 'Global/Special_Tiles/HealPad.png', size: 2 },
-            17: { name: 'Slow Tile', img: 'Global/Special_Tiles/SlowTile.png', size: 1 },
-            18: { name: 'Speed Tile', img: 'Global/Special_Tiles/SpeedTile.png', size: 1 },
-            19: { name: 'Spikes', img: 'Global/Special_Tiles/Spikes.png', size: 1 },
-            20: { name: 'Jump R', img: 'Global/Jumpads/R.png', size: 2 },
-            21: { name: 'Jump L', img: 'Global/Jumpads/L.png', size: 2 },
-            22: { name: 'Jump T', img: 'Global/Jumpads/T.png', size: 2 },
-            23: { name: 'Jump B', img: 'Global/Jumpads/B.png', size: 2 },
-            24: { name: 'Jump BR', img: 'Global/Jumpads/BR.png', size: 2 },
-            25: { name: 'Jump TL', img: 'Global/Jumpads/TL.png', size: 2 },
-            26: { name: 'Jump BL', img: 'Global/Jumpads/BL.png', size: 2 },
-            27: { name: 'Jump TR', img: 'Global/Jumpads/TR.png', size: 2 },
-            28: { name: 'Teleporter Blue', img: 'Global/Teleporters/Blue.png', size: 2 },
-            29: { name: 'Teleporter Green', img: 'Global/Teleporters/Green.png', size: 2 },
-            30: { name: 'Teleporter Red', img: 'Global/Teleporters/Red.png', size: 2 },
-            31: { name: 'Teleporter Yellow', img: 'Global/Teleporters/Yellow.png', size: 2 },
-            32: { name: 'Bolt', img: 'Global/Objectives/Bolt.png', placeableOnThis: [-100], size: 1, layer: this.layerCount -2, showInGamemode: 'Siege' },
-            34: { name: 'TokenBlue', img: 'Global/Objectives/TokenBlue.png', size: 1, showInGamemode: 'Token_Run', placeableOnThis: [-100], layer: this.layerCount -2},
-            35: { name: 'TokenRed', img: 'Global/Objectives/TokenRed.png', size: 1, showInGamemode: 'Token_Run', placeableOnThis: [-100], layer: this.layerCount -2},
-            36: { name: 'Trio Spawn', size: 1, showInGamemode: ['Showdown', 'Loaded_SD', 'Gem_Grab', 'Wipeout'], layer: this.layerCount - 1, getImg: (gamemode) => {
+            'x': { name: 'Smoke', img: 'Global/Special_Tiles/Smoke.png', size: 1 },
+            'y': { name: 'Heal Pad', img: 'Global/Special_Tiles/HealPad.png', size: 2 },
+            'z': { name: 'Slow Tile', img: 'Global/Special_Tiles/SlowTile.png', size: 1 },
+            'w': { name: 'Speed Tile', img: 'Global/Special_Tiles/SpeedTile.png', size: 1 },
+            'v': { name: 'Spikes', img: 'Global/Special_Tiles/Spikes.png', size: 1 },
+            'H': { name: 'Jump R', img: 'Global/Jumpads/R.png', size: 2 },
+            'G': { name: 'Jump L', img: 'Global/Jumpads/L.png', size: 2 },
+            'K': { name: 'Jump T', img: 'Global/Jumpads/T.png', size: 2 },
+            'L': { name: 'Jump B', img: 'Global/Jumpads/B.png', size: 2 },
+            'P': { name: 'Jump BR', img: 'Global/Jumpads/BR.png', size: 2 },
+            'Z': { name: 'Jump TL', img: 'Global/Jumpads/TL.png', size: 2 },
+            'O': { name: 'Jump BL', img: 'Global/Jumpads/BL.png', size: 2 },
+            'U': { name: 'Jump TR', img: 'Global/Jumpads/TR.png', size: 2 },
+            'c': { name: 'Teleporter Blue', img: 'Global/Teleporters/Blue.png', size: 2 },
+            'd': { name: 'Teleporter Green', img: 'Global/Teleporters/Green.png', size: 2 },
+            'e': { name: 'Teleporter Red', img: 'Global/Teleporters/Red.png', size: 2 },
+            'f': { name: 'Teleporter Yellow', img: 'Global/Teleporters/Yellow.png', size: 2 },
+            'g': { name: 'Bolt', img: 'Global/Objectives/Bolt.png', placeableOnThis: [-100], size: 1, layer: this.layerCount -2, showInGamemode: 'Siege' },
+            'token-blue': { name: 'TokenBlue', img: 'Global/Objectives/TokenBlue.png', size: 1, showInGamemode: 'Token_Run', placeableOnThis: [-100], layer: this.layerCount -2},
+            'token-red': { name: 'TokenRed', img: 'Global/Objectives/TokenRed.png', size: 1, showInGamemode: 'Token_Run', placeableOnThis: [-100], layer: this.layerCount -2},
+            '3': { name: 'Trio Spawn', size: 1, showInGamemode: ['Showdown', 'Loaded_SD', 'Gem_Grab', 'Wipeout'], layer: this.layerCount - 1, getImg: (gamemode) => {
                 const isShowdownMode = gamemode === 'Showdown' || gamemode === 'Loaded_SD';
                 return { img: isShowdownMode ? 'Global/Spawns/7.png' : 'Global/Spawns/8.png'};
             }},
-            37: { name: 'Box', img: 'Global/Objectives/Box.png', showInGamemode: ['Showdown', 'Trophy_Escape', 'Brawl_Bosses'], size: 1},
-            38: { name: 'Boss Zone', layer: this.layerCount -1, img: 'Global/Arena/Boss_Zone.png', showInGamemode: 'Brawl_Arena', size: 1},
-            39: { name: 'Monster Zone', layer: this.layerCount -1, img: 'Global/Arena/Monster_Zone.png', showInGamemode: 'Brawl_Arena', size: 1},
-            40: { name: 'Track', layer: this.layerCount -2, img: 'Global/Arena/Track/Blue/Fence.png', showInGamemode: 'Brawl_Arena', size: 1},
-            41: { name: 'Blue Respawn', layer: this.layerCount -1, img: 'Global/Spawns/5.png', showInGamemode: ['Brawl_Ball', 'Hockey', 'Volley_Brawl', 'Paint_Brawl'], size: 1},
-            42: { name: 'Red Respawn', layer: this.layerCount -1, img: 'Global/Spawns/6.png', showInGamemode: ['Brawl_Ball', 'Hockey', 'Volley_Brawl', 'Paint_Brawl'], size: 1},
-            43: { name: 'Base Ike Blue', layer: this.layerCount -1, img: 'Global/Arena/Base_Ike_Blue.png', showInGamemode: 'Brawl_Arena', size: 1 },
-            44: { name: 'Small Ike Blue', layer: this.layerCount -1, img: 'Global/Arena/Small_Ike_Blue.png', showInGamemode: 'Brawl_Arena', size: 1 },
-            45: { name: 'BFence', img: '${env}/Fence_5v5/BFence.png', showInEnvironment: ['Tropical_Island', 'Super_City_2', 'Bazaar', 'Medieval_Manor', 'Ice_Island', 'Katana_Kingdom', 'Hockey', 'Spongebob', 'Subway_Surfers', 'Stranger_Things_Lair', 'Stranger_Things_Lab', 'Stranger_Things_Forest', 'Swamp_of_Love', 'Mortuary', 'Circus', 'Starr_Toon', 'Escape_Room',], size: 1 },
-            46: { name: 'Base Ike Red', layer: this.layerCount -1, img: 'Global/Arena/Base_Ike_Red.png', showInGamemode: 'Brawl_Arena', size: 1 },
-            47: { name: 'Small Ike Red', layer: this.layerCount -1, img: 'Global/Arena/Small_Ike_Red.png', showInGamemode: 'Brawl_Arena', size: 1 },
-            48: { name: 'Bumper', size: 1, showInGamemode: ['Brawl_Ball', 'Hockey', 'Paint_Brawl'], getImg: (gamemode) => {
+            '4': { name: 'Box', img: 'Global/Objectives/Box.png', showInGamemode: ['Showdown', 'Trophy_Escape', 'Brawl_Bosses'], size: 1},
+            'boss-zone': { name: 'Boss Zone', layer: this.layerCount -1, img: 'Global/Arena/Boss_Zone.png', showInGamemode: 'Brawl_Arena', size: 1},
+            'monster-zone': { name: 'Monster Zone', layer: this.layerCount -1, img: 'Global/Arena/Monster_Zone.png', showInGamemode: 'Brawl_Arena', size: 1},
+            'track': { name: 'Track', layer: this.layerCount -2, img: 'Global/Arena/Track/Blue/Fence.png', showInGamemode: 'Brawl_Arena', size: 1},
+            '6': { name: 'Blue Respawn', layer: this.layerCount -1, img: 'Global/Spawns/5.png', showInGamemode: ['Brawl_Ball', 'Hockey', 'Volley_Brawl', 'Paint_Brawl'], size: 1},
+            '7': { name: 'Red Respawn', layer: this.layerCount -1, img: 'Global/Spawns/6.png', showInGamemode: ['Brawl_Ball', 'Hockey', 'Volley_Brawl', 'Paint_Brawl'], size: 1},
+            'base-ike-blue': { name: 'Base Ike Blue', layer: this.layerCount -1, img: 'Global/Arena/Base_Ike_Blue.png', showInGamemode: 'Brawl_Arena', size: 1 },
+            'small-ike-blue': { name: 'Small Ike Blue', layer: this.layerCount -1, img: 'Global/Arena/Small_Ike_Blue.png', showInGamemode: 'Brawl_Arena', size: 1 },
+            'E': { name: 'BFence', img: '${env}/Fence_5v5/BFence.png', showInEnvironment: ['Tropical_Island', 'Super_City_2', 'Bazaar', 'Medieval_Manor', 'Ice_Island', 'Katana_Kingdom', 'Hockey', 'Spongebob', 'Subway_Surfers', 'Stranger_Things_Lair', 'Stranger_Things_Lab', 'Stranger_Things_Forest', 'Swamp_of_Love', 'Mortuary', 'Circus', 'Starr_Toon', 'Escape_Room',], size: 1 },
+            'base-ike-red': { name: 'Base Ike Red', layer: this.layerCount -1, img: 'Global/Arena/Base_Ike_Red.png', showInGamemode: 'Brawl_Arena', size: 1 },
+            'small-ike-red': { name: 'Small Ike Red', layer: this.layerCount -1, img: 'Global/Arena/Small_Ike_Red.png', showInGamemode: 'Brawl_Arena', size: 1 },
+            'o': { name: 'Bumper', size: 1, showInGamemode: ['Brawl_Ball', 'Hockey', 'Paint_Brawl'], getImg: (gamemode) => {
                 return { img: gamemode === 'Hockey' ? 'Global/Bumpers/HockeyBumper.png' : this.environment === 'Deep_Sea' ? 'Global/Bumpers/DeepSeaBumper.png' : 'Global/Bumpers/Bumper.png' };
             }},
-            49: { name: 'TNT', img: 'Global/TNT.png', size: 1 },
+            'tnt': { name: 'TNT', img: 'Global/TNT.png', size: 1 },
             // 50: { name: 'UnbreakableBrick', img: 'Global/UnbreakableBrick.png', showInEnvironment: ['Grassy_Field','Stadium',], size: 1 },
-            51: { name: 'GodzillaCity1', img: 'Global/Godzilla Tiles/GodzillaCity1.png', showInGamemode: 'Godzilla_City_Smash', size: 1},
-            52: { name: 'GodzillaCity2', img: 'Global/Godzilla Tiles/GodzillaCity2.png', showInGamemode: 'Godzilla_City_Smash', size: 1},
-            53: { name: 'GodzillaCity3', img: 'Global/Godzilla Tiles/GodzillaCity3.png', showInGamemode: 'Godzilla_City_Smash', size: 1},
-            54: { name: 'GodzillaCity4', img: 'Global/Godzilla Tiles/GodzillaCity4.png', showInGamemode: 'Godzilla_City_Smash', size: 1},
-            55: { name: 'GodzillaExplosive', img: 'Global/Godzilla Tiles/GodzillaExplosive.png', showInGamemode: 'Godzilla_City_Smash', size: 1},
-            56: { name: 'GodzillaSpawn', img: 'Global/Godzilla Tiles/GodzillaSpawn.png', showInGamemode: 'Godzilla_City_Smash', placeableOnThis: [-100], size: 1, layer: this.layerCount -2},
-            57: { name: 'Bot_Zone', layer: this.layerCount -2, img: 'Global/Objectives/Bot_Zone.png', showInGamemode: ['Trophy_Escape', 'Samurai_Smash'], placeableOnThis: [-100], size: 1, layer: this.layerCount -2},
-            58: { name: 'Escape', layer: this.layerCount -2, img: 'Global/Objectives/Escape.png', showInGamemode: 'Trophy_Escape', size: 1},
-            59: { name: 'Bomb', img: 'Global/Objectives/Bomb.png', showInGamemode: 'Safe_Blast', placeableOnThis: [-100], size: 1, layer: this.layerCount -2},
-            60: { name: 'Amulet', img: 'Global/Objectives/Amulet.png', showInGamemode: 'Spirit_Wars', placeableOnThis: [-100], size: 1, layer: this.layerCount -2},
-            61: { name: 'BossSpawn', img: 'Global/Boss Spawns/BossSpawn.png', showInGamemode: ['Boss_Fight', 'Takedown'], placeableOnThis: [-100], size: 1, layer: this.layerCount -2},
-            62: { name: 'KaijuBoss', img: 'Global/Boss Spawns/KaijuBoss.png', showInGamemode: 'Super_City_Rampage', placeableOnThis: [-100], size: 1, layer: this.layerCount -2},
-    		63: { name: 'Yellow Spawn', img: 'Global/Spawns/9.png', showInGamemode: ['Gem_Grab','Wipeout'], size: 1 },
-    		64: { name: 'GenericBoss', img: 'Global/Boss Spawns/GenericBoss.png', showInGamemode: 'Brawl_Bosses', placeableOnThis: [-100], layer: this.layerCount -2, size: 1 },
-            65: { name: 'OniHunt', img: 'Global/Boss Spawns/OniHunt.png', showInGamemode: 'Brawl_Bosses', placeableOnThis: [-100], layer: this.layerCount -2, size: 1},
-            66: { name: 'SubwayRun1', img: 'Global/Objectives/SubwayRun1.png', showInGamemode: 'Subway_Run', size: 2 },
-            67: { name: 'SubwayRun2', img: 'Global/Objectives/SubwayRun2.png', showInGamemode: 'Subway_Run', size: 2 },
-            68: { name: 'Rails', layer: 1, img: 'Global/Special_Tiles/Rails/Fence.png', placeableOnThis: [73, 74, 75], size: 1},
-            69: { name: 'IceTile', img: 'Global/Special_Tiles/IceTile/00000000.png', size: 1 },
-            70: { name: 'SnowTile', img: 'Global/Special_Tiles/SnowTile/00000000.png', size: 1 },
-            71: { name: 'TreasurePad1', img: 'Global/Objectives/TreasurePad1.png', showInGamemode: 'Treasure_Hunt', placeableOnThis: [-100], size: 1, layer: this.layerCount -2},
-            72: { name: 'TreasurePad2', img: 'Global/Objectives/TreasurePad2.png', showInGamemode: 'Treasure_Hunt', placeableOnThis: [-100], size: 1, layer: this.layerCount -2},
-            73: { name: 'RedTrain', img: 'Global/Special_Tiles/RedTrain/Train_Fence.png', placeableOn: [68], size: 1},
-            74: { name: 'YellowTrain', img: 'Global/Special_Tiles/YellowTrain/Train_Fence.png', placeableOn: [68], size: 1},
-            75: { name: 'GreenTrain', img: 'Global/Special_Tiles/GreenTrain/Train_Fence.png', placeableOn: [68], size: 1},
-            76: { name: 'Box_Loaded', img: 'Global/Objectives/Box_Loaded.png', showInGamemode: 'Loaded_SD', size: 1},
+            // 51: { name: 'GodzillaCity1', img: 'Global/Godzilla Tiles/GodzillaCity1.png', showInGamemode: 'Godzilla_City_Smash', size: 1},
+            // 52: { name: 'GodzillaCity2', img: 'Global/Godzilla Tiles/GodzillaCity2.png', showInGamemode: 'Godzilla_City_Smash', size: 1},
+            // 53: { name: 'GodzillaCity3', img: 'Global/Godzilla Tiles/GodzillaCity3.png', showInGamemode: 'Godzilla_City_Smash', size: 1},
+            // 54: { name: 'GodzillaCity4', img: 'Global/Godzilla Tiles/GodzillaCity4.png', showInGamemode: 'Godzilla_City_Smash', size: 1},
+            // 55: { name: 'GodzillaExplosive', img: 'Global/Godzilla Tiles/GodzillaExplosive.png', showInGamemode: 'Godzilla_City_Smash', size: 1},
+            // 56: { name: 'GodzillaSpawn', img: 'Global/Godzilla Tiles/GodzillaSpawn.png', showInGamemode: 'Godzilla_City_Smash', placeableOnThis: [-100], size: 1, layer: this.layerCount -2},
+            // 57: { name: 'Bot_Zone', layer: this.layerCount -2, img: 'Global/Objectives/Bot_Zone.png', showInGamemode: ['Trophy_Escape', 'Samurai_Smash'], placeableOnThis: [-100], size: 1, layer: this.layerCount -2},
+            // 58: { name: 'Escape', layer: this.layerCount -2, img: 'Global/Objectives/Escape.png', showInGamemode: 'Trophy_Escape', size: 1},
+            // 59: { name: 'Bomb', img: 'Global/Objectives/Bomb.png', showInGamemode: 'Safe_Blast', placeableOnThis: [-100], size: 1, layer: this.layerCount -2},
+            // 60: { name: 'Amulet', img: 'Global/Objectives/Amulet.png', showInGamemode: 'Spirit_Wars', placeableOnThis: [-100], size: 1, layer: this.layerCount -2},
+            // 61: { name: 'BossSpawn', img: 'Global/Boss Spawns/BossSpawn.png', showInGamemode: ['Boss_Fight', 'Takedown'], placeableOnThis: [-100], size: 1, layer: this.layerCount -2},
+            // 62: { name: 'KaijuBoss', img: 'Global/Boss Spawns/KaijuBoss.png', showInGamemode: 'Super_City_Rampage', placeableOnThis: [-100], size: 1, layer: this.layerCount -2},
+    		// 63: { name: 'Yellow Spawn', img: 'Global/Spawns/9.png', showInGamemode: ['Gem_Grab','Wipeout'], size: 1 },
+    		// 64: { name: 'GenericBoss', img: 'Global/Boss Spawns/GenericBoss.png', showInGamemode: 'Brawl_Bosses', placeableOnThis: [-100], layer: this.layerCount -2, size: 1 },
+            // 65: { name: 'OniHunt', img: 'Global/Boss Spawns/OniHunt.png', showInGamemode: 'Brawl_Bosses', placeableOnThis: [-100], layer: this.layerCount -2, size: 1},
+            // 66: { name: 'SubwayRun1', img: 'Global/Objectives/SubwayRun1.png', showInGamemode: 'Subway_Run', size: 2 },
+            // 67: { name: 'SubwayRun2', img: 'Global/Objectives/SubwayRun2.png', showInGamemode: 'Subway_Run', size: 2 },
+            'rails': { name: 'Rails', layer: 1, img: 'Global/Special_Tiles/Rails/Fence.png', placeableOnThis: ['red-train', 'yellow-train', 'green-train'], size: 1},
+            'ice-tile': { name: 'IceTile', img: 'Global/Special_Tiles/IceTile/00000000.png', size: 1 },
+            'snow-tile': { name: 'SnowTile', img: 'Global/Special_Tiles/SnowTile/00000000.png', size: 1 },
+            // 71: { name: 'TreasurePad1', img: 'Global/Objectives/TreasurePad1.png', showInGamemode: 'Treasure_Hunt', placeableOnThis: [-100], size: 1, layer: this.layerCount -2},
+            // 72: { name: 'TreasurePad2', img: 'Global/Objectives/TreasurePad2.png', showInGamemode: 'Treasure_Hunt', placeableOnThis: [-100], size: 1, layer: this.layerCount -2},
+            'red-train': { name: 'RedTrain', img: 'Global/Special_Tiles/RedTrain/Train_Fence.png', placeableOn: ['rails'], size: 1},
+            'yellow-train': { name: 'YellowTrain', img: 'Global/Special_Tiles/YellowTrain/Train_Fence.png', placeableOn: ['rails'], size: 1},
+            'green-train': { name: 'GreenTrain', img: 'Global/Special_Tiles/GreenTrain/Train_Fence.png', placeableOn: ['rails'], size: 1},
+            // 'box-loaded': { name: 'Box_Loaded', img: 'Global/Objectives/Box_Loaded.png', showInGamemode: 'Loaded_SD', size: 1},
         };
 
         Object.values(this.tileDefinitions).forEach(def => {
@@ -2184,6 +2202,7 @@ export class MapMaker {
         const zoomOutBtnBottom = document.getElementById('zoomOutBtnBottom');
         const clearBtn = document.getElementById('clearBtn');
         const saveBtn = document.getElementById('saveBtn');
+        const loadBtn = document.getElementById('mapLoadBtn');
         const exportBtn = document.getElementById('exportBtn');
         const errorsBtn = document.getElementById('errorsBtn');
         const guidesBtn = document.getElementById('guidesBtn');
@@ -2221,7 +2240,8 @@ export class MapMaker {
         zoomOutBtn.addEventListener('click', () => this.zoom(-this.zoomStep));
         zoomOutBtnBottom.addEventListener('click', () => this.zoom(-this.zoomStep));
         clearBtn.addEventListener('click', () => this.clearMap());
-        saveBtn.addEventListener('click', () => this.saveMap());
+        saveBtn.addEventListener('click', () => this.downloadMapCode());
+        loadBtn.addEventListener('click', () => this.loadMap());
         exportBtn.addEventListener('click', async () => await this.exportMap());
         errorsBtn.addEventListener('click', () => this.toggleShowErrors());
         guidesBtn.addEventListener('click', () => this.toggleGuides());
@@ -2441,7 +2461,7 @@ export class MapMaker {
             return;
         }
 
-        if (this.mapData[this.defaultTileLayer][coords.y][coords.x] < 1) return;
+        if (!isRenderableTile(this.mapData[this.defaultTileLayer][coords.y][coords.x])) return;
 
         this.selectedTile = { id: this.mapData[this.defaultTileLayer][coords.y][coords.x], ...this.tileDefinitions[this.mapData[this.defaultTileLayer][coords.y][coords.x]] };
         document.getElementById('tileSelector').querySelectorAll('.tile-btn').forEach(b => b.classList.remove('selected'));
@@ -2537,13 +2557,13 @@ export class MapMaker {
                 }
                 
                 // Remove tile from original position immediately
-                this.mapData[topmostTile.layerIndex][coords.y][coords.x] = 0;
+                this.mapData[topmostTile.layerIndex][coords.y][coords.x] = EMPTY_TILE;
             
             // If it's a 2x2 tile, also remove the other three tiles
             if (is2x2) {
-                this.mapData[topmostTile.layerIndex][coords.y][coords.x + 1] = 0;
-                this.mapData[topmostTile.layerIndex][coords.y + 1][coords.x] = 0;
-                this.mapData[topmostTile.layerIndex][coords.y + 1][coords.x + 1] = 0;
+                this.mapData[topmostTile.layerIndex][coords.y][coords.x + 1] = EMPTY_TILE;
+                this.mapData[topmostTile.layerIndex][coords.y + 1][coords.x] = EMPTY_TILE;
+                this.mapData[topmostTile.layerIndex][coords.y + 1][coords.x + 1] = EMPTY_TILE;
             }
             
             // Apply mirroring for removal
@@ -2551,26 +2571,26 @@ export class MapMaker {
                 const mirrorY = this.mapHeight - 1 - coords.y;
                 const mirrorTopmost = this.findTopmostTileAt(coords.x, mirrorY);
                 const mirrorLayer = mirrorTopmost ? mirrorTopmost.layerIndex : topmostTile.layerIndex;
-                this.mapData[mirrorLayer][mirrorY][coords.x] = 0;
+                this.mapData[mirrorLayer][mirrorY][coords.x] = EMPTY_TILE;
                 
                 // If it's a 2x2 tile, also remove the other three tiles
                 if (is2x2) {
-                    this.mapData[mirrorLayer][mirrorY][coords.x + 1] = 0;
-                    this.mapData[mirrorLayer][mirrorY - 1][coords.x] = 0;
-                    this.mapData[mirrorLayer][mirrorY - 1][coords.x + 1] = 0;
+                    this.mapData[mirrorLayer][mirrorY][coords.x + 1] = EMPTY_TILE;
+                    this.mapData[mirrorLayer][mirrorY - 1][coords.x] = EMPTY_TILE;
+                    this.mapData[mirrorLayer][mirrorY - 1][coords.x + 1] = EMPTY_TILE;
                 }
             }
             if (this.mirrorHorizontal) {
                 const mirrorX = this.mapWidth - 1 - coords.x;
                 const mirrorTopmost = this.findTopmostTileAt(mirrorX, coords.y);
                 const mirrorLayer = mirrorTopmost ? mirrorTopmost.layerIndex : topmostTile.layerIndex;
-                this.mapData[mirrorLayer][coords.y][mirrorX] = 0;
+                this.mapData[mirrorLayer][coords.y][mirrorX] = EMPTY_TILE;
                 
                 // If it's a 2x2 tile, also remove the other three tiles
                 if (is2x2) {
-                    this.mapData[mirrorLayer][coords.y][mirrorX - 1] = 0;
-                    this.mapData[mirrorLayer][coords.y + 1][mirrorX] = 0;
-                    this.mapData[mirrorLayer][coords.y + 1][mirrorX - 1] = 0;
+                    this.mapData[mirrorLayer][coords.y][mirrorX - 1] = EMPTY_TILE;
+                    this.mapData[mirrorLayer][coords.y + 1][mirrorX] = EMPTY_TILE;
+                    this.mapData[mirrorLayer][coords.y + 1][mirrorX - 1] = EMPTY_TILE;
                 }
             }
             if (this.mirrorDiagonal) {
@@ -2578,13 +2598,13 @@ export class MapMaker {
                 const mirrorY = this.mapHeight - 1 - coords.y;
                 const mirrorTopmost = this.findTopmostTileAt(mirrorX, mirrorY);
                 const mirrorLayer = mirrorTopmost ? mirrorTopmost.layerIndex : topmostTile.layerIndex;
-                this.mapData[mirrorLayer][mirrorY][mirrorX] = 0;
+                this.mapData[mirrorLayer][mirrorY][mirrorX] = EMPTY_TILE;
                 
                 // If it's a 2x2 tile, also remove the other three tiles
                 if (is2x2) {
-                    this.mapData[mirrorLayer][mirrorY][mirrorX - 1] = 0;
-                    this.mapData[mirrorLayer][mirrorY - 1][mirrorX] = 0;
-                    this.mapData[mirrorLayer][mirrorY - 1][mirrorX - 1] = 0;
+                    this.mapData[mirrorLayer][mirrorY][mirrorX - 1] = EMPTY_TILE;
+                    this.mapData[mirrorLayer][mirrorY - 1][mirrorX] = EMPTY_TILE;
+                    this.mapData[mirrorLayer][mirrorY - 1][mirrorX - 1] = EMPTY_TILE;
                 }
             }
             
@@ -2813,7 +2833,7 @@ export class MapMaker {
             if (!tileEntry) return;
             const [id, def] = tileEntry;
 
-            if (id === '0' || id === '-1') return; // Skip empty and occupied tiles
+            if (id === EMPTY_TILE || isOccupiedMarker(id)) return; // Skip empty and occupied tiles
             if (def.showInGamemode && !def.showInGamemode.includes(this.gamemode)) return;
             if (def.showInEnvironment && !def.showInEnvironment.includes(this.environment)) return;
 
@@ -2846,7 +2866,7 @@ export class MapMaker {
             }
 
             btn.addEventListener('click', () => {
-                this.selectedTile = { id: parseInt(id), ...def };
+                this.selectedTile = { id: id, ...def };
                 container.querySelectorAll('.tile-btn').forEach(b => b.classList.remove('selected'));
                 btn.classList.add('selected');
                 this.toggleEraseMode(false);
@@ -2856,7 +2876,7 @@ export class MapMaker {
             container.appendChild(btn);
         });
 
-        document.getElementById('tileSelector').querySelector(`.tile-btn[id="1"]`).classList.add('selected');
+        document.getElementById('tileSelector').querySelector(`.tile-btn[id="M"]`).classList.add('selected');
     }
 
     loadEnvironmentBackgrounds() {
@@ -2896,21 +2916,21 @@ export class MapMaker {
 
         let img;
         // === Water, Ice and Snow tiles ===
-        if (tileId === 8 || tileId === 69 || tileId === 70) {
+        if (tileId === 'W' || tileId === 'ice-tile' || tileId === 'snow-tile') {
             // Determinar tipo e caminhos de arquivo
             let tileType, basePath, cachePrefix;
 
-            if (tileId === 8) {
+            if (tileId === 'W') {
                 tileType = "Water";
                 basePath = `Resources/${this.environment}/Water`;
                 cachePrefix = `${this.environment}/water_`;
             } 
-            else if (tileId === 69) {
+            else if (tileId === 'ice-tile') {
                 tileType = "IceTile";
                 basePath = `Resources/Global/Special_Tiles/IceTile`;
                 cachePrefix = `global/icetile_`;
             } 
-            else if (tileId === 70) {
+            else if (tileId === 'snow-tile') {
                 tileType = "SnowTile";
                 basePath = `Resources/Global/Special_Tiles/SnowTile`;
                 cachePrefix = `global/snowtile_`;
@@ -2927,9 +2947,9 @@ export class MapMaker {
 
             // Same type tile function 
             const isSameType = (id) => {
-                if (tileId === 8) return id === 8; // Water
-                if (tileId === 69) return id === 69; // Ice
-                if (tileId === 70) return id === 70; // Snow
+                if (tileId === 'W') return id === 'W'; // Water
+                if (tileId === 'ice-tile') return id === 'ice-tile'; // Ice
+                if (tileId === 'snow-tile') return id === 'snow-tile'; // Snow
                 return false;
             };
 
@@ -3019,8 +3039,8 @@ export class MapMaker {
 
             return;
 
-        } else if (tileId === 7 || tileId === 9) { // Fence or Rope Fence
-            const isFence = tileId === 7;
+        } else if (tileId === 'N' || tileId === 'a') { // Fence or Rope Fence
+            const isFence = tileId === 'N';
             const imageName = this.fenceLogicHandler.getFenceImageName(x, y, this.mapData[this.defaultTileLayer], this.environment, isFence);
             
             // For rope fence, map the image name to the corresponding Post variation
@@ -3056,7 +3076,7 @@ export class MapMaker {
                 return;
             }
 
-        } else if (tileId === 40) {
+        } else if (tileId === 'track') {
             const imageName = this.fenceLogicHandler.getFenceImageName(x, y, this.mapData[this.defaultTileLayer], 'Brawl_Arena');
 
             const pathColor = red ? 'Red' : 'Blue';
@@ -3086,7 +3106,7 @@ export class MapMaker {
                 return;
             }
 
-        } else if (tileId === 45) {
+        } else if (tileId === 'E') {
             // Robust check: Only try to draw BFence if allowed in this environment
             const def = this.tileDefinitions[tileId];
             if (!def.showInEnvironment || !def.showInEnvironment.includes(this.environment)) {
@@ -3119,7 +3139,7 @@ export class MapMaker {
                 };
                 return;
             }
-        } else if (tileId === 68) {
+        } else if (tileId === 'rails') {
             const imageName = this.fenceLogicHandler.getFenceImageName(x, y, this.mapData[1], 'Rails');
             
             const imagePath = `Resources/Global/Special_Tiles/Rails/${imageName}.png`;
@@ -3145,10 +3165,11 @@ export class MapMaker {
                 };
                 return;
             }
-        } else if ([73, 74, 75].some(a => a === tileId)) {
+        } else if (['red-train', 'yellow-train', 'green-train'].includes(tileId)) {
             const imageName = this.fenceLogicHandler.getFenceImageName(x, y, this.mapData[1], 'Train');
 
-            const imagePath = `Resources/Global/Special_Tiles/${tileId === 73 ? 'RedTrain' : tileId === 74 ? 'YellowTrain' : 'GreenTrain'}/Train_${imageName}.png`;
+            const trainColor = tileId === 'red-train' ? 'RedTrain' : tileId === 'yellow-train' ? 'YellowTrain' : 'GreenTrain';
+            const imagePath = `Resources/Global/Special_Tiles/${trainColor}/Train_${imageName}.png`;
 
             img = this.tileImages[imagePath];
             
@@ -3159,7 +3180,7 @@ export class MapMaker {
                 img.onerror = () => {
                     console.error(`Failed to load border fence image: ${imagePath}`);
                     // Load fallback image
-                    img.src = `Resources/Global/Special_Tiles/${tileId === 73 ? 'RedTrain' : tileId === 74 ? 'YellowTrain' : 'GreenTrain'}/Train_Fence.png`;
+                    img.src = `Resources/Global/Special_Tiles/${trainColor}/Train_Fence.png`;
                 };
                 this.tileImages[imagePath] = img;
             }
@@ -3216,10 +3237,10 @@ export class MapMaker {
             }
         } else {
             // For fence and rope fence variations, use the specific variation's dimensions
-            const isFence = tileId === 7;
-            const isRope = tileId === 9;
-            const isBorder = tileId === 45;
-            const isTrain = [73, 74, 75].includes(tileId);
+            const isFence = tileId === 'N';
+            const isRope = tileId === 'a';
+            const isBorder = tileId === 'E';
+            const isTrain = ['red-train', 'yellow-train', 'green-train'].includes(tileId);
             if (isFence || isRope || isBorder) {
                 const imageName = this.fenceLogicHandler.getFenceImageName(x, y, this.mapData[this.defaultTileLayer], this.environment, isFence, isBorder);
                 const ropeMapping = {
@@ -3273,8 +3294,8 @@ export class MapMaker {
     showJumpLanding(ctx, tileId, x, y) {
         // Map tileId to jump type
         const jumpTypes = {
-            20: 'R', 21: 'L', 22: 'T', 23: 'B',
-            24: 'BR', 25: 'TL', 26: 'BL', 27: 'TR'
+            H: 'R', G: 'L', K: 'T', L: 'B',
+            P: 'BR', Z: 'TL', O: 'BL', U: 'TR'
         };
         const type = jumpTypes[tileId];
         if (!type) return;
@@ -3441,7 +3462,7 @@ export class MapMaker {
             for (let y = 0; y < this.mapHeight; y++) {
                 for (let x = 0; x < this.mapWidth; x++) {
                     const tileId = layerGrid[y][x];
-                    if (tileId === 0 || tileId === -1) continue;
+                    if (!isRenderableTile(tileId)) continue;
 
                     const def = this.tileDefinitions[tileId];
                     if (!def) continue;
@@ -3464,8 +3485,8 @@ export class MapMaker {
         }
 
         if (this.gamemode === 'Brawl_Arena'){
-            const trackLayerIndex = this.tileDefinitions[40]?.layer ?? this.defaultTileLayer;
-            const smallIkeLayerIndex = this.tileDefinitions[47]?.layer ?? this.defaultTileLayer;
+            const trackLayerIndex = this.tileDefinitions['track']?.layer ?? this.defaultTileLayer;
+            const smallIkeLayerIndex = this.tileDefinitions['small-ike-red']?.layer ?? this.defaultTileLayer;
             const resolveLayerGrid = (index) => this.mapData[index] || this.mapData[this.defaultTileLayer];
             const trackLayerGrid = resolveLayerGrid(trackLayerIndex);
             const smallIkeLayerGrid = resolveLayerGrid(smallIkeLayerIndex);
@@ -3478,7 +3499,7 @@ export class MapMaker {
                 const isSameType = (x, y) => {
                     if (x < 0 || x >= width || y < 0 || y >= height) return false;
                     const id = trackLayerGrid[y][x];
-                    return id === 40;
+                    return id === 'track';
                 };
 
                 return {
@@ -3491,7 +3512,7 @@ export class MapMaker {
 
             for (let y = 0; y < this.mapHeight; y++) {
                 for (let x = 0; x < this.mapWidth; x++) {
-                    if (smallIkeLayerGrid[y][x] === 47){
+                    if (smallIkeLayerGrid[y][x] === 'small-ike-red'){
                         const addRedToConnections = (x, y, firstRun = false) => {
                             if (!firstRun) {
                                 const tile = getTileAt(trackLayerIndex, x, y);
@@ -3585,7 +3606,7 @@ export class MapMaker {
                             const tile = getTileAt(layerKey, x, y);
                             const red = tile?.red ?? false;
 
-                            if (this.showGuides && tileId >= 20 && tileId <= 27) {
+                            if (this.showGuides && ['H', 'G', 'K', 'L', 'P', 'Z', 'O', 'U'].includes(tileId)) {
                                 this.showJumpLanding(this.ctx, tileId, x, y);
                             }
                         });
@@ -3672,7 +3693,7 @@ export class MapMaker {
     }
 
     createEmptyLayerGrid(width = this.mapWidth, height = this.mapHeight) {
-        return Array.from({ length: height }, () => Array(width).fill(0));
+        return Array.from({ length: height }, () => Array(width).fill(EMPTY_TILE));
     }
 
     createEmptyLayeredMap(width = this.mapWidth, height = this.mapHeight) {
@@ -3694,7 +3715,7 @@ export class MapMaker {
         if (!placingDef) return false;
         
         // If target is empty (0), check if placing tile can be placed on empty tiles
-        if (targetTileId === 0) {
+        if (isEmptyTile(targetTileId)) {
             // If placing tile has placeableOn property (and it's not -100), it cannot be placed on empty tiles
             if (placingDef.placeableOn && !placingDef.placeableOn.includes(-100)) {
                 return false;
@@ -3734,7 +3755,7 @@ export class MapMaker {
             if (!layerGrid) continue;
             
             const tileId = layerGrid[y][x];
-            if (tileId === 0 || tileId === -1 || tileId === -2 || tileId === -3) continue;
+            if (!isRenderableTile(tileId)) continue;
             
             const def = this.tileDefinitions[tileId];
             if (!def) continue;
@@ -3753,7 +3774,7 @@ export class MapMaker {
             if (!layerGrid) continue;
             
             const tileId = layerGrid[y][x];
-            if (tileId !== 0 && tileId !== -1 && tileId !== -2 && tileId !== -3) {
+            if (isRenderableTile(tileId)) {
                 const def = this.tileDefinitions[tileId];
                 if (def) {
                     return { layerIndex, tileId, def };
@@ -3772,7 +3793,7 @@ export class MapMaker {
             if (!layerGrid) continue;
             
             const tileId = layerGrid[y][x];
-            if (tileId === 0 || tileId === -1 || tileId === -2 || tileId === -3) continue;
+            if (!isRenderableTile(tileId)) continue;
             
             const def = this.tileDefinitions[tileId];
             if (def) {
@@ -3985,7 +4006,7 @@ export class MapMaker {
                 for (let x = startX; x <= endX; x++) {
                     // Find topmost tile at this position across all layers
                     const topmostTile = this.getTopmostTileAt(x, y);
-                    if (topmostTile && topmostTile.tileId !== 0 && topmostTile.tileId !== -1 && topmostTile.tileId !== -2 && topmostTile.tileId !== -3 && topmostTile.tileId !== 33) {
+                    if (topmostTile && isRenderableTile(topmostTile.tileId)) {
                         this.selectedTiles.push({
                             x: x, 
                             y: y,
@@ -4021,7 +4042,7 @@ export class MapMaker {
 
         // Check if we're placing on an existing tile or empty tile
         const topmostTile = this.getTopmostTileAt(x, y);
-        const targetTileId = topmostTile ? topmostTile.tileId : 0;
+        const targetTileId = topmostTile ? topmostTile.tileId : EMPTY_TILE;
         const canPlace = this.canPlaceTileOn(id, targetTileId);
         
         if (!canPlace) {
@@ -4078,9 +4099,9 @@ export class MapMaker {
 
         // For 2x2 tiles, mark the other tiles as occupied
         if (def.size === 2) {
-            this.mapData[targetLayer][y][x + 1] = -1;
-            this.mapData[targetLayer][y + 1][x] = -2;
-            this.mapData[targetLayer][y + 1][x + 1] = -3;
+            this.mapData[targetLayer][y][x + 1] = OCCUPIED_TILE_RIGHT;
+            this.mapData[targetLayer][y + 1][x] = OCCUPIED_TILE_BOTTOM;
+            this.mapData[targetLayer][y + 1][x + 1] = OCCUPIED_TILE_BOTTOM_RIGHT;
         }
 
         // Handle mirroring
@@ -4105,14 +4126,14 @@ export class MapMaker {
                     // Check if any tiles are occupied
                     for (let dy = 0; dy < 2; dy++) {
                         for (let dx = 0; dx < 2; dx++) {
-                            if (this.mapData[targetLayer][ty + dy][tx + dx] !== 0) return;
+                            if (!isEmptyTile(this.mapData[targetLayer][ty + dy][tx + dx])) return;
                         }
                     }
                     // Place the tile and mark occupied spaces
                     this.mapData[targetLayer][ty][tx] = mid;
-                    this.mapData[targetLayer][ty][tx + 1] = -1;
-                    this.mapData[targetLayer][ty + 1][tx] = -1;
-                    this.mapData[targetLayer][ty + 1][tx + 1] = -1;
+                    this.mapData[targetLayer][ty][tx + 1] = OCCUPIED_TILE_RIGHT;
+                    this.mapData[targetLayer][ty + 1][tx] = OCCUPIED_TILE_BOTTOM;
+                    this.mapData[targetLayer][ty + 1][tx + 1] = OCCUPIED_TILE_BOTTOM_RIGHT;
                 } else {
                     this.mapData[targetLayer][ty][tx] = mid;
                 }
@@ -4166,21 +4187,21 @@ export class MapMaker {
             // Find tile ID by mirrored name
             const mirroredDef = Object.entries(this.tileDefinitions)
                 .find(([_, d]) => d.name === `Jump ${mirroredDirection}`);
-            return mirroredDef ? parseInt(mirroredDef[0]) : tileId;
+            return mirroredDef ? mirroredDef[0] : tileId;
         }
 
         if (this.correctMirroring) {
             switch (tileId){
-                case 12: return 13;
-                case 13: return 12;
-                case 34: return 35;
-                case 35: return 34;
-                case 41: return 42;
-                case 42: return 41;
-                case 43: return 46;
-                case 46: return 43;
-                case 44: return 47;
-                case 47: return 44;
+                case '1': return '2';
+                case '2': return '1';
+                case 'token-blue': return 'token-red';
+                case 'token-red': return 'token-blue';
+                case '6': return '7';
+                case '7': return '6';
+                case 'base-ike-blue': return 'base-ike-red';
+                case 'base-ike-red': return 'base-ike-blue';
+                case 'small-ike-blue': return 'small-ike-red';
+                case 'small-ike-red': return 'small-ike-blue';
             }
         }
 
@@ -4204,26 +4225,26 @@ export class MapMaker {
         
         // Erase the tile and its occupied spaces on the correct layer
         if (def && def.size === 2) {
-            this.mapData[layerIndex][y][x + 1] = 0;
-            this.mapData[layerIndex][y + 1][x] = 0;
-            this.mapData[layerIndex][y + 1][x + 1] = 0;
+            this.mapData[layerIndex][y][x + 1] = EMPTY_TILE;
+            this.mapData[layerIndex][y + 1][x] = EMPTY_TILE;
+            this.mapData[layerIndex][y + 1][x + 1] = EMPTY_TILE;
         }
-        if (tileId === -1) {
-            this.mapData[layerIndex][y][x - 1] = 0;
-            this.mapData[layerIndex][y + 1][x] = 0;
-            this.mapData[layerIndex][y + 1][x - 1] = 0;
+        if (tileId === OCCUPIED_TILE_RIGHT) {
+            this.mapData[layerIndex][y][x - 1] = EMPTY_TILE;
+            this.mapData[layerIndex][y + 1][x] = EMPTY_TILE;
+            this.mapData[layerIndex][y + 1][x - 1] = EMPTY_TILE;
         }
-        if (tileId === -2) {
-            this.mapData[layerIndex][y][x + 1] = 0;
-            this.mapData[layerIndex][y - 1][x] = 0;
-            this.mapData[layerIndex][y - 1][x + 1] = 0;
+        if (tileId === OCCUPIED_TILE_BOTTOM) {
+            this.mapData[layerIndex][y][x + 1] = EMPTY_TILE;
+            this.mapData[layerIndex][y - 1][x] = EMPTY_TILE;
+            this.mapData[layerIndex][y - 1][x + 1] = EMPTY_TILE;
         }
-        if (tileId === -3) {
-            this.mapData[layerIndex][y][x - 1] = 0;
-            this.mapData[layerIndex][y - 1][x] = 0;
-            this.mapData[layerIndex][y - 1][x - 1] = 0;
+        if (tileId === OCCUPIED_TILE_BOTTOM_RIGHT) {
+            this.mapData[layerIndex][y][x - 1] = EMPTY_TILE;
+            this.mapData[layerIndex][y - 1][x] = EMPTY_TILE;
+            this.mapData[layerIndex][y - 1][x - 1] = EMPTY_TILE;
         }
-        this.mapData[layerIndex][y][x] = 0;
+        this.mapData[layerIndex][y][x] = EMPTY_TILE;
 
         // Handle mirroring for regular tiles
          if (this.mirrorVertical || this.mirrorHorizontal || this.mirrorDiagonal) {
@@ -4236,29 +4257,29 @@ export class MapMaker {
             
             if (this.mirrorVertical) {
                 if (def && def.size === 2) {
-                    this.mapData[mirrorLayer][mirrorY - 1][x] = 0;
-                    this.mapData[mirrorLayer][mirrorY - 1][x + 1] = 0;
-                    this.mapData[mirrorLayer][mirrorY][x + 1] = 0;
+                    this.mapData[mirrorLayer][mirrorY - 1][x] = EMPTY_TILE;
+                    this.mapData[mirrorLayer][mirrorY - 1][x + 1] = EMPTY_TILE;
+                    this.mapData[mirrorLayer][mirrorY][x + 1] = EMPTY_TILE;
                 }
-                this.mapData[mirrorLayer][mirrorY][x] = 0;
+                this.mapData[mirrorLayer][mirrorY][x] = EMPTY_TILE;
             }
             
             if (this.mirrorHorizontal) {
                 if (def && def.size === 2) {
-                    this.mapData[mirrorLayer][y + 1][mirrorX] = 0;
-                    this.mapData[mirrorLayer][y][mirrorX - 1] = 0;
-                    this.mapData[mirrorLayer][y + 1][mirrorX - 1] = 0;
+                    this.mapData[mirrorLayer][y + 1][mirrorX] = EMPTY_TILE;
+                    this.mapData[mirrorLayer][y][mirrorX - 1] = EMPTY_TILE;
+                    this.mapData[mirrorLayer][y + 1][mirrorX - 1] = EMPTY_TILE;
                 }
-                this.mapData[mirrorLayer][y][mirrorX] = 0;
+                this.mapData[mirrorLayer][y][mirrorX] = EMPTY_TILE;
             }
             
             if (this.mirrorDiagonal) {
                 if (def && def.size === 2) {
-                    this.mapData[mirrorLayer][mirrorY - 1][mirrorX - 1] = 0;
-                    this.mapData[mirrorLayer][mirrorY - 1][mirrorX] = 0;
-                    this.mapData[mirrorLayer][mirrorY][mirrorX - 1] = 0;
+                    this.mapData[mirrorLayer][mirrorY - 1][mirrorX - 1] = EMPTY_TILE;
+                    this.mapData[mirrorLayer][mirrorY - 1][mirrorX] = EMPTY_TILE;
+                    this.mapData[mirrorLayer][mirrorY][mirrorX - 1] = EMPTY_TILE;
                 }
-                this.mapData[mirrorLayer][mirrorY][mirrorX] = 0;
+                this.mapData[mirrorLayer][mirrorY][mirrorX] = EMPTY_TILE;
             }
         }
 
@@ -4289,140 +4310,234 @@ export class MapMaker {
         return Date.now();
     }
     
-    async saveMap() {
-        try {
-            const mapLinkElement = document.getElementById('mapLink');
-            const baseMapLink = 'https://she-fairy.github.io/atlas-horizon/map.html';
-            const isNewMap = mapLinkElement.innerText === baseMapLink;
+    // async saveMap() {
+    //     try {
+    //         const mapLinkElement = document.getElementById('mapLink');
+    //         const baseMapLink = 'https://she-fairy.github.io/atlas-horizon/map.html';
+    //         const isNewMap = mapLinkElement.innerText === baseMapLink;
     
-            const mapData = {
-                name: document.getElementById('mapName').value !== '' ? document.getElementById('mapName').value : 'Untitled Map',
-                size: document.getElementById('mapSize').value,
-                gamemode: document.getElementById('gamemode').value,
-                environment: document.getElementById('environment').value,
-                mapData: this.mapData
-            };
+    //         const mapData = {
+    //             name: document.getElementById('mapName').value !== '' ? document.getElementById('mapName').value : 'Untitled Map',
+    //             size: document.getElementById('mapSize').value,
+    //             gamemode: document.getElementById('gamemode').value,
+    //             environment: document.getElementById('environment').value,
+    //             mapData: this.mapData
+    //         };
     
-            if (!isSupabaseReady()) {
-                await window.atlasAlert({
-                    title: 'Save unavailable',
-                    message: 'Supabase is not configured, so this map cannot be saved.',
-                    variant: 'danger'
-                });
+    //         if (!isSupabaseReady()) {
+    //             await window.atlasAlert({
+    //                 title: 'Save unavailable',
+    //                 message: 'Supabase is not configured, so this map cannot be saved.',
+    //                 variant: 'danger'
+    //             });
+    //             return;
+    //         }
+
+    //         try {
+    //             // Create or update map metadata in Supabase
+    //             let supaMapId;
+    //             if (isNewMap) {
+    //                 const meta = {
+    //                     name: mapData.name,
+    //                     width: this.mapWidth,
+    //                     height: this.mapHeight,
+    //                     gamemode: mapData.gamemode,
+    //                     environment: mapData.environment
+    //                 };
+    //                 // Ensure we have the freshest authenticated user directly from Supabase
+    //                 try {
+    //                     if (!isSupabaseReady()) {
+    //                         const start = Date.now();
+    //                         while (!isSupabaseReady() && Date.now() - start < 3000) {
+    //                             await new Promise(r => setTimeout(r, 100));
+    //                         }
+    //                         if (!isSupabaseReady()) throw new Error('SUPABASE_NOT_INITIALIZED_AT_SAVE_TIME');
+    //                     }
+    //                     const res = await window.supabaseService.getAuthUserNow();
+    //                     const user = res?.data?.user;
+    //                     if (!user?.id) {
+    //                         console.error('NO_AUTH_USER_AT_SAVE_TIME', res?.error);
+    //                         throw new Error('NO_AUTH_USER_AT_SAVE_TIME');
+    //                     }
+    //                     // Use authoritative user id in payload
+    //                     meta.user_id = user.id;
+    //                 } catch (e) {
+    //                     console.error('Failed to resolve auth user before createMap()', e);
+    //                     throw e;
+    //                 }
+
+    //                 const { data: created, error } =
+    //                 await window.supabase.rpc('create_map_with_limit', {
+    //                     p_name: meta.name,
+    //                     p_width: this.mapWidth,
+    //                     p_height: this.mapHeight,
+    //                     p_gamemode: meta.gamemode,
+    //                     p_environment: meta.environment
+    //                 });
+
+    //                 if (error) {
+    //                 if (error.message.includes('MONTHLY_MAP_LIMIT_REACHED')) {
+    //                     await window.atlasAlert({
+    //                     title: 'Limit reached',
+    //                     message: 'You can only create 50 maps per month.',
+    //                     variant: 'danger'
+    //                     });
+    //                     return;
+    //                 }
+    //                 throw error;
+    //                 }
+    //                 // created may be a single object; defensively handle array or null
+    //                 let createdRec = created;
+    //                 if (Array.isArray(createdRec)) createdRec = createdRec[0];
+    //                 supaMapId = createdRec?.id;
+    //                 if (!supaMapId) {
+    //                     console.error('createMap returned no id', created);
+    //                     throw new Error('CREATE_MAP_NO_ID');
+    //                 }
+    //                 // Build a map link that includes the authoritative user's id (UI/navigation only)
+    //                 try {
+    //                     const res2 = await window.supabaseService.getAuthUserNow();
+    //                     const user2 = res2?.data?.user;
+    //                     const curId = user2?.id || '';
+    //                     mapLinkElement.innerText = `https://she-fairy.github.io/atlas-horizon/map.html?id=${supaMapId}&user=${curId}`;
+    //                 } catch (e) {
+    //                     console.error('Failed to append user id to map link', e);
+    //                     mapLinkElement.innerText = `https://she-fairy.github.io/atlas-horizon/map.html?id=${supaMapId}`;
+    //                 }
+    //             } else {
+    //                 const currentUrl = new URL(mapLinkElement.innerText);
+    //                 supaMapId = currentUrl.searchParams.get('id');
+    //             }
+
+    //             await window.supabaseService.updateMapMeta(supaMapId, {
+    //                 name: mapData.name,
+    //                 width: this.mapWidth,
+    //                 height: this.mapHeight,
+    //                 gamemode: mapData.gamemode,
+    //                 environment: mapData.environment
+    //             });
+
+    //             // Flush buffered tile changes immediately
+    //             await this.flushBufferedChanges(supaMapId, true);
+
+    //             await window.atlasAlert({
+    //                 title: 'Map saved',
+    //                 message: 'Your map was saved successfully.',
+    //                 variant: 'success'
+    //             });
+    //             return;
+    //         } catch (e) {
+    //             console.error('Failed to save map', e);
+    //             await window.atlasAlert({
+    //                 title: 'Save failed',
+    //                 message: 'Failed to save map.',
+    //                 variant: 'danger'
+    //             });
+    //             return;
+    //         }
+    //     } catch (error) {
+    //         console.error('Error saving map:', error);
+    //         await window.atlasAlert({
+    //             title: 'Save failed',
+    //             message: 'Failed to save map. Please try again.',
+    //             variant: 'danger'
+    //         });
+    //     }
+    // }
+
+    downloadMapCode(){
+        const mapDataStr = JSON.stringify({
+            name: document.getElementById('mapName').value,
+            size: document.getElementById('mapSize').value,
+            width: this.mapWidth,
+            height: this.mapHeight,
+            gamemode: this.gamemode,
+            environment: this.environment,
+            mapData: this.mapData
+        });
+        const blob = new Blob([mapDataStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${document.getElementById('mapName').value || 'map'}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    async selectJsonFile() {
+        return new Promise((resolve, reject) => {
+            const input = document.getElementById("jsonFileInput");
+
+            // Reset so selecting the same file again still triggers change
+            input.value = "";
+
+            input.onchange = async (event) => {
+            const file = event.target.files[0];
+
+            if (!file) {
+                reject("No file selected");
                 return;
             }
 
             try {
-                // Create or update map metadata in Supabase
-                let supaMapId;
-                if (isNewMap) {
-                    const meta = {
-                        name: mapData.name,
-                        width: this.mapWidth,
-                        height: this.mapHeight,
-                        gamemode: mapData.gamemode,
-                        environment: mapData.environment
-                    };
-                    // Ensure we have the freshest authenticated user directly from Supabase
-                    try {
-                        if (!isSupabaseReady()) {
-                            const start = Date.now();
-                            while (!isSupabaseReady() && Date.now() - start < 3000) {
-                                await new Promise(r => setTimeout(r, 100));
-                            }
-                            if (!isSupabaseReady()) throw new Error('SUPABASE_NOT_INITIALIZED_AT_SAVE_TIME');
-                        }
-                        const res = await window.supabaseService.getAuthUserNow();
-                        const user = res?.data?.user;
-                        if (!user?.id) {
-                            console.error('NO_AUTH_USER_AT_SAVE_TIME', res?.error);
-                            throw new Error('NO_AUTH_USER_AT_SAVE_TIME');
-                        }
-                        // Use authoritative user id in payload
-                        meta.user_id = user.id;
-                    } catch (e) {
-                        console.error('Failed to resolve auth user before createMap()', e);
-                        throw e;
-                    }
+                const text = await file.text();
+                const json = JSON.parse(text);
 
-                    const { data: created, error } =
-                    await window.supabase.rpc('create_map_with_limit', {
-                        p_name: meta.name,
-                        p_width: this.mapWidth,
-                        p_height: this.mapHeight,
-                        p_gamemode: meta.gamemode,
-                        p_environment: meta.environment
-                    });
-
-                    if (error) {
-                    if (error.message.includes('MONTHLY_MAP_LIMIT_REACHED')) {
-                        await window.atlasAlert({
-                        title: 'Limit reached',
-                        message: 'You can only create 50 maps per month.',
-                        variant: 'danger'
-                        });
-                        return;
-                    }
-                    throw error;
-                    }
-                    // created may be a single object; defensively handle array or null
-                    let createdRec = created;
-                    if (Array.isArray(createdRec)) createdRec = createdRec[0];
-                    supaMapId = createdRec?.id;
-                    if (!supaMapId) {
-                        console.error('createMap returned no id', created);
-                        throw new Error('CREATE_MAP_NO_ID');
-                    }
-                    // Build a map link that includes the authoritative user's id (UI/navigation only)
-                    try {
-                        const res2 = await window.supabaseService.getAuthUserNow();
-                        const user2 = res2?.data?.user;
-                        const curId = user2?.id || '';
-                        mapLinkElement.innerText = `https://she-fairy.github.io/atlas-horizon/map.html?id=${supaMapId}&user=${curId}`;
-                    } catch (e) {
-                        console.error('Failed to append user id to map link', e);
-                        mapLinkElement.innerText = `https://she-fairy.github.io/atlas-horizon/map.html?id=${supaMapId}`;
-                    }
-                } else {
-                    const currentUrl = new URL(mapLinkElement.innerText);
-                    supaMapId = currentUrl.searchParams.get('id');
-                }
-
-                await window.supabaseService.updateMapMeta(supaMapId, {
-                    name: mapData.name,
-                    width: this.mapWidth,
-                    height: this.mapHeight,
-                    gamemode: mapData.gamemode,
-                    environment: mapData.environment
+                resolve({
+                file,
+                json
                 });
-
-                // Flush buffered tile changes immediately
-                await this.flushBufferedChanges(supaMapId, true);
-
-                await window.atlasAlert({
-                    title: 'Map saved',
-                    message: 'Your map was saved successfully.',
-                    variant: 'success'
-                });
-                return;
-            } catch (e) {
-                console.error('Failed to save map', e);
-                await window.atlasAlert({
-                    title: 'Save failed',
-                    message: 'Failed to save map.',
-                    variant: 'danger'
-                });
-                return;
+            } catch (err) {
+                reject("Invalid JSON file");
             }
-        } catch (error) {
-            console.error('Error saving map:', error);
-            await window.atlasAlert({
-                title: 'Save failed',
-                message: 'Failed to save map. Please try again.',
-                variant: 'danger'
-            });
-        }
+            };
+
+            input.click();
+        });    }
+
+        // Example usage
+        async loadMap() {
+            try {
+                const result = await this.selectJsonFile();
+
+                console.log("Selected file:", result.file.name);
+                console.log("Parsed JSON:", result.json);
+
+                document.getElementById('mapName').value = result.json.name || 'Untitled Map';
+                document.getElementById('mapSize').value = result.json.size || this.mapSizes.regular;
+                this.setSize(document.getElementById('mapSize').value);
+                this.mapWidth = result.json.width || this.mapWidth;
+                this.mapHeight = result.json.height || this.mapHeight;
+                this.gamemode = result.json.gamemode || this.gamemode;
+                document.getElementById('gamemode').value = this.gamemode;
+                this.environment = result.json.environment || this.environment;
+                this.setGamemode(this.gamemode);
+                document.getElementById('environment').value = this.environment;
+                this.setEnvironment(this.environment);
+                this.mapData = result.json.mapData || this.createEmptyMapData();
+                this.draw();
+            } catch (err) {
+                console.error(err);
+            }
     }
+
+    createEmptyMapData() {
+        const layers = [];
+        for (let i = 0; i < this.layerCount; i++) {
+            const layer = [];
+            for (let y = 0; y < this.mapHeight; y++) {
+                const row = [];
+                for (let x = 0; x < this.mapWidth; x++) {
+                    row.push(EMPTY_TILE);
+                }   
+            layer.push(row);
+            }       
+            layers.push(layer);
+        }
+        return layers;
+    }    
 
     async createMapPNG() {
         const tileSize = this.tileSize;
@@ -4533,7 +4648,7 @@ export class MapMaker {
             for (let y = 0; y < this.mapHeight; y++) {
                 for (let x = 0; x < this.mapWidth; x++) {
                     const tileId = layerGrid[y][x];
-                    if (tileId === 0 || tileId === -1) continue;
+                    if (!isRenderableTile(tileId)) continue;
 
                     const def = this.tileDefinitions[tileId];
                     if (!def) continue;
@@ -4557,8 +4672,8 @@ export class MapMaker {
         }
 
         if (this.gamemode === 'Brawl_Arena'){
-            const trackLayerIndex = this.tileDefinitions[40]?.layer ?? this.defaultTileLayer;
-            const smallIkeLayerIndex = this.tileDefinitions[47]?.layer ?? this.defaultTileLayer;
+            const trackLayerIndex = this.tileDefinitions['track']?.layer ?? this.defaultTileLayer;
+            const smallIkeLayerIndex = this.tileDefinitions['small-ike-red']?.layer ?? this.defaultTileLayer;
             const resolveLayerGrid = (index) => this.mapData[index] || this.mapData[this.defaultTileLayer];
             const trackLayerGrid = resolveLayerGrid(trackLayerIndex);
             const smallIkeLayerGrid = resolveLayerGrid(smallIkeLayerIndex);
@@ -4570,7 +4685,7 @@ export class MapMaker {
                 const isSameType = (x, y) => {
                     if (x < 0 || x >= width || y < 0 || y >= height) return false;
                     const id = trackLayerGrid[y][x];
-                    return id === 40;
+                    return id === 'track';
                 };
 
                 return {
@@ -4583,7 +4698,7 @@ export class MapMaker {
 
                             for (let y = 0; y < this.mapHeight; y++) {
                 for (let x = 0; x < this.mapWidth; x++) {
-                    if (smallIkeLayerGrid[y][x] === 47){
+                    if (smallIkeLayerGrid[y][x] === 'small-ike-red'){
                         let firstRun = true;
                         const addRedToConnections = (x, y) => {
                             if (!firstRun) {
@@ -4713,11 +4828,11 @@ export class MapMaker {
                 const oldLayer = (this._lastSavedMap && this._lastSavedMap[layer]) || this.createEmptyLayerGrid(this.mapWidth, this.mapHeight);
                 for (let y = 0; y < this.mapHeight; y++) {
                     for (let x = 0; x < this.mapWidth; x++) {
-                        const newVal = (newLayer[y] && typeof newLayer[y][x] !== 'undefined') ? newLayer[y][x] : 0;
-                        const oldVal = (oldLayer[y] && typeof oldLayer[y][x] !== 'undefined') ? oldLayer[y][x] : 0;
+                        const newVal = (newLayer[y] && typeof newLayer[y][x] !== 'undefined') ? newLayer[y][x] : EMPTY_TILE;
+                        const oldVal = (oldLayer[y] && typeof oldLayer[y][x] !== 'undefined') ? oldLayer[y][x] : EMPTY_TILE;
                         if (newVal === oldVal) continue;
                         // treat 0 as default (do not store)
-                        if (newVal === 0) {
+                        if (isEmptyTile(newVal) || isOccupiedMarker(newVal)) {
                             deletes.push({ x, y, layer });
                         } else {
                             const def = this.tileDefinitions[newVal] || { name: String(newVal) };
@@ -4782,10 +4897,10 @@ export class MapMaker {
 
 
         // Remove objectives
-        if (this.mapData[this.defaultTileLayer].every(row => row.every(tile => tile === 0))) {
+        if (this.mapData[this.defaultTileLayer].every(row => row.every(isEmptyTile))) {
             for (let y = 0; y < this.mapHeight; y++) {
                 for (let x = 0; x < this.mapWidth; x++) {
-                    if (this.mapData[this.defaultTileLayer][y][x] === 14) this.mapData[this.defaultTileLayer][y][x] = 0;
+                    if (this.mapData[this.defaultTileLayer][y][x] === '8') this.mapData[this.defaultTileLayer][y][x] = EMPTY_TILE;
                 }
             }
         }
@@ -4794,7 +4909,7 @@ export class MapMaker {
             if (value.showInGamemode && !value.showInGamemode.includes(this.gamemode)) {
                 for (let y = 0; y < this.mapHeight; y++) {
                     for (let x = 0; x < this.mapWidth; x++) {
-                        if (this.mapData[this.defaultTileLayer][y][x] === parseInt(key)) this.mapData[this.defaultTileLayer][y][x] = 0;
+                        if (this.mapData[this.defaultTileLayer][y][x] === key) this.mapData[this.defaultTileLayer][y][x] = EMPTY_TILE;
                     }
                 }
             }
@@ -4814,7 +4929,7 @@ export class MapMaker {
                 for (const [startX, startY] of corners) {
                     for (let y = 0; y < 4; y++) {
                         for (let x = 0; x < 7; x++) {
-                            this.mapData[this.defaultTileLayer][startX + y][startY + x] = 33; // Empty2 tile
+                            this.mapData[this.defaultTileLayer][startX + y][startY + x] = EMPTY_TILE; // Empty2 tile
                         }
                     }
                 }
@@ -4846,28 +4961,28 @@ export class MapMaker {
 
                 if (!this.existingMap && apply) {
                     // Clear previous spawn tiles
-                    this.placeTile(middleX, 0, 42, false);                      // Red
-                    this.placeTile(middleX, this.mapHeight - 1, 41, false);     // Blue
-                    this.placeTile(middleX - 2, 0, 42, false);                  // Red
-                    this.placeTile(middleX - 2, this.mapHeight - 1, 41, false); // Blue
-                    this.placeTile(middleX + 2, 0, 42, false);                  // Red
-                    this.placeTile(middleX + 2, this.mapHeight - 1, 41, false); // Blue
+                    this.placeTile(middleX, 0, '7', false);                      // Red
+                    this.placeTile(middleX, this.mapHeight - 1, '6', false);     // Blue
+                    this.placeTile(middleX - 2, 0, '7', false);                  // Red
+                    this.placeTile(middleX - 2, this.mapHeight - 1, '6', false); // Blue
+                    this.placeTile(middleX + 2, 0, '7', false);                  // Red
+                    this.placeTile(middleX + 2, this.mapHeight - 1, '6', false); // Blue
 
                     // Place spawn tiles
-                    this.placeTile(middleX, 8, 13, false);      // Red
-                    this.placeTile(middleX, this.mapHeight - 9, 12, false);   // Blue
-                    this.placeTile(middleX - 2, 8, 13, false);                              // Red
-                    this.placeTile(middleX - 2, this.mapHeight - 9, 12, false); // Blue
-                    this.placeTile(middleX + 2, 8, 13, false);                              // Red
-                    this.placeTile(middleX + 2, this.mapHeight - 9, 12, false); // Blue
+                    this.placeTile(middleX, 8, '2', false);      // Red
+                    this.placeTile(middleX, this.mapHeight - 9, '1', false);   // Blue
+                    this.placeTile(middleX - 2, 8, '2', false);                              // Red
+                    this.placeTile(middleX - 2, this.mapHeight - 9, '1', false); // Blue
+                    this.placeTile(middleX + 2, 8, '2', false);                              // Red
+                    this.placeTile(middleX + 2, this.mapHeight - 9, '1', false); // Blue
                 }
 
             } else if (wasBrawl) {
                 for (const [startX, startY] of corners) {
                     for (let y = 0; y < 4; y++) {
                         for (let x = 0; x < 7; x++) {
-                            if (this.mapData[this.defaultTileLayer][startX + y][startY + x] === 33) {
-                                this.mapData[this.defaultTileLayer][startX + y][startY + x] = 0;
+                            if (isEmptyTile(this.mapData[this.defaultTileLayer][startX + y][startY + x])) {
+                                this.mapData[this.defaultTileLayer][startX + y][startY + x] = EMPTY_TILE;
                             }
                         }
                     }
@@ -4888,7 +5003,7 @@ export class MapMaker {
             );
         }
 
-        if (apply && (this.mapData[this.defaultTileLayer].every(row => row.every(tile => tile === 0 || tile === 14 || tile === 13 || tile === 12 || tile === 33)))) 
+        if (apply && (this.mapData[this.defaultTileLayer].every(row => row.every(tile => isEmptyTile(tile) || tile === '8' || tile === '2' || tile === '1')))) 
             this.applyDefaultLayoutIfEmpty();
 
 
@@ -4910,41 +5025,41 @@ export class MapMaker {
         // Place spawns for regular maps
         if (this.mapSize === this.mapSizes.regular) {
             if (this.gamemode === 'Duels') {
-                this.mapData[this.defaultTileLayer][topY][midX] = 13;      // Red
-                this.mapData[this.defaultTileLayer][bottomY][midX] = 12;   // Blue
-                if (this.mapData[this.defaultTileLayer][topY][midX - 2] === 13) {
-                    this.mapData[this.defaultTileLayer][topY][midX - 2] = 0;
+                this.mapData[this.defaultTileLayer][topY][midX] = '2';      // Red
+                this.mapData[this.defaultTileLayer][bottomY][midX] = '1';   // Blue
+                if (this.mapData[this.defaultTileLayer][topY][midX - 2] === '2') {
+                    this.mapData[this.defaultTileLayer][topY][midX - 2] = EMPTY_TILE;
                 }
-                if (this.mapData[this.defaultTileLayer][topY][midX + 2] === 13) {
-                    this.mapData[this.defaultTileLayer][topY][midX + 2] = 0;
+                if (this.mapData[this.defaultTileLayer][topY][midX + 2] === '2') {
+                    this.mapData[this.defaultTileLayer][topY][midX + 2] = EMPTY_TILE;
                 }
-                if (this.mapData[this.defaultTileLayer][bottomY][midX - 2] === 12) {
-                    this.mapData[this.defaultTileLayer][bottomY][midX - 2] = 0;
+                if (this.mapData[this.defaultTileLayer][bottomY][midX - 2] === '1') {
+                    this.mapData[this.defaultTileLayer][bottomY][midX - 2] = EMPTY_TILE;
                 }
-                if (this.mapData[this.defaultTileLayer][bottomY][midX + 2] === 12) {
-                    this.mapData[this.defaultTileLayer][bottomY][midX + 2] = 0;
+                if (this.mapData[this.defaultTileLayer][bottomY][midX + 2] === '1') {
+                    this.mapData[this.defaultTileLayer][bottomY][midX + 2] = EMPTY_TILE;
                 }
             } else if ((this.gamemode === 'Brawl_Ball' || this.gamemode === 'Hockey' || this.gamemode ==='Paint_Brawl')) {
-                this.mapData[this.defaultTileLayer][8][midX] = 13;      // Red
-                this.mapData[this.defaultTileLayer][bottomY - 8][midX] = 12;   // Blue
-                this.mapData[this.defaultTileLayer][8][midX - 2] = 13;  // Red
-                this.mapData[this.defaultTileLayer][bottomY - 8][midX - 2] = 12; // Blue
-                this.mapData[this.defaultTileLayer][8][midX + 2] = 13;  // Red
-                this.mapData[this.defaultTileLayer][bottomY - 8][midX + 2] = 12; // Blue
+                this.mapData[this.defaultTileLayer][8][midX] = '2';      // Red
+                this.mapData[this.defaultTileLayer][bottomY - 8][midX] = '1';   // Blue
+                this.mapData[this.defaultTileLayer][8][midX - 2] = '2';  // Red
+                this.mapData[this.defaultTileLayer][bottomY - 8][midX - 2] = '1'; // Blue
+                this.mapData[this.defaultTileLayer][8][midX + 2] = '2';  // Red
+                this.mapData[this.defaultTileLayer][bottomY - 8][midX + 2] = '1'; // Blue
                 for (let x = 0; x < mapWidth; x++) {
-                    if (this.mapData[this.defaultTileLayer][0][x] === 13) {
-                        this.mapData[this.defaultTileLayer][0][x] = 0;
+                    if (this.mapData[this.defaultTileLayer][0][x] === '2') {
+                        this.mapData[this.defaultTileLayer][0][x] = EMPTY_TILE;
                     }
                 }
                 for (let x = 0; x < mapWidth; x++) {
-                    if (this.mapData[this.defaultTileLayer][bottomY][x] === 12) {
-                        this.mapData[this.defaultTileLayer][bottomY][x] = 0;
+                    if (this.mapData[this.defaultTileLayer][bottomY][x] === '1') {
+                        this.mapData[this.defaultTileLayer][bottomY][x] = EMPTY_TILE;
                     }
                 }
             } else {
                 [midX - 2, midX, midX + 2].forEach(x => {
-                    this.mapData[this.defaultTileLayer][topY][x] = 13;
-                    this.mapData[this.defaultTileLayer][bottomY][x] = 12;
+                    this.mapData[this.defaultTileLayer][topY][x] = '2';
+                    this.mapData[this.defaultTileLayer][bottomY][x] = '1';
                 });
             }
 
@@ -4956,40 +5071,40 @@ export class MapMaker {
                 'Hold_The_Trophy', 'Basket_Brawl', 'Volley_Brawl', 'Dodgebrawl', 'Hockey', 'Bot_Drop', 'Paint_Brawl', 'Lone_Star',
             ];
             if (objectiveModes.includes(this.gamemode)) {
-                this.placeTile(centerX, centerY, 14, false); // Place objective tile
+                this.placeTile(centerX, centerY, '8', false); // Place objective tile
             } else if (this.gamemode === 'Heist' || this.gamemode === 'Snowtel_Thieves' || this.gamemode === 'Safe_Blast') {
-                this.placeTile(centerX, 4, 14, false);
-                this.placeTile(centerX, mapHeight - 5, 14, false);
+                this.placeTile(centerX, 4, '8', false);
+                this.placeTile(centerX, mapHeight - 5, '8', false);
             }
             if (objectiveModes.includes(this.gamemode)) {
-                this.placeTile(centerX, centerY, 14, false); // Place objective tile
+                this.placeTile(centerX, centerY, '8', false); // Place objective tile
             } else if (this.gamemode === 'Token_Run') {
-                this.placeTile(centerX, 5, 14, false);
-                this.placeTile(centerX, mapHeight - 6, 14, false);
+                this.placeTile(centerX, 5, '8', false);
+                this.placeTile(centerX, mapHeight - 6, '8', false);
             }
             if (objectiveModes.includes(this.gamemode)) {
-                this.placeTile(centerX, centerY, 14, false); // Place objective tile
+                this.placeTile(centerX, centerY, '8', false); // Place objective tile
             } else if (this.gamemode === 'Spirit_Wars') {
-                this.placeTile(centerX, 3, 14, false);
-                this.placeTile(centerX, mapHeight - 4, 14, false);
+                this.placeTile(centerX, 3, '8', false);
+                this.placeTile(centerX, mapHeight - 4, '8', false);
             }
         }
 
 
         if (this.mapSize === this.mapSizes.basket) {
             // Place spawns for basket maps
-            this.mapData[this.defaultTileLayer][6][this.mapWidth - 2] = 13;      // Red
-            this.mapData[this.defaultTileLayer][6][1] = 12;                      // Blue
-            this.mapData[this.defaultTileLayer][8][this.mapWidth - 2] = 13;      // Red
-            this.mapData[this.defaultTileLayer][8][1] = 12;                      // Blue
-            this.mapData[this.defaultTileLayer][10][this.mapWidth - 2] = 13;     // Red
-            this.mapData[this.defaultTileLayer][10][1] = 12;                     // Blue
+            this.mapData[this.defaultTileLayer][6][this.mapWidth - 2] = '2';      // Red
+            this.mapData[this.defaultTileLayer][6][1] = '1';                      // Blue
+            this.mapData[this.defaultTileLayer][8][this.mapWidth - 2] = '2';      // Red
+            this.mapData[this.defaultTileLayer][8][1] = '1';                      // Blue
+            this.mapData[this.defaultTileLayer][10][this.mapWidth - 2] = '2';     // Red
+            this.mapData[this.defaultTileLayer][10][1] = '1';                     // Blue
 
             // Center objective
             if (this.gamemode === 'Basket_Brawl') {
             const centerY = Math.floor(mapHeight / 2);
             const centerX = Math.floor(mapWidth / 2);
-            this.placeTile(centerX, centerY, 14, false); // Place objective tile
+            this.placeTile(centerX, centerY, '8', false); // Place objective tile
             }
         }
 
@@ -5000,25 +5115,25 @@ export class MapMaker {
             const centerY = Math.floor(mapHeight / 2);
             const topLeft = centerX - 1;
             const topTop = centerY - 1;
-            this.mapData[this.defaultTileLayer][topTop][topLeft] = 14;
+            this.mapData[this.defaultTileLayer][topTop][topLeft] = '8';
 
             // Unbreakables on col 10 and mirrored
             for (let y = centerY - 8; y <= centerY + 7; y++) {
-                this.mapData[this.defaultTileLayer][y][9] = 11;
-                this.mapData[this.defaultTileLayer][y][mapWidth - 10] = 11;
+                this.mapData[this.defaultTileLayer][y][9] = 'I';
+                this.mapData[this.defaultTileLayer][y][mapWidth - 10] = 'I';
             }
             // Extend Unbreakables
             for (let x = 9; x <= 13; x++) {
-                this.mapData[this.defaultTileLayer][centerY + 7][x] = 11;
-                this.mapData[this.defaultTileLayer][centerY + 7][mapWidth - x - 1] = 11;
-                this.mapData[this.defaultTileLayer][centerY - 8][x] = 11;
-                this.mapData[this.defaultTileLayer][centerY - 8][mapWidth - x - 1] = 11;
+                this.mapData[this.defaultTileLayer][centerY + 7][x] = 'I';
+                this.mapData[this.defaultTileLayer][centerY + 7][mapWidth - x - 1] = 'I';
+                this.mapData[this.defaultTileLayer][centerY - 8][x] = 'I';
+                this.mapData[this.defaultTileLayer][centerY - 8][mapWidth - x - 1] = 'I';
             }
 
             // Fill water from edges to col 1–9 and col width-10–width
             for (let y = 0; y < mapHeight; y++) {
-                for (let x = 0; x <= 8; x++) this.mapData[this.defaultTileLayer][y][x] = 8;
-                for (let x = mapWidth - 9; x < mapWidth; x++) this.mapData[this.defaultTileLayer][y][x] = 8;
+                for (let x = 0; x <= 8; x++) this.mapData[this.defaultTileLayer][y][x] = 'W';
+                for (let x = mapWidth - 9; x < mapWidth; x++) this.mapData[this.defaultTileLayer][y][x] = 'W';
             }
 
         } else if (this.mapSize === this.mapSizes.showdown && (this.gamemode === 'Gem_Grab' || this.gamemode === 'Bounty' || this.gamemode === 'Lone_Star' || this.gamemode === 'Hot_Zone')) {
@@ -5027,7 +5142,7 @@ export class MapMaker {
             const centerY = Math.floor(mapHeight / 2);
             const topLeft = centerX - 1;
             const topTop = centerY - 1;
-            this.mapData[this.defaultTileLayer][topTop][topLeft] = 14;
+            this.mapData[this.defaultTileLayer][topTop][topLeft] = '8';
         }
         this.draw();
     }
@@ -5059,7 +5174,7 @@ export class MapMaker {
                     this.minZoom = 0.4;
                     this.delta = 1.75;
                     this.zoomLevel = 0.575;
-                    this.tileDefinitions[14].size = 1;
+                    this.tileDefinitions['8'].size = 1;
                     this.objectiveData.Gem_Grab[0] = 2; // width
                     this.objectiveData.Gem_Grab[1] = 2; // height
                     this.objectiveData.Gem_Grab[2] = -50; 
@@ -5104,7 +5219,7 @@ export class MapMaker {
                     this.minZoom = 0.15;
                     this.delta = 0.5;
                     this.zoomLevel = 0.3;
-                    this.tileDefinitions[14].size = 2;
+                    this.tileDefinitions['8'].size = 2;
                     // restore original width/height
                     this.objectiveData.Gem_Grab[0] = 1;
                     this.objectiveData.Gem_Grab[1] = 1;
@@ -5332,14 +5447,14 @@ export class MapMaker {
         // Clear the original tiles from the map (using their layer)
         for (const tile of this.selectedTiles) {
             const layer = tile.layer !== undefined ? tile.layer : this.defaultTileLayer;
-            this.mapData[layer][tile.y][tile.x] = 0;
+            this.mapData[layer][tile.y][tile.x] = EMPTY_TILE;
             
             // Also clear negative IDs for size 2 tiles
             const def = this.tileDefinitions[tile.id];
             if (def && def.size === 2) {
-                this.mapData[layer][tile.y][tile.x + 1] = 0;
-                this.mapData[layer][tile.y + 1][tile.x] = 0;
-                this.mapData[layer][tile.y + 1][tile.x + 1] = 0;
+                this.mapData[layer][tile.y][tile.x + 1] = EMPTY_TILE;
+                this.mapData[layer][tile.y + 1][tile.x] = EMPTY_TILE;
+                this.mapData[layer][tile.y + 1][tile.x + 1] = EMPTY_TILE;
             }
         }
 
@@ -5367,9 +5482,9 @@ export class MapMaker {
                         // Handle negative IDs for size 2 tiles
                         const def = this.tileDefinitions[originalTile.id];
                         if (def && def.size === 2) {
-                            this.mapData[originalTile.layer][newY][newX + 1] = -1;
-                            this.mapData[originalTile.layer][newY + 1][newX] = -2;
-                            this.mapData[originalTile.layer][newY + 1][newX + 1] = -3;
+                            this.mapData[originalTile.layer][newY][newX + 1] = OCCUPIED_TILE_RIGHT;
+                            this.mapData[originalTile.layer][newY + 1][newX] = OCCUPIED_TILE_BOTTOM;
+                            this.mapData[originalTile.layer][newY + 1][newX + 1] = OCCUPIED_TILE_BOTTOM_RIGHT;
                         }
                         
                         // Add to selected tiles array
@@ -5428,7 +5543,7 @@ export class MapMaker {
     }
 
     isBlock(tileId) {
-        const blockIds = [1, 3, 4, 5, 6, 7, 8, 9, 11]; // IDs for Wall, Wall2, Crate, Barrel, Cactus, Water, Fence, Rope Fence, Unbreakable
+        const blockIds = ['M', 'X', 'Y', 'C', 'T', 'N', 'W', 'a', 'I'];
         return blockIds.includes(tileId);
     }
     
@@ -5540,7 +5655,7 @@ export class MapMaker {
         
         // Get the tile ID at the clicked position
         const tileId = this.mapData[this.defaultTileLayer][coords.y][coords.x];
-        if (tileId === 0 || tileId === -1) return; // Skip empty and occupied tiles
+        if (!isRenderableTile(tileId)) return; // Skip empty and occupied tiles
         
         // Get the tile definition
         const def = this.tileDefinitions[tileId];
@@ -5669,20 +5784,21 @@ window.addEventListener('load', async () => {
                     let maxLayer = 0;
                     for (const t of tiles) if (typeof t.layer === 'number' && t.layer > maxLayer) maxLayer = t.layer;
                     const layers = Math.max(5, maxLayer + 1);
-                    const layered = Array.from({ length: layers }, () => Array.from({ length: height }, () => Array(width).fill(0)));
+                    const layered = Array.from({ length: layers }, () => Array.from({ length: height }, () => Array(width).fill(EMPTY_TILE)));
                     for (const t of tiles) {
                         const layer = t.layer || 0;
                         const x = t.x;
                         const y = t.y;
-                        let tileId = 0;
-                        try { tileId = t.data && t.data.tile_id ? Number(t.data.tile_id) : 0; } catch (e) { tileId = 0; }
-                        if (!tileId) {
-                            const parsed = parseInt(t.tile_type, 10);
-                            tileId = isNaN(parsed) ? 0 : parsed;
-                        }
+                        const tileId = t.data && t.data.tile_id ? String(t.data.tile_id) : EMPTY_TILE;
                         if (typeof x === 'number' && typeof y === 'number') {
                             if (layer < layered.length && y >= 0 && y < height && x >= 0 && x < width) {
                                 layered[layer][y][x] = tileId;
+                                const def = window.mapMaker.tileDefinitions[tileId];
+                                if (def?.size === 2 && y + 1 < height && x + 1 < width) {
+                                    layered[layer][y][x + 1] = OCCUPIED_TILE_RIGHT;
+                                    layered[layer][y + 1][x] = OCCUPIED_TILE_BOTTOM;
+                                    layered[layer][y + 1][x + 1] = OCCUPIED_TILE_BOTTOM_RIGHT;
+                                }
                             }
                         }
                     }

@@ -128,23 +128,11 @@ export async function generateMapImage(mapData, size = 'regular', gamemode = 'Ge
     await renderer.loadTileImages();
     await renderer.preloadWaterTiles();
 
-    // Filter out tiles that aren't allowed in this environment/gamemode
-    // CRITICAL: Don't filter out dynamically loaded images (water, fences, etc.)
-    // which use cache keys instead of tileId keys
+    // Filter tile-definition image keys; keep dynamically loaded cache keys.
     const filteredTileImages = {};
     for (const [key, img] of Object.entries(renderer.tileImages)) {
-      // Check if this is a tileId key (numeric string) or a cache key (like water_xxx, image paths, etc.)
-      const tileId = parseInt(key);
-      const isNumericKey = !isNaN(tileId) && String(tileId) === key;
-      
-      if (isNumericKey) {
-        // This is a tileId key - check if it should be filtered
-        const def = renderer.tileDefinitions[tileId];
-        if (!def) {
-          // No definition, keep it (might be needed)
-          filteredTileImages[key] = img;
-          continue;
-        }
+      const def = renderer.tileDefinitions[key];
+      if (def) {
         
         // Skip tiles that are restricted to specific environments
         if (def.showInEnvironment && !def.showInEnvironment.includes(environment)) continue;

@@ -328,7 +328,7 @@
     if (!tile) return true;
     const tt = tile.tile_type;
     if (tt === undefined || tt === null || tt === '') return true;
-    if (tt === 0 || tt === '0') return true;
+    if (tt === 0 || tt === '0' || tt === '.') return true;
     if (tile.data && tile.data.default === true) return true;
     return false;
   };
